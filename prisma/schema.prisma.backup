@@ -7,7 +7,7 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
 // =============================================================================
@@ -40,9 +40,9 @@ enum UserRole {
 }
 
 enum AfricanRegion {
-  WACAF    // Western and Central Africa
-  ESAF     // Eastern and Southern Africa
-  NORTHERN // Northern Africa
+  WACAF
+  ESAF
+  NORTHERN
 }
 
 enum MembershipStatus {
@@ -320,65 +320,50 @@ enum ResourceType {
 
 model Organization {
   id                String              @id @default(cuid())
-  
   nameEn            String              @map("name_en")
   nameFr            String              @map("name_fr")
   icaoCode          String?             @unique @map("icao_code")
-  
   country           String
   region            AfricanRegion
   city              String?
-  
   membershipStatus  MembershipStatus    @default(PENDING)
   joinedAt          DateTime?           @map("joined_at")
-  
   users             User[]
   assessments       Assessment[]
   reviewsAsHost     Review[]            @relation("HostANSP")
   findings          Finding[]
   documents         Document[]
-  
   createdAt         DateTime            @default(now()) @map("created_at")
   updatedAt         DateTime            @updatedAt @map("updated_at")
-  
   @@map("organizations")
 }
 
 model User {
-  id                String              @id @default(cuid())
-  
-  email             String              @unique
-  passwordHash      String?             @map("password_hash")
-  emailVerified     DateTime?           @map("email_verified")
-  
-  firstName         String              @map("first_name")
-  lastName          String              @map("last_name")
-  title             String?
-  phone             String?
-  
-  locale            Locale              @default(EN)
-  timezone          String              @default("UTC")
-  theme             Theme               @default(SYSTEM)
-  
-  role              UserRole            @default(STAFF)
-  organizationId    String?             @map("organization_id")
-  organization      Organization?       @relation(fields: [organizationId], references: [id])
-  
-  reviewerProfile   ReviewerProfile?
-  
-  lastLoginAt       DateTime?           @map("last_login_at")
-  isActive          Boolean             @default(true) @map("is_active")
-  
+  id                  String              @id @default(cuid())
+  email               String              @unique
+  passwordHash        String?             @map("password_hash")
+  emailVerified       DateTime?           @map("email_verified")
+  firstName           String              @map("first_name")
+  lastName            String              @map("last_name")
+  title               String?
+  phone               String?
+  locale              Locale              @default(EN)
+  timezone            String              @default("UTC")
+  theme               Theme               @default(SYSTEM)
+  role                UserRole            @default(STAFF)
+  organizationId      String?             @map("organization_id")
+  organization        Organization?       @relation(fields: [organizationId], references: [id])
+  reviewerProfile     ReviewerProfile?
+  lastLoginAt         DateTime?           @map("last_login_at")
+  isActive            Boolean             @default(true) @map("is_active")
   assessmentResponses AssessmentResponse[]
   reviewTeamMembers   ReviewTeamMember[]
   assignedFindings    Finding[]           @relation("AssignedTo")
   assignedCAPs        CorrectiveActionPlan[] @relation("AssignedTo")
   notifications       Notification[]
   auditLogs           AuditLog[]
-  
-  createdAt         DateTime            @default(now()) @map("created_at")
-  updatedAt         DateTime            @updatedAt @map("updated_at")
-  
+  createdAt           DateTime            @default(now()) @map("created_at")
+  updatedAt           DateTime            @updatedAt @map("updated_at")
   @@map("users")
 }
 
@@ -388,72 +373,52 @@ model User {
 
 model Questionnaire {
   id                String              @id @default(cuid())
-  
   code              String              @unique
   type              QuestionnaireType
   version           String
-  
   titleEn           String              @map("title_en")
   titleFr           String              @map("title_fr")
   descriptionEn     String?             @map("description_en")
   descriptionFr     String?             @map("description_fr")
-  
   categories        QuestionnaireCategory[]
   questions         Question[]
-  
   effectiveDate     DateTime            @map("effective_date")
   expiryDate        DateTime?           @map("expiry_date")
   isActive          Boolean             @default(true) @map("is_active")
-  
   assessments       Assessment[]
-  
   createdAt         DateTime            @default(now()) @map("created_at")
   updatedAt         DateTime            @updatedAt @map("updated_at")
-  
   @@map("questionnaires")
 }
 
 model QuestionnaireCategory {
   id                String              @id @default(cuid())
-  
   questionnaireId   String              @map("questionnaire_id")
   questionnaire     Questionnaire       @relation(fields: [questionnaireId], references: [id])
-  
   code              String
   sortOrder         Int                 @map("sort_order")
-  
   nameEn            String              @map("name_en")
   nameFr            String              @map("name_fr")
   descriptionEn     String?             @map("description_en")
   descriptionFr     String?             @map("description_fr")
-  
-  // USOAP CMA specific
   auditArea         USOAPAuditArea?     @map("audit_area")
   criticalElement   CriticalElement?    @map("critical_element")
-  
-  // CANSO SoE specific
   smsComponent      SMSComponent?       @map("sms_component")
   studyArea         CANSOStudyArea?     @map("study_area")
   transversalArea   TransversalArea?    @map("transversal_area")
-  
   questions         Question[]
-  
   createdAt         DateTime            @default(now()) @map("created_at")
   updatedAt         DateTime            @updatedAt @map("updated_at")
-  
   @@unique([questionnaireId, code])
   @@map("questionnaire_categories")
 }
 
 model Question {
   id                  String              @id @default(cuid())
-  
   questionnaireId     String              @map("questionnaire_id")
   questionnaire       Questionnaire       @relation(fields: [questionnaireId], references: [id])
   categoryId          String              @map("category_id")
   category            QuestionnaireCategory @relation(fields: [categoryId], references: [id])
-  
-  // USOAP CMA fields
   pqNumber            String?             @map("pq_number")
   auditArea           USOAPAuditArea?     @map("audit_area")
   criticalElement     CriticalElement?    @map("critical_element")
@@ -461,35 +426,24 @@ model Question {
   requiresOnSite      Boolean             @default(false) @map("requires_on_site")
   pqStatus            PQAmendmentStatus   @default(NO_CHANGE) @map("pq_status")
   previousPqNumber    String?             @map("previous_pq_number")
-  
-  // CANSO SoE fields
   smsComponent        SMSComponent?       @map("sms_component")
   studyArea           CANSOStudyArea?     @map("study_area")
   maturityLevel       MaturityLevel?      @map("maturity_level")
-  
-  // Content
   questionTextEn      String              @map("question_text_en")
   questionTextFr      String              @map("question_text_fr")
   guidanceEn          String?             @map("guidance_en") @db.Text
   guidanceFr          String?             @map("guidance_fr") @db.Text
-  
   icaoReferences      ICAOReference[]
-  
   responseType        ResponseType        @default(SATISFACTORY_NOT)
   requiredEvidence    String[]            @default([])
-  
   weight              Float               @default(1.0)
   maxScore            Float               @default(1.0) @map("max_score")
-  
   sortOrder           Int                 @map("sort_order")
   isActive            Boolean             @default(true) @map("is_active")
-  
   responses           AssessmentResponse[]
   findings            Finding[]
-  
   createdAt           DateTime            @default(now()) @map("created_at")
   updatedAt           DateTime            @updatedAt @map("updated_at")
-  
   @@unique([questionnaireId, pqNumber])
   @@index([auditArea, criticalElement])
   @@index([smsComponent, studyArea])
@@ -498,15 +452,12 @@ model Question {
 
 model ICAOReference {
   id                String              @id @default(cuid())
-  
   questionId        String              @map("question_id")
   question          Question            @relation(fields: [questionId], references: [id])
-  
   referenceType     ICAOReferenceType   @map("reference_type")
   document          String
   chapter           String?
   description       String?
-  
   @@map("icao_references")
 }
 
@@ -515,108 +466,80 @@ model ICAOReference {
 // =============================================================================
 
 model ReviewerProfile {
-  id                  String              @id @default(cuid())
-  
-  userId              String              @unique @map("user_id")
-  user                User                @relation(fields: [userId], references: [id])
-  
-  organizationId      String              @map("organization_id")
-  
-  status              ReviewerStatus      @default(NOMINATED)
-  nominatedAt         DateTime?           @map("nominated_at")
-  selectedAt          DateTime?           @map("selected_at")
-  certifiedAt         DateTime?           @map("certified_at")
-  
-  currentPosition     String              @map("current_position")
-  yearsExperience     Int                 @map("years_experience")
-  biography           String?             @db.Text
-  biographyFr         String?             @map("biography_fr") @db.Text
-  
-  expertiseAreas      ExpertiseArea[]     @default([])
-  specializations     String[]            @default([])
-  
-  languages           ReviewerLanguage[]
-  certifications      ReviewerCertification[]
-  trainingRecords     ReviewerTraining[]
-  
-  reviewsCompleted    Int                 @default(0) @map("reviews_completed")
-  reviewsAsLead       Int                 @default(0) @map("reviews_as_lead")
-  lastReviewDate      DateTime?           @map("last_review_date")
-  
-  isAvailable         Boolean             @default(true) @map("is_available")
-  availableFrom       DateTime?           @map("available_from")
-  availableTo         DateTime?           @map("available_to")
-  
-  conflictOrganizations String[]          @default([]) @map("conflict_organizations")
-  
-  averageRating       Float?              @map("average_rating")
-  feedbackCount       Int                 @default(0) @map("feedback_count")
-  
-  teamAssignments     ReviewTeamMember[]
-  
-  createdAt           DateTime            @default(now()) @map("created_at")
-  updatedAt           DateTime            @updatedAt @map("updated_at")
-  
+  id                    String              @id @default(cuid())
+  userId                String              @unique @map("user_id")
+  user                  User                @relation(fields: [userId], references: [id])
+  organizationId        String              @map("organization_id")
+  status                ReviewerStatus      @default(NOMINATED)
+  nominatedAt           DateTime?           @map("nominated_at")
+  selectedAt            DateTime?           @map("selected_at")
+  certifiedAt           DateTime?           @map("certified_at")
+  currentPosition       String              @map("current_position")
+  yearsExperience       Int                 @map("years_experience")
+  biography             String?             @db.Text
+  biographyFr           String?             @map("biography_fr") @db.Text
+  expertiseAreas        ExpertiseArea[]     @default([])
+  specializations       String[]            @default([])
+  languages             ReviewerLanguage[]
+  certifications        ReviewerCertification[]
+  trainingRecords       ReviewerTraining[]
+  reviewsCompleted      Int                 @default(0) @map("reviews_completed")
+  reviewsAsLead         Int                 @default(0) @map("reviews_as_lead")
+  lastReviewDate        DateTime?           @map("last_review_date")
+  isAvailable           Boolean             @default(true) @map("is_available")
+  availableFrom         DateTime?           @map("available_from")
+  availableTo           DateTime?           @map("available_to")
+  conflictOrganizations String[]            @default([]) @map("conflict_organizations")
+  averageRating         Float?              @map("average_rating")
+  feedbackCount         Int                 @default(0) @map("feedback_count")
+  teamAssignments       ReviewTeamMember[]
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedAt             DateTime            @updatedAt @map("updated_at")
   @@map("reviewer_profiles")
 }
 
 model ReviewerLanguage {
   id                  String              @id @default(cuid())
-  
   reviewerProfileId   String              @map("reviewer_profile_id")
   reviewerProfile     ReviewerProfile     @relation(fields: [reviewerProfileId], references: [id])
-  
   language            Language
   proficiency         LanguageProficiency
   isNative            Boolean             @default(false) @map("is_native")
-  
   @@unique([reviewerProfileId, language])
   @@map("reviewer_languages")
 }
 
 model ReviewerCertification {
   id                  String              @id @default(cuid())
-  
   reviewerProfileId   String              @map("reviewer_profile_id")
   reviewerProfile     ReviewerProfile     @relation(fields: [reviewerProfileId], references: [id])
-  
   type                CertificationType
   name                String
   issuingBody         String              @map("issuing_body")
   certificateNumber   String?             @map("certificate_number")
-  
   issuedDate          DateTime            @map("issued_date")
   expiryDate          DateTime?           @map("expiry_date")
   isValid             Boolean             @default(true) @map("is_valid")
-  
   documentUrl         String?             @map("document_url")
-  
   @@map("reviewer_certifications")
 }
 
 model ReviewerTraining {
   id                  String              @id @default(cuid())
-  
   reviewerProfileId   String              @map("reviewer_profile_id")
   reviewerProfile     ReviewerProfile     @relation(fields: [reviewerProfileId], references: [id])
-  
   trainingType        TrainingType        @map("training_type")
   courseName          String              @map("course_name")
   courseNameFr        String?             @map("course_name_fr")
   provider            String
-  
   startDate           DateTime            @map("start_date")
   completionDate      DateTime?           @map("completion_date")
   status              TrainingStatus      @default(IN_PROGRESS)
   grade               String?
-  
   location            String?
   isOnline            Boolean             @default(false) @map("is_online")
-  
   certificateUrl      String?             @map("certificate_url")
-  
   createdAt           DateTime            @default(now()) @map("created_at")
-  
   @@map("reviewer_trainings")
 }
 
@@ -626,147 +549,110 @@ model ReviewerTraining {
 
 model Assessment {
   id                  String              @id @default(cuid())
-  
   type                AssessmentType      @default(SELF_ASSESSMENT)
   questionnaireId     String              @map("questionnaire_id")
   questionnaire       Questionnaire       @relation(fields: [questionnaireId], references: [id])
-  
   organizationId      String              @map("organization_id")
   organization        Organization        @relation(fields: [organizationId], references: [id])
-  
   status              AssessmentStatus    @default(DRAFT)
   progress            Float               @default(0)
-  
   startedAt           DateTime?           @map("started_at")
   submittedAt         DateTime?           @map("submitted_at")
   completedAt         DateTime?           @map("completed_at")
-  
   overallScore        Float?              @map("overall_score")
   maturityLevel       MaturityLevel?      @map("maturity_level")
   eiScore             Float?              @map("ei_score")
-  
   categoryScores      Json?               @map("category_scores")
-  
   reviewId            String?             @map("review_id")
   review              Review?             @relation(fields: [reviewId], references: [id])
-  
   responses           AssessmentResponse[]
   documents           Document[]
-  
   createdAt           DateTime            @default(now()) @map("created_at")
   updatedAt           DateTime            @updatedAt @map("updated_at")
-  
   @@index([organizationId, questionnaireId])
   @@map("assessments")
 }
 
 model AssessmentResponse {
   id                  String              @id @default(cuid())
-  
   assessmentId        String              @map("assessment_id")
   assessment          Assessment          @relation(fields: [assessmentId], references: [id])
   questionId          String              @map("question_id")
   question            Question            @relation(fields: [questionId], references: [id])
-  
   responseValue       String?             @map("response_value")
   maturityLevel       MaturityLevel?      @map("maturity_level")
   score               Float?
-  
   notes               String?             @db.Text
   evidenceUrls        String[]            @default([]) @map("evidence_urls")
-  
   respondedById       String?             @map("responded_by_id")
   respondedBy         User?               @relation(fields: [respondedById], references: [id])
   respondedAt         DateTime?           @map("responded_at")
-  
   createdAt           DateTime            @default(now()) @map("created_at")
   updatedAt           DateTime            @updatedAt @map("updated_at")
-  
   @@unique([assessmentId, questionId])
   @@map("assessment_responses")
 }
 
 model Review {
   id                  String              @id @default(cuid())
-  
   referenceNumber     String              @unique @map("reference_number")
   reviewType          ReviewType          @default(FULL)
-  
   hostOrganizationId  String              @map("host_organization_id")
   hostOrganization    Organization        @relation("HostANSP", fields: [hostOrganizationId], references: [id])
-  
   status              ReviewStatus        @default(REQUESTED)
   phase               ReviewPhase         @default(PLANNING)
-  
   requestedDate       DateTime            @map("requested_date")
   plannedStartDate    DateTime?           @map("planned_start_date")
   plannedEndDate      DateTime?           @map("planned_end_date")
   actualStartDate     DateTime?           @map("actual_start_date")
   actualEndDate       DateTime?           @map("actual_end_date")
-  
   questionnairesInScope String[]          @default([]) @map("questionnaires_in_scope")
   areasInScope        String[]            @default([]) @map("areas_in_scope")
-  
   teamMembers         ReviewTeamMember[]
   assessments         Assessment[]
   findings            Finding[]
   report              ReviewReport?
   documents           Document[]
-  
   createdAt           DateTime            @default(now()) @map("created_at")
   updatedAt           DateTime            @updatedAt @map("updated_at")
-  
   @@map("reviews")
 }
 
 model ReviewTeamMember {
   id                  String              @id @default(cuid())
-  
   reviewId            String              @map("review_id")
   review              Review              @relation(fields: [reviewId], references: [id])
   userId              String              @map("user_id")
   user                User                @relation(fields: [userId], references: [id])
   reviewerProfileId   String?             @map("reviewer_profile_id")
   reviewerProfile     ReviewerProfile?    @relation(fields: [reviewerProfileId], references: [id])
-  
   role                TeamRole            @default(REVIEWER)
   assignedAreas       String[]            @default([]) @map("assigned_areas")
-  
   confirmedAt         DateTime?           @map("confirmed_at")
   declinedAt          DateTime?           @map("declined_at")
   declineReason       String?             @map("decline_reason")
-  
   createdAt           DateTime            @default(now()) @map("created_at")
-  
   @@unique([reviewId, userId])
   @@map("review_team_members")
 }
 
 model ReviewReport {
   id                  String              @id @default(cuid())
-  
   reviewId            String              @unique @map("review_id")
   review              Review              @relation(fields: [reviewId], references: [id])
-  
   titleEn             String              @map("title_en")
   titleFr             String              @map("title_fr")
-  
   executiveSummaryEn  String?             @map("executive_summary_en") @db.Text
   executiveSummaryFr  String?             @map("executive_summary_fr") @db.Text
-  
   overallMaturity     MaturityLevel?      @map("overall_maturity")
   overallEI           Float?              @map("overall_ei")
-  
   status              String              @default("DRAFT")
   draftedAt           DateTime?           @map("drafted_at")
   reviewedAt          DateTime?           @map("reviewed_at")
   finalizedAt         DateTime?           @map("finalized_at")
-  
   pdfUrl              String?             @map("pdf_url")
-  
   createdAt           DateTime            @default(now()) @map("created_at")
   updatedAt           DateTime            @updatedAt @map("updated_at")
-  
   @@map("review_reports")
 }
 
@@ -775,47 +661,35 @@ model ReviewReport {
 // =============================================================================
 
 model Finding {
-  id                  String              @id @default(cuid())
-  
-  reviewId            String              @map("review_id")
-  review              Review              @relation(fields: [reviewId], references: [id])
-  organizationId      String              @map("organization_id")
-  organization        Organization        @relation(fields: [organizationId], references: [id])
-  
-  questionId          String?             @map("question_id")
-  question            Question?           @relation(fields: [questionId], references: [id])
-  
-  referenceNumber     String              @unique @map("reference_number")
-  findingType         FindingType         @default(OBSERVATION)
-  severity            FindingSeverity     @default(MINOR)
-  
-  titleEn             String              @map("title_en")
-  titleFr             String              @map("title_fr")
-  descriptionEn       String              @map("description_en") @db.Text
-  descriptionFr       String              @map("description_fr") @db.Text
-  evidenceEn          String?             @map("evidence_en") @db.Text
-  evidenceFr          String?             @map("evidence_fr") @db.Text
-  
-  icaoReference       String?             @map("icao_reference")
-  criticalElement     CriticalElement?    @map("critical_element")
-  
-  status              FindingStatus       @default(OPEN)
-  
-  assignedToId        String?             @map("assigned_to_id")
-  assignedTo          User?               @relation("AssignedTo", fields: [assignedToId], references: [id])
-  
-  capRequired         Boolean             @default(true) @map("cap_required")
+  id                   String              @id @default(cuid())
+  reviewId             String              @map("review_id")
+  review               Review              @relation(fields: [reviewId], references: [id])
+  organizationId       String              @map("organization_id")
+  organization         Organization        @relation(fields: [organizationId], references: [id])
+  questionId           String?             @map("question_id")
+  question             Question?           @relation(fields: [questionId], references: [id])
+  referenceNumber      String              @unique @map("reference_number")
+  findingType          FindingType         @default(OBSERVATION)
+  severity             FindingSeverity     @default(MINOR)
+  titleEn              String              @map("title_en")
+  titleFr              String              @map("title_fr")
+  descriptionEn        String              @map("description_en") @db.Text
+  descriptionFr        String              @map("description_fr") @db.Text
+  evidenceEn           String?             @map("evidence_en") @db.Text
+  evidenceFr           String?             @map("evidence_fr") @db.Text
+  icaoReference        String?             @map("icao_reference")
+  criticalElement      CriticalElement?    @map("critical_element")
+  status               FindingStatus       @default(OPEN)
+  assignedToId         String?             @map("assigned_to_id")
+  assignedTo           User?               @relation("AssignedTo", fields: [assignedToId], references: [id])
+  capRequired          Boolean             @default(true) @map("cap_required")
   correctiveActionPlan CorrectiveActionPlan?
-  
-  identifiedAt        DateTime            @default(now()) @map("identified_at")
-  targetCloseDate     DateTime?           @map("target_close_date")
-  closedAt            DateTime?           @map("closed_at")
-  
-  documents           Document[]
-  
-  createdAt           DateTime            @default(now()) @map("created_at")
-  updatedAt           DateTime            @updatedAt @map("updated_at")
-  
+  identifiedAt         DateTime            @default(now()) @map("identified_at")
+  targetCloseDate      DateTime?           @map("target_close_date")
+  closedAt             DateTime?           @map("closed_at")
+  documents            Document[]
+  createdAt            DateTime            @default(now()) @map("created_at")
+  updatedAt            DateTime            @updatedAt @map("updated_at")
   @@index([reviewId, status])
   @@index([organizationId, status])
   @@map("findings")
@@ -823,37 +697,28 @@ model Finding {
 
 model CorrectiveActionPlan {
   id                  String              @id @default(cuid())
-  
   findingId           String              @unique @map("finding_id")
   finding             Finding             @relation(fields: [findingId], references: [id])
-  
   rootCauseEn         String              @map("root_cause_en") @db.Text
   rootCauseFr         String              @map("root_cause_fr") @db.Text
   correctiveActionEn  String              @map("corrective_action_en") @db.Text
   correctiveActionFr  String              @map("corrective_action_fr") @db.Text
   preventiveActionEn  String?             @map("preventive_action_en") @db.Text
   preventiveActionFr  String?             @map("preventive_action_fr") @db.Text
-  
   status              CAPStatus           @default(DRAFT)
-  
   assignedToId        String?             @map("assigned_to_id")
   assignedTo          User?               @relation("AssignedTo", fields: [assignedToId], references: [id])
-  
   submittedAt         DateTime?           @map("submitted_at")
   acceptedAt          DateTime?           @map("accepted_at")
   dueDate             DateTime            @map("due_date")
   completedAt         DateTime?           @map("completed_at")
   verifiedAt          DateTime?           @map("verified_at")
-  
   verificationMethod  String?             @map("verification_method")
   verificationNotes   String?             @map("verification_notes") @db.Text
   verifiedById        String?             @map("verified_by_id")
-  
   documents           Document[]
-  
   createdAt           DateTime            @default(now()) @map("created_at")
   updatedAt           DateTime            @updatedAt @map("updated_at")
-  
   @@map("corrective_action_plans")
 }
 
@@ -863,66 +728,50 @@ model CorrectiveActionPlan {
 
 model TrainingModule {
   id                  String              @id @default(cuid())
-  
   moduleNumber        Int                 @map("module_number")
   code                String              @unique
-  
   titleEn             String              @map("title_en")
   titleFr             String              @map("title_fr")
   descriptionEn       String              @map("description_en") @db.Text
   descriptionFr       String              @map("description_fr") @db.Text
-  
   objectivesEn        String[]            @default([]) @map("objectives_en")
   objectivesFr        String[]            @default([]) @map("objectives_fr")
-  
   topics              TrainingTopic[]
   resources           TrainingResource[]
-  
   iconName            String?             @map("icon_name")
   sortOrder           Int                 @map("sort_order")
   isActive            Boolean             @default(true) @map("is_active")
   isEnabled           Boolean             @default(true) @map("is_enabled")
   enabledUntil        DateTime?           @map("enabled_until")
-  
   createdAt           DateTime            @default(now()) @map("created_at")
   updatedAt           DateTime            @updatedAt @map("updated_at")
-  
   @@map("training_modules")
 }
 
 model TrainingTopic {
   id                  String              @id @default(cuid())
-  
   moduleId            String              @map("module_id")
   module              TrainingModule      @relation(fields: [moduleId], references: [id])
-  
   titleEn             String              @map("title_en")
   titleFr             String              @map("title_fr")
   contentEn           String              @map("content_en") @db.Text
   contentFr           String              @map("content_fr") @db.Text
-  
   relatedPQs          String[]            @default([]) @map("related_pqs")
   relatedStudyAreas   CANSOStudyArea[]    @default([]) @map("related_study_areas")
-  
   sortOrder           Int                 @map("sort_order")
-  
   @@map("training_topics")
 }
 
 model TrainingResource {
   id                  String              @id @default(cuid())
-  
   moduleId            String              @map("module_id")
   module              TrainingModule      @relation(fields: [moduleId], references: [id])
-  
   titleEn             String              @map("title_en")
   titleFr             String              @map("title_fr")
   resourceType        ResourceType        @map("resource_type")
   url                 String?
   fileUrl             String?             @map("file_url")
-  
   sortOrder           Int                 @map("sort_order")
-  
   @@map("training_resources")
 }
 
@@ -932,21 +781,15 @@ model TrainingResource {
 
 model Document {
   id                  String              @id @default(cuid())
-  
   name                String
   description         String?
   fileUrl             String              @map("file_url")
   fileType            String              @map("file_type")
   fileSize            Int                 @map("file_size")
-  
   category            String?
   tags                String[]            @default([])
-  
-  // Ownership
   organizationId      String?             @map("organization_id")
   organization        Organization?       @relation(fields: [organizationId], references: [id])
-  
-  // Associations
   assessmentId        String?             @map("assessment_id")
   assessment          Assessment?         @relation(fields: [assessmentId], references: [id])
   reviewId            String?             @map("review_id")
@@ -955,58 +798,43 @@ model Document {
   finding             Finding?            @relation(fields: [findingId], references: [id])
   capId               String?             @map("cap_id")
   cap                 CorrectiveActionPlan? @relation(fields: [capId], references: [id])
-  
   uploadedById        String              @map("uploaded_by_id")
   uploadedAt          DateTime            @default(now()) @map("uploaded_at")
-  
   createdAt           DateTime            @default(now()) @map("created_at")
   updatedAt           DateTime            @updatedAt @map("updated_at")
-  
   @@map("documents")
 }
 
 model Notification {
   id                  String              @id @default(cuid())
-  
   userId              String              @map("user_id")
   user                User                @relation(fields: [userId], references: [id])
-  
   type                String
   titleEn             String              @map("title_en")
   titleFr             String              @map("title_fr")
   messageEn           String              @map("message_en")
   messageFr           String              @map("message_fr")
-  
   link                String?
   data                Json?
-  
   readAt              DateTime?           @map("read_at")
   emailSentAt         DateTime?           @map("email_sent_at")
-  
   createdAt           DateTime            @default(now()) @map("created_at")
-  
   @@index([userId, readAt])
   @@map("notifications")
 }
 
 model AuditLog {
   id                  String              @id @default(cuid())
-  
   userId              String?             @map("user_id")
   user                User?               @relation(fields: [userId], references: [id])
-  
   action              String
   entityType          String              @map("entity_type")
   entityId            String              @map("entity_id")
-  
   previousData        Json?               @map("previous_data")
   newData             Json?               @map("new_data")
-  
   ipAddress           String?             @map("ip_address")
   userAgent           String?             @map("user_agent")
-  
   createdAt           DateTime            @default(now()) @map("created_at")
-  
   @@index([entityType, entityId])
   @@index([userId, createdAt])
   @@map("audit_logs")

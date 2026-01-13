@@ -1,0 +1,21 @@
+{
+  "common": {
+    "appName": "African ANSP Peer Review",
+    "appTagline": "Enhancing Aviation Safety Through Collaboration",
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "submit": "Submit"
+    }
+  },
+  "questionnaire": {
+    "ans": {
+      "title": "ANS Questionnaire",
+      "subtitle": "USOAP CMA 2024 Protocol Questions"
+    },
+    "sms": {
+      "title": "SMS Questionnaire",
+      "subtitle": "CANSO Standard of Excellence 2024"
+    }
+  }
+}

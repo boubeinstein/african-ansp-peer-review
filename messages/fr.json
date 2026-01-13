@@ -1,0 +1,21 @@
+{
+  "common": {
+    "appName": "Revue par les Pairs ANSP Africains",
+    "appTagline": "Améliorer la Sécurité Aérienne par la Collaboration",
+    "actions": {
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "submit": "Soumettre"
+    }
+  },
+  "questionnaire": {
+    "ans": {
+      "title": "Questionnaire ANS",
+      "subtitle": "Questions de Protocole USOAP CMA 2024"
+    },
+    "sms": {
+      "title": "Questionnaire SMS",
+      "subtitle": "Standard d'Excellence CANSO 2024"
+    }
+  }
+}

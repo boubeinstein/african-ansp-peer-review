@@ -1,21 +1,80 @@
 {
   "common": {
     "appName": "Revue par les Pairs ANSP Africains",
-    "appTagline": "Améliorer la Sécurité Aérienne par la Collaboration",
+    "appTagline": "Excellence Collaborative en Sécurité Aéronautique",
     "actions": {
       "save": "Enregistrer",
       "cancel": "Annuler",
-      "submit": "Soumettre"
+      "submit": "Soumettre",
+      "delete": "Supprimer",
+      "edit": "Modifier",
+      "view": "Voir",
+      "close": "Fermer",
+      "confirm": "Confirmer",
+      "back": "Retour",
+      "next": "Suivant",
+      "profile": "Profil",
+      "settings": "Paramètres",
+      "logout": "Déconnexion"
     }
+  },
+  "navigation": {
+    "dashboard": "Tableau de bord",
+    "questionnaires": "Questionnaires",
+    "assessments": "Évaluations",
+    "reviews": "Revues par les Pairs",
+    "organizations": "Organisations",
+    "reviewers": "Évaluateurs",
+    "training": "Formation",
+    "settings": "Paramètres"
+  },
+  "auth": {
+    "login": {
+      "title": "Bon retour",
+      "subtitle": "Connectez-vous à votre compte pour continuer",
+      "signIn": "Se connecter",
+      "signingIn": "Connexion...",
+      "forgotPassword": "Mot de passe oublié?",
+      "noAccount": "Vous n'avez pas de compte?",
+      "signUp": "S'inscrire"
+    },
+    "register": {
+      "title": "Créer un compte",
+      "subtitle": "Rejoignez le Programme de Revue par les Pairs ANSP Africains",
+      "createAccount": "Créer un compte",
+      "creating": "Création du compte...",
+      "haveAccount": "Vous avez déjà un compte?",
+      "signIn": "Se connecter",
+      "success": "Compte créé avec succès!",
+      "redirecting": "Redirection vers la connexion...",
+      "passwordRequirements": "Min 12 caractères avec majuscule, minuscule, chiffre et caractère spécial"
+    },
+    "fields": {
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "language": "Langue préférée"
+    },
+    "errors": {
+      "invalidCredentials": "E-mail ou mot de passe invalide",
+      "generic": "Une erreur s'est produite. Veuillez réessayer."
+    }
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bon retour",
+    "overview": "Voici un aperçu de vos activités de revue par les pairs."
   },
   "questionnaire": {
     "ans": {
-      "title": "Questionnaire ANS",
-      "subtitle": "Questions de Protocole USOAP CMA 2024"
+      "title": "Questionnaire ANS (USOAP CMA 2024)",
+      "subtitle": "851 Questions de Protocole dans 9 domaines d'audit"
     },
     "sms": {
-      "title": "Questionnaire SMS",
-      "subtitle": "Standard d'Excellence CANSO 2024"
+      "title": "Questionnaire SMS (CANSO SoE)",
+      "subtitle": "Évaluation de la maturité du Système de Gestion de la Sécurité"
     }
   }
 }

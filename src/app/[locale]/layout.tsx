@@ -1,12 +1,8 @@
-import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { routing } from "@/lib/i18n/routing";
 import "../globals.css";
-
-export const metadata: Metadata = {
-  title: "African ANSP Peer Review Program",
-  description: "ICAO-endorsed peer review mechanism for African ANSPs",
-};
 
 export default async function LocaleLayout({
   children,
@@ -16,11 +12,16 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+
+  if (!routing.locales.includes(locale as "en" | "fr")) {
+    notFound();
+  }
+
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
-      <body className="antialiased">
+    <html lang={locale} suppressHydrationWarning>
+      <body className="antialiased" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           {children}
         </NextIntlClientProvider>

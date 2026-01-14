@@ -1,21 +1,80 @@
 {
   "common": {
     "appName": "African ANSP Peer Review",
-    "appTagline": "Enhancing Aviation Safety Through Collaboration",
+    "appTagline": "Collaborative Excellence in Aviation Safety",
     "actions": {
       "save": "Save",
       "cancel": "Cancel",
-      "submit": "Submit"
+      "submit": "Submit",
+      "delete": "Delete",
+      "edit": "Edit",
+      "view": "View",
+      "close": "Close",
+      "confirm": "Confirm",
+      "back": "Back",
+      "next": "Next",
+      "profile": "Profile",
+      "settings": "Settings",
+      "logout": "Log out"
     }
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "questionnaires": "Questionnaires",
+    "assessments": "Assessments",
+    "reviews": "Peer Reviews",
+    "organizations": "Organizations",
+    "reviewers": "Reviewers",
+    "training": "Training",
+    "settings": "Settings"
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to your account to continue",
+      "signIn": "Sign in",
+      "signingIn": "Signing in...",
+      "forgotPassword": "Forgot password?",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up"
+    },
+    "register": {
+      "title": "Create an account",
+      "subtitle": "Join the African ANSP Peer Review Program",
+      "createAccount": "Create account",
+      "creating": "Creating account...",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "success": "Account created successfully!",
+      "redirecting": "Redirecting to login...",
+      "passwordRequirements": "Min 12 characters with uppercase, lowercase, number, and special character"
+    },
+    "fields": {
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "language": "Preferred Language"
+    },
+    "errors": {
+      "invalidCredentials": "Invalid email or password",
+      "generic": "An error occurred. Please try again."
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back",
+    "overview": "Here's an overview of your peer review activities."
   },
   "questionnaire": {
     "ans": {
-      "title": "ANS Questionnaire",
-      "subtitle": "USOAP CMA 2024 Protocol Questions"
+      "title": "ANS Questionnaire (USOAP CMA 2024)",
+      "subtitle": "851 Protocol Questions across 9 audit areas"
     },
     "sms": {
-      "title": "SMS Questionnaire",
-      "subtitle": "CANSO Standard of Excellence 2024"
+      "title": "SMS Questionnaire (CANSO SoE)",
+      "subtitle": "Safety Management System maturity assessment"
     }
   }
 }

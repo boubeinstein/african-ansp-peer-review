@@ -40,8 +40,6 @@ export default async function AdminQuestionnairesPage({
     redirect(`/${locale}/unauthorized`);
   }
 
-  const t = await getTranslations({ locale, namespace: "admin.questionnaires" });
-
   return (
     <div className="container mx-auto py-6 px-4 max-w-7xl">
       <Suspense fallback={<QuestionnaireListSkeleton />}>

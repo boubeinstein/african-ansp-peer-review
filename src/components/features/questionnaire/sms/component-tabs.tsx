@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Shield, AlertTriangle, CheckCircle, Megaphone } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { SMS_COMPONENTS, getSMSComponentsArray } from "@/lib/questionnaire/constants";
+import { getSMSComponentsArray } from "@/lib/questionnaire/constants";
 import type { SMSComponent } from "@prisma/client";
 
 interface ComponentTabsProps {

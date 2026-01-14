@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { CRITICAL_ELEMENTS, getCriticalElementsArray } from "@/lib/questionnaire/constants";
+import { getCriticalElementsArray } from "@/lib/questionnaire/constants";
 import type { CriticalElement } from "@prisma/client";
 
 interface CriticalElementFilterProps {

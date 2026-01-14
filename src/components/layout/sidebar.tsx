@@ -27,12 +27,12 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { titleKey: "dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { titleKey: "questionnaires", href: "/dashboard/questionnaires", icon: ClipboardList },
-  { titleKey: "assessments", href: "/dashboard/assessments", icon: FileCheck },
-  { titleKey: "reviews", href: "/dashboard/reviews", icon: Users },
-  { titleKey: "organizations", href: "/dashboard/organizations", icon: Building2 },
-  { titleKey: "training", href: "/dashboard/training", icon: BookOpen },
-  { titleKey: "settings", href: "/dashboard/settings", icon: Settings },
+  { titleKey: "questionnaires", href: "/questionnaires", icon: ClipboardList },
+  { titleKey: "assessments", href: "/assessments", icon: FileCheck },
+  { titleKey: "reviews", href: "/reviews", icon: Users },
+  { titleKey: "organizations", href: "/organizations", icon: Building2 },
+  { titleKey: "training", href: "/training", icon: BookOpen },
+  { titleKey: "settings", href: "/settings", icon: Settings },
 ];
 
 interface SidebarProps {
@@ -53,7 +53,7 @@ export function Sidebar({ locale }: SidebarProps) {
     >
       <div className="flex h-16 items-center justify-center border-b px-4">
         {!collapsed && (
-          <Link href={`/${locale}/dashboard`} className="flex items-center gap-2">
+          <Link href={`/${locale}`} className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
               A
             </div>
@@ -70,11 +70,14 @@ export function Sidebar({ locale }: SidebarProps) {
       <ScrollArea className="flex-1 px-3 py-4">
         <nav className="flex flex-col gap-1">
           {navItems.map((item) => {
-            const isActive = pathname.includes(item.href);
+            const fullHref = item.href === "/" ? `/${locale}` : `/${locale}${item.href}`;
+            const isActive = item.href === "/"
+              ? pathname === `/${locale}` || pathname === `/${locale}/`
+              : pathname.startsWith(fullHref);
             return (
               <Link
-                key={item.href}
-                href={`/${locale}${item.href}`}
+                key={item.titleKey}
+                href={fullHref}
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
                   isActive

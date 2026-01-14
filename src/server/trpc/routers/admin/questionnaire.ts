@@ -8,9 +8,6 @@ import {
   ANSQuestionImportSchema,
   SMSQuestionImportSchema,
   QuestionnaireTypeSchema,
-  type ANSQuestionImport,
-  type SMSQuestionImport,
-  type CategoryImport,
   type ValidationError,
   type ImportSummary,
 } from "@/lib/questionnaire/import-schema";
@@ -19,7 +16,6 @@ import {
   parseCSV,
   parseANSImport,
   parseSMSImport,
-  detectImportType,
 } from "@/lib/questionnaire/import-parser";
 
 // =============================================================================

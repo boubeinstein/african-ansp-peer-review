@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { USOAP_AUDIT_AREAS, getAuditAreasArray } from "@/lib/questionnaire/constants";
+import { getAuditAreasArray } from "@/lib/questionnaire/constants";
 import type { USOAPAuditArea } from "@prisma/client";
 
 interface AuditAreaFilterProps {

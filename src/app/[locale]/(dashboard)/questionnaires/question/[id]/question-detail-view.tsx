@@ -2,16 +2,13 @@
 
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import {
   Star,
   MapPin,
   BookOpen,
-  ExternalLink,
   Link2,
   FileText,
   Layers,
@@ -19,7 +16,6 @@ import {
   Shield,
   ArrowLeft,
   Share2,
-  Copy,
   Check,
 } from "lucide-react";
 import { useState, useCallback } from "react";

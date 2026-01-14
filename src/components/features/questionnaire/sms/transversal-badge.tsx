@@ -1,6 +1,5 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
@@ -55,7 +54,6 @@ export function TransversalBadge({
   showLabel = true,
   size = "md",
 }: TransversalBadgeProps) {
-  const t = useTranslations("smsBrowser");
   const lang = locale === "fr" ? "fr" : "en";
   const config = areaConfig[area];
   const meta = TRANSVERSAL_AREAS[area];

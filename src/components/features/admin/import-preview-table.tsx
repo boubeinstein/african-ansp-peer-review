@@ -459,7 +459,6 @@ export function ImportSummaryCard({
   totalReferences,
   errorCount,
   warningCount,
-  type,
 }: ImportSummaryProps) {
   const t = useTranslations("admin.import");
 

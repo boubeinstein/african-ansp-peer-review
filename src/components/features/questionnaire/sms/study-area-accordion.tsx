@@ -1,8 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { ChevronDown, Target, BookOpen } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { ChevronDown, Target } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Accordion,
@@ -13,10 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 import { TransversalBadges } from "./transversal-badge";
 import { MaturityTable } from "./maturity-table";
-import {
-  CANSO_STUDY_AREAS,
-  getStudyAreasByComponent,
-} from "@/lib/questionnaire/constants";
+import { getStudyAreasByComponent } from "@/lib/questionnaire/constants";
 import type { SMSComponent, CANSOStudyArea, TransversalArea } from "@prisma/client";
 
 interface StudyAreaAccordionProps {

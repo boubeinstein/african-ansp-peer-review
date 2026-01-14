@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { AlertCircle, FileQuestion, Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 import {
   Pagination,
   PaginationContent,
@@ -15,7 +14,6 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { PQCard } from "./pq-card";
-import { trpc } from "@/lib/trpc/client";
 import type { USOAPAuditArea, CriticalElement } from "@prisma/client";
 
 interface PQListProps {

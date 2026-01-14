@@ -87,13 +87,13 @@ export function Header({ locale, user }: HeaderProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href={`/${locale}/dashboard/profile`}>
+              <Link href={`/${locale}/profile`}>
                 <User className="mr-2 h-4 w-4" />
                 {t("actions.profile")}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href={`/${locale}/dashboard/settings`}>
+              <Link href={`/${locale}/settings`}>
                 <Settings className="mr-2 h-4 w-4" />
                 {t("actions.settings")}
               </Link>

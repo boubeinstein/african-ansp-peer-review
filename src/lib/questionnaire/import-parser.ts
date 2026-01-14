@@ -3,8 +3,6 @@ import type {
   SMSQuestionImport,
   CategoryImport,
   QuestionnaireImport,
-  ANSBulkImport,
-  SMSBulkImport,
   ValidationError,
   ICAOReferenceImport,
 } from "./import-schema";

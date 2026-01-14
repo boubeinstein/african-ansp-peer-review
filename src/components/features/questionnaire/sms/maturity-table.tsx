@@ -179,7 +179,6 @@ function getObjectivesForStudyArea(studyArea: CANSOStudyArea): ObjectiveMaturity
 export function MaturityTable({
   studyArea,
   locale,
-  componentNumber,
 }: MaturityTableProps) {
   const t = useTranslations("smsBrowser");
   const lang = locale === "fr" ? "fr" : "en";

@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -22,7 +21,6 @@ import {
   BookOpen,
   ExternalLink,
   Link2,
-  AlertCircle,
   FileText,
   Layers,
   Target,
@@ -31,9 +29,8 @@ import {
 import {
   LanguageToggle,
   useContentLanguage,
-  type ContentLanguage,
 } from "./language-toggle";
-import { AmendmentBadge, AmendmentIndicators } from "./amendment-badge";
+import { AmendmentIndicators } from "./amendment-badge";
 import { ICAOReferenceList } from "./icao-reference-list";
 import {
   USOAP_AUDIT_AREAS,
@@ -44,10 +41,6 @@ import {
 import type {
   Question,
   ICAOReference,
-  USOAPAuditArea,
-  CriticalElement,
-  SMSComponent,
-  CANSOStudyArea,
   PQAmendmentStatus,
   QuestionnaireType,
 } from "@prisma/client";

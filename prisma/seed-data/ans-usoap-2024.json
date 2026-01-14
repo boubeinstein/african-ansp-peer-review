@@ -1,0 +1,970 @@
+{
+  "questionnaire": {
+    "code": "USOAP-CMA-2024",
+    "type": "ANS_USOAP_CMA",
+    "version": "2024",
+    "titleEn": "ICAO USOAP CMA Protocol Questions 2024",
+    "titleFr": "Questions de Protocole USOAP CMA de l'OACI 2024",
+    "descriptionEn": "The ICAO Universal Safety Oversight Audit Programme Continuous Monitoring Approach (USOAP CMA) Protocol Questions are used to assess States' safety oversight capabilities across 8 Critical Elements and 9 Audit Areas.",
+    "descriptionFr": "Les Questions de Protocole USOAP CMA de l'OACI sont utilisées pour évaluer les capacités de surveillance de la sécurité des États à travers 8 Éléments Critiques et 9 Domaines d'Audit.",
+    "effectiveDate": "2025-07-01"
+  },
+  "categories": [
+    {
+      "code": "AGA-CE2",
+      "sortOrder": 1,
+      "nameEn": "AGA - Primary Aviation Legislation and Specific Operating Regulations",
+      "nameFr": "AGA - Législation Aéronautique Primaire et Règlements d'Exploitation Spécifiques",
+      "descriptionEn": "Protocol Questions assessing whether the State has promulgated regulations to transpose ICAO Annex 14 provisions and established certification requirements for aerodromes.",
+      "descriptionFr": "Questions de Protocole évaluant si l'État a promulgué des règlements pour transposer les dispositions de l'Annexe 14 de l'OACI et établi des exigences de certification pour les aérodromes.",
+      "auditArea": "AGA",
+      "criticalElement": "CE_2"
+    },
+    {
+      "code": "AGA-CE3",
+      "sortOrder": 2,
+      "nameEn": "AGA - State Civil Aviation System and Safety Oversight Functions",
+      "nameFr": "AGA - Système d'Aviation Civile de l'État et Fonctions de Surveillance de la Sécurité",
+      "descriptionEn": "Protocol Questions assessing the organizational structure, separation of authority, and defined responsibilities of the aerodrome regulatory authority.",
+      "descriptionFr": "Questions de Protocole évaluant la structure organisationnelle, la séparation des autorités et les responsabilités définies de l'autorité de réglementation des aérodromes.",
+      "auditArea": "AGA",
+      "criticalElement": "CE_3"
+    },
+    {
+      "code": "AGA-CE4",
+      "sortOrder": 3,
+      "nameEn": "AGA - Technical Personnel Qualification and Training",
+      "nameFr": "AGA - Qualification et Formation du Personnel Technique",
+      "descriptionEn": "Protocol Questions assessing minimum qualification requirements and ongoing training programmes for aerodrome regulatory authority technical staff.",
+      "descriptionFr": "Questions de Protocole évaluant les exigences minimales de qualification et les programmes de formation continue pour le personnel technique de l'autorité de réglementation des aérodromes.",
+      "auditArea": "AGA",
+      "criticalElement": "CE_4"
+    },
+    {
+      "code": "AGA-CE5",
+      "sortOrder": 4,
+      "nameEn": "AGA - Technical Guidance, Tools and Provision of Safety-Critical Information",
+      "nameFr": "AGA - Orientations Techniques, Outils et Fourniture d'Informations Critiques pour la Sécurité",
+      "descriptionEn": "Protocol Questions assessing the availability of technical guidance material and procedures for aerodrome certification and oversight activities.",
+      "descriptionFr": "Questions de Protocole évaluant la disponibilité du matériel d'orientation technique et des procédures pour la certification des aérodromes et les activités de surveillance.",
+      "auditArea": "AGA",
+      "criticalElement": "CE_5"
+    },
+    {
+      "code": "AGA-CE6",
+      "sortOrder": 5,
+      "nameEn": "AGA - Licensing, Certification, Authorization and Approval Obligations",
+      "nameFr": "AGA - Obligations de Licence, Certification, Autorisation et Approbation",
+      "descriptionEn": "Protocol Questions assessing the implementation of aerodrome certification systems, approval processes, and exemption procedures.",
+      "descriptionFr": "Questions de Protocole évaluant la mise en œuvre des systèmes de certification des aérodromes, des processus d'approbation et des procédures d'exemption.",
+      "auditArea": "AGA",
+      "criticalElement": "CE_6"
+    },
+    {
+      "code": "AGA-CE7",
+      "sortOrder": 6,
+      "nameEn": "AGA - Surveillance Obligations",
+      "nameFr": "AGA - Obligations de Surveillance",
+      "descriptionEn": "Protocol Questions assessing the implementation of surveillance programmes, inspection activities, and continuous monitoring of certified aerodromes.",
+      "descriptionFr": "Questions de Protocole évaluant la mise en œuvre des programmes de surveillance, des activités d'inspection et du suivi continu des aérodromes certifiés.",
+      "auditArea": "AGA",
+      "criticalElement": "CE_7"
+    },
+    {
+      "code": "AGA-CE8",
+      "sortOrder": 7,
+      "nameEn": "AGA - Resolution of Safety Concerns",
+      "nameFr": "AGA - Résolution des Problèmes de Sécurité",
+      "descriptionEn": "Protocol Questions assessing the procedures and mechanisms for identifying and resolving safety concerns at certified aerodromes.",
+      "descriptionFr": "Questions de Protocole évaluant les procédures et mécanismes pour identifier et résoudre les problèmes de sécurité dans les aérodromes certifiés.",
+      "auditArea": "AGA",
+      "criticalElement": "CE_8"
+    }
+  ],
+  "questions": [
+    {
+      "pqNumber": "AGA-8.001",
+      "questionTextEn": "Has the State promulgated specific operating regulations to transpose the provisions of Annex 14?",
+      "questionTextFr": "L'État a-t-il promulgué des règlements d'exploitation spécifiques pour transposer les dispositions de l'Annexe 14?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_2",
+      "isPriorityPQ": true,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 1,
+      "guidanceEn": "Review the State's primary aviation legislation and specific operating regulations related to aerodromes. Verify that the regulations address the Standards and Recommended Practices (SARPs) contained in ICAO Annex 14, Volumes I and II. Check that the regulations cover aerodrome design, operations, certification requirements, and safety management.",
+      "guidanceFr": "Examiner la législation aéronautique primaire de l'État et les règlements d'exploitation spécifiques relatifs aux aérodromes. Vérifier que les règlements traitent des Normes et Pratiques Recommandées (SARP) contenues dans l'Annexe 14 de l'OACI, Volumes I et II. Vérifier que les règlements couvrent la conception des aérodromes, les opérations, les exigences de certification et la gestion de la sécurité.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "CC",
+          "document": "Chicago Convention",
+          "chapter": "Article 37",
+          "description": "Adoption of international standards and procedures"
+        },
+        {
+          "referenceType": "STD",
+          "document": "Annex 14, Vol I",
+          "chapter": "Chapter 1",
+          "description": "General - Aerodrome certification"
+        },
+        {
+          "referenceType": "STD",
+          "document": "Annex 14, Vol II",
+          "chapter": "Chapter 1",
+          "description": "General - Heliport certification"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.003",
+      "questionTextEn": "Has the State implemented procedures for the amendment of its specific regulations, taking into consideration ICAO provisions and their amendments?",
+      "questionTextFr": "L'État a-t-il mis en place des procédures pour la modification de ses règlements spécifiques, en tenant compte des dispositions de l'OACI et de leurs amendements?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_2",
+      "isPriorityPQ": true,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 2,
+      "guidanceEn": "Verify that the State has established a formal process to review and amend its aerodrome regulations when ICAO amends Annex 14 or related documents. Check that there is a documented procedure with defined timelines and responsibilities for updating national regulations.",
+      "guidanceFr": "Vérifier que l'État a établi un processus formel pour examiner et modifier ses règlements d'aérodrome lorsque l'OACI modifie l'Annexe 14 ou les documents connexes. Vérifier qu'il existe une procédure documentée avec des délais et des responsabilités définis pour la mise à jour des règlements nationaux.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "CC",
+          "document": "Chicago Convention",
+          "chapter": "Article 38",
+          "description": "Departures from international standards and procedures"
+        },
+        {
+          "referenceType": "GM",
+          "document": "Doc 9734",
+          "chapter": "Part A, Chapter 3",
+          "description": "Safety Oversight Manual - Specific operating regulations"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.005",
+      "questionTextEn": "Has the State promulgated regulations for the certification of aerodromes?",
+      "questionTextFr": "L'État a-t-il promulgué des règlements pour la certification des aérodromes?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_2",
+      "isPriorityPQ": true,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 3,
+      "guidanceEn": "Review the regulations to confirm they include requirements for aerodrome certification. The regulations should address the certification process, conditions for granting certificates, certificate validity, renewal procedures, and grounds for suspension or revocation.",
+      "guidanceFr": "Examiner les règlements pour confirmer qu'ils incluent des exigences pour la certification des aérodromes. Les règlements doivent traiter du processus de certification, des conditions d'octroi des certificats, de la validité des certificats, des procédures de renouvellement et des motifs de suspension ou de révocation.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 14, Vol I",
+          "chapter": "Chapter 1, 1.4",
+          "description": "Aerodrome certification"
+        },
+        {
+          "referenceType": "GM",
+          "document": "Doc 9774",
+          "chapter": "Chapter 2",
+          "description": "Manual on Certification of Aerodromes"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.007",
+      "questionTextEn": "Do the aerodrome regulations include requirements for the establishment and implementation of a safety management system (SMS) by the aerodrome operator?",
+      "questionTextFr": "Les règlements d'aérodrome incluent-ils des exigences pour l'établissement et la mise en œuvre d'un système de gestion de la sécurité (SGS) par l'exploitant d'aérodrome?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_2",
+      "isPriorityPQ": true,
+      "requiresOnSite": false,
+      "pqStatus": "REVISED",
+      "sortOrder": 4,
+      "guidanceEn": "Verify that the State's aerodrome regulations require certified aerodromes to implement a safety management system. The SMS requirements should be consistent with ICAO Annex 19 and address all four SMS components: safety policy, safety risk management, safety assurance, and safety promotion.",
+      "guidanceFr": "Vérifier que les règlements d'aérodrome de l'État exigent que les aérodromes certifiés mettent en œuvre un système de gestion de la sécurité. Les exigences du SGS doivent être conformes à l'Annexe 19 de l'OACI et traiter des quatre composantes du SGS: politique de sécurité, gestion des risques de sécurité, assurance de la sécurité et promotion de la sécurité.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 14, Vol I",
+          "chapter": "Chapter 1, 1.4.6",
+          "description": "Safety management system requirements"
+        },
+        {
+          "referenceType": "STD",
+          "document": "Annex 19",
+          "chapter": "Chapter 4",
+          "description": "Service providers' safety management"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.009",
+      "questionTextEn": "Do the aerodrome regulations include requirements for rescue and fire fighting (RFF) services at certified aerodromes?",
+      "questionTextFr": "Les règlements d'aérodrome incluent-ils des exigences pour les services de sauvetage et de lutte contre l'incendie (SSLI) dans les aérodromes certifiés?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_2",
+      "isPriorityPQ": true,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 5,
+      "guidanceEn": "Review the regulations to verify they include comprehensive RFF requirements including level of protection, response time objectives, extinguishing agents, equipment, personnel training, and emergency planning. Requirements should be consistent with Annex 14, Chapter 9.",
+      "guidanceFr": "Examiner les règlements pour vérifier qu'ils comprennent des exigences complètes en matière de SSLI, notamment le niveau de protection, les objectifs de temps de réponse, les agents extincteurs, l'équipement, la formation du personnel et la planification des urgences. Les exigences doivent être conformes au Chapitre 9 de l'Annexe 14.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 14, Vol I",
+          "chapter": "Chapter 9",
+          "description": "Aerodrome emergency planning and rescue and fire fighting"
+        },
+        {
+          "referenceType": "GM",
+          "document": "Doc 9137",
+          "chapter": "Part 1",
+          "description": "Airport Services Manual - Rescue and Fire Fighting"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.011",
+      "questionTextEn": "If the State is involved in the provision of aerodrome facilities and services, is there a clear separation of authority between the State operators and the State regulatory authority?",
+      "questionTextFr": "Si l'État est impliqué dans la fourniture d'installations et de services d'aérodrome, existe-t-il une séparation claire des autorités entre les opérateurs de l'État et l'autorité de réglementation de l'État?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_3",
+      "isPriorityPQ": true,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 6,
+      "guidanceEn": "If the State owns or operates aerodromes, verify that there is a clear functional and organizational separation between the aerodrome operator functions and the regulatory oversight functions. Review organizational charts and documentation demonstrating independent decision-making authority for certification and surveillance activities.",
+      "guidanceFr": "Si l'État possède ou exploite des aérodromes, vérifier qu'il existe une séparation fonctionnelle et organisationnelle claire entre les fonctions d'exploitation d'aérodrome et les fonctions de surveillance réglementaire. Examiner les organigrammes et la documentation démontrant l'autorité de décision indépendante pour les activités de certification et de surveillance.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 14, Vol I",
+          "chapter": "Chapter 1, 1.4.1",
+          "description": "Certification framework"
+        },
+        {
+          "referenceType": "GM",
+          "document": "Doc 9734",
+          "chapter": "Part A, Chapter 2",
+          "description": "Safety oversight responsibilities"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.015",
+      "questionTextEn": "Has the State implemented procedures for identifying and notifying differences, if any, to ICAO?",
+      "questionTextFr": "L'État a-t-il mis en œuvre des procédures pour identifier et notifier les différences, le cas échéant, à l'OACI?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_2",
+      "isPriorityPQ": false,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 7,
+      "guidanceEn": "Verify that the State has established procedures for identifying differences between national regulations and ICAO SARPs in Annex 14. Check that the State has notified any significant differences to ICAO through the appropriate means (EFOD system) and that the differences are published in the State's AIP.",
+      "guidanceFr": "Vérifier que l'État a établi des procédures pour identifier les différences entre les règlements nationaux et les SARP de l'OACI dans l'Annexe 14. Vérifier que l'État a notifié toute différence significative à l'OACI par les moyens appropriés (système EFOD) et que les différences sont publiées dans l'AIP de l'État.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "CC",
+          "document": "Chicago Convention",
+          "chapter": "Article 38",
+          "description": "Notification of differences"
+        },
+        {
+          "referenceType": "STD",
+          "document": "Annex 15",
+          "chapter": "Chapter 5",
+          "description": "NOTAM and AIP supplements"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.017",
+      "questionTextEn": "Has the State established regulations addressing aerodrome physical characteristics requirements?",
+      "questionTextFr": "L'État a-t-il établi des règlements traitant des exigences relatives aux caractéristiques physiques des aérodromes?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_2",
+      "isPriorityPQ": false,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 8,
+      "guidanceEn": "Review the regulations to verify they include requirements for aerodrome physical characteristics such as runway dimensions, runway strips, clearways, stopways, taxiways, aprons, and obstacle limitation surfaces consistent with Annex 14, Chapters 3 and 4.",
+      "guidanceFr": "Examiner les règlements pour vérifier qu'ils comprennent des exigences relatives aux caractéristiques physiques des aérodromes telles que les dimensions des pistes, les bandes de piste, les prolongements dégagés, les prolongements d'arrêt, les voies de circulation, les aires de trafic et les surfaces de limitation d'obstacles conformément aux Chapitres 3 et 4 de l'Annexe 14.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 14, Vol I",
+          "chapter": "Chapter 3",
+          "description": "Physical characteristics"
+        },
+        {
+          "referenceType": "STD",
+          "document": "Annex 14, Vol I",
+          "chapter": "Chapter 4",
+          "description": "Obstacle restriction and removal"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.019",
+      "questionTextEn": "Has the State established regulations addressing visual aids requirements at aerodromes?",
+      "questionTextFr": "L'État a-t-il établi des règlements traitant des exigences relatives aux aides visuelles dans les aérodromes?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_2",
+      "isPriorityPQ": false,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 9,
+      "guidanceEn": "Review the regulations for requirements related to visual aids including markings, lights, signs, and markers. Verify coverage of runway lighting systems, taxiway lighting, approach lighting, and visual approach slope indicator systems consistent with Annex 14, Chapter 5.",
+      "guidanceFr": "Examiner les règlements pour les exigences relatives aux aides visuelles, y compris les marquages, les feux, les panneaux et les balises. Vérifier la couverture des systèmes d'éclairage de piste, de l'éclairage des voies de circulation, de l'éclairage d'approche et des systèmes indicateurs de pente d'approche visuels conformément au Chapitre 5 de l'Annexe 14.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 14, Vol I",
+          "chapter": "Chapter 5",
+          "description": "Visual aids for navigation"
+        },
+        {
+          "referenceType": "GM",
+          "document": "Doc 9157",
+          "chapter": "Part 4",
+          "description": "Aerodrome Design Manual - Visual Aids"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.021",
+      "questionTextEn": "Has the State established regulations for aerodrome maintenance requirements?",
+      "questionTextFr": "L'État a-t-il établi des règlements pour les exigences de maintenance des aérodromes?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_2",
+      "isPriorityPQ": false,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 10,
+      "guidanceEn": "Review the regulations for maintenance requirements including pavement maintenance, visual aids maintenance, drainage systems, and electrical systems. Verify that maintenance programmes are required to be documented and approved as part of the aerodrome certification process.",
+      "guidanceFr": "Examiner les règlements pour les exigences de maintenance, y compris la maintenance des chaussées, des aides visuelles, des systèmes de drainage et des systèmes électriques. Vérifier que les programmes de maintenance doivent être documentés et approuvés dans le cadre du processus de certification de l'aérodrome.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 14, Vol I",
+          "chapter": "Chapter 10",
+          "description": "Aerodrome maintenance"
+        },
+        {
+          "referenceType": "GM",
+          "document": "Doc 9137",
+          "chapter": "Part 9",
+          "description": "Airport Services Manual - Aerodrome Maintenance Practices"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.031",
+      "questionTextEn": "Has the State established an organizational structure for airport certification and surveillance activities?",
+      "questionTextFr": "L'État a-t-il établi une structure organisationnelle pour les activités de certification et de surveillance des aéroports?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_3",
+      "isPriorityPQ": false,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 11,
+      "guidanceEn": "Review the organizational structure of the aerodrome regulatory authority. Verify that a dedicated unit or section exists for aerodrome certification and surveillance with clearly defined reporting lines and authorities.",
+      "guidanceFr": "Examiner la structure organisationnelle de l'autorité de réglementation des aérodromes. Vérifier qu'une unité ou section dédiée existe pour la certification et la surveillance des aérodromes avec des lignes hiérarchiques et des autorités clairement définies.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9734",
+          "chapter": "Part A, Chapter 3",
+          "description": "State civil aviation system"
+        },
+        {
+          "referenceType": "GM",
+          "document": "Doc 9774",
+          "chapter": "Chapter 2",
+          "description": "Certification organization structure"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.033",
+      "questionTextEn": "Are all the functions and responsibilities of the aerodrome regulatory authority clearly defined?",
+      "questionTextFr": "Toutes les fonctions et responsabilités de l'autorité de réglementation des aérodromes sont-elles clairement définies?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_3",
+      "isPriorityPQ": false,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 12,
+      "guidanceEn": "Review documented functions and responsibilities of the aerodrome regulatory authority. Verify that responsibilities include regulation development, certification, surveillance, enforcement actions, and coordination with other relevant authorities.",
+      "guidanceFr": "Examiner les fonctions et responsabilités documentées de l'autorité de réglementation des aérodromes. Vérifier que les responsabilités incluent l'élaboration de règlements, la certification, la surveillance, les actions d'application et la coordination avec d'autres autorités concernées.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9734",
+          "chapter": "Part A, Chapter 3",
+          "description": "Safety oversight functions"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.035",
+      "questionTextEn": "Have job descriptions been developed for technical staff and key management personnel of the aerodrome regulatory authority?",
+      "questionTextFr": "Des descriptions de poste ont-elles été élaborées pour le personnel technique et le personnel de direction clé de l'autorité de réglementation des aérodromes?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_3",
+      "isPriorityPQ": false,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 13,
+      "guidanceEn": "Review job descriptions for aerodrome inspectors and key management positions. Verify that job descriptions include required qualifications, experience, responsibilities, and reporting relationships.",
+      "guidanceFr": "Examiner les descriptions de poste pour les inspecteurs d'aérodrome et les postes de direction clés. Vérifier que les descriptions de poste incluent les qualifications requises, l'expérience, les responsabilités et les relations hiérarchiques.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9734",
+          "chapter": "Part A, Chapter 4",
+          "description": "Technical personnel qualification"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.037",
+      "questionTextEn": "Has the State established procedures for cooperation between the aerodrome regulatory authority and other relevant State authorities?",
+      "questionTextFr": "L'État a-t-il établi des procédures de coopération entre l'autorité de réglementation des aérodromes et d'autres autorités étatiques concernées?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_3",
+      "isPriorityPQ": false,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 14,
+      "guidanceEn": "Review coordination procedures and agreements between the aerodrome authority and other relevant authorities such as ATS providers, meteorological services, AIS, security agencies, and environmental agencies. Verify that formal coordination mechanisms exist.",
+      "guidanceFr": "Examiner les procédures de coordination et les accords entre l'autorité des aérodromes et d'autres autorités concernées telles que les fournisseurs de services ATS, les services météorologiques, l'AIS, les agences de sécurité et les agences environnementales. Vérifier que des mécanismes de coordination formels existent.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9734",
+          "chapter": "Part A, Chapter 3",
+          "description": "State civil aviation system coordination"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.039",
+      "questionTextEn": "Does the aerodrome regulatory authority have sufficient human resources to carry out its functions and mandate?",
+      "questionTextFr": "L'autorité de réglementation des aérodromes dispose-t-elle de ressources humaines suffisantes pour remplir ses fonctions et son mandat?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_3",
+      "isPriorityPQ": true,
+      "requiresOnSite": true,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 15,
+      "guidanceEn": "Review the staffing levels of the aerodrome regulatory authority against the scope of certification and surveillance activities required. Assess whether the number of qualified inspectors is adequate to conduct initial certifications, renewals, and routine surveillance of all certified aerodromes.",
+      "guidanceFr": "Examiner les niveaux de dotation en personnel de l'autorité de réglementation des aérodromes par rapport à l'étendue des activités de certification et de surveillance requises. Évaluer si le nombre d'inspecteurs qualifiés est adéquat pour effectuer les certifications initiales, les renouvellements et la surveillance de routine de tous les aérodromes certifiés.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9734",
+          "chapter": "Part A, Chapter 3",
+          "description": "Adequate resources for safety oversight"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.040",
+      "questionTextEn": "Has the State established appropriate minimum qualification and experience requirements for the technical staff?",
+      "questionTextFr": "L'État a-t-il établi des exigences minimales appropriées de qualification et d'expérience pour le personnel technique?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_4",
+      "isPriorityPQ": false,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 16,
+      "guidanceEn": "Review the minimum qualification requirements for aerodrome inspectors including educational background, technical knowledge, and relevant experience in aerodrome operations or engineering. Requirements should include familiarity with ICAO SARPs and national regulations.",
+      "guidanceFr": "Examiner les exigences minimales de qualification pour les inspecteurs d'aérodrome, y compris la formation académique, les connaissances techniques et l'expérience pertinente dans les opérations ou l'ingénierie aéroportuaire. Les exigences devraient inclure la familiarité avec les SARP de l'OACI et les règlements nationaux.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9734",
+          "chapter": "Part A, Chapter 4",
+          "description": "Qualification requirements for technical personnel"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.042",
+      "questionTextEn": "Does the State ensure that the established minimum qualification and experience requirements are met by all technical staff?",
+      "questionTextFr": "L'État s'assure-t-il que les exigences minimales établies en matière de qualification et d'expérience sont respectées par tout le personnel technique?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_4",
+      "isPriorityPQ": false,
+      "requiresOnSite": true,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 17,
+      "guidanceEn": "Review personnel records of aerodrome inspectors to verify compliance with minimum qualification requirements. Check that qualifications are verified during recruitment and maintained throughout employment.",
+      "guidanceFr": "Examiner les dossiers du personnel des inspecteurs d'aérodrome pour vérifier la conformité aux exigences minimales de qualification. Vérifier que les qualifications sont vérifiées lors du recrutement et maintenues tout au long de l'emploi.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9734",
+          "chapter": "Part A, Chapter 4",
+          "description": "Verification of personnel qualifications"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.045",
+      "questionTextEn": "Has the State established an initial training programme for aerodrome inspectors?",
+      "questionTextFr": "L'État a-t-il établi un programme de formation initiale pour les inspecteurs d'aérodrome?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_4",
+      "isPriorityPQ": false,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 18,
+      "guidanceEn": "Review the initial training programme for new aerodrome inspectors. The programme should cover ICAO SARPs, national regulations, certification procedures, inspection techniques, and surveillance methodologies. Training records should document completion of required modules.",
+      "guidanceFr": "Examiner le programme de formation initiale pour les nouveaux inspecteurs d'aérodrome. Le programme devrait couvrir les SARP de l'OACI, les règlements nationaux, les procédures de certification, les techniques d'inspection et les méthodologies de surveillance. Les dossiers de formation devraient documenter l'achèvement des modules requis.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9734",
+          "chapter": "Part A, Chapter 4",
+          "description": "Training programmes for technical personnel"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.047",
+      "questionTextEn": "Has the State established a recurrent training programme for aerodrome inspectors?",
+      "questionTextFr": "L'État a-t-il établi un programme de formation périodique pour les inspecteurs d'aérodrome?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_4",
+      "isPriorityPQ": false,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 19,
+      "guidanceEn": "Review the recurrent training programme for aerodrome inspectors including frequency requirements and content. The programme should address updates to ICAO provisions, changes to national regulations, lessons learned from audits, and emerging safety issues.",
+      "guidanceFr": "Examiner le programme de formation périodique pour les inspecteurs d'aérodrome, y compris les exigences de fréquence et le contenu. Le programme devrait traiter des mises à jour des dispositions de l'OACI, des changements aux règlements nationaux, des leçons tirées des audits et des problèmes de sécurité émergents.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9734",
+          "chapter": "Part A, Chapter 4",
+          "description": "Recurrent training requirements"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.049",
+      "questionTextEn": "Does the State maintain training records for aerodrome regulatory authority technical staff?",
+      "questionTextFr": "L'État tient-il des dossiers de formation pour le personnel technique de l'autorité de réglementation des aérodromes?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_4",
+      "isPriorityPQ": false,
+      "requiresOnSite": true,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 20,
+      "guidanceEn": "Review training records for aerodrome inspectors to verify that initial and recurrent training has been completed. Records should include training dates, course content, and any certifications or authorizations granted.",
+      "guidanceFr": "Examiner les dossiers de formation des inspecteurs d'aérodrome pour vérifier que la formation initiale et périodique a été effectuée. Les dossiers devraient inclure les dates de formation, le contenu des cours et toute certification ou autorisation accordée.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9734",
+          "chapter": "Part A, Chapter 4",
+          "description": "Training records maintenance"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.061",
+      "questionTextEn": "Has the State developed technical guidance material for aerodrome certification?",
+      "questionTextFr": "L'État a-t-il élaboré du matériel d'orientation technique pour la certification des aérodromes?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_5",
+      "isPriorityPQ": false,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 21,
+      "guidanceEn": "Review technical guidance material available to aerodrome inspectors and operators. This should include guidance on certification requirements, acceptable means of compliance, and interpretation of standards. Material should be consistent with ICAO guidance documents.",
+      "guidanceFr": "Examiner le matériel d'orientation technique disponible pour les inspecteurs d'aérodrome et les exploitants. Cela devrait inclure des orientations sur les exigences de certification, les moyens acceptables de conformité et l'interprétation des normes. Le matériel devrait être conforme aux documents d'orientation de l'OACI.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9774",
+          "chapter": "Chapter 3",
+          "description": "Technical guidance for certification"
+        },
+        {
+          "referenceType": "GM",
+          "document": "Doc 9157",
+          "chapter": "Parts 1-6",
+          "description": "Aerodrome Design Manual"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.063",
+      "questionTextEn": "Has the State developed procedures and checklists for aerodrome certification inspections?",
+      "questionTextFr": "L'État a-t-il élaboré des procédures et des listes de contrôle pour les inspections de certification des aérodromes?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_5",
+      "isPriorityPQ": false,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 22,
+      "guidanceEn": "Review inspection procedures and checklists used during aerodrome certification. These should systematically address all certification requirements including physical characteristics, visual aids, RFF services, emergency planning, and SMS implementation.",
+      "guidanceFr": "Examiner les procédures d'inspection et les listes de contrôle utilisées lors de la certification des aérodromes. Celles-ci devraient aborder systématiquement toutes les exigences de certification, y compris les caractéristiques physiques, les aides visuelles, les services SSLI, la planification d'urgence et la mise en œuvre du SGS.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9774",
+          "chapter": "Chapter 4",
+          "description": "Certification inspection procedures"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.065",
+      "questionTextEn": "Has the State developed procedures and checklists for aerodrome surveillance inspections?",
+      "questionTextFr": "L'État a-t-il élaboré des procédures et des listes de contrôle pour les inspections de surveillance des aérodromes?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_5",
+      "isPriorityPQ": false,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 23,
+      "guidanceEn": "Review surveillance inspection procedures and checklists. These should address routine inspections, special inspections, and follow-up inspections. Checklists should cover all aspects of aerodrome operations requiring continuous monitoring.",
+      "guidanceFr": "Examiner les procédures d'inspection de surveillance et les listes de contrôle. Celles-ci devraient aborder les inspections de routine, les inspections spéciales et les inspections de suivi. Les listes de contrôle devraient couvrir tous les aspects des opérations d'aérodrome nécessitant une surveillance continue.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9774",
+          "chapter": "Chapter 5",
+          "description": "Surveillance procedures"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.081",
+      "questionTextEn": "Has the State established a system for the certification of aerodromes used for international operations?",
+      "questionTextFr": "L'État a-t-il établi un système de certification des aérodromes utilisés pour les opérations internationales?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_6",
+      "isPriorityPQ": true,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 24,
+      "guidanceEn": "Verify that the State has implemented a comprehensive aerodrome certification system as required by Annex 14. The system should include application procedures, assessment criteria, certificate issuance, validity periods, and renewal procedures.",
+      "guidanceFr": "Vérifier que l'État a mis en place un système complet de certification des aérodromes comme l'exige l'Annexe 14. Le système devrait inclure les procédures de demande, les critères d'évaluation, la délivrance des certificats, les périodes de validité et les procédures de renouvellement.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 14, Vol I",
+          "chapter": "Chapter 1, 1.4",
+          "description": "Aerodrome certification requirement"
+        },
+        {
+          "referenceType": "GM",
+          "document": "Doc 9774",
+          "chapter": "Chapter 2",
+          "description": "Certification system establishment"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.083",
+      "questionTextEn": "Does the State ensure that all aerodromes open to public use and used for international operations are certified?",
+      "questionTextFr": "L'État s'assure-t-il que tous les aérodromes ouverts à l'usage public et utilisés pour les opérations internationales sont certifiés?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_6",
+      "isPriorityPQ": true,
+      "requiresOnSite": true,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 25,
+      "guidanceEn": "Review the list of certified aerodromes against the list of aerodromes used for international operations. Verify that all required aerodromes hold valid aerodrome certificates and that the certification process was properly completed.",
+      "guidanceFr": "Comparer la liste des aérodromes certifiés avec la liste des aérodromes utilisés pour les opérations internationales. Vérifier que tous les aérodromes requis détiennent des certificats d'aérodrome valides et que le processus de certification a été correctement effectué.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 14, Vol I",
+          "chapter": "Chapter 1, 1.4.1",
+          "description": "Certification of international aerodromes"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.085",
+      "questionTextEn": "Does the aerodrome certificate include all the necessary information and conditions?",
+      "questionTextFr": "Le certificat d'aérodrome inclut-il toutes les informations et conditions nécessaires?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_6",
+      "isPriorityPQ": false,
+      "requiresOnSite": true,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 26,
+      "guidanceEn": "Review sample aerodrome certificates to verify they include all required information: certificate holder, aerodrome location, reference code, types of operations authorized, special limitations, validity period, and any conditions attached to the certificate.",
+      "guidanceFr": "Examiner des échantillons de certificats d'aérodrome pour vérifier qu'ils incluent toutes les informations requises: titulaire du certificat, emplacement de l'aérodrome, code de référence, types d'opérations autorisées, limitations spéciales, période de validité et toutes conditions attachées au certificat.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 14, Vol I",
+          "chapter": "Chapter 1, 1.4.3",
+          "description": "Certificate contents"
+        },
+        {
+          "referenceType": "GM",
+          "document": "Doc 9774",
+          "chapter": "Chapter 3",
+          "description": "Certificate format and content"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.087",
+      "questionTextEn": "Does the State require the aerodrome operator to develop and maintain an aerodrome manual?",
+      "questionTextFr": "L'État exige-t-il que l'exploitant d'aérodrome élabore et maintienne un manuel d'aérodrome?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_6",
+      "isPriorityPQ": false,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 27,
+      "guidanceEn": "Verify that regulations require certified aerodromes to maintain an aerodrome manual. Review requirements for manual content, approval procedures, and update mechanisms. The manual should document all operational procedures and compliance with certification requirements.",
+      "guidanceFr": "Vérifier que les règlements exigent que les aérodromes certifiés maintiennent un manuel d'aérodrome. Examiner les exigences relatives au contenu du manuel, aux procédures d'approbation et aux mécanismes de mise à jour. Le manuel devrait documenter toutes les procédures opérationnelles et la conformité aux exigences de certification.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 14, Vol I",
+          "chapter": "Chapter 1, 1.4.4",
+          "description": "Aerodrome manual requirement"
+        },
+        {
+          "referenceType": "GM",
+          "document": "Doc 9774",
+          "chapter": "Chapter 4",
+          "description": "Aerodrome manual contents"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.091",
+      "questionTextEn": "Has the State established procedures for granting exemptions from aerodrome certification requirements?",
+      "questionTextFr": "L'État a-t-il établi des procédures pour accorder des exemptions aux exigences de certification des aérodromes?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_6",
+      "isPriorityPQ": false,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 28,
+      "guidanceEn": "Review the exemption process including application requirements, assessment criteria, risk mitigation measures, time limitations, and approval authority. Exemptions should only be granted when an equivalent level of safety can be demonstrated.",
+      "guidanceFr": "Examiner le processus d'exemption, y compris les exigences de demande, les critères d'évaluation, les mesures d'atténuation des risques, les limitations de temps et l'autorité d'approbation. Les exemptions ne devraient être accordées que lorsqu'un niveau de sécurité équivalent peut être démontré.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9774",
+          "chapter": "Chapter 6",
+          "description": "Exemptions and deviations"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.111",
+      "questionTextEn": "Has the State established a surveillance programme for certified aerodromes?",
+      "questionTextFr": "L'État a-t-il établi un programme de surveillance pour les aérodromes certifiés?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_7",
+      "isPriorityPQ": true,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 29,
+      "guidanceEn": "Review the State's surveillance programme for certified aerodromes. The programme should define inspection types, frequencies, scope, and resources required. It should include provisions for both routine and unannounced inspections.",
+      "guidanceFr": "Examiner le programme de surveillance de l'État pour les aérodromes certifiés. Le programme devrait définir les types d'inspection, les fréquences, la portée et les ressources requises. Il devrait inclure des dispositions pour les inspections de routine et les inspections inopinées.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 14, Vol I",
+          "chapter": "Chapter 1, 1.4",
+          "description": "Ongoing surveillance requirements"
+        },
+        {
+          "referenceType": "GM",
+          "document": "Doc 9774",
+          "chapter": "Chapter 5",
+          "description": "Surveillance programme establishment"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.113",
+      "questionTextEn": "Does the State conduct periodic surveillance inspections of certified aerodromes?",
+      "questionTextFr": "L'État effectue-t-il des inspections de surveillance périodiques des aérodromes certifiés?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_7",
+      "isPriorityPQ": true,
+      "requiresOnSite": true,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 30,
+      "guidanceEn": "Review surveillance inspection records to verify that periodic inspections are being conducted according to the established programme. Check that all certified aerodromes are included in the surveillance schedule and that inspections are documented.",
+      "guidanceFr": "Examiner les dossiers d'inspection de surveillance pour vérifier que des inspections périodiques sont effectuées conformément au programme établi. Vérifier que tous les aérodromes certifiés sont inclus dans le calendrier de surveillance et que les inspections sont documentées.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9774",
+          "chapter": "Chapter 5",
+          "description": "Periodic surveillance inspections"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.115",
+      "questionTextEn": "Does the State surveillance programme include verification of the aerodrome operator's SMS?",
+      "questionTextFr": "Le programme de surveillance de l'État inclut-il la vérification du SGS de l'exploitant d'aérodrome?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_7",
+      "isPriorityPQ": true,
+      "requiresOnSite": true,
+      "pqStatus": "REVISED",
+      "sortOrder": 31,
+      "guidanceEn": "Verify that the surveillance programme includes assessment of the aerodrome operator's SMS implementation and effectiveness. Review inspection procedures for SMS evaluation including safety policy, risk management processes, safety assurance activities, and safety promotion.",
+      "guidanceFr": "Vérifier que le programme de surveillance inclut l'évaluation de la mise en œuvre et de l'efficacité du SGS de l'exploitant d'aérodrome. Examiner les procédures d'inspection pour l'évaluation du SGS, y compris la politique de sécurité, les processus de gestion des risques, les activités d'assurance de la sécurité et la promotion de la sécurité.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 19",
+          "chapter": "Chapter 3",
+          "description": "State safety oversight of service providers' SMS"
+        },
+        {
+          "referenceType": "GM",
+          "document": "Doc 9859",
+          "chapter": "Chapter 9",
+          "description": "SMS oversight by the State"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.117",
+      "questionTextEn": "Does the State maintain records of surveillance inspections?",
+      "questionTextFr": "L'État tient-il des registres des inspections de surveillance?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_7",
+      "isPriorityPQ": false,
+      "requiresOnSite": true,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 32,
+      "guidanceEn": "Review the system for maintaining surveillance inspection records. Records should include inspection dates, inspectors assigned, areas inspected, findings, and follow-up actions required. Verify that records are retained for an appropriate period.",
+      "guidanceFr": "Examiner le système de maintien des registres d'inspection de surveillance. Les registres devraient inclure les dates d'inspection, les inspecteurs assignés, les zones inspectées, les constatations et les actions de suivi requises. Vérifier que les registres sont conservés pendant une période appropriée.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9774",
+          "chapter": "Chapter 5",
+          "description": "Record keeping requirements"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.141",
+      "questionTextEn": "Has the State established procedures for identifying and resolving safety concerns at certified aerodromes?",
+      "questionTextFr": "L'État a-t-il établi des procédures pour identifier et résoudre les problèmes de sécurité dans les aérodromes certifiés?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_8",
+      "isPriorityPQ": true,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 33,
+      "guidanceEn": "Review procedures for identifying and addressing safety deficiencies found during surveillance activities. Procedures should include mechanisms for documenting findings, requiring corrective actions, setting timelines, and verifying implementation.",
+      "guidanceFr": "Examiner les procédures pour identifier et traiter les déficiences de sécurité constatées lors des activités de surveillance. Les procédures devraient inclure des mécanismes pour documenter les constatations, exiger des actions correctives, fixer des délais et vérifier la mise en œuvre.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9734",
+          "chapter": "Part A, Chapter 8",
+          "description": "Resolution of safety concerns"
+        },
+        {
+          "referenceType": "GM",
+          "document": "Doc 9774",
+          "chapter": "Chapter 7",
+          "description": "Enforcement procedures"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.143",
+      "questionTextEn": "Does the State have enforcement procedures for non-compliance with aerodrome certification requirements?",
+      "questionTextFr": "L'État dispose-t-il de procédures d'application pour le non-respect des exigences de certification des aérodromes?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_8",
+      "isPriorityPQ": true,
+      "requiresOnSite": false,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 34,
+      "guidanceEn": "Review enforcement procedures available to the aerodrome regulatory authority including warnings, conditions on certificates, suspension, and revocation. Procedures should be proportionate to the severity of non-compliance and include due process provisions.",
+      "guidanceFr": "Examiner les procédures d'application disponibles pour l'autorité de réglementation des aérodromes, y compris les avertissements, les conditions sur les certificats, la suspension et la révocation. Les procédures devraient être proportionnées à la gravité du non-respect et inclure des dispositions de procédure régulière.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9774",
+          "chapter": "Chapter 7",
+          "description": "Enforcement actions"
+        }
+      ]
+    },
+    {
+      "pqNumber": "AGA-8.145",
+      "questionTextEn": "Does the State track corrective actions required of aerodrome operators to closure?",
+      "questionTextFr": "L'État suit-il les actions correctives requises des exploitants d'aérodrome jusqu'à leur clôture?",
+      "auditArea": "AGA",
+      "criticalElement": "CE_8",
+      "isPriorityPQ": false,
+      "requiresOnSite": true,
+      "pqStatus": "NO_CHANGE",
+      "sortOrder": 35,
+      "guidanceEn": "Review the tracking system for corrective actions. Verify that the State monitors the implementation of required corrective actions, conducts follow-up inspections when necessary, and maintains records of closure status for all identified deficiencies.",
+      "guidanceFr": "Examiner le système de suivi des actions correctives. Vérifier que l'État surveille la mise en œuvre des actions correctives requises, effectue des inspections de suivi si nécessaire et maintient des registres de l'état de clôture pour toutes les déficiences identifiées.",
+      "responseType": "SATISFACTORY_NOT",
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9734",
+          "chapter": "Part A, Chapter 8",
+          "description": "Corrective action follow-up"
+        }
+      ]
+    }
+  ]
+}

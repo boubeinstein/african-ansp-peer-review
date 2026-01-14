@@ -15,7 +15,30 @@
       "next": "Next",
       "profile": "Profile",
       "settings": "Settings",
-      "logout": "Log out"
+      "logout": "Log out",
+      "search": "Search",
+      "filter": "Filter",
+      "export": "Export",
+      "import": "Import",
+      "refresh": "Refresh",
+      "loading": "Loading...",
+      "retry": "Retry"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending",
+      "completed": "Completed",
+      "draft": "Draft",
+      "submitted": "Submitted",
+      "inProgress": "In Progress",
+      "archived": "Archived"
+    },
+    "validation": {
+      "required": "This field is required",
+      "invalidEmail": "Please enter a valid email address",
+      "minLength": "Minimum {min} characters required",
+      "maxLength": "Maximum {max} characters allowed"
     }
   },
   "navigation": {
@@ -26,7 +49,8 @@
     "organizations": "Organizations",
     "reviewers": "Reviewers",
     "training": "Training",
-    "settings": "Settings"
+    "settings": "Settings",
+    "admin": "Administration"
   },
   "auth": {
     "login": {
@@ -59,7 +83,10 @@
     },
     "errors": {
       "invalidCredentials": "Invalid email or password",
-      "generic": "An error occurred. Please try again."
+      "generic": "An error occurred. Please try again.",
+      "sessionExpired": "Your session has expired. Please sign in again.",
+      "unauthorized": "You are not authorized to access this resource.",
+      "networkError": "Network error. Please check your connection."
     }
   },
   "dashboard": {
@@ -68,13 +95,593 @@
     "overview": "Here's an overview of your peer review activities."
   },
   "questionnaire": {
+    "title": "Questionnaires",
+    "subtitle": "Browse USOAP CMA Protocol Questions and CANSO SoE assessments",
+    "selectType": "Select questionnaire type",
     "ans": {
-      "title": "ANS Questionnaire (USOAP CMA 2024)",
-      "subtitle": "851 Protocol Questions across 9 audit areas"
+      "title": "ANS Questionnaire",
+      "fullTitle": "USOAP CMA 2024 Protocol Questions",
+      "description": "851 Protocol Questions across 9 audit areas aligned with ICAO standards for Air Navigation Services oversight",
+      "effectiveDate": "Effective: July 1, 2025",
+      "auditAreas": "Audit Areas",
+      "criticalElements": "Critical Elements",
+      "browse": "Browse Questions"
     },
     "sms": {
-      "title": "SMS Questionnaire (CANSO SoE)",
-      "subtitle": "Safety Management System maturity assessment"
+      "title": "SMS Questionnaire",
+      "fullTitle": "CANSO Standard of Excellence 2024",
+      "description": "Safety Management System maturity assessment across 4 components and 12 study areas",
+      "components": "SMS Components",
+      "studyAreas": "Study Areas",
+      "maturityLevels": "Maturity Levels",
+      "browse": "Assess Maturity"
+    },
+    "stats": {
+      "totalQuestions": "Total Questions",
+      "priorityQuestions": "Priority PQs",
+      "newIn2024": "New in 2024"
+    },
+    "info": {
+      "title": "About the Questionnaires",
+      "ansDescription": "The ANS questionnaire is based on ICAO's Universal Safety Oversight Audit Programme (USOAP) Continuous Monitoring Approach. It evaluates State compliance with international standards across 8 Critical Elements.",
+      "smsDescription": "The SMS questionnaire follows CANSO's Standard of Excellence framework to assess Safety Management System maturity. Organizations are rated from Level A (Informal) to Level E (Excellence)."
     }
+  },
+  "auditAreas": {
+    "LEG": {
+      "code": "LEG",
+      "name": "Legislation",
+      "fullName": "Primary Aviation Legislation",
+      "description": "Legislation that provides the foundation for safety oversight and the establishment of a civil aviation authority"
+    },
+    "ORG": {
+      "code": "ORG",
+      "name": "Organization",
+      "fullName": "Civil Aviation Organization",
+      "description": "Establishment of a civil aviation authority with adequate staffing, resources and organizational structure"
+    },
+    "PEL": {
+      "code": "PEL",
+      "name": "Personnel Licensing",
+      "fullName": "Personnel Licensing and Training",
+      "description": "Licensing and certification of aviation personnel including pilots, air traffic controllers, and aircraft maintenance engineers"
+    },
+    "OPS": {
+      "code": "OPS",
+      "name": "Operations",
+      "fullName": "Aircraft Operations",
+      "description": "Operational requirements for aircraft operators including flight operations, cabin safety, and dangerous goods transport"
+    },
+    "AIR": {
+      "code": "AIR",
+      "name": "Airworthiness",
+      "fullName": "Airworthiness of Aircraft",
+      "description": "Certification and continuing airworthiness of aircraft including type certification and maintenance organizations"
+    },
+    "AIG": {
+      "code": "AIG",
+      "name": "Accident Investigation",
+      "fullName": "Accident and Incident Investigation",
+      "description": "Investigation of aircraft accidents and incidents to determine causes and formulate safety recommendations"
+    },
+    "ANS": {
+      "code": "ANS",
+      "name": "Air Navigation Services",
+      "fullName": "Air Navigation Services",
+      "description": "Provision of air traffic services, communications, navigation, surveillance, aeronautical information, and meteorology"
+    },
+    "AGA": {
+      "code": "AGA",
+      "name": "Aerodromes",
+      "fullName": "Aerodromes and Ground Aids",
+      "description": "Certification and oversight of aerodromes including physical characteristics, visual aids, and rescue and firefighting services"
+    },
+    "SSP": {
+      "code": "SSP",
+      "name": "State Safety Programme",
+      "fullName": "State Safety Programme",
+      "description": "Implementation of a State Safety Programme including safety policy, risk management, assurance, and promotion"
+    }
+  },
+  "criticalElements": {
+    "CE_1": {
+      "code": "CE-1",
+      "name": "Primary Aviation Legislation",
+      "shortName": "Legislation",
+      "description": "The provision of a comprehensive and effective aviation law consistent with the environment and complexity of the State's aviation activity, and compliant with the requirements of the Convention on International Civil Aviation"
+    },
+    "CE_2": {
+      "code": "CE-2",
+      "name": "Specific Operating Regulations",
+      "shortName": "Regulations",
+      "description": "The provision of adequate regulations to address, at a minimum, national requirements emanating from the primary aviation legislation and providing standardized operational procedures, equipment, and infrastructure in conformity with Standards and Recommended Practices"
+    },
+    "CE_3": {
+      "code": "CE-3",
+      "name": "State System and Functions",
+      "shortName": "State System",
+      "description": "The establishment of a state aviation system and state safety oversight functions to provide, at a minimum, the appropriate organizational structure, qualified technical personnel, defined responsibilities, and documented policies and procedures"
+    },
+    "CE_4": {
+      "code": "CE-4",
+      "name": "Qualified Technical Personnel",
+      "shortName": "Technical Personnel",
+      "description": "The availability of adequate and qualified technical personnel for the performance of state safety oversight functions. Technical personnel requirements include staffing, training, competency, and proficiency"
+    },
+    "CE_5": {
+      "code": "CE-5",
+      "name": "Guidance, Tools and Provision of Safety-critical Information",
+      "shortName": "Guidance & Tools",
+      "description": "The provision of technical guidance, tools, and safety-critical information to the aviation industry, and within the state aviation system, to enable them to meet the established requirements"
+    },
+    "CE_6": {
+      "code": "CE-6",
+      "name": "Licensing, Certification, Authorization and/or Approval Obligations",
+      "shortName": "Licensing & Certification",
+      "description": "The implementation of processes and procedures to ensure that aviation personnel and organizations meet the established requirements before they are allowed to perform their functions"
+    },
+    "CE_7": {
+      "code": "CE-7",
+      "name": "Surveillance Obligations",
+      "shortName": "Surveillance",
+      "description": "The implementation of processes, such as inspections, audits, and monitoring activities, to ensure that aviation licence, certificate, authorization, and approval holders continue to meet the established requirements"
+    },
+    "CE_8": {
+      "code": "CE-8",
+      "name": "Resolution of Safety Issues",
+      "shortName": "Safety Issues",
+      "description": "The implementation of processes and procedures to resolve identified safety issues that have an impact on aviation safety, including enforcement measures"
+    }
+  },
+  "smsComponents": {
+    "SAFETY_POLICY_OBJECTIVES": {
+      "code": "1",
+      "name": "Safety Policy and Objectives",
+      "shortName": "Safety Policy",
+      "description": "Management commitment, safety responsibilities, appointment of key safety personnel, SMS documentation, and safety policy communication",
+      "weight": 20
+    },
+    "SAFETY_RISK_MANAGEMENT": {
+      "code": "2",
+      "name": "Safety Risk Management",
+      "shortName": "Risk Management",
+      "description": "Hazard identification, safety risk assessment and mitigation processes",
+      "weight": 40
+    },
+    "SAFETY_ASSURANCE": {
+      "code": "3",
+      "name": "Safety Assurance",
+      "shortName": "Assurance",
+      "description": "Safety performance monitoring and measurement, change management, and continuous improvement",
+      "weight": 30
+    },
+    "SAFETY_PROMOTION": {
+      "code": "4",
+      "name": "Safety Promotion",
+      "shortName": "Promotion",
+      "description": "Training and education, and safety communication",
+      "weight": 10
+    }
+  },
+  "studyAreas": {
+    "SA_1_1": {
+      "code": "1.1",
+      "name": "Safety Policy",
+      "component": "SAFETY_POLICY_OBJECTIVES",
+      "description": "Management commitment and responsibility for safety, including the safety policy statement"
+    },
+    "SA_1_2": {
+      "code": "1.2",
+      "name": "Safety Accountabilities",
+      "component": "SAFETY_POLICY_OBJECTIVES",
+      "description": "Identification of the accountable executive and safety responsibilities of managers"
+    },
+    "SA_1_3": {
+      "code": "1.3",
+      "name": "Key Safety Personnel",
+      "component": "SAFETY_POLICY_OBJECTIVES",
+      "description": "Appointment of key safety personnel including the safety manager"
+    },
+    "SA_1_4": {
+      "code": "1.4",
+      "name": "Emergency Response Planning",
+      "component": "SAFETY_POLICY_OBJECTIVES",
+      "description": "Coordination of emergency response planning with appropriate organizations"
+    },
+    "SA_1_5": {
+      "code": "1.5",
+      "name": "SMS Documentation",
+      "component": "SAFETY_POLICY_OBJECTIVES",
+      "description": "SMS implementation plan, documentation, and records management"
+    },
+    "SA_2_1": {
+      "code": "2.1",
+      "name": "Hazard Identification",
+      "component": "SAFETY_RISK_MANAGEMENT",
+      "description": "Processes for identifying hazards through reactive, proactive, and predictive methods"
+    },
+    "SA_2_2": {
+      "code": "2.2",
+      "name": "Risk Assessment and Mitigation",
+      "component": "SAFETY_RISK_MANAGEMENT",
+      "description": "Safety risk assessment and development of risk controls and mitigation strategies"
+    },
+    "SA_3_1": {
+      "code": "3.1",
+      "name": "Safety Performance Monitoring",
+      "component": "SAFETY_ASSURANCE",
+      "description": "Monitoring and measurement of safety performance including SPIs and SPTs"
+    },
+    "SA_3_2": {
+      "code": "3.2",
+      "name": "Management of Change",
+      "component": "SAFETY_ASSURANCE",
+      "description": "Processes to manage safety risks associated with organizational or operational changes"
+    },
+    "SA_3_3": {
+      "code": "3.3",
+      "name": "Continuous Improvement",
+      "component": "SAFETY_ASSURANCE",
+      "description": "Internal evaluations, audits, and continuous improvement of the SMS"
+    },
+    "SA_4_1": {
+      "code": "4.1",
+      "name": "Training and Education",
+      "component": "SAFETY_PROMOTION",
+      "description": "Safety training programs for personnel at all levels"
+    },
+    "SA_4_2": {
+      "code": "4.2",
+      "name": "Safety Communication",
+      "component": "SAFETY_PROMOTION",
+      "description": "Communication of safety-critical information and promotion of safety culture"
+    }
+  },
+  "maturityLevels": {
+    "LEVEL_A": {
+      "code": "A",
+      "name": "Informal",
+      "shortName": "Level A",
+      "description": "Ad-hoc safety management activities. No systematic approach. Safety may be addressed reactively.",
+      "color": "#DC2626"
+    },
+    "LEVEL_B": {
+      "code": "B",
+      "name": "Defined",
+      "shortName": "Level B",
+      "description": "Safety processes are documented and implemented. Basic compliance with regulatory requirements.",
+      "color": "#F97316"
+    },
+    "LEVEL_C": {
+      "code": "C",
+      "name": "Managed",
+      "shortName": "Level C",
+      "description": "Safety processes are systematically applied and monitored. Safety data is collected and analyzed.",
+      "color": "#EAB308"
+    },
+    "LEVEL_D": {
+      "code": "D",
+      "name": "Assured",
+      "shortName": "Level D",
+      "description": "Safety performance is measured against targets. Proactive hazard identification and risk management.",
+      "color": "#22C55E"
+    },
+    "LEVEL_E": {
+      "code": "E",
+      "name": "Excellence",
+      "shortName": "Level E",
+      "description": "Continuous improvement and predictive safety management. Industry leader in safety culture.",
+      "color": "#3B82F6"
+    }
+  },
+  "transversalAreas": {
+    "SPM": {
+      "code": "SPM",
+      "name": "Safety Performance Management",
+      "description": "Cross-cutting area addressing how safety performance is measured and managed across all components"
+    },
+    "HP": {
+      "code": "HP",
+      "name": "Human Performance",
+      "description": "Cross-cutting area addressing human factors and their impact on safety across all components"
+    },
+    "CI": {
+      "code": "CI",
+      "name": "Continuous Improvement",
+      "description": "Cross-cutting area addressing how continuous improvement is embedded across all components"
+    }
+  },
+  "ansBrowser": {
+    "title": "ANS Protocol Questions",
+    "subtitle": "USOAP CMA 2024 - 851 Protocol Questions across 9 Audit Areas",
+    "breadcrumb": {
+      "questionnaires": "Questionnaires",
+      "ans": "ANS USOAP CMA"
+    },
+    "filters": {
+      "title": "Filters",
+      "search": "Search",
+      "searchPlaceholder": "Search by PQ number or text...",
+      "auditArea": "Audit Area",
+      "criticalElement": "Critical Element",
+      "additional": "Additional Filters",
+      "priorityPQ": "Priority PQ",
+      "requiresOnSite": "Requires On-Site",
+      "selectAll": "Select All",
+      "clear": "Clear",
+      "clearAll": "Clear All Filters"
+    },
+    "results": {
+      "showing": "Showing {from}-{to} of {total} questions",
+      "page": "Page {current} of {total}"
+    },
+    "pq": {
+      "priority": "Priority",
+      "onSite": "On-Site",
+      "newIn2024": "New in 2024",
+      "revisedIn2024": "Revised in 2024",
+      "guidance": "Guidance for Review of Evidence",
+      "icaoReferences": "ICAO References"
+    },
+    "empty": {
+      "title": "No questions found",
+      "description": "Try adjusting your filters or search query to find Protocol Questions."
+    },
+    "error": {
+      "title": "Error loading questions",
+      "description": "There was a problem loading the questions. Please try again."
+    }
+  },
+  "smsBrowser": {
+    "title": "SMS Maturity Assessment",
+    "subtitle": "CANSO Standard of Excellence 2024 - Safety Management System Assessment",
+    "breadcrumb": {
+      "questionnaires": "Questionnaires",
+      "sms": "SMS CANSO SoE"
+    },
+    "components": {
+      "title": "SMS Components",
+      "selected": "Selected Component",
+      "weight": "weight",
+      "1": {
+        "short": "Component 1"
+      },
+      "2": {
+        "short": "Component 2"
+      },
+      "3": {
+        "short": "Component 3"
+      },
+      "4": {
+        "short": "Component 4"
+      }
+    },
+    "studyArea": {
+      "title": "Study Areas",
+      "objectives": "{count} objectives"
+    },
+    "maturity": {
+      "legend": "Maturity Level Guide",
+      "objectivesTitle": "Maturity Objectives"
+    },
+    "transversal": {
+      "SPM": "Safety Performance Management",
+      "HP": "Human Performance",
+      "CI": "Continuous Improvement"
+    }
+  },
+  "questionDetail": {
+    "title": "Question Detail",
+    "question": "Question",
+    "notFound": "Question not found",
+    "breadcrumb": {
+      "questionnaires": "Questionnaires"
+    },
+    "priority": "Priority",
+    "onSite": "On-Site",
+    "guidance": "Guidance for Review of Evidence",
+    "icaoReferences": "ICAO References",
+    "noReferences": "No ICAO references available",
+    "relatedQuestions": "Related Questions",
+    "auditArea": "Audit Area",
+    "criticalElement": "Critical Element",
+    "smsComponent": "SMS Component",
+    "studyArea": "Study Area",
+    "category": "Category",
+    "metadata": "Question Metadata",
+    "weight": "weight",
+    "previous": "Previous",
+    "next": "Next",
+    "openInNewTab": "Open in new tab",
+    "backToList": "Back to Questions",
+    "share": "Share",
+    "copied": "Copied!",
+    "amendment": {
+      "NO_CHANGE": "No Change",
+      "REVISED": "Revised",
+      "NEW": "New in 2024",
+      "MERGED": "Merged",
+      "DELETED": "Deleted",
+      "REFERENCE_REVISED": "Ref. Updated",
+      "from": "from",
+      "was": "was"
+    }
+  },
+  "admin": {
+    "title": "Administration",
+    "description": "Manage system settings, users, and questionnaire data",
+    "questionnaires": {
+      "title": "Questionnaire Management",
+      "description": "Manage questionnaires, import data, and configure assessment frameworks",
+      "refresh": "Refresh",
+      "import": "Import Data",
+      "active": "Active",
+      "inactive": "Inactive",
+      "stats": {
+        "total": "Total Questionnaires",
+        "active": "Active",
+        "ansCount": "ANS Questionnaires",
+        "smsCount": "SMS Questionnaires"
+      },
+      "table": {
+        "type": "Type",
+        "code": "Code",
+        "title": "Title",
+        "version": "Version",
+        "effectiveDate": "Effective Date",
+        "questions": "Questions",
+        "assessments": "Assessments",
+        "status": "Status"
+      },
+      "actions": {
+        "view": "View Questionnaire",
+        "edit": "Edit Details",
+        "deactivate": "Deactivate",
+        "delete": "Delete Permanently"
+      },
+      "empty": {
+        "title": "No questionnaires found",
+        "description": "Import your first questionnaire to get started.",
+        "action": "Import Questionnaire"
+      },
+      "deleteDialog": {
+        "softTitle": "Deactivate Questionnaire?",
+        "softDescription": "This will mark the questionnaire as inactive. Existing assessments will be preserved.",
+        "hardTitle": "Delete Questionnaire?",
+        "hardDescription": "This will permanently delete the questionnaire and all associated questions. This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "deleting": "Deleting..."
+      },
+      "deleteSoftSuccess": "Questionnaire deactivated successfully",
+      "deleteHardSuccess": "Questionnaire deleted permanently"
+    },
+    "import": {
+      "pageTitle": "Import Questionnaire Data",
+      "pageDescription": "Upload and import questionnaire data from JSON or CSV files",
+      "backToList": "Back to Questionnaires",
+      "step": "Step {current} of {total}",
+      "back": "Back",
+      "next": "Next",
+      "import": "Import",
+      "done": "Done",
+      "step1": {
+        "name": "Select Type",
+        "title": "Select Questionnaire Type",
+        "description": "Choose the type of questionnaire you want to import",
+        "ansTitle": "ANS USOAP CMA",
+        "ansDescription": "ICAO Universal Safety Oversight Audit Programme - Protocol Questions for Air Navigation Services",
+        "smsTitle": "SMS CANSO SoE",
+        "smsDescription": "CANSO Standard of Excellence - Safety Management System maturity assessment"
+      },
+      "step2": {
+        "name": "Upload File",
+        "title": "Upload Import File",
+        "description": "Upload a JSON or CSV file containing the questionnaire data",
+        "formatLabel": "File Format",
+        "dropHere": "Drop file here",
+        "orClickToUpload": "or click to upload",
+        "fileUploaded": "File uploaded successfully",
+        "validating": "Validating file..."
+      },
+      "step3": {
+        "name": "Preview",
+        "title": "Preview Import Data",
+        "description": "Review the data before importing",
+        "noData": "No data to preview",
+        "warnings": "Warnings"
+      },
+      "step4": {
+        "name": "Confirm",
+        "importing": "Importing Data...",
+        "pleaseWait": "Please wait while we import your data",
+        "success": "Import Successful!",
+        "successDescription": "Imported {categories} categories, {questions} questions, and {references} ICAO references",
+        "error": "Import Failed",
+        "ready": "Ready to Import",
+        "readyDescription": "Click the Import button to start the import process"
+      },
+      "searchPlaceholder": "Search by PQ number or text...",
+      "showing": "Showing {from}-{to} of {total}",
+      "page": "Page {current} of {total}",
+      "status": "Status",
+      "pqNumber": "PQ Number",
+      "auditArea": "Audit Area",
+      "ce": "CE",
+      "component": "Component",
+      "studyArea": "Study Area",
+      "questionText": "Question Text",
+      "refs": "Refs",
+      "actions": "Actions",
+      "errors": "errors",
+      "noMatchingResults": "No matching results",
+      "noData": "No data",
+      "editQuestion": "Edit Question",
+      "questionTextEn": "Question Text (English)",
+      "questionTextFr": "Question Text (French)",
+      "cancel": "Cancel",
+      "save": "Save",
+      "questions": "Questions",
+      "categories": "Categories",
+      "references": "References",
+      "warnings": "Warnings",
+      "validationSuccess": "File validated successfully",
+      "validationErrors": "Validation found {count} errors",
+      "validationFailed": "Validation failed",
+      "importSuccess": "Import completed successfully",
+      "importFailed": "Import failed"
+    }
+  },
+  "errors": {
+    "generic": "An error occurred",
+    "notFound": "Not found",
+    "unauthorized": "Unauthorized access",
+    "forbidden": "Access forbidden",
+    "serverError": "Server error",
+    "networkError": "Network error",
+    "timeout": "Request timed out",
+    "validation": "Validation error",
+    "loadFailed": "Failed to load data",
+    "saveFailed": "Failed to save data",
+    "deleteFailed": "Failed to delete",
+    "importFailed": "Import failed",
+    "exportFailed": "Export failed",
+    "tryAgain": "Please try again",
+    "contactSupport": "If the problem persists, please contact support"
+  },
+  "success": {
+    "saved": "Saved successfully",
+    "deleted": "Deleted successfully",
+    "imported": "Imported successfully",
+    "exported": "Exported successfully",
+    "updated": "Updated successfully",
+    "created": "Created successfully",
+    "submitted": "Submitted successfully",
+    "copied": "Copied to clipboard"
+  },
+  "empty": {
+    "noData": "No data available",
+    "noResults": "No results found",
+    "noQuestions": "No questions found",
+    "noAssessments": "No assessments found",
+    "noReviews": "No reviews found",
+    "noOrganizations": "No organizations found",
+    "noUsers": "No users found",
+    "noDocuments": "No documents found",
+    "noNotifications": "No notifications",
+    "startSearch": "Start by searching or applying filters",
+    "createFirst": "Create your first item to get started"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "first": "First",
+    "last": "Last",
+    "page": "Page",
+    "of": "of",
+    "showing": "Showing",
+    "to": "to",
+    "entries": "entries",
+    "perPage": "per page"
   }
 }

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { AppShell } from "@/components/layout/app-shell";
+import { DashboardProviders } from "@/components/providers/dashboard-providers";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -26,8 +27,10 @@ export default async function DashboardLayout({
   };
 
   return (
-    <AppShell locale={locale} user={user}>
-      {children}
-    </AppShell>
+    <DashboardProviders>
+      <AppShell locale={locale} user={user}>
+        {children}
+      </AppShell>
+    </DashboardProviders>
   );
 }

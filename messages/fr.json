@@ -15,7 +15,30 @@
       "next": "Suivant",
       "profile": "Profil",
       "settings": "Paramètres",
-      "logout": "Déconnexion"
+      "logout": "Déconnexion",
+      "search": "Rechercher",
+      "filter": "Filtrer",
+      "export": "Exporter",
+      "import": "Importer",
+      "refresh": "Actualiser",
+      "loading": "Chargement...",
+      "retry": "Réessayer"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif",
+      "pending": "En attente",
+      "completed": "Terminé",
+      "draft": "Brouillon",
+      "submitted": "Soumis",
+      "inProgress": "En cours",
+      "archived": "Archivé"
+    },
+    "validation": {
+      "required": "Ce champ est obligatoire",
+      "invalidEmail": "Veuillez entrer une adresse e-mail valide",
+      "minLength": "Minimum {min} caractères requis",
+      "maxLength": "Maximum {max} caractères autorisés"
     }
   },
   "navigation": {
@@ -26,7 +49,8 @@
     "organizations": "Organisations",
     "reviewers": "Évaluateurs",
     "training": "Formation",
-    "settings": "Paramètres"
+    "settings": "Paramètres",
+    "admin": "Administration"
   },
   "auth": {
     "login": {
@@ -59,7 +83,10 @@
     },
     "errors": {
       "invalidCredentials": "E-mail ou mot de passe invalide",
-      "generic": "Une erreur s'est produite. Veuillez réessayer."
+      "generic": "Une erreur s'est produite. Veuillez réessayer.",
+      "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
+      "unauthorized": "Vous n'êtes pas autorisé à accéder à cette ressource.",
+      "networkError": "Erreur réseau. Veuillez vérifier votre connexion."
     }
   },
   "dashboard": {
@@ -68,13 +95,593 @@
     "overview": "Voici un aperçu de vos activités de revue par les pairs."
   },
   "questionnaire": {
+    "title": "Questionnaires",
+    "subtitle": "Parcourir les Questions de Protocole USOAP CMA et les évaluations CANSO SoE",
+    "selectType": "Sélectionner le type de questionnaire",
     "ans": {
-      "title": "Questionnaire ANS (USOAP CMA 2024)",
-      "subtitle": "851 Questions de Protocole dans 9 domaines d'audit"
+      "title": "Questionnaire ANS",
+      "fullTitle": "Questions de Protocole USOAP CMA 2024",
+      "description": "851 Questions de Protocole dans 9 domaines d'audit alignées sur les normes OACI pour la surveillance des Services de Navigation Aérienne",
+      "effectiveDate": "En vigueur : 1er juillet 2025",
+      "auditAreas": "Domaines d'Audit",
+      "criticalElements": "Éléments Critiques",
+      "browse": "Parcourir les Questions"
     },
     "sms": {
-      "title": "Questionnaire SMS (CANSO SoE)",
-      "subtitle": "Évaluation de la maturité du Système de Gestion de la Sécurité"
+      "title": "Questionnaire SGS",
+      "fullTitle": "Norme d'Excellence CANSO 2024",
+      "description": "Évaluation de la maturité du Système de Gestion de la Sécurité à travers 4 composantes et 12 domaines d'étude",
+      "components": "Composantes SGS",
+      "studyAreas": "Domaines d'Étude",
+      "maturityLevels": "Niveaux de Maturité",
+      "browse": "Évaluer la Maturité"
+    },
+    "stats": {
+      "totalQuestions": "Total Questions",
+      "priorityQuestions": "QP Prioritaires",
+      "newIn2024": "Nouveau en 2024"
+    },
+    "info": {
+      "title": "À propos des Questionnaires",
+      "ansDescription": "Le questionnaire ANS est basé sur le Programme Universel d'Audit de Surveillance de la Sécurité (USOAP) de l'OACI - Approche de Surveillance Continue. Il évalue la conformité des États aux normes internationales à travers 8 Éléments Critiques.",
+      "smsDescription": "Le questionnaire SGS suit le cadre de la Norme d'Excellence CANSO pour évaluer la maturité du Système de Gestion de la Sécurité. Les organisations sont notées du Niveau A (Informel) au Niveau E (Excellence)."
     }
+  },
+  "auditAreas": {
+    "LEG": {
+      "code": "LEG",
+      "name": "Législation",
+      "fullName": "Législation aéronautique de base",
+      "description": "Législation qui fournit le fondement de la supervision de la sécurité et la création d'une autorité de l'aviation civile"
+    },
+    "ORG": {
+      "code": "ORG",
+      "name": "Organisation",
+      "fullName": "Organisation de l'aviation civile",
+      "description": "Création d'une autorité de l'aviation civile avec un personnel adéquat, des ressources et une structure organisationnelle"
+    },
+    "PEL": {
+      "code": "PEL",
+      "name": "Licences du personnel",
+      "fullName": "Licences et formation du personnel",
+      "description": "Délivrance des licences et certification du personnel aéronautique incluant pilotes, contrôleurs de la circulation aérienne et techniciens de maintenance"
+    },
+    "OPS": {
+      "code": "OPS",
+      "name": "Exploitation",
+      "fullName": "Exploitation technique des aéronefs",
+      "description": "Exigences opérationnelles pour les exploitants d'aéronefs incluant les opérations de vol, la sécurité en cabine et le transport de marchandises dangereuses"
+    },
+    "AIR": {
+      "code": "AIR",
+      "name": "Navigabilité",
+      "fullName": "Navigabilité des aéronefs",
+      "description": "Certification et maintien de la navigabilité des aéronefs incluant la certification de type et les organismes de maintenance"
+    },
+    "AIG": {
+      "code": "AIG",
+      "name": "Enquêtes sur les accidents",
+      "fullName": "Enquêtes sur les accidents et incidents d'aviation",
+      "description": "Enquêtes sur les accidents et incidents d'aviation pour déterminer les causes et formuler des recommandations de sécurité"
+    },
+    "ANS": {
+      "code": "ANS",
+      "name": "Services de navigation aérienne",
+      "fullName": "Services de navigation aérienne",
+      "description": "Fourniture des services de circulation aérienne, communications, navigation, surveillance, information aéronautique et météorologie"
+    },
+    "AGA": {
+      "code": "AGA",
+      "name": "Aérodromes",
+      "fullName": "Aérodromes et aides au sol",
+      "description": "Certification et supervision des aérodromes incluant les caractéristiques physiques, les aides visuelles et les services de sauvetage et de lutte contre l'incendie"
+    },
+    "SSP": {
+      "code": "SSP",
+      "name": "Programme de sécurité de l'État",
+      "fullName": "Programme de sécurité de l'État",
+      "description": "Mise en œuvre d'un Programme de sécurité de l'État incluant la politique de sécurité, la gestion des risques, l'assurance et la promotion"
+    }
+  },
+  "criticalElements": {
+    "CE_1": {
+      "code": "EC-1",
+      "name": "Législation aéronautique de base",
+      "shortName": "Législation",
+      "description": "Mise en place d'une législation aéronautique complète et efficace, adaptée à l'environnement et à la complexité de l'activité aéronautique de l'État, et conforme aux dispositions de la Convention relative à l'aviation civile internationale"
+    },
+    "CE_2": {
+      "code": "EC-2",
+      "name": "Règlements d'exploitation spécifiques",
+      "shortName": "Règlements",
+      "description": "Mise en place de règlements adéquats pour répondre, au minimum, aux exigences nationales découlant de la législation aéronautique de base et fournissant des procédures d'exploitation normalisées, des équipements et des infrastructures conformes aux normes et pratiques recommandées"
+    },
+    "CE_3": {
+      "code": "EC-3",
+      "name": "Système et fonctions de l'État",
+      "shortName": "Système de l'État",
+      "description": "Établissement d'un système aéronautique de l'État et de fonctions de supervision de la sécurité pour fournir, au minimum, la structure organisationnelle appropriée, du personnel technique qualifié, des responsabilités définies et des politiques et procédures documentées"
+    },
+    "CE_4": {
+      "code": "EC-4",
+      "name": "Personnel technique qualifié",
+      "shortName": "Personnel technique",
+      "description": "Disponibilité d'un personnel technique adéquat et qualifié pour l'exercice des fonctions de supervision de la sécurité de l'État. Les exigences relatives au personnel technique comprennent les effectifs, la formation, la compétence et la qualification"
+    },
+    "CE_5": {
+      "code": "EC-5",
+      "name": "Éléments indicatifs, outils et fourniture d'informations critiques pour la sécurité",
+      "shortName": "Éléments indicatifs et outils",
+      "description": "Fourniture d'éléments indicatifs techniques, d'outils et d'informations critiques pour la sécurité à l'industrie aéronautique et au sein du système aéronautique de l'État, pour leur permettre de satisfaire aux exigences établies"
+    },
+    "CE_6": {
+      "code": "EC-6",
+      "name": "Obligations en matière de délivrance de licences, de certification, d'autorisation et/ou d'approbation",
+      "shortName": "Délivrance de licences et certification",
+      "description": "Mise en œuvre de processus et procédures pour s'assurer que le personnel et les organismes aéronautiques satisfont aux exigences établies avant d'être autorisés à exercer leurs fonctions"
+    },
+    "CE_7": {
+      "code": "EC-7",
+      "name": "Obligations en matière de surveillance",
+      "shortName": "Surveillance",
+      "description": "Mise en œuvre de processus, tels que les inspections, audits et activités de surveillance, pour s'assurer que les titulaires de licences, certificats, autorisations et approbations continuent de satisfaire aux exigences établies"
+    },
+    "CE_8": {
+      "code": "EC-8",
+      "name": "Résolution des problèmes de sécurité",
+      "shortName": "Problèmes de sécurité",
+      "description": "Mise en œuvre de processus et procédures pour résoudre les problèmes de sécurité identifiés qui ont un impact sur la sécurité de l'aviation, y compris les mesures d'application"
+    }
+  },
+  "smsComponents": {
+    "SAFETY_POLICY_OBJECTIVES": {
+      "code": "1",
+      "name": "Politique et objectifs de sécurité",
+      "shortName": "Politique de sécurité",
+      "description": "Engagement de la direction, responsabilités en matière de sécurité, nomination du personnel clé de sécurité, documentation du SGS et communication de la politique de sécurité",
+      "weight": 20
+    },
+    "SAFETY_RISK_MANAGEMENT": {
+      "code": "2",
+      "name": "Gestion des risques de sécurité",
+      "shortName": "Gestion des risques",
+      "description": "Identification des dangers, évaluation des risques de sécurité et processus d'atténuation",
+      "weight": 40
+    },
+    "SAFETY_ASSURANCE": {
+      "code": "3",
+      "name": "Assurance de la sécurité",
+      "shortName": "Assurance",
+      "description": "Surveillance et mesure des performances de sécurité, gestion du changement et amélioration continue",
+      "weight": 30
+    },
+    "SAFETY_PROMOTION": {
+      "code": "4",
+      "name": "Promotion de la sécurité",
+      "shortName": "Promotion",
+      "description": "Formation et éducation, et communication en matière de sécurité",
+      "weight": 10
+    }
+  },
+  "studyAreas": {
+    "SA_1_1": {
+      "code": "1.1",
+      "name": "Politique de sécurité",
+      "component": "SAFETY_POLICY_OBJECTIVES",
+      "description": "Engagement et responsabilité de la direction en matière de sécurité, y compris la déclaration de politique de sécurité"
+    },
+    "SA_1_2": {
+      "code": "1.2",
+      "name": "Responsabilités de sécurité",
+      "component": "SAFETY_POLICY_OBJECTIVES",
+      "description": "Identification du dirigeant responsable et des responsabilités de sécurité des gestionnaires"
+    },
+    "SA_1_3": {
+      "code": "1.3",
+      "name": "Personnel clé de sécurité",
+      "component": "SAFETY_POLICY_OBJECTIVES",
+      "description": "Nomination du personnel clé de sécurité, y compris le responsable de la sécurité"
+    },
+    "SA_1_4": {
+      "code": "1.4",
+      "name": "Planification des interventions d'urgence",
+      "component": "SAFETY_POLICY_OBJECTIVES",
+      "description": "Coordination de la planification des interventions d'urgence avec les organismes appropriés"
+    },
+    "SA_1_5": {
+      "code": "1.5",
+      "name": "Documentation du SGS",
+      "component": "SAFETY_POLICY_OBJECTIVES",
+      "description": "Plan de mise en œuvre du SGS, documentation et gestion des dossiers"
+    },
+    "SA_2_1": {
+      "code": "2.1",
+      "name": "Identification des dangers",
+      "component": "SAFETY_RISK_MANAGEMENT",
+      "description": "Processus d'identification des dangers par des méthodes réactives, proactives et prédictives"
+    },
+    "SA_2_2": {
+      "code": "2.2",
+      "name": "Évaluation et atténuation des risques",
+      "component": "SAFETY_RISK_MANAGEMENT",
+      "description": "Évaluation des risques de sécurité et développement de contrôles et stratégies d'atténuation"
+    },
+    "SA_3_1": {
+      "code": "3.1",
+      "name": "Surveillance des performances de sécurité",
+      "component": "SAFETY_ASSURANCE",
+      "description": "Surveillance et mesure des performances de sécurité, y compris les IPS et les OPS"
+    },
+    "SA_3_2": {
+      "code": "3.2",
+      "name": "Gestion du changement",
+      "component": "SAFETY_ASSURANCE",
+      "description": "Processus de gestion des risques de sécurité associés aux changements organisationnels ou opérationnels"
+    },
+    "SA_3_3": {
+      "code": "3.3",
+      "name": "Amélioration continue",
+      "component": "SAFETY_ASSURANCE",
+      "description": "Évaluations internes, audits et amélioration continue du SGS"
+    },
+    "SA_4_1": {
+      "code": "4.1",
+      "name": "Formation et éducation",
+      "component": "SAFETY_PROMOTION",
+      "description": "Programmes de formation à la sécurité pour le personnel à tous les niveaux"
+    },
+    "SA_4_2": {
+      "code": "4.2",
+      "name": "Communication de sécurité",
+      "component": "SAFETY_PROMOTION",
+      "description": "Communication d'informations critiques pour la sécurité et promotion de la culture de sécurité"
+    }
+  },
+  "maturityLevels": {
+    "LEVEL_A": {
+      "code": "A",
+      "name": "Informel",
+      "shortName": "Niveau A",
+      "description": "Activités de gestion de la sécurité ad hoc. Pas d'approche systématique. La sécurité peut être traitée de manière réactive.",
+      "color": "#DC2626"
+    },
+    "LEVEL_B": {
+      "code": "B",
+      "name": "Défini",
+      "shortName": "Niveau B",
+      "description": "Les processus de sécurité sont documentés et mis en œuvre. Conformité de base aux exigences réglementaires.",
+      "color": "#F97316"
+    },
+    "LEVEL_C": {
+      "code": "C",
+      "name": "Géré",
+      "shortName": "Niveau C",
+      "description": "Les processus de sécurité sont systématiquement appliqués et surveillés. Les données de sécurité sont collectées et analysées.",
+      "color": "#EAB308"
+    },
+    "LEVEL_D": {
+      "code": "D",
+      "name": "Assuré",
+      "shortName": "Niveau D",
+      "description": "Les performances de sécurité sont mesurées par rapport aux objectifs. Identification proactive des dangers et gestion des risques.",
+      "color": "#22C55E"
+    },
+    "LEVEL_E": {
+      "code": "E",
+      "name": "Excellence",
+      "shortName": "Niveau E",
+      "description": "Amélioration continue et gestion prédictive de la sécurité. Leader de l'industrie en matière de culture de sécurité.",
+      "color": "#3B82F6"
+    }
+  },
+  "transversalAreas": {
+    "SPM": {
+      "code": "GPS",
+      "name": "Gestion des performances de sécurité",
+      "description": "Domaine transversal abordant la façon dont les performances de sécurité sont mesurées et gérées dans toutes les composantes"
+    },
+    "HP": {
+      "code": "PH",
+      "name": "Performance humaine",
+      "description": "Domaine transversal abordant les facteurs humains et leur impact sur la sécurité dans toutes les composantes"
+    },
+    "CI": {
+      "code": "AC",
+      "name": "Amélioration continue",
+      "description": "Domaine transversal abordant la façon dont l'amélioration continue est intégrée dans toutes les composantes"
+    }
+  },
+  "ansBrowser": {
+    "title": "Questions de Protocole ANS",
+    "subtitle": "USOAP CMA 2024 - 851 Questions de Protocole dans 9 Domaines d'Audit",
+    "breadcrumb": {
+      "questionnaires": "Questionnaires",
+      "ans": "ANS USOAP CMA"
+    },
+    "filters": {
+      "title": "Filtres",
+      "search": "Rechercher",
+      "searchPlaceholder": "Rechercher par numéro QP ou texte...",
+      "auditArea": "Domaine d'Audit",
+      "criticalElement": "Élément Critique",
+      "additional": "Filtres Additionnels",
+      "priorityPQ": "QP Prioritaire",
+      "requiresOnSite": "Nécessite Sur Site",
+      "selectAll": "Tout Sélectionner",
+      "clear": "Effacer",
+      "clearAll": "Effacer Tous les Filtres"
+    },
+    "results": {
+      "showing": "Affichage {from}-{to} sur {total} questions",
+      "page": "Page {current} sur {total}"
+    },
+    "pq": {
+      "priority": "Prioritaire",
+      "onSite": "Sur Site",
+      "newIn2024": "Nouveau en 2024",
+      "revisedIn2024": "Révisé en 2024",
+      "guidance": "Orientations pour l'Examen des Preuves",
+      "icaoReferences": "Références OACI"
+    },
+    "empty": {
+      "title": "Aucune question trouvée",
+      "description": "Essayez d'ajuster vos filtres ou votre recherche pour trouver des Questions de Protocole."
+    },
+    "error": {
+      "title": "Erreur de chargement des questions",
+      "description": "Un problème est survenu lors du chargement des questions. Veuillez réessayer."
+    }
+  },
+  "smsBrowser": {
+    "title": "Évaluation de la Maturité SGS",
+    "subtitle": "Norme d'Excellence CANSO 2024 - Évaluation du Système de Gestion de la Sécurité",
+    "breadcrumb": {
+      "questionnaires": "Questionnaires",
+      "sms": "SGS CANSO SoE"
+    },
+    "components": {
+      "title": "Composantes SGS",
+      "selected": "Composante Sélectionnée",
+      "weight": "pondération",
+      "1": {
+        "short": "Composante 1"
+      },
+      "2": {
+        "short": "Composante 2"
+      },
+      "3": {
+        "short": "Composante 3"
+      },
+      "4": {
+        "short": "Composante 4"
+      }
+    },
+    "studyArea": {
+      "title": "Domaines d'Étude",
+      "objectives": "{count} objectifs"
+    },
+    "maturity": {
+      "legend": "Guide des Niveaux de Maturité",
+      "objectivesTitle": "Objectifs de Maturité"
+    },
+    "transversal": {
+      "SPM": "Gestion des Performances de Sécurité",
+      "HP": "Performance Humaine",
+      "CI": "Amélioration Continue"
+    }
+  },
+  "questionDetail": {
+    "title": "Détail de la Question",
+    "question": "Question",
+    "notFound": "Question non trouvée",
+    "breadcrumb": {
+      "questionnaires": "Questionnaires"
+    },
+    "priority": "Prioritaire",
+    "onSite": "Sur Site",
+    "guidance": "Orientations pour l'Examen des Preuves",
+    "icaoReferences": "Références OACI",
+    "noReferences": "Aucune référence OACI disponible",
+    "relatedQuestions": "Questions Connexes",
+    "auditArea": "Domaine d'Audit",
+    "criticalElement": "Élément Critique",
+    "smsComponent": "Composante SGS",
+    "studyArea": "Domaine d'Étude",
+    "category": "Catégorie",
+    "metadata": "Métadonnées de la Question",
+    "weight": "pondération",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "openInNewTab": "Ouvrir dans un nouvel onglet",
+    "backToList": "Retour aux Questions",
+    "share": "Partager",
+    "copied": "Copié!",
+    "amendment": {
+      "NO_CHANGE": "Inchangé",
+      "REVISED": "Révisé",
+      "NEW": "Nouveau en 2024",
+      "MERGED": "Fusionné",
+      "DELETED": "Supprimé",
+      "REFERENCE_REVISED": "Réf. Mise à jour",
+      "from": "de",
+      "was": "était"
+    }
+  },
+  "admin": {
+    "title": "Administration",
+    "description": "Gérer les paramètres système, les utilisateurs et les données des questionnaires",
+    "questionnaires": {
+      "title": "Gestion des Questionnaires",
+      "description": "Gérer les questionnaires, importer des données et configurer les cadres d'évaluation",
+      "refresh": "Actualiser",
+      "import": "Importer",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "stats": {
+        "total": "Total des Questionnaires",
+        "active": "Actifs",
+        "ansCount": "Questionnaires ANS",
+        "smsCount": "Questionnaires SGS"
+      },
+      "table": {
+        "type": "Type",
+        "code": "Code",
+        "title": "Titre",
+        "version": "Version",
+        "effectiveDate": "Date d'Effet",
+        "questions": "Questions",
+        "assessments": "Évaluations",
+        "status": "Statut"
+      },
+      "actions": {
+        "view": "Voir le Questionnaire",
+        "edit": "Modifier les Détails",
+        "deactivate": "Désactiver",
+        "delete": "Supprimer Définitivement"
+      },
+      "empty": {
+        "title": "Aucun questionnaire trouvé",
+        "description": "Importez votre premier questionnaire pour commencer.",
+        "action": "Importer un Questionnaire"
+      },
+      "deleteDialog": {
+        "softTitle": "Désactiver le Questionnaire?",
+        "softDescription": "Cela marquera le questionnaire comme inactif. Les évaluations existantes seront préservées.",
+        "hardTitle": "Supprimer le Questionnaire?",
+        "hardDescription": "Cela supprimera définitivement le questionnaire et toutes les questions associées. Cette action est irréversible.",
+        "cancel": "Annuler",
+        "confirm": "Confirmer",
+        "deleting": "Suppression..."
+      },
+      "deleteSoftSuccess": "Questionnaire désactivé avec succès",
+      "deleteHardSuccess": "Questionnaire supprimé définitivement"
+    },
+    "import": {
+      "pageTitle": "Importer des Données de Questionnaire",
+      "pageDescription": "Télécharger et importer des données de questionnaire depuis des fichiers JSON ou CSV",
+      "backToList": "Retour aux Questionnaires",
+      "step": "Étape {current} sur {total}",
+      "back": "Retour",
+      "next": "Suivant",
+      "import": "Importer",
+      "done": "Terminé",
+      "step1": {
+        "name": "Type",
+        "title": "Sélectionner le Type de Questionnaire",
+        "description": "Choisissez le type de questionnaire que vous souhaitez importer",
+        "ansTitle": "ANS USOAP CMA",
+        "ansDescription": "Programme Universel d'Audit de Surveillance de la Sécurité de l'OACI - Questions de Protocole pour les Services de Navigation Aérienne",
+        "smsTitle": "SGS CANSO SoE",
+        "smsDescription": "Norme d'Excellence CANSO - Évaluation de la maturité du Système de Gestion de la Sécurité"
+      },
+      "step2": {
+        "name": "Fichier",
+        "title": "Télécharger le Fichier d'Import",
+        "description": "Téléchargez un fichier JSON ou CSV contenant les données du questionnaire",
+        "formatLabel": "Format de Fichier",
+        "dropHere": "Déposez le fichier ici",
+        "orClickToUpload": "ou cliquez pour télécharger",
+        "fileUploaded": "Fichier téléchargé avec succès",
+        "validating": "Validation du fichier..."
+      },
+      "step3": {
+        "name": "Aperçu",
+        "title": "Aperçu des Données d'Import",
+        "description": "Vérifiez les données avant l'importation",
+        "noData": "Aucune donnée à afficher",
+        "warnings": "Avertissements"
+      },
+      "step4": {
+        "name": "Confirmer",
+        "importing": "Importation des Données...",
+        "pleaseWait": "Veuillez patienter pendant l'importation",
+        "success": "Importation Réussie!",
+        "successDescription": "Importé {categories} catégories, {questions} questions et {references} références OACI",
+        "error": "Échec de l'Importation",
+        "ready": "Prêt à Importer",
+        "readyDescription": "Cliquez sur le bouton Importer pour démarrer le processus d'importation"
+      },
+      "searchPlaceholder": "Rechercher par numéro QP ou texte...",
+      "showing": "Affichage {from}-{to} sur {total}",
+      "page": "Page {current} sur {total}",
+      "status": "Statut",
+      "pqNumber": "Numéro QP",
+      "auditArea": "Domaine d'Audit",
+      "ce": "EC",
+      "component": "Composante",
+      "studyArea": "Domaine d'Étude",
+      "questionText": "Texte de la Question",
+      "refs": "Réfs",
+      "actions": "Actions",
+      "errors": "erreurs",
+      "noMatchingResults": "Aucun résultat correspondant",
+      "noData": "Aucune donnée",
+      "editQuestion": "Modifier la Question",
+      "questionTextEn": "Texte de la Question (Anglais)",
+      "questionTextFr": "Texte de la Question (Français)",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "questions": "Questions",
+      "categories": "Catégories",
+      "references": "Références",
+      "warnings": "Avertissements",
+      "validationSuccess": "Fichier validé avec succès",
+      "validationErrors": "La validation a trouvé {count} erreurs",
+      "validationFailed": "Échec de la validation",
+      "importSuccess": "Importation terminée avec succès",
+      "importFailed": "Échec de l'importation"
+    }
+  },
+  "errors": {
+    "generic": "Une erreur s'est produite",
+    "notFound": "Non trouvé",
+    "unauthorized": "Accès non autorisé",
+    "forbidden": "Accès interdit",
+    "serverError": "Erreur serveur",
+    "networkError": "Erreur réseau",
+    "timeout": "Délai d'attente dépassé",
+    "validation": "Erreur de validation",
+    "loadFailed": "Échec du chargement des données",
+    "saveFailed": "Échec de l'enregistrement des données",
+    "deleteFailed": "Échec de la suppression",
+    "importFailed": "Échec de l'importation",
+    "exportFailed": "Échec de l'exportation",
+    "tryAgain": "Veuillez réessayer",
+    "contactSupport": "Si le problème persiste, veuillez contacter le support"
+  },
+  "success": {
+    "saved": "Enregistré avec succès",
+    "deleted": "Supprimé avec succès",
+    "imported": "Importé avec succès",
+    "exported": "Exporté avec succès",
+    "updated": "Mis à jour avec succès",
+    "created": "Créé avec succès",
+    "submitted": "Soumis avec succès",
+    "copied": "Copié dans le presse-papier"
+  },
+  "empty": {
+    "noData": "Aucune donnée disponible",
+    "noResults": "Aucun résultat trouvé",
+    "noQuestions": "Aucune question trouvée",
+    "noAssessments": "Aucune évaluation trouvée",
+    "noReviews": "Aucune revue trouvée",
+    "noOrganizations": "Aucune organisation trouvée",
+    "noUsers": "Aucun utilisateur trouvé",
+    "noDocuments": "Aucun document trouvé",
+    "noNotifications": "Aucune notification",
+    "startSearch": "Commencez par rechercher ou appliquer des filtres",
+    "createFirst": "Créez votre premier élément pour commencer"
+  },
+  "pagination": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "first": "Premier",
+    "last": "Dernier",
+    "page": "Page",
+    "of": "sur",
+    "showing": "Affichage de",
+    "to": "à",
+    "entries": "entrées",
+    "perPage": "par page"
   }
 }

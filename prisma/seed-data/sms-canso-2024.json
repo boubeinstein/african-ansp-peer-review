@@ -1,0 +1,600 @@
+{
+  "questionnaire": {
+    "code": "CANSO-SOE-2024",
+    "type": "SMS_CANSO_SOE",
+    "version": "2024",
+    "titleEn": "CANSO Standard of Excellence in Safety Management Systems 2024",
+    "titleFr": "Norme d'Excellence CANSO en Systèmes de Gestion de la Sécurité 2024",
+    "descriptionEn": "The CANSO Standard of Excellence (SoE) provides a framework for assessing the maturity of Safety Management Systems in Air Navigation Service Providers. Organizations are rated from Level A (Informal) to Level E (Excellence) across 4 SMS components and 12 study areas.",
+    "descriptionFr": "La Norme d'Excellence (SoE) de CANSO fournit un cadre pour évaluer la maturité des Systèmes de Gestion de la Sécurité chez les Fournisseurs de Services de Navigation Aérienne. Les organisations sont notées du Niveau A (Informel) au Niveau E (Excellence) à travers 4 composantes SGS et 12 domaines d'étude.",
+    "effectiveDate": "2024-01-01"
+  },
+  "categories": [
+    {
+      "code": "SMS-C1",
+      "sortOrder": 1,
+      "nameEn": "Component 1: Safety Policy and Objectives",
+      "nameFr": "Composante 1: Politique et Objectifs de Sécurité",
+      "descriptionEn": "Safety policy, accountabilities, coordination, SMS documentation, and management commitment. This component establishes the foundation for the SMS including the safety culture enabler.",
+      "descriptionFr": "Politique de sécurité, responsabilités, coordination, documentation SGS et engagement de la direction. Cette composante établit les fondements du SGS, y compris le catalyseur de culture de sécurité.",
+      "smsComponent": "SAFETY_POLICY_OBJECTIVES"
+    },
+    {
+      "code": "SMS-C1-SA1.1",
+      "sortOrder": 2,
+      "nameEn": "Study Area 1.1: Safety Culture Enabler",
+      "nameFr": "Domaine d'Étude 1.1: Catalyseur de Culture de Sécurité",
+      "descriptionEn": "Assessment of the organization's safety culture maturity as a foundation for effective SMS implementation.",
+      "descriptionFr": "Évaluation de la maturité de la culture de sécurité de l'organisation comme fondement pour une mise en œuvre efficace du SGS.",
+      "smsComponent": "SAFETY_POLICY_OBJECTIVES",
+      "studyArea": "SA_1_1"
+    },
+    {
+      "code": "SMS-C1-SA1.2",
+      "sortOrder": 3,
+      "nameEn": "Study Area 1.2: Safety Policy (ICAO Element 1.1)",
+      "nameFr": "Domaine d'Étude 1.2: Politique de Sécurité (Élément OACI 1.1)",
+      "descriptionEn": "Management commitment to safety, allocation of resources, and establishment of safety policy statement.",
+      "descriptionFr": "Engagement de la direction envers la sécurité, allocation des ressources et établissement de la déclaration de politique de sécurité.",
+      "smsComponent": "SAFETY_POLICY_OBJECTIVES",
+      "studyArea": "SA_1_2"
+    },
+    {
+      "code": "SMS-C1-SA1.3",
+      "sortOrder": 4,
+      "nameEn": "Study Area 1.3: Safety Accountabilities (ICAO Elements 1.2 & 1.3)",
+      "nameFr": "Domaine d'Étude 1.3: Responsabilités de Sécurité (Éléments OACI 1.2 & 1.3)",
+      "descriptionEn": "Definition of accountabilities and responsibilities for safety management, including the accountable executive.",
+      "descriptionFr": "Définition des responsabilités pour la gestion de la sécurité, y compris le dirigeant responsable.",
+      "smsComponent": "SAFETY_POLICY_OBJECTIVES",
+      "studyArea": "SA_1_3"
+    },
+    {
+      "code": "SMS-C1-SA1.4",
+      "sortOrder": 5,
+      "nameEn": "Study Area 1.4: Coordination of Emergency Response Planning (ICAO Element 1.4)",
+      "nameFr": "Domaine d'Étude 1.4: Coordination de la Planification des Interventions d'Urgence (Élément OACI 1.4)",
+      "descriptionEn": "Emergency response planning coordination with relevant organizations and stakeholders.",
+      "descriptionFr": "Coordination de la planification des interventions d'urgence avec les organisations et parties prenantes concernées.",
+      "smsComponent": "SAFETY_POLICY_OBJECTIVES",
+      "studyArea": "SA_1_4"
+    },
+    {
+      "code": "SMS-C1-SA1.5",
+      "sortOrder": 6,
+      "nameEn": "Study Area 1.5: SMS Documentation (ICAO Element 1.5)",
+      "nameFr": "Domaine d'Étude 1.5: Documentation SGS (Élément OACI 1.5)",
+      "descriptionEn": "Documentation of SMS components, processes, and procedures in a comprehensive SMS manual.",
+      "descriptionFr": "Documentation des composantes, processus et procédures du SGS dans un manuel SGS complet.",
+      "smsComponent": "SAFETY_POLICY_OBJECTIVES",
+      "studyArea": "SA_1_5"
+    },
+    {
+      "code": "SMS-C2",
+      "sortOrder": 7,
+      "nameEn": "Component 2: Safety Risk Management",
+      "nameFr": "Composante 2: Gestion des Risques de Sécurité",
+      "descriptionEn": "Hazard identification, risk assessment, and risk mitigation processes. This component ensures systematic identification and management of safety risks.",
+      "descriptionFr": "Identification des dangers, évaluation des risques et processus d'atténuation des risques. Cette composante assure l'identification et la gestion systématiques des risques de sécurité.",
+      "smsComponent": "SAFETY_RISK_MANAGEMENT"
+    },
+    {
+      "code": "SMS-C2-SA2.1",
+      "sortOrder": 8,
+      "nameEn": "Study Area 2.1: Hazard Identification (ICAO Element 2.1)",
+      "nameFr": "Domaine d'Étude 2.1: Identification des Dangers (Élément OACI 2.1)",
+      "descriptionEn": "Processes for identifying hazards in operations, including reactive, proactive, and predictive methods.",
+      "descriptionFr": "Processus d'identification des dangers dans les opérations, y compris les méthodes réactives, proactives et prédictives.",
+      "smsComponent": "SAFETY_RISK_MANAGEMENT",
+      "studyArea": "SA_2_1"
+    },
+    {
+      "code": "SMS-C2-SA2.2",
+      "sortOrder": 9,
+      "nameEn": "Study Area 2.2: Risk Assessment and Mitigation (ICAO Element 2.2)",
+      "nameFr": "Domaine d'Étude 2.2: Évaluation et Atténuation des Risques (Élément OACI 2.2)",
+      "descriptionEn": "Assessment of safety risks and development of risk mitigation strategies to acceptable levels.",
+      "descriptionFr": "Évaluation des risques de sécurité et développement de stratégies d'atténuation des risques à des niveaux acceptables.",
+      "smsComponent": "SAFETY_RISK_MANAGEMENT",
+      "studyArea": "SA_2_2"
+    },
+    {
+      "code": "SMS-C3",
+      "sortOrder": 10,
+      "nameEn": "Component 3: Safety Assurance",
+      "nameFr": "Composante 3: Assurance de la Sécurité",
+      "descriptionEn": "Safety performance monitoring, change management, and continuous improvement. This component ensures the SMS effectiveness is continuously monitored and improved.",
+      "descriptionFr": "Suivi des performances de sécurité, gestion du changement et amélioration continue. Cette composante assure que l'efficacité du SGS est continuellement surveillée et améliorée.",
+      "smsComponent": "SAFETY_ASSURANCE"
+    },
+    {
+      "code": "SMS-C3-SA3.1",
+      "sortOrder": 11,
+      "nameEn": "Study Area 3.1: Safety Performance Monitoring and Measurement (ICAO Element 3.1)",
+      "nameFr": "Domaine d'Étude 3.1: Suivi et Mesure des Performances de Sécurité (Élément OACI 3.1)",
+      "descriptionEn": "Monitoring of safety performance indicators and targets, safety reporting and investigation processes.",
+      "descriptionFr": "Suivi des indicateurs et objectifs de performance de sécurité, processus de signalement et d'enquête sur la sécurité.",
+      "smsComponent": "SAFETY_ASSURANCE",
+      "studyArea": "SA_3_1"
+    },
+    {
+      "code": "SMS-C3-SA3.2",
+      "sortOrder": 12,
+      "nameEn": "Study Area 3.2: Management of Change (ICAO Element 3.2)",
+      "nameFr": "Domaine d'Étude 3.2: Gestion du Changement (Élément OACI 3.2)",
+      "descriptionEn": "Processes for managing changes to the organization, operations, or systems that may affect safety.",
+      "descriptionFr": "Processus de gestion des changements organisationnels, opérationnels ou systémiques pouvant affecter la sécurité.",
+      "smsComponent": "SAFETY_ASSURANCE",
+      "studyArea": "SA_3_2"
+    },
+    {
+      "code": "SMS-C3-SA3.3",
+      "sortOrder": 13,
+      "nameEn": "Study Area 3.3: Continuous Improvement of the SMS (ICAO Element 3.3)",
+      "nameFr": "Domaine d'Étude 3.3: Amélioration Continue du SGS (Élément OACI 3.3)",
+      "descriptionEn": "Processes for continuous improvement of SMS effectiveness through internal evaluations and external audits.",
+      "descriptionFr": "Processus d'amélioration continue de l'efficacité du SGS par des évaluations internes et des audits externes.",
+      "smsComponent": "SAFETY_ASSURANCE",
+      "studyArea": "SA_3_3"
+    },
+    {
+      "code": "SMS-C4",
+      "sortOrder": 14,
+      "nameEn": "Component 4: Safety Promotion",
+      "nameFr": "Composante 4: Promotion de la Sécurité",
+      "descriptionEn": "Training, education, and safety communication. This component ensures personnel competency and organization-wide safety awareness.",
+      "descriptionFr": "Formation, éducation et communication de sécurité. Cette composante assure la compétence du personnel et la sensibilisation à la sécurité dans toute l'organisation.",
+      "smsComponent": "SAFETY_PROMOTION"
+    },
+    {
+      "code": "SMS-C4-SA4.1",
+      "sortOrder": 15,
+      "nameEn": "Study Area 4.1: Training and Education (ICAO Element 4.1)",
+      "nameFr": "Domaine d'Étude 4.1: Formation et Éducation (Élément OACI 4.1)",
+      "descriptionEn": "SMS training programmes and competency development for all personnel involved in safety management.",
+      "descriptionFr": "Programmes de formation SGS et développement des compétences pour tout le personnel impliqué dans la gestion de la sécurité.",
+      "smsComponent": "SAFETY_PROMOTION",
+      "studyArea": "SA_4_1"
+    },
+    {
+      "code": "SMS-C4-SA4.2",
+      "sortOrder": 16,
+      "nameEn": "Study Area 4.2: Safety Communication (ICAO Element 4.2)",
+      "nameFr": "Domaine d'Étude 4.2: Communication de Sécurité (Élément OACI 4.2)",
+      "descriptionEn": "Communication of safety information throughout the organization and with external stakeholders.",
+      "descriptionFr": "Communication des informations de sécurité dans toute l'organisation et avec les parties prenantes externes.",
+      "smsComponent": "SAFETY_PROMOTION",
+      "studyArea": "SA_4_2"
+    }
+  ],
+  "questions": [
+    {
+      "smsComponent": "SAFETY_POLICY_OBJECTIVES",
+      "studyArea": "SA_1_1",
+      "questionTextEn": "Safety Culture: Leadership demonstrates visible commitment to safety through actions, decisions, and resource allocation.",
+      "questionTextFr": "Culture de Sécurité: La direction démontre un engagement visible envers la sécurité par ses actions, décisions et l'allocation des ressources.",
+      "sortOrder": 1,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A (Informal): Safety is not explicitly addressed by leadership; decisions are primarily operational/commercial.\nLevel B (Defined): Leadership verbally supports safety but actions are inconsistent.\nLevel C (Implemented): Leadership regularly demonstrates commitment through decisions and resource allocation.\nLevel D (Managed): Safety leadership is embedded in organizational governance; safety considerations influence strategic decisions.\nLevel E (Excellence): Leadership proactively drives safety innovation; safety excellence is a core organizational value visible in all decisions.",
+      "guidanceFr": "Niveau A (Informel): La sécurité n'est pas explicitement abordée par la direction; les décisions sont principalement opérationnelles/commerciales.\nNiveau B (Défini): La direction soutient verbalement la sécurité mais les actions sont incohérentes.\nNiveau C (Mis en œuvre): La direction démontre régulièrement son engagement par des décisions et l'allocation des ressources.\nNiveau D (Géré): Le leadership en sécurité est intégré à la gouvernance organisationnelle; les considérations de sécurité influencent les décisions stratégiques.\nNiveau E (Excellence): La direction impulse proactivement l'innovation en matière de sécurité; l'excellence en sécurité est une valeur organisationnelle fondamentale visible dans toutes les décisions.",
+      "weight": 2.0,
+      "maxScore": 5.0,
+      "icaoReferences": []
+    },
+    {
+      "smsComponent": "SAFETY_POLICY_OBJECTIVES",
+      "studyArea": "SA_1_1",
+      "questionTextEn": "Safety Culture: A just culture environment exists where staff feel comfortable reporting safety concerns without fear of blame.",
+      "questionTextFr": "Culture de Sécurité: Un environnement de culture juste existe où le personnel se sent à l'aise de signaler les problèmes de sécurité sans crainte de blâme.",
+      "sortOrder": 2,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A (Informal): Punitive culture; staff reluctant to report issues; blame is common.\nLevel B (Defined): Just culture policy exists but implementation is inconsistent; some fear persists.\nLevel C (Implemented): Just culture is generally practiced; most staff comfortable reporting; clear distinction between acceptable and unacceptable behavior.\nLevel D (Managed): Strong just culture; high reporting rates; systematic review of reported events without blame.\nLevel E (Excellence): Just culture is deeply embedded; staff actively participate in safety; reporting is seen as professional duty and is encouraged.",
+      "guidanceFr": "Niveau A (Informel): Culture punitive; personnel réticent à signaler les problèmes; le blâme est courant.\nNiveau B (Défini): Une politique de culture juste existe mais la mise en œuvre est incohérente; une certaine crainte persiste.\nNiveau C (Mis en œuvre): La culture juste est généralement pratiquée; la plupart du personnel est à l'aise pour signaler; distinction claire entre comportement acceptable et inacceptable.\nNiveau D (Géré): Culture juste forte; taux de signalement élevés; examen systématique des événements signalés sans blâme.\nNiveau E (Excellence): La culture juste est profondément ancrée; le personnel participe activement à la sécurité; le signalement est perçu comme un devoir professionnel et est encouragé.",
+      "weight": 2.0,
+      "maxScore": 5.0,
+      "icaoReferences": []
+    },
+    {
+      "smsComponent": "SAFETY_POLICY_OBJECTIVES",
+      "studyArea": "SA_1_2",
+      "questionTextEn": "Safety Policy: A documented safety policy statement exists that reflects management's commitment to safety.",
+      "questionTextFr": "Politique de Sécurité: Une déclaration de politique de sécurité documentée existe et reflète l'engagement de la direction envers la sécurité.",
+      "sortOrder": 3,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A (Informal): No formal safety policy document exists.\nLevel B (Defined): Safety policy document exists but is generic or not specific to the organization.\nLevel C (Implemented): Safety policy is documented, organization-specific, signed by the accountable executive, and communicated to staff.\nLevel D (Managed): Safety policy is regularly reviewed, updated, and integrated with other organizational policies.\nLevel E (Excellence): Safety policy is a living document that drives organizational behavior; staff can articulate policy content and its implications for their work.",
+      "guidanceFr": "Niveau A (Informel): Aucun document de politique de sécurité formel n'existe.\nNiveau B (Défini): Un document de politique de sécurité existe mais est générique ou non spécifique à l'organisation.\nNiveau C (Mis en œuvre): La politique de sécurité est documentée, spécifique à l'organisation, signée par le dirigeant responsable et communiquée au personnel.\nNiveau D (Géré): La politique de sécurité est régulièrement révisée, mise à jour et intégrée aux autres politiques organisationnelles.\nNiveau E (Excellence): La politique de sécurité est un document vivant qui guide le comportement organisationnel; le personnel peut articuler le contenu de la politique et ses implications pour leur travail.",
+      "weight": 1.5,
+      "maxScore": 5.0,
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 19",
+          "chapter": "Appendix 2, 1.1",
+          "description": "Management commitment and responsibility - Safety policy"
+        }
+      ]
+    },
+    {
+      "smsComponent": "SAFETY_POLICY_OBJECTIVES",
+      "studyArea": "SA_1_2",
+      "questionTextEn": "Safety Policy: Adequate resources (financial, human, technical) are allocated to safety management activities.",
+      "questionTextFr": "Politique de Sécurité: Des ressources adéquates (financières, humaines, techniques) sont allouées aux activités de gestion de la sécurité.",
+      "sortOrder": 4,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A (Informal): No dedicated resources for safety management; safety activities are ad hoc.\nLevel B (Defined): Some resources allocated but insufficient for systematic safety management.\nLevel C (Implemented): Adequate resources allocated; dedicated safety personnel; safety budget identified.\nLevel D (Managed): Resource allocation is based on risk assessment; resources are reviewed and adjusted based on safety performance.\nLevel E (Excellence): Resources are proactively allocated for safety improvement initiatives; investment in safety tools and technologies.",
+      "guidanceFr": "Niveau A (Informel): Pas de ressources dédiées à la gestion de la sécurité; les activités de sécurité sont ad hoc.\nNiveau B (Défini): Quelques ressources allouées mais insuffisantes pour une gestion systématique de la sécurité.\nNiveau C (Mis en œuvre): Ressources adéquates allouées; personnel de sécurité dédié; budget de sécurité identifié.\nNiveau D (Géré): L'allocation des ressources est basée sur l'évaluation des risques; les ressources sont révisées et ajustées en fonction des performances de sécurité.\nNiveau E (Excellence): Les ressources sont proactivement allouées aux initiatives d'amélioration de la sécurité; investissement dans les outils et technologies de sécurité.",
+      "weight": 1.5,
+      "maxScore": 5.0,
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 19",
+          "chapter": "Appendix 2, 1.1",
+          "description": "Allocation of resources for safety"
+        }
+      ]
+    },
+    {
+      "smsComponent": "SAFETY_POLICY_OBJECTIVES",
+      "studyArea": "SA_1_3",
+      "questionTextEn": "Safety Accountabilities: An accountable executive is identified with ultimate responsibility for the SMS and safety performance.",
+      "questionTextFr": "Responsabilités de Sécurité: Un dirigeant responsable est identifié avec la responsabilité ultime du SGS et des performances de sécurité.",
+      "sortOrder": 5,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A (Informal): No clearly identified accountable executive for safety.\nLevel B (Defined): Accountable executive is nominally identified but role is not clearly understood or exercised.\nLevel C (Implemented): Accountable executive is identified, understands responsibilities, and actively engages with safety management.\nLevel D (Managed): Accountable executive leads safety governance; regularly reviews safety performance; ensures adequate resources.\nLevel E (Excellence): Accountable executive is a visible safety champion; drives safety culture; personally engaged in safety improvement.",
+      "guidanceFr": "Niveau A (Informel): Pas de dirigeant responsable clairement identifié pour la sécurité.\nNiveau B (Défini): Le dirigeant responsable est nominalement identifié mais le rôle n'est pas clairement compris ou exercé.\nNiveau C (Mis en œuvre): Le dirigeant responsable est identifié, comprend ses responsabilités et s'engage activement dans la gestion de la sécurité.\nNiveau D (Géré): Le dirigeant responsable dirige la gouvernance de la sécurité; examine régulièrement les performances de sécurité; assure des ressources adéquates.\nNiveau E (Excellence): Le dirigeant responsable est un champion de la sécurité visible; impulse la culture de sécurité; personnellement engagé dans l'amélioration de la sécurité.",
+      "weight": 1.5,
+      "maxScore": 5.0,
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 19",
+          "chapter": "Appendix 2, 1.2",
+          "description": "Safety accountabilities - Accountable executive"
+        }
+      ]
+    },
+    {
+      "smsComponent": "SAFETY_POLICY_OBJECTIVES",
+      "studyArea": "SA_1_3",
+      "questionTextEn": "Safety Accountabilities: Safety responsibilities are defined for managers, supervisors, and operational personnel.",
+      "questionTextFr": "Responsabilités de Sécurité: Les responsabilités de sécurité sont définies pour les gestionnaires, superviseurs et le personnel opérationnel.",
+      "sortOrder": 6,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A (Informal): Safety responsibilities are not defined beyond general expectations.\nLevel B (Defined): Safety responsibilities are documented but not consistently communicated or understood.\nLevel C (Implemented): Safety responsibilities are clearly defined in job descriptions and understood by all levels.\nLevel D (Managed): Safety responsibilities are integrated into performance management; managers are held accountable for safety.\nLevel E (Excellence): Safety responsibilities are embraced at all levels; staff proactively contribute to safety beyond defined responsibilities.",
+      "guidanceFr": "Niveau A (Informel): Les responsabilités de sécurité ne sont pas définies au-delà des attentes générales.\nNiveau B (Défini): Les responsabilités de sécurité sont documentées mais pas communiquées ou comprises de manière cohérente.\nNiveau C (Mis en œuvre): Les responsabilités de sécurité sont clairement définies dans les descriptions de poste et comprises à tous les niveaux.\nNiveau D (Géré): Les responsabilités de sécurité sont intégrées à la gestion des performances; les gestionnaires sont responsables de la sécurité.\nNiveau E (Excellence): Les responsabilités de sécurité sont adoptées à tous les niveaux; le personnel contribue proactivement à la sécurité au-delà des responsabilités définies.",
+      "weight": 1.0,
+      "maxScore": 5.0,
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 19",
+          "chapter": "Appendix 2, 1.3",
+          "description": "Appointment of key safety personnel"
+        }
+      ]
+    },
+    {
+      "smsComponent": "SAFETY_POLICY_OBJECTIVES",
+      "studyArea": "SA_1_5",
+      "questionTextEn": "SMS Documentation: An SMS Manual documents all aspects of the organization's safety management system.",
+      "questionTextFr": "Documentation SGS: Un Manuel SGS documente tous les aspects du système de gestion de la sécurité de l'organisation.",
+      "sortOrder": 7,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A (Informal): No SMS documentation exists.\nLevel B (Defined): Some SMS documentation exists but is incomplete or fragmented.\nLevel C (Implemented): Comprehensive SMS Manual exists covering all SMS components and processes.\nLevel D (Managed): SMS Manual is regularly reviewed and updated; integrated with other management system documentation.\nLevel E (Excellence): SMS documentation is user-friendly, accessible, and actively used; staff reference it regularly in their work.",
+      "guidanceFr": "Niveau A (Informel): Aucune documentation SGS n'existe.\nNiveau B (Défini): Une certaine documentation SGS existe mais est incomplète ou fragmentée.\nNiveau C (Mis en œuvre): Un Manuel SGS complet existe couvrant toutes les composantes et processus du SGS.\nNiveau D (Géré): Le Manuel SGS est régulièrement révisé et mis à jour; intégré à la documentation des autres systèmes de gestion.\nNiveau E (Excellence): La documentation SGS est conviviale, accessible et activement utilisée; le personnel s'y réfère régulièrement dans son travail.",
+      "weight": 1.0,
+      "maxScore": 5.0,
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 19",
+          "chapter": "Appendix 2, 1.5",
+          "description": "SMS documentation"
+        }
+      ]
+    },
+    {
+      "smsComponent": "SAFETY_RISK_MANAGEMENT",
+      "studyArea": "SA_2_1",
+      "questionTextEn": "Hazard Identification: Reactive processes exist to identify hazards from safety reports, incidents, and accidents.",
+      "questionTextFr": "Identification des Dangers: Des processus réactifs existent pour identifier les dangers à partir des rapports de sécurité, incidents et accidents.",
+      "sortOrder": 8,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A (Informal): No systematic process for hazard identification from events.\nLevel B (Defined): Some reactive hazard identification occurs but is ad hoc and inconsistent.\nLevel C (Implemented): Systematic process exists for identifying hazards from reported events; hazard register maintained.\nLevel D (Managed): Hazard identification is linked to risk assessment; trends are analyzed; hazards are prioritized.\nLevel E (Excellence): Comprehensive reactive system with integration across departments; benchmarking with industry; lessons learned shared externally.",
+      "guidanceFr": "Niveau A (Informel): Aucun processus systématique d'identification des dangers à partir des événements.\nNiveau B (Défini): Une certaine identification réactive des dangers se produit mais est ad hoc et incohérente.\nNiveau C (Mis en œuvre): Un processus systématique existe pour identifier les dangers à partir des événements signalés; registre des dangers maintenu.\nNiveau D (Géré): L'identification des dangers est liée à l'évaluation des risques; les tendances sont analysées; les dangers sont priorisés.\nNiveau E (Excellence): Système réactif complet avec intégration entre les départements; comparaison avec l'industrie; leçons apprises partagées à l'externe.",
+      "weight": 1.5,
+      "maxScore": 5.0,
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 19",
+          "chapter": "Appendix 2, 2.1",
+          "description": "Hazard identification - Reactive processes"
+        }
+      ]
+    },
+    {
+      "smsComponent": "SAFETY_RISK_MANAGEMENT",
+      "studyArea": "SA_2_1",
+      "questionTextEn": "Hazard Identification: Proactive processes exist to identify hazards before they result in incidents or accidents.",
+      "questionTextFr": "Identification des Dangers: Des processus proactifs existent pour identifier les dangers avant qu'ils ne provoquent des incidents ou accidents.",
+      "sortOrder": 9,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A (Informal): No proactive hazard identification processes.\nLevel B (Defined): Some proactive activities occur (e.g., safety surveys) but not systematically.\nLevel C (Implemented): Systematic proactive processes exist including safety assessments, audits, and operational monitoring.\nLevel D (Managed): Proactive hazard identification is integrated into operational planning; staff actively identify hazards.\nLevel E (Excellence): Predictive methods used (data analytics, trend analysis); organization anticipates future hazards.",
+      "guidanceFr": "Niveau A (Informel): Aucun processus proactif d'identification des dangers.\nNiveau B (Défini): Certaines activités proactives se produisent (par ex., enquêtes de sécurité) mais pas de manière systématique.\nNiveau C (Mis en œuvre): Des processus proactifs systématiques existent, y compris des évaluations de sécurité, des audits et une surveillance opérationnelle.\nNiveau D (Géré): L'identification proactive des dangers est intégrée à la planification opérationnelle; le personnel identifie activement les dangers.\nNiveau E (Excellence): Méthodes prédictives utilisées (analyse de données, analyse des tendances); l'organisation anticipe les dangers futurs.",
+      "weight": 1.5,
+      "maxScore": 5.0,
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 19",
+          "chapter": "Appendix 2, 2.1",
+          "description": "Hazard identification - Proactive processes"
+        }
+      ]
+    },
+    {
+      "smsComponent": "SAFETY_RISK_MANAGEMENT",
+      "studyArea": "SA_2_2",
+      "questionTextEn": "Risk Assessment: A documented risk assessment methodology is used to assess safety risks.",
+      "questionTextFr": "Évaluation des Risques: Une méthodologie d'évaluation des risques documentée est utilisée pour évaluer les risques de sécurité.",
+      "sortOrder": 10,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A (Informal): No formal risk assessment methodology.\nLevel B (Defined): Risk assessment methodology exists but is not consistently applied.\nLevel C (Implemented): Documented methodology consistently applied; risk matrix used; probability and severity assessed.\nLevel D (Managed): Risk assessment methodology is refined based on experience; multiple techniques used as appropriate.\nLevel E (Excellence): Advanced risk assessment techniques used; quantitative analysis where applicable; integration with operational decision-making.",
+      "guidanceFr": "Niveau A (Informel): Pas de méthodologie formelle d'évaluation des risques.\nNiveau B (Défini): Une méthodologie d'évaluation des risques existe mais n'est pas appliquée de manière cohérente.\nNiveau C (Mis en œuvre): Méthodologie documentée appliquée de manière cohérente; matrice de risques utilisée; probabilité et gravité évaluées.\nNiveau D (Géré): La méthodologie d'évaluation des risques est affinée en fonction de l'expérience; plusieurs techniques utilisées selon les besoins.\nNiveau E (Excellence): Techniques avancées d'évaluation des risques utilisées; analyse quantitative si applicable; intégration avec la prise de décision opérationnelle.",
+      "weight": 1.5,
+      "maxScore": 5.0,
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 19",
+          "chapter": "Appendix 2, 2.2",
+          "description": "Safety risk assessment and mitigation"
+        },
+        {
+          "referenceType": "GM",
+          "document": "Doc 9859",
+          "chapter": "Chapter 5",
+          "description": "Safety risk management"
+        }
+      ]
+    },
+    {
+      "smsComponent": "SAFETY_RISK_MANAGEMENT",
+      "studyArea": "SA_2_2",
+      "questionTextEn": "Risk Mitigation: Risk mitigation measures are implemented and tracked to reduce risks to acceptable levels.",
+      "questionTextFr": "Atténuation des Risques: Des mesures d'atténuation des risques sont mises en œuvre et suivies pour réduire les risques à des niveaux acceptables.",
+      "sortOrder": 11,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A (Informal): No systematic approach to risk mitigation.\nLevel B (Defined): Some mitigation measures implemented but tracking is limited.\nLevel C (Implemented): Mitigation measures are systematically identified, implemented, and tracked; effectiveness reviewed.\nLevel D (Managed): Risk mitigation is integrated into operational management; residual risk is monitored; mitigation ownership assigned.\nLevel E (Excellence): Continuous optimization of mitigation strategies; proactive identification of new mitigations; learning from industry best practices.",
+      "guidanceFr": "Niveau A (Informel): Pas d'approche systématique de l'atténuation des risques.\nNiveau B (Défini): Certaines mesures d'atténuation mises en œuvre mais le suivi est limité.\nNiveau C (Mis en œuvre): Les mesures d'atténuation sont systématiquement identifiées, mises en œuvre et suivies; l'efficacité est examinée.\nNiveau D (Géré): L'atténuation des risques est intégrée à la gestion opérationnelle; le risque résiduel est surveillé; la propriété de l'atténuation est assignée.\nNiveau E (Excellence): Optimisation continue des stratégies d'atténuation; identification proactive de nouvelles atténuations; apprentissage des meilleures pratiques de l'industrie.",
+      "weight": 1.5,
+      "maxScore": 5.0,
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 19",
+          "chapter": "Appendix 2, 2.2",
+          "description": "Safety risk mitigation"
+        }
+      ]
+    },
+    {
+      "smsComponent": "SAFETY_ASSURANCE",
+      "studyArea": "SA_3_1",
+      "questionTextEn": "Safety Reporting: A voluntary and confidential safety reporting system exists for staff to report hazards and safety concerns.",
+      "questionTextFr": "Signalement de Sécurité: Un système de signalement de sécurité volontaire et confidentiel existe pour que le personnel signale les dangers et les préoccupations de sécurité.",
+      "sortOrder": 12,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A (Informal): No voluntary safety reporting system; only mandatory reports submitted.\nLevel B (Defined): Voluntary reporting system exists but usage is low; confidentiality concerns.\nLevel C (Implemented): Active voluntary reporting system with good participation; reports are investigated and feedback provided.\nLevel D (Managed): High reporting rates; reports drive safety improvements; reporters receive timely feedback.\nLevel E (Excellence): Reporting culture is embedded; staff proactively report; system captures leading indicators; external benchmarking of reporting metrics.",
+      "guidanceFr": "Niveau A (Informel): Pas de système de signalement volontaire de sécurité; seuls les rapports obligatoires sont soumis.\nNiveau B (Défini): Un système de signalement volontaire existe mais l'utilisation est faible; préoccupations de confidentialité.\nNiveau C (Mis en œuvre): Système de signalement volontaire actif avec bonne participation; les rapports sont examinés et un retour d'information est fourni.\nNiveau D (Géré): Taux de signalement élevés; les rapports conduisent à des améliorations de sécurité; les signaleurs reçoivent un retour d'information en temps opportun.\nNiveau E (Excellence): La culture du signalement est ancrée; le personnel signale proactivement; le système capture les indicateurs avancés; comparaison externe des métriques de signalement.",
+      "weight": 1.5,
+      "maxScore": 5.0,
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 19",
+          "chapter": "Appendix 2, 3.1",
+          "description": "Safety performance monitoring - Internal safety reporting"
+        }
+      ]
+    },
+    {
+      "smsComponent": "SAFETY_ASSURANCE",
+      "studyArea": "SA_3_1",
+      "questionTextEn": "Safety Investigation: Safety events are investigated to identify root causes and contributing factors.",
+      "questionTextFr": "Enquête de Sécurité: Les événements de sécurité sont étudiés pour identifier les causes profondes et les facteurs contributifs.",
+      "sortOrder": 13,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A (Informal): Investigations focus on blame; only major events investigated.\nLevel B (Defined): Some investigations conducted but methodology is inconsistent; focus on immediate causes.\nLevel C (Implemented): Systematic investigation process; root cause analysis conducted; recommendations tracked.\nLevel D (Managed): Investigation findings drive systemic improvements; human factors considered; organizational factors analyzed.\nLevel E (Excellence): Comprehensive investigation methodology; integration with industry learning; investigation quality reviewed.",
+      "guidanceFr": "Niveau A (Informel): Les enquêtes se concentrent sur le blâme; seuls les événements majeurs sont étudiés.\nNiveau B (Défini): Certaines enquêtes sont menées mais la méthodologie est incohérente; accent sur les causes immédiates.\nNiveau C (Mis en œuvre): Processus d'enquête systématique; analyse des causes profondes effectuée; recommandations suivies.\nNiveau D (Géré): Les résultats des enquêtes conduisent à des améliorations systémiques; les facteurs humains sont considérés; les facteurs organisationnels sont analysés.\nNiveau E (Excellence): Méthodologie d'enquête complète; intégration avec l'apprentissage de l'industrie; qualité des enquêtes examinée.",
+      "weight": 1.5,
+      "maxScore": 5.0,
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 19",
+          "chapter": "Appendix 2, 3.1",
+          "description": "Safety performance monitoring - Investigation"
+        }
+      ]
+    },
+    {
+      "smsComponent": "SAFETY_ASSURANCE",
+      "studyArea": "SA_3_1",
+      "questionTextEn": "Safety Performance Indicators: Safety performance indicators (SPIs) and safety performance targets (SPTs) are established and monitored.",
+      "questionTextFr": "Indicateurs de Performance de Sécurité: Des indicateurs de performance de sécurité (IPS) et des objectifs de performance de sécurité (OPS) sont établis et surveillés.",
+      "sortOrder": 14,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A (Informal): No SPIs or SPTs defined.\nLevel B (Defined): Some indicators exist but are limited to lagging indicators (accident/incident rates).\nLevel C (Implemented): Comprehensive SPIs including leading and lagging indicators; SPTs established; regular monitoring.\nLevel D (Managed): SPIs drive management decisions; trends analyzed; targets reviewed and adjusted based on performance.\nLevel E (Excellence): Advanced performance measurement; predictive indicators; benchmarking with industry leaders; safety performance linked to business performance.",
+      "guidanceFr": "Niveau A (Informel): Aucun IPS ou OPS défini.\nNiveau B (Défini): Certains indicateurs existent mais sont limités aux indicateurs rétrospectifs (taux d'accidents/incidents).\nNiveau C (Mis en œuvre): IPS complets incluant indicateurs avancés et rétrospectifs; OPS établis; surveillance régulière.\nNiveau D (Géré): Les IPS guident les décisions de gestion; tendances analysées; objectifs révisés et ajustés en fonction des performances.\nNiveau E (Excellence): Mesure de performance avancée; indicateurs prédictifs; comparaison avec les leaders de l'industrie; performance de sécurité liée à la performance de l'entreprise.",
+      "weight": 1.5,
+      "maxScore": 5.0,
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 19",
+          "chapter": "Appendix 2, 3.1",
+          "description": "Safety performance monitoring - SPIs and SPTs"
+        },
+        {
+          "referenceType": "GM",
+          "document": "Doc 9859",
+          "chapter": "Chapter 6",
+          "description": "Safety performance indicators and targets"
+        }
+      ]
+    },
+    {
+      "smsComponent": "SAFETY_ASSURANCE",
+      "studyArea": "SA_3_2",
+      "questionTextEn": "Management of Change: A formal process exists to manage changes that may affect safety.",
+      "questionTextFr": "Gestion du Changement: Un processus formel existe pour gérer les changements pouvant affecter la sécurité.",
+      "sortOrder": 15,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A (Informal): No formal change management process for safety.\nLevel B (Defined): Change management process exists but safety is not systematically considered.\nLevel C (Implemented): Formal MOC process requires safety assessment for significant changes; approval authority defined.\nLevel D (Managed): MOC integrated into project management; safety risks from changes are tracked and mitigated.\nLevel E (Excellence): Comprehensive MOC covering all aspects (technical, organizational, operational); lessons learned from changes feed back into process.",
+      "guidanceFr": "Niveau A (Informel): Pas de processus formel de gestion du changement pour la sécurité.\nNiveau B (Défini): Un processus de gestion du changement existe mais la sécurité n'est pas systématiquement considérée.\nNiveau C (Mis en œuvre): Un processus formel de MOC exige une évaluation de sécurité pour les changements significatifs; autorité d'approbation définie.\nNiveau D (Géré): MOC intégré à la gestion de projet; les risques de sécurité des changements sont suivis et atténués.\nNiveau E (Excellence): MOC complet couvrant tous les aspects (technique, organisationnel, opérationnel); les leçons tirées des changements alimentent le processus.",
+      "weight": 1.5,
+      "maxScore": 5.0,
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 19",
+          "chapter": "Appendix 2, 3.2",
+          "description": "The management of change"
+        }
+      ]
+    },
+    {
+      "smsComponent": "SAFETY_ASSURANCE",
+      "studyArea": "SA_3_3",
+      "questionTextEn": "Continuous Improvement: Internal SMS evaluations and audits are conducted to assess SMS effectiveness.",
+      "questionTextFr": "Amélioration Continue: Des évaluations et audits internes du SGS sont effectués pour évaluer l'efficacité du SGS.",
+      "sortOrder": 16,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A (Informal): No internal SMS evaluations conducted.\nLevel B (Defined): Some informal reviews of SMS elements but not systematic.\nLevel C (Implemented): Periodic internal SMS audits/evaluations conducted; findings documented and tracked.\nLevel D (Managed): Comprehensive evaluation programme; findings drive SMS improvements; management review of SMS performance.\nLevel E (Excellence): Continuous SMS improvement embedded in culture; external benchmarking; SMS maturity assessment used.",
+      "guidanceFr": "Niveau A (Informel): Aucune évaluation interne du SGS effectuée.\nNiveau B (Défini): Quelques revues informelles des éléments du SGS mais pas systématiques.\nNiveau C (Mis en œuvre): Audits/évaluations internes périodiques du SGS effectués; constatations documentées et suivies.\nNiveau D (Géré): Programme d'évaluation complet; les constatations conduisent à des améliorations du SGS; revue de direction des performances du SGS.\nNiveau E (Excellence): L'amélioration continue du SGS est ancrée dans la culture; comparaison externe; évaluation de la maturité du SGS utilisée.",
+      "weight": 1.5,
+      "maxScore": 5.0,
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 19",
+          "chapter": "Appendix 2, 3.3",
+          "description": "Continuous improvement of the SMS"
+        }
+      ]
+    },
+    {
+      "smsComponent": "SAFETY_PROMOTION",
+      "studyArea": "SA_4_1",
+      "questionTextEn": "Training and Education: SMS training programmes exist for personnel at all levels.",
+      "questionTextFr": "Formation et Éducation: Des programmes de formation SGS existent pour le personnel à tous les niveaux.",
+      "sortOrder": 17,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A (Informal): No specific SMS training provided.\nLevel B (Defined): Some SMS awareness training exists but is not comprehensive or mandatory.\nLevel C (Implemented): Systematic SMS training programme; initial and recurrent training; role-specific content; training records maintained.\nLevel D (Managed): Training effectiveness evaluated; training needs analysis conducted; competency-based approach.\nLevel E (Excellence): Comprehensive training covering advanced SMS concepts; simulation-based training; external courses for key personnel; continuous learning culture.",
+      "guidanceFr": "Niveau A (Informel): Aucune formation SGS spécifique fournie.\nNiveau B (Défini): Une certaine formation de sensibilisation au SGS existe mais n'est pas complète ou obligatoire.\nNiveau C (Mis en œuvre): Programme de formation SGS systématique; formation initiale et périodique; contenu spécifique au rôle; dossiers de formation maintenus.\nNiveau D (Géré): L'efficacité de la formation est évaluée; analyse des besoins de formation effectuée; approche basée sur les compétences.\nNiveau E (Excellence): Formation complète couvrant les concepts avancés du SGS; formation basée sur la simulation; cours externes pour le personnel clé; culture d'apprentissage continu.",
+      "weight": 1.5,
+      "maxScore": 5.0,
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 19",
+          "chapter": "Appendix 2, 4.1",
+          "description": "Training and education"
+        }
+      ]
+    },
+    {
+      "smsComponent": "SAFETY_PROMOTION",
+      "studyArea": "SA_4_2",
+      "questionTextEn": "Safety Communication: Safety information is communicated throughout the organization.",
+      "questionTextFr": "Communication de Sécurité: Les informations de sécurité sont communiquées dans toute l'organisation.",
+      "sortOrder": 18,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A (Informal): No systematic safety communication; information shared ad hoc.\nLevel B (Defined): Some safety communication exists but is not coordinated or comprehensive.\nLevel C (Implemented): Systematic safety communication programme; safety meetings, bulletins, briefings; lessons learned shared.\nLevel D (Managed): Two-way communication; staff input sought and valued; safety communication effectiveness measured.\nLevel E (Excellence): Safety communication embedded in culture; multiple channels used; external safety information actively incorporated; safety knowledge management system.",
+      "guidanceFr": "Niveau A (Informel): Pas de communication de sécurité systématique; informations partagées de manière ad hoc.\nNiveau B (Défini): Une certaine communication de sécurité existe mais n'est pas coordonnée ou complète.\nNiveau C (Mis en œuvre): Programme de communication de sécurité systématique; réunions de sécurité, bulletins, briefings; leçons apprises partagées.\nNiveau D (Géré): Communication bidirectionnelle; l'avis du personnel est sollicité et valorisé; l'efficacité de la communication de sécurité est mesurée.\nNiveau E (Excellence): La communication de sécurité est ancrée dans la culture; plusieurs canaux utilisés; informations de sécurité externes activement incorporées; système de gestion des connaissances de sécurité.",
+      "weight": 1.5,
+      "maxScore": 5.0,
+      "icaoReferences": [
+        {
+          "referenceType": "STD",
+          "document": "Annex 19",
+          "chapter": "Appendix 2, 4.2",
+          "description": "Safety communication"
+        }
+      ]
+    },
+    {
+      "smsComponent": "SAFETY_ASSURANCE",
+      "studyArea": "SA_3_1",
+      "transversalArea": "SPM",
+      "questionTextEn": "Safety Performance Management (Transversal): Safety performance is systematically monitored, measured, and managed across the organization.",
+      "questionTextFr": "Gestion des Performances de Sécurité (Transversal): Les performances de sécurité sont systématiquement surveillées, mesurées et gérées dans toute l'organisation.",
+      "sortOrder": 19,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A: No systematic safety performance management.\nLevel B: Basic metrics tracked reactively.\nLevel C: SPIs monitored; performance reviewed regularly.\nLevel D: Performance management integrated into governance; data-driven decisions.\nLevel E: Advanced analytics; predictive performance management; continuous optimization.",
+      "guidanceFr": "Niveau A: Pas de gestion systématique des performances de sécurité.\nNiveau B: Métriques de base suivies de manière réactive.\nNiveau C: IPS surveillés; performances examinées régulièrement.\nNiveau D: Gestion des performances intégrée à la gouvernance; décisions basées sur les données.\nNiveau E: Analytique avancée; gestion prédictive des performances; optimisation continue.",
+      "weight": 1.0,
+      "maxScore": 5.0,
+      "icaoReferences": []
+    },
+    {
+      "smsComponent": "SAFETY_PROMOTION",
+      "studyArea": "SA_4_1",
+      "transversalArea": "HP",
+      "questionTextEn": "Human Performance (Transversal): Human factors are systematically considered in safety management activities.",
+      "questionTextFr": "Performance Humaine (Transversal): Les facteurs humains sont systématiquement pris en compte dans les activités de gestion de la sécurité.",
+      "sortOrder": 20,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A: Human factors not considered; focus on procedural compliance.\nLevel B: Basic awareness of human factors exists.\nLevel C: Human factors integrated into hazard identification and investigation.\nLevel D: Human performance expertise available; HF principles in design and procedures.\nLevel E: Comprehensive HF programme; positive human performance culture; system designed for human capabilities.",
+      "guidanceFr": "Niveau A: Facteurs humains non considérés; accent sur la conformité procédurale.\nNiveau B: Sensibilisation de base aux facteurs humains existe.\nNiveau C: Facteurs humains intégrés à l'identification des dangers et aux enquêtes.\nNiveau D: Expertise en performance humaine disponible; principes FH dans la conception et les procédures.\nNiveau E: Programme FH complet; culture positive de performance humaine; système conçu pour les capacités humaines.",
+      "weight": 1.0,
+      "maxScore": 5.0,
+      "icaoReferences": [
+        {
+          "referenceType": "GM",
+          "document": "Doc 9859",
+          "chapter": "Chapter 4",
+          "description": "Human performance in safety management"
+        }
+      ]
+    },
+    {
+      "smsComponent": "SAFETY_ASSURANCE",
+      "studyArea": "SA_3_3",
+      "transversalArea": "CI",
+      "questionTextEn": "Continuous Improvement (Transversal): The organization demonstrates a commitment to continuous improvement in safety.",
+      "questionTextFr": "Amélioration Continue (Transversal): L'organisation démontre un engagement envers l'amélioration continue de la sécurité.",
+      "sortOrder": 21,
+      "maturityLevel": null,
+      "responseType": "MATURITY_LEVEL",
+      "guidanceEn": "Level A: No systematic improvement efforts.\nLevel B: Improvements occur in response to major events.\nLevel C: Regular improvement initiatives based on audits and reviews.\nLevel D: Continuous improvement embedded in processes; improvement targets set.\nLevel E: Innovation culture; proactive improvement; industry leadership in safety practices.",
+      "guidanceFr": "Niveau A: Pas d'efforts d'amélioration systématiques.\nNiveau B: Des améliorations se produisent en réponse aux événements majeurs.\nNiveau C: Initiatives d'amélioration régulières basées sur les audits et revues.\nNiveau D: Amélioration continue ancrée dans les processus; objectifs d'amélioration fixés.\nNiveau E: Culture d'innovation; amélioration proactive; leadership industriel dans les pratiques de sécurité.",
+      "weight": 1.0,
+      "maxScore": 5.0,
+      "icaoReferences": []
+    }
+  ]
+}

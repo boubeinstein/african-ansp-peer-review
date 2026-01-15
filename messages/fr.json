@@ -1176,5 +1176,49 @@
       "exportReport": "Exporter le Rapport",
       "compare": "Comparer les Évaluations"
     }
+  },
+  "evidence": {
+    "upload": {
+      "title": "Télécharger des Preuves",
+      "dragDrop": "Glissez-déposez les fichiers ici, ou cliquez pour parcourir",
+      "addUrl": "Ajouter une Référence URL",
+      "urlPlaceholder": "Entrez l'URL d'un document externe",
+      "uploading": "Téléchargement...",
+      "uploadComplete": "Téléchargement terminé",
+      "uploadFailed": "Échec du téléchargement",
+      "maxSize": "Taille maximale du fichier : {size} Mo",
+      "allowedTypes": "Autorisés : PDF, Images, Word, Excel",
+      "maxFiles": "Maximum {count} fichiers par question",
+      "removeConfirm": "Supprimer cette preuve ?",
+      "category": "Catégorie",
+      "description": "Description (optionnelle)",
+      "description_placeholder": "Ajoutez une description pour ce document"
+    },
+    "categories": {
+      "POLICY": "Document de Politique",
+      "PROCEDURE": "Procédure",
+      "RECORD": "Enregistrement/Journal",
+      "CERTIFICATE": "Certificat/Licence",
+      "REPORT": "Rapport",
+      "TRAINING": "Matériel de Formation",
+      "EVIDENCE": "Preuve",
+      "OTHER": "Autre"
+    },
+    "library": {
+      "title": "Bibliothèque de Documents",
+      "description": "Sélectionnez des documents de la bibliothèque de votre organisation",
+      "searchPlaceholder": "Rechercher des documents...",
+      "allCategories": "Toutes les Catégories",
+      "noResults": "Aucun document trouvé",
+      "empty": "Aucun document dans la bibliothèque",
+      "addSelected": "Ajouter la Sélection"
+    },
+    "preview": {
+      "download": "Télécharger",
+      "openInNewTab": "Ouvrir dans un nouvel onglet",
+      "close": "Fermer",
+      "noPreview": "Aperçu non disponible",
+      "uploadedBy": "Téléchargé par"
+    }
   }
 }

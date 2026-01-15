@@ -1176,5 +1176,49 @@
       "exportReport": "Export Report",
       "compare": "Compare Assessments"
     }
+  },
+  "evidence": {
+    "upload": {
+      "title": "Upload Evidence",
+      "dragDrop": "Drag and drop files here, or click to browse",
+      "addUrl": "Add URL Reference",
+      "urlPlaceholder": "Enter a URL to an external document",
+      "uploading": "Uploading...",
+      "uploadComplete": "Upload complete",
+      "uploadFailed": "Upload failed",
+      "maxSize": "Maximum file size: {size}MB",
+      "allowedTypes": "Allowed: PDF, Images, Word, Excel",
+      "maxFiles": "Maximum {count} files per question",
+      "removeConfirm": "Remove this evidence?",
+      "category": "Category",
+      "description": "Description (optional)",
+      "description_placeholder": "Add a description for this document"
+    },
+    "categories": {
+      "POLICY": "Policy Document",
+      "PROCEDURE": "Procedure",
+      "RECORD": "Record/Log",
+      "CERTIFICATE": "Certificate/License",
+      "REPORT": "Report",
+      "TRAINING": "Training Material",
+      "EVIDENCE": "Evidence",
+      "OTHER": "Other"
+    },
+    "library": {
+      "title": "Document Library",
+      "description": "Select documents from your organization's library",
+      "searchPlaceholder": "Search documents...",
+      "allCategories": "All Categories",
+      "noResults": "No documents found",
+      "empty": "No documents in library",
+      "addSelected": "Add Selected"
+    },
+    "preview": {
+      "download": "Download",
+      "openInNewTab": "Open in new tab",
+      "close": "Close",
+      "noPreview": "Preview not available",
+      "uploadedBy": "Uploaded by"
+    }
   }
 }

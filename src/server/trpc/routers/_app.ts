@@ -4,6 +4,7 @@ import { adminRouter } from "./admin";
 import { assessmentRouter } from "./assessment";
 import { responseRouter } from "./response";
 import { scoringRouter } from "./scoring";
+import { documentRouter } from "./document";
 
 /**
  * Main app router combining all sub-routers
@@ -14,6 +15,7 @@ export const appRouter = router({
   assessment: assessmentRouter,
   response: responseRouter,
   scoring: scoringRouter,
+  document: documentRouter,
 });
 
 /**

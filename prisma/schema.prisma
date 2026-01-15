@@ -46,14 +46,16 @@ model User {
   isActive            Boolean                @default(true) @map("is_active")
   createdAt           DateTime               @default(now()) @map("created_at")
   updatedAt           DateTime               @updatedAt @map("updated_at")
-  assessmentResponses AssessmentResponse[]
-  auditLogs           AuditLog[]
-  assignedCAPs        CorrectiveActionPlan[] @relation("AssignedTo")
-  assignedFindings    Finding[]              @relation("AssignedTo")
-  notifications       Notification[]
-  reviewTeamMembers   ReviewTeamMember[]
-  reviewerProfile     ReviewerProfile?
-  organization        Organization?          @relation(fields: [organizationId], references: [id])
+  assessmentResponses    AssessmentResponse[]
+  auditLogs              AuditLog[]
+  assignedCAPs           CorrectiveActionPlan[]  @relation("AssignedTo")
+  assignedFindings       Finding[]               @relation("AssignedTo")
+  notifications          Notification[]
+  reviewTeamMembers      ReviewTeamMember[]
+  reviewerProfile        ReviewerProfile?
+  organization           Organization?           @relation(fields: [organizationId], references: [id])
+  uploadedDocuments      Document[]              @relation("UploadedDocuments")
+  addedResponseDocuments ResponseDocument[]      @relation("AddedResponseDocuments")
 
   @@map("users")
 }
@@ -265,21 +267,24 @@ model Assessment {
 }
 
 model AssessmentResponse {
-  id            String         @id @default(cuid())
-  assessmentId  String         @map("assessment_id")
-  questionId    String         @map("question_id")
-  responseValue String?        @map("response_value")
-  maturityLevel MaturityLevel? @map("maturity_level")
+  id            String             @id @default(cuid())
+  assessmentId  String             @map("assessment_id")
+  questionId    String             @map("question_id")
+  responseValue String?            @map("response_value")
+  maturityLevel MaturityLevel?     @map("maturity_level")
   score         Float?
   notes         String?
-  evidenceUrls  String[]       @default([]) @map("evidence_urls")
-  respondedById String?        @map("responded_by_id")
-  respondedAt   DateTime?      @map("responded_at")
-  createdAt     DateTime       @default(now()) @map("created_at")
-  updatedAt     DateTime       @updatedAt @map("updated_at")
-  assessment    Assessment     @relation(fields: [assessmentId], references: [id])
-  question      Question       @relation(fields: [questionId], references: [id])
-  respondedBy   User?          @relation(fields: [respondedById], references: [id])
+  evidenceUrls  String[]           @default([]) @map("evidence_urls")
+  respondedById String?            @map("responded_by_id")
+  respondedAt   DateTime?          @map("responded_at")
+  createdAt     DateTime           @default(now()) @map("created_at")
+  updatedAt     DateTime           @updatedAt @map("updated_at")
+
+  // Relations
+  assessment    Assessment         @relation(fields: [assessmentId], references: [id])
+  question      Question           @relation(fields: [questionId], references: [id])
+  respondedBy   User?              @relation(fields: [respondedById], references: [id])
+  documents     ResponseDocument[]
 
   @@unique([assessmentId, questionId])
   @@map("assessment_responses")
@@ -470,12 +475,14 @@ model TrainingResource {
 model Document {
   id             String                @id @default(cuid())
   name           String
+  originalName   String?               @map("original_name")
   description    String?
   fileUrl        String                @map("file_url")
   fileType       String                @map("file_type")
   fileSize       Int                   @map("file_size")
-  category       String?
+  category       DocumentCategory      @default(EVIDENCE)
   tags           String[]              @default([])
+  language       Locale?
   organizationId String?               @map("organization_id")
   assessmentId   String?               @map("assessment_id")
   reviewId       String?               @map("review_id")
@@ -483,15 +490,41 @@ model Document {
   capId          String?               @map("cap_id")
   uploadedById   String                @map("uploaded_by_id")
   uploadedAt     DateTime              @default(now()) @map("uploaded_at")
+  isDeleted      Boolean               @default(false) @map("is_deleted")
+  deletedAt      DateTime?             @map("deleted_at")
   createdAt      DateTime              @default(now()) @map("created_at")
   updatedAt      DateTime              @updatedAt @map("updated_at")
+
+  // Relations
   assessment     Assessment?           @relation(fields: [assessmentId], references: [id])
   cap            CorrectiveActionPlan? @relation(fields: [capId], references: [id])
   finding        Finding?              @relation(fields: [findingId], references: [id])
   organization   Organization?         @relation(fields: [organizationId], references: [id])
   review         Review?               @relation(fields: [reviewId], references: [id])
+  uploadedBy     User                  @relation("UploadedDocuments", fields: [uploadedById], references: [id])
+  responses      ResponseDocument[]
 
+  @@index([organizationId, isDeleted])
+  @@index([assessmentId])
   @@map("documents")
+}
+
+model ResponseDocument {
+  id         String             @id @default(cuid())
+  responseId String             @map("response_id")
+  documentId String             @map("document_id")
+  notes      String?
+  addedAt    DateTime           @default(now()) @map("added_at")
+  addedById  String             @map("added_by_id")
+
+  // Relations
+  response   AssessmentResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  document   Document           @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  addedBy    User               @relation("AddedResponseDocuments", fields: [addedById], references: [id])
+
+  @@unique([responseId, documentId])
+  @@index([documentId])
+  @@map("response_documents")
 }
 
 model Notification {
@@ -829,4 +862,15 @@ enum ResourceType {
   CHECKLIST
   TEMPLATE
   EXTERNAL_LINK
+}
+
+enum DocumentCategory {
+  POLICY
+  PROCEDURE
+  RECORD
+  CERTIFICATE
+  REPORT
+  TRAINING
+  EVIDENCE
+  OTHER
 }

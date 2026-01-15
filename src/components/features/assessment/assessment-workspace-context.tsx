@@ -172,7 +172,7 @@ export function AssessmentWorkspaceProvider({
     data: responsesData,
     isLoading: isLoadingResponses,
   } = trpc.assessment.getResponses.useQuery(
-    { assessmentId, limit: 1000 },
+    { assessmentId, limit: 100 },
     { enabled: !!assessmentId }
   );
 

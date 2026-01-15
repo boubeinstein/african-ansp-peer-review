@@ -161,7 +161,7 @@ export const BulkSaveResponsesInput = z.object({
       })
     )
     .min(1)
-    .max(100),
+    .max(1000),
 });
 
 export type BulkSaveResponsesInput = z.infer<typeof BulkSaveResponsesInput>;
@@ -180,7 +180,7 @@ export const GetResponsesInput = z.object({
   onlyUnanswered: z.boolean().optional(),
   onlyDraft: z.boolean().optional(),
   page: z.number().int().positive().default(1),
-  limit: z.number().int().min(1).max(100).default(50),
+  limit: z.number().int().min(1).max(1000).default(50),
 });
 
 export type GetResponsesInput = z.infer<typeof GetResponsesInput>;

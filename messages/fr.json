@@ -91,8 +91,78 @@
   },
   "dashboard": {
     "title": "Tableau de bord",
-    "welcome": "Bon retour",
-    "overview": "Voici un aperçu de vos activités de revue par les pairs."
+    "welcome": "Bon retour, {name}!",
+    "subtitle": "Voici un aperçu de vos activités de revue par les pairs.",
+    "newAssessment": "Nouvelle évaluation",
+    "stats": {
+      "totalAssessments": "Total des évaluations",
+      "inProgress": "en cours",
+      "completed": "Terminées",
+      "documents": "Documents",
+      "thisWeek": "cette semaine",
+      "overdue": "En retard"
+    },
+    "assessments": {
+      "title": "État des évaluations",
+      "overdue": "évaluations en retard",
+      "active": "actives",
+      "viewAll": "Voir tout"
+    },
+    "activity": {
+      "title": "Activité récente",
+      "empty": "Aucune activité récente",
+      "viewAll": "Voir tout"
+    },
+    "attention": {
+      "title": "Nécessite une attention",
+      "allOnTrack": "Toutes les évaluations sont en bonne voie!",
+      "overdue": "En retard",
+      "stalled": "Bloqué",
+      "viewAll": "Voir tout"
+    },
+    "quickActions": {
+      "title": "Actions rapides",
+      "description": "Commencez avec les tâches courantes",
+      "newAssessment": "Commencer une auto-évaluation",
+      "newAssessmentDesc": "Démarrer une nouvelle évaluation ANS ou SMS",
+      "questionnaires": "Parcourir les questionnaires",
+      "questionnairesDesc": "Explorer les cadres USOAP CMA et CANSO SoE",
+      "training": "Modules de formation",
+      "trainingDesc": "Accéder aux matériels de formation des évaluateurs"
+    }
+  },
+  "progress": {
+    "loading": "Chargement de la progression...",
+    "refresh": "Actualiser",
+    "continue": "Continuer l'évaluation",
+    "error": {
+      "title": "Erreur",
+      "notFound": "Évaluation non trouvée",
+      "back": "Retour aux évaluations"
+    },
+    "summary": {
+      "progress": "Progression globale",
+      "questions": "questions",
+      "status": "Statut",
+      "activity": "Événements",
+      "dueDate": "Date limite",
+      "noDueDate": "Pas de date limite"
+    },
+    "tabs": {
+      "progress": "Progression",
+      "timeline": "Chronologie"
+    },
+    "categories": {
+      "title": "Progression par catégorie",
+      "description": "Suivez votre progression dans toutes les catégories du questionnaire",
+      "overallProgress": "Progression globale"
+    },
+    "timeline": {
+      "title": "Chronologie des activités",
+      "description": "Suivez toutes les activités de cette évaluation",
+      "empty": "Aucune activité enregistrée",
+      "loadMore": "Charger plus"
+    }
   },
   "assessment": {
     "title": "Auto-évaluation",

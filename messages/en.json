@@ -91,8 +91,78 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "welcome": "Welcome back",
-    "overview": "Here's an overview of your peer review activities."
+    "welcome": "Welcome back, {name}!",
+    "subtitle": "Here's an overview of your peer review activities.",
+    "newAssessment": "New Assessment",
+    "stats": {
+      "totalAssessments": "Total Assessments",
+      "inProgress": "in progress",
+      "completed": "Completed",
+      "documents": "Documents",
+      "thisWeek": "this week",
+      "overdue": "Overdue"
+    },
+    "assessments": {
+      "title": "Assessment Status",
+      "overdue": "assessments overdue",
+      "active": "active",
+      "viewAll": "View All"
+    },
+    "activity": {
+      "title": "Recent Activity",
+      "empty": "No recent activity",
+      "viewAll": "View All"
+    },
+    "attention": {
+      "title": "Needs Attention",
+      "allOnTrack": "All assessments are on track!",
+      "overdue": "Overdue",
+      "stalled": "Stalled",
+      "viewAll": "View All"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "description": "Get started with common tasks",
+      "newAssessment": "Start Self-Assessment",
+      "newAssessmentDesc": "Begin a new ANS or SMS assessment",
+      "questionnaires": "Browse Questionnaires",
+      "questionnairesDesc": "Explore USOAP CMA and CANSO SoE frameworks",
+      "training": "Training Modules",
+      "trainingDesc": "Access peer reviewer training materials"
+    }
+  },
+  "progress": {
+    "loading": "Loading progress...",
+    "refresh": "Refresh",
+    "continue": "Continue Assessment",
+    "error": {
+      "title": "Error",
+      "notFound": "Assessment not found",
+      "back": "Back to Assessments"
+    },
+    "summary": {
+      "progress": "Overall Progress",
+      "questions": "questions",
+      "status": "Status",
+      "activity": "Events",
+      "dueDate": "Due Date",
+      "noDueDate": "No due date"
+    },
+    "tabs": {
+      "progress": "Progress",
+      "timeline": "Timeline"
+    },
+    "categories": {
+      "title": "Progress by Category",
+      "description": "Track your progress across all questionnaire categories",
+      "overallProgress": "Overall Progress"
+    },
+    "timeline": {
+      "title": "Activity Timeline",
+      "description": "Track all activity on this assessment",
+      "empty": "No activity recorded yet",
+      "loadMore": "Load More"
+    }
   },
   "assessment": {
     "title": "Self-Assessment",

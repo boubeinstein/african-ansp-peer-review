@@ -56,6 +56,7 @@ model User {
   organization           Organization?           @relation(fields: [organizationId], references: [id])
   uploadedDocuments      Document[]              @relation("UploadedDocuments")
   addedResponseDocuments ResponseDocument[]      @relation("AddedResponseDocuments")
+  assessmentEvents       AssessmentEvent[]
 
   @@map("users")
 }
@@ -257,6 +258,7 @@ model Assessment {
   createdAt       DateTime             @default(now()) @map("created_at")
   updatedAt       DateTime             @updatedAt @map("updated_at")
   responses       AssessmentResponse[]
+  events          AssessmentEvent[]
   organization    Organization         @relation(fields: [organizationId], references: [id])
   questionnaire   Questionnaire        @relation(fields: [questionnaireId], references: [id])
   review          Review?              @relation(fields: [reviewId], references: [id])
@@ -264,6 +266,23 @@ model Assessment {
 
   @@index([organizationId, questionnaireId])
   @@map("assessments")
+}
+
+model AssessmentEvent {
+  id           String     @id @default(cuid())
+  assessmentId String     @map("assessment_id")
+  type         EventType
+  description  String
+  metadata     Json?
+  userId       String     @map("user_id")
+  createdAt    DateTime   @default(now()) @map("created_at")
+
+  // Relations
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  user         User       @relation(fields: [userId], references: [id])
+
+  @@index([assessmentId, createdAt])
+  @@map("assessment_events")
 }
 
 model AssessmentResponse {
@@ -873,4 +892,18 @@ enum DocumentCategory {
   TRAINING
   EVIDENCE
   OTHER
+}
+
+enum EventType {
+  CREATED
+  STARTED
+  RESPONSE_SAVED
+  EVIDENCE_ADDED
+  EVIDENCE_REMOVED
+  STATUS_CHANGED
+  SUBMITTED
+  REVIEWED
+  COMPLETED
+  REOPENED
+  COMMENT_ADDED
 }

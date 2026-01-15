@@ -1097,5 +1097,84 @@
       },
       "supportedFormats": "Supportés : PDF, Word, Excel, images (max 10 Mo chacun)"
     }
+  },
+  "scoring": {
+    "eiScore": "Score de Mise en Œuvre Effective",
+    "smsMaturity": "Niveau de Maturité SGS",
+    "overallEI": "EI Global",
+    "overallScore": "Score Global",
+    "calculating": "Calcul des scores...",
+    "complete": "Complet",
+    "incomplete": "Incomplet",
+    "byAuditArea": "Score par Domaine d'Audit",
+    "byCriticalElement": "Score par Élément Critique",
+    "byComponent": "Score par Composante SGS",
+    "byStudyArea": "Score par Domaine d'Étude",
+    "componentOverview": "Aperçu des Composantes",
+    "responseBreakdown": "Répartition des Réponses",
+    "satisfactory": "Satisfaisant",
+    "notSatisfactory": "Non Satisfaisant",
+    "notApplicable": "Non Applicable",
+    "notReviewed": "Non Examiné",
+    "incompleteAssessment": "Évaluation incomplète - minimum {threshold}% requis",
+    "noResponses": "Aucune réponse enregistrée",
+    "noData": "Aucune donnée disponible",
+    "level": "Niveau",
+    "levels": "niveaux",
+    "score": "Score",
+    "weight": "Poids",
+    "questionsAnswered": "questions répondues",
+    "questions": "questions",
+    "scoreComparison": "Comparaison des Scores",
+    "maturityDistribution": "Distribution des Niveaux de Maturité",
+    "trend": {
+      "improving": "En amélioration",
+      "declining": "En déclin",
+      "stable": "Stable",
+      "insufficientData": "Données insuffisantes pour l'analyse de tendance"
+    },
+    "thresholds": {
+      "excellent": "Excellent",
+      "good": "Bon",
+      "satisfactory": "Satisfaisant",
+      "needsImprovement": "À améliorer",
+      "poor": "Faible",
+      "critical": "Critique"
+    },
+    "maturityLevels": {
+      "A": {
+        "name": "Initial/Ad-hoc",
+        "description": "Aucun processus formel. La sécurité peut être traitée de manière réactive."
+      },
+      "B": {
+        "name": "Défini/Documenté",
+        "description": "Processus documentés mais pas appliqués de manière cohérente."
+      },
+      "C": {
+        "name": "Mis en œuvre/Mesuré",
+        "description": "Processus mis en œuvre et mesurés."
+      },
+      "D": {
+        "name": "Géré/Contrôlé",
+        "description": "Processus gérés avec surveillance continue."
+      },
+      "E": {
+        "name": "Optimisé/Leader",
+        "description": "Pratiques de pointe, amélioration continue."
+      }
+    },
+    "validation": {
+      "valid": "Évaluation prête pour la notation",
+      "canCalculate": "Les scores peuvent être calculés",
+      "minCompletion": "Minimum {threshold}% de complétion requis pour la notation officielle",
+      "statusWarning": "Le statut de l'évaluation est {status}. Envisagez de soumettre pour la notation officielle."
+    },
+    "actions": {
+      "calculate": "Calculer les Scores",
+      "recalculate": "Recalculer",
+      "viewBreakdown": "Voir le Détail",
+      "exportReport": "Exporter le Rapport",
+      "compare": "Comparer les Évaluations"
+    }
   }
 }

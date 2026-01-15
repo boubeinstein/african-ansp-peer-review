@@ -1097,5 +1097,84 @@
       },
       "supportedFormats": "Supported: PDF, Word, Excel, images (max 10MB each)"
     }
+  },
+  "scoring": {
+    "eiScore": "Effective Implementation Score",
+    "smsMaturity": "SMS Maturity Level",
+    "overallEI": "Overall EI",
+    "overallScore": "Overall Score",
+    "calculating": "Calculating scores...",
+    "complete": "Complete",
+    "incomplete": "Incomplete",
+    "byAuditArea": "Score by Audit Area",
+    "byCriticalElement": "Score by Critical Element",
+    "byComponent": "Score by SMS Component",
+    "byStudyArea": "Score by Study Area",
+    "componentOverview": "Component Overview",
+    "responseBreakdown": "Response Breakdown",
+    "satisfactory": "Satisfactory",
+    "notSatisfactory": "Not Satisfactory",
+    "notApplicable": "Not Applicable",
+    "notReviewed": "Not Reviewed",
+    "incompleteAssessment": "Assessment incomplete - minimum {threshold}% required",
+    "noResponses": "No responses recorded",
+    "noData": "No data available",
+    "level": "Level",
+    "levels": "levels",
+    "score": "Score",
+    "weight": "Weight",
+    "questionsAnswered": "questions answered",
+    "questions": "questions",
+    "scoreComparison": "Score Comparison",
+    "maturityDistribution": "Maturity Level Distribution",
+    "trend": {
+      "improving": "Improving",
+      "declining": "Declining",
+      "stable": "Stable",
+      "insufficientData": "Insufficient data for trend analysis"
+    },
+    "thresholds": {
+      "excellent": "Excellent",
+      "good": "Good",
+      "satisfactory": "Satisfactory",
+      "needsImprovement": "Needs Improvement",
+      "poor": "Poor",
+      "critical": "Critical"
+    },
+    "maturityLevels": {
+      "A": {
+        "name": "Initial/Ad-hoc",
+        "description": "No formal processes. Safety may be addressed reactively."
+      },
+      "B": {
+        "name": "Defined/Documented",
+        "description": "Processes documented but not consistently applied."
+      },
+      "C": {
+        "name": "Implemented/Measured",
+        "description": "Processes implemented and measured."
+      },
+      "D": {
+        "name": "Managed/Controlled",
+        "description": "Processes managed with continuous monitoring."
+      },
+      "E": {
+        "name": "Optimizing/Leading",
+        "description": "Industry-leading practices, continuous improvement."
+      }
+    },
+    "validation": {
+      "valid": "Assessment ready for scoring",
+      "canCalculate": "Scores can be calculated",
+      "minCompletion": "Minimum {threshold}% completion required for official scoring",
+      "statusWarning": "Assessment status is {status}. Consider submitting for official scoring."
+    },
+    "actions": {
+      "calculate": "Calculate Scores",
+      "recalculate": "Recalculate",
+      "viewBreakdown": "View Breakdown",
+      "exportReport": "Export Report",
+      "compare": "Compare Assessments"
+    }
   }
 }

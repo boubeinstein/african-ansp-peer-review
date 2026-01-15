@@ -4,12 +4,14 @@ import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/lib/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
-import { Plus, ClipboardList, Clock, CheckCircle2, FileText, Loader2, PlayCircle } from "lucide-react";
+import { Plus, ClipboardList, Clock, CheckCircle2, FileText, Loader2, PlayCircle, Award } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
+import { MaturityLevelBadge } from "@/components/features/assessment/maturity-level-badge";
+import { cn } from "@/lib/utils";
 import type { AssessmentStatus } from "@prisma/client";
 
 export default function AssessmentsPage() {
@@ -157,13 +159,43 @@ export default function AssessmentsPage() {
                   </div>
                   
                   <div className="flex flex-col items-end gap-2 min-w-[200px]">
-                    <div className="w-full">
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>{t("list.progress")}</span>
-                        <span>{assessment.progress}%</span>
+                    {/* Show score for submitted/completed assessments */}
+                    {(assessment.status === "SUBMITTED" ||
+                      assessment.status === "UNDER_REVIEW" ||
+                      assessment.status === "COMPLETED") &&
+                      (assessment.eiScore !== null || assessment.maturityLevel !== null || assessment.overallScore !== null) ? (
+                      <div className="flex items-center gap-3 mb-1">
+                        {assessment.questionnaire.type === "ANS_USOAP_CMA" ? (
+                          <div className="flex items-center gap-2">
+                            <Award className="h-4 w-4 text-primary" />
+                            <span className="text-sm text-muted-foreground">EI:</span>
+                            <span className={cn(
+                              "font-bold text-lg",
+                              (assessment.eiScore ?? assessment.overallScore ?? 0) >= 80 ? "text-green-600" :
+                              (assessment.eiScore ?? assessment.overallScore ?? 0) >= 60 ? "text-yellow-600" :
+                              (assessment.eiScore ?? assessment.overallScore ?? 0) >= 40 ? "text-orange-600" : "text-red-600"
+                            )}>
+                              {(assessment.eiScore ?? assessment.overallScore)?.toFixed(1)}%
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <MaturityLevelBadge level={assessment.maturityLevel} size="sm" />
+                            <span className="font-semibold">
+                              {assessment.overallScore?.toFixed(1)}%
+                            </span>
+                          </div>
+                        )}
                       </div>
-                      <Progress value={assessment.progress} className="h-2" />
-                    </div>
+                    ) : (
+                      <div className="w-full">
+                        <div className="flex justify-between text-sm mb-1">
+                          <span>{t("list.progress")}</span>
+                          <span>{assessment.progress}%</span>
+                        </div>
+                        <Progress value={assessment.progress} className="h-2" />
+                      </div>
+                    )}
                     <div className="flex gap-2">
                       <Button variant="outline" size="sm" asChild>
                         <Link href={`/assessments/${assessment.id}`}>

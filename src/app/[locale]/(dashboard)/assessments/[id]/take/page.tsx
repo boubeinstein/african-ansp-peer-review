@@ -66,6 +66,11 @@ function WorkspaceHeader() {
     answeredCount,
     totalCount,
     saveStatus,
+    hasPendingChanges,
+    pendingSavesCount,
+    canSubmit: contextCanSubmit,
+    saveAllPendingResponses,
+    refreshResponseCount,
     isSubmitDialogOpen,
     setIsSubmitDialogOpen,
   } = useAssessmentWorkspace();
@@ -95,13 +100,25 @@ function WorkspaceHeader() {
 
   const handleSubmit = async () => {
     if (!assessment?.id) return;
+
+    // First, save all pending responses to ensure data consistency
+    if (hasPendingChanges) {
+      await saveAllPendingResponses();
+    }
+
+    // Refresh response count from server to ensure accuracy
+    await refreshResponseCount();
+
+    // Small delay to ensure database is consistent
+    await new Promise(resolve => setTimeout(resolve, 200));
+
     await submitMutation.mutateAsync({ id: assessment.id });
   };
 
   // Check if assessment can be edited/submitted
-  const isEditable = assessment.status === "IN_PROGRESS" || assessment.status === "DRAFT";
   const isAlreadySubmitted = assessment.status === "SUBMITTED" || assessment.status === "UNDER_REVIEW" || assessment.status === "COMPLETED";
-  const canSubmit = progressPercent === 100 && isEditable;
+  const isSaving = saveStatus === "saving" || pendingSavesCount > 0;
+  const canSubmit = contextCanSubmit && !isSaving;
   const isSubmitting = submitMutation.isPending;
 
   const questionnaireTitle =
@@ -183,14 +200,20 @@ function WorkspaceHeader() {
               <Button
                 variant={canSubmit ? "default" : "outline"}
                 size="sm"
-                disabled={!canSubmit || isSubmitting}
+                disabled={!canSubmit || isSubmitting || isSaving}
               >
-                {isSubmitting ? (
+                {isSubmitting || isSaving ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                 ) : (
                   <Send className="h-4 w-4 mr-2" />
                 )}
-                {isSubmitting ? tCommon("submitting") : tAssessment("actions.submit")}
+                {isSubmitting
+                  ? tCommon("submitting")
+                  : pendingSavesCount > 0
+                  ? `${tAssessment("saving")} (${pendingSavesCount})`
+                  : saveStatus === "saving"
+                  ? tAssessment("saving")
+                  : tAssessment("actions.submit")}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -362,7 +385,7 @@ function WorkspaceContent() {
   }
 
   return (
-    <div className="flex flex-1 overflow-hidden">
+    <div className="flex flex-1 min-h-0 overflow-hidden">
       {/* Left Sidebar - Question Navigation */}
       <QuestionNavigationSidebar />
 
@@ -370,7 +393,7 @@ function WorkspaceContent() {
       <motion.main
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex-1 overflow-hidden"
+        className="flex-1 min-h-0 overflow-hidden"
       >
         <QuestionResponsePanel />
       </motion.main>

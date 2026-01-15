@@ -575,6 +575,65 @@ export const assessmentRouter = router({
     }),
 
   /**
+   * Get accurate response count for an assessment (used before submission)
+   */
+  getResponseCount: protectedProcedure
+    .input(z.object({ assessmentId: z.string().cuid() }))
+    .query(async ({ input }) => {
+      const { assessmentId } = input;
+
+      // Get assessment with questionnaire
+      const assessment = await prisma.assessment.findUnique({
+        where: { id: assessmentId },
+        include: {
+          questionnaire: {
+            include: {
+              questions: {
+                where: { isActive: true },
+                select: { id: true },
+              },
+            },
+          },
+        },
+      });
+
+      if (!assessment) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Assessment not found" });
+      }
+
+      // Get all responses for this assessment
+      const responses = await prisma.assessmentResponse.findMany({
+        where: { assessmentId },
+        select: { questionId: true, responseValue: true, maturityLevel: true },
+      });
+
+      const questionnaireType = assessment.questionnaire.type;
+      const totalQuestions = assessment.questionnaire.questions.length;
+
+      // Count only properly answered questions
+      const answeredQuestionIds = new Set(
+        responses
+          .filter((r) => {
+            if (questionnaireType === "ANS_USOAP_CMA") {
+              return r.responseValue !== null && r.responseValue !== "NOT_REVIEWED";
+            }
+            return r.maturityLevel !== null;
+          })
+          .map((r) => r.questionId)
+      );
+
+      const answeredCount = answeredQuestionIds.size;
+      const progress = totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0;
+
+      return {
+        totalQuestions,
+        answeredCount,
+        progress,
+        isComplete: answeredCount >= totalQuestions,
+      };
+    }),
+
+  /**
    * List assessments with filters
    */
   list: protectedProcedure
@@ -847,6 +906,24 @@ export const assessmentRouter = router({
         });
       }
 
+      // Get the questionnaire with ALL active questions
+      const questionnaire = await prisma.questionnaire.findUnique({
+        where: { id: assessment.questionnaireId },
+        include: {
+          questions: {
+            where: { isActive: true },
+            select: { id: true, pqNumber: true },
+          },
+        },
+      });
+
+      if (!questionnaire) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Questionnaire not found",
+        });
+      }
+
       // Get all responses with questions
       const responses = await prisma.assessmentResponse.findMany({
         where: { assessmentId: input.id },
@@ -855,8 +932,48 @@ export const assessmentRouter = router({
         },
       });
 
-      const totalQuestions = responses.length;
+      // Calculate actual totals using questionnaire questions
       const questionnaireType = assessment.questionnaire.type;
+      const totalQuestions = questionnaire.questions.length;
+
+      // Build set of answered question IDs
+      const answeredQuestionIds = new Set(
+        responses
+          .filter((r) => {
+            if (questionnaireType === "ANS_USOAP_CMA") {
+              return r.responseValue !== null && r.responseValue !== "NOT_REVIEWED";
+            }
+            return r.maturityLevel !== null;
+          })
+          .map((r) => r.questionId)
+      );
+
+      // Find unanswered questions
+      const unansweredQuestions = questionnaire.questions.filter(
+        (q) => !answeredQuestionIds.has(q.id)
+      );
+
+      // Log for debugging
+      console.log(`[Assessment Submit] Assessment ${input.id}:`, {
+        totalQuestions,
+        answeredCount: answeredQuestionIds.size,
+        unansweredCount: unansweredQuestions.length,
+        unansweredPQs: unansweredQuestions.slice(0, 10).map((q: { id: string; pqNumber: string | null }) => q.pqNumber || q.id.slice(0, 8)),
+      });
+
+      // Validate all questions are answered
+      if (unansweredQuestions.length > 0) {
+        const percentage = Math.round((answeredQuestionIds.size / totalQuestions) * 100);
+        const unansweredList = unansweredQuestions
+          .slice(0, 5)
+          .map((q: { id: string; pqNumber: string | null }) => q.pqNumber || q.id.slice(0, 8))
+          .join(", ");
+
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Assessment cannot be submitted:\nOnly ${answeredQuestionIds.size} of ${totalQuestions} questions answered (${percentage}%).\nUnanswered questions: ${unansweredList}${unansweredQuestions.length > 5 ? ` and ${unansweredQuestions.length - 5} more...` : ""}`,
+        });
+      }
 
       // Transform for validation
       const responsesForValidation = responses.map((r) => ({

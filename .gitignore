@@ -38,3 +38,7 @@ coverage
 # Misc
 *.pem
 *.log
+codebase.md
+codebase-*.md
+uploads/
+tsconfig.tsbuildinfo

@@ -107,7 +107,12 @@ interface AssessmentWorkspaceContextValue {
   // Response actions
   updateResponse: (questionId: string, updates: Partial<ResponseData>) => void;
   saveCurrentResponse: () => Promise<void>;
+  saveAllPendingResponses: () => Promise<void>;
+  refreshResponseCount: () => Promise<void>;
   toggleFlag: (questionId: string) => void;
+  hasPendingChanges: boolean;
+  pendingSavesCount: number;
+  canSubmit: boolean;
 
   // UI state
   isSidebarOpen: boolean;
@@ -387,6 +392,54 @@ export function AssessmentWorkspaceProvider({
     }
   }, [assessmentId, currentQuestion, currentResponse, saveMutation]);
 
+  // Save ALL pending responses (for submission)
+  const saveAllPendingResponses = useCallback(async () => {
+    if (pendingChanges.size === 0) return;
+
+    setSaveStatus("saving");
+    const pendingQuestionIds = Array.from(pendingChanges);
+
+    try {
+      // Save all pending responses in parallel
+      await Promise.all(
+        pendingQuestionIds.map(async (questionId) => {
+          const response = localResponses.get(questionId);
+          if (!response) return;
+
+          await saveMutation.mutateAsync({
+            assessmentId,
+            questionId,
+            responseValue: response.responseValue,
+            maturityLevel: response.maturityLevel,
+            notes: response.notes || undefined,
+            evidenceUrls: response.evidenceUrls,
+          });
+        })
+      );
+
+      // Clear all pending changes
+      setPendingChanges(new Set());
+      setSaveStatus("saved");
+      setLastSavedAt(new Date());
+    } catch {
+      setSaveStatus("error");
+    }
+  }, [assessmentId, pendingChanges, localResponses, saveMutation]);
+
+  // Computed: has pending changes
+  const hasPendingChanges = pendingChanges.size > 0;
+  const pendingSavesCount = pendingChanges.size;
+
+  // Refresh response count from server (for accurate submission check)
+  const utils = trpc.useUtils();
+  const refreshResponseCount = useCallback(async () => {
+    try {
+      await utils.assessment.getResponseCount.invalidate({ assessmentId });
+    } catch {
+      // Silently fail - this is just a refresh
+    }
+  }, [assessmentId, utils]);
+
   // Toggle flag
   const toggleFlag = useCallback(
     (questionId: string) => {
@@ -426,6 +479,15 @@ export function AssessmentWorkspaceProvider({
   const totalCount = questions.length;
   const progressPercent = totalCount > 0 ? Math.round((answeredCount / totalCount) * 100) : 0;
   const isOnLastQuestion = currentQuestionIndex >= filteredQuestions.length - 1;
+
+  // Can submit: all questions answered, no pending saves, status is editable
+  const canSubmit = useMemo(() => {
+    const isEditable = assessmentData?.status === "DRAFT";
+    const allAnswered = answeredCount >= totalCount && totalCount > 0;
+    const notSaving = saveStatus !== "saving" && pendingChanges.size === 0;
+
+    return isEditable && allAnswered && notSaving;
+  }, [assessmentData?.status, answeredCount, totalCount, saveStatus, pendingChanges.size]);
 
   // Auto-save effect (debounced)
   useEffect(() => {
@@ -595,7 +657,12 @@ export function AssessmentWorkspaceProvider({
     filteredQuestions,
     updateResponse,
     saveCurrentResponse,
+    saveAllPendingResponses,
+    refreshResponseCount,
     toggleFlag,
+    hasPendingChanges,
+    pendingSavesCount,
+    canSubmit,
     isSidebarOpen,
     toggleSidebar,
     isEvidencePanelOpen,

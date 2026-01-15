@@ -310,10 +310,16 @@
       "complete": "Complete Assessment",
       "archive": "Archive Assessment",
       "export": "Export Assessment",
-      "compare": "Compare Assessments"
+      "compare": "Compare Assessments",
+      "viewResponses": "View Responses"
     },
+    "saving": "Saving...",
+    "saveError": "Failed to save response",
     "submitSuccess": "Assessment submitted successfully",
     "submitError": "Failed to submit assessment",
+    "readyToSubmit": "All questions answered. Ready to submit.",
+    "notReadyToSubmit": "Please answer all questions before submitting.",
+    "pendingSaves": "Saving {count} response(s)...",
     "alreadySubmitted": "Already Submitted",
     "submittedReadOnly": "This assessment has been submitted and is under review. It is currently read-only.",
     "completedReadOnly": "This assessment has been completed and is now read-only.",
@@ -327,6 +333,55 @@
       "incompleteCategories": "{count} categories have unanswered questions",
       "canSubmit": "Assessment is ready for submission",
       "cannotSubmit": "Assessment cannot be submitted yet"
+    },
+    "loading": "Loading assessment...",
+    "backToList": "Back to Assessments",
+    "error": {
+      "title": "Error",
+      "description": "Could not load assessment"
+    },
+    "details": {
+      "organization": "Organization",
+      "progress": "Progress",
+      "dates": "Dates",
+      "questionsAnswered": "questions answered",
+      "started": "Started",
+      "startedAt": "Started",
+      "submitted": "Submitted",
+      "submittedAt": "Submitted",
+      "completed": "Completed",
+      "completedAt": "Completed",
+      "createdAt": "Created",
+      "due": "Due"
+    },
+    "draft": {
+      "title": "Assessment In Progress",
+      "description": "Continue answering questions to complete this assessment. Your progress is automatically saved.",
+      "continueButton": "Continue Assessment"
+    },
+    "inProgress": {
+      "title": "Assessment In Progress",
+      "description": "Continue answering questions to complete this assessment.",
+      "continueButton": "Continue"
+    },
+    "submittedState": {
+      "title": "Assessment Submitted",
+      "description": "This assessment has been submitted and is awaiting review."
+    },
+    "completedState": {
+      "title": "Assessment Completed",
+      "description": "This assessment has been reviewed and completed."
+    },
+    "score": {
+      "resultsTitle": "Assessment Results",
+      "eiScore": "Effective Implementation (EI) Score",
+      "eiDescription": "Percentage of satisfactory responses among applicable questions",
+      "maturityLevel": "SMS Maturity Level",
+      "maturityDescription": "Overall maturity based on CANSO Standard of Excellence",
+      "byAuditArea": "Score by Audit Area",
+      "byCriticalElement": "Score by Critical Element",
+      "byComponent": "Score by SMS Component",
+      "byStudyArea": "Score by Study Area"
     }
   },
   "questionnaire": {

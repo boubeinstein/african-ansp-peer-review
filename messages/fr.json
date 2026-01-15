@@ -310,10 +310,16 @@
       "complete": "Terminer l'évaluation",
       "archive": "Archiver l'évaluation",
       "export": "Exporter l'évaluation",
-      "compare": "Comparer les évaluations"
+      "compare": "Comparer les évaluations",
+      "viewResponses": "Voir les réponses"
     },
+    "saving": "Enregistrement...",
+    "saveError": "Échec de l'enregistrement de la réponse",
     "submitSuccess": "Évaluation soumise avec succès",
     "submitError": "Échec de la soumission de l'évaluation",
+    "readyToSubmit": "Toutes les questions ont été répondues. Prêt à soumettre.",
+    "notReadyToSubmit": "Veuillez répondre à toutes les questions avant de soumettre.",
+    "pendingSaves": "Enregistrement de {count} réponse(s)...",
     "alreadySubmitted": "Déjà soumise",
     "submittedReadOnly": "Cette évaluation a été soumise et est en cours de révision. Elle est actuellement en lecture seule.",
     "completedReadOnly": "Cette évaluation a été terminée et est maintenant en lecture seule.",
@@ -327,6 +333,55 @@
       "incompleteCategories": "{count} catégories ont des questions sans réponse",
       "canSubmit": "L'évaluation est prête à être soumise",
       "cannotSubmit": "L'évaluation ne peut pas encore être soumise"
+    },
+    "loading": "Chargement de l'évaluation...",
+    "backToList": "Retour aux évaluations",
+    "error": {
+      "title": "Erreur",
+      "description": "Impossible de charger l'évaluation"
+    },
+    "details": {
+      "organization": "Organisation",
+      "progress": "Progression",
+      "dates": "Dates",
+      "questionsAnswered": "questions répondues",
+      "started": "Commencée",
+      "startedAt": "Commencé",
+      "submitted": "Soumise",
+      "submittedAt": "Soumis",
+      "completed": "Terminée",
+      "completedAt": "Terminé",
+      "createdAt": "Créé",
+      "due": "Échéance"
+    },
+    "draft": {
+      "title": "Évaluation en cours",
+      "description": "Continuez à répondre aux questions pour terminer cette évaluation. Votre progression est automatiquement sauvegardée.",
+      "continueButton": "Continuer l'évaluation"
+    },
+    "inProgress": {
+      "title": "Évaluation en cours",
+      "description": "Continuez à répondre aux questions pour compléter cette évaluation.",
+      "continueButton": "Continuer"
+    },
+    "submittedState": {
+      "title": "Évaluation soumise",
+      "description": "Cette évaluation a été soumise et est en attente de révision."
+    },
+    "completedState": {
+      "title": "Évaluation terminée",
+      "description": "Cette évaluation a été révisée et complétée."
+    },
+    "score": {
+      "resultsTitle": "Résultats de l'évaluation",
+      "eiScore": "Score de Mise en Œuvre Effective (EI)",
+      "eiDescription": "Pourcentage de réponses satisfaisantes parmi les questions applicables",
+      "maturityLevel": "Niveau de Maturité SGS",
+      "maturityDescription": "Maturité globale basée sur la Norme d'Excellence CANSO",
+      "byAuditArea": "Score par Domaine d'Audit",
+      "byCriticalElement": "Score par Élément Critique",
+      "byComponent": "Score par Composante SGS",
+      "byStudyArea": "Score par Domaine d'Étude"
     }
   },
   "questionnaire": {

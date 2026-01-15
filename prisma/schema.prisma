@@ -7,55 +7,59 @@ datasource db {
 }
 
 model Organization {
-  id               String           @id @default(cuid())
-  nameEn           String           @map("name_en")
-  nameFr           String           @map("name_fr")
-  icaoCode         String?          @unique @map("icao_code")
+  id               String            @id @default(cuid())
+  nameEn           String            @map("name_en")
+  nameFr           String            @map("name_fr")
+  icaoCode         String?           @unique @map("icao_code")
   country          String
   region           AfricanRegion
   city             String?
-  peerReviewTeam   Int?             @map("peer_review_team")
-  membershipStatus MembershipStatus @default(PENDING)
-  joinedAt         DateTime?        @map("joined_at")
-  createdAt        DateTime         @default(now()) @map("created_at")
-  updatedAt        DateTime         @updatedAt @map("updated_at")
+  peerReviewTeam   Int?              @map("peer_review_team")
+  membershipStatus MembershipStatus  @default(PENDING)
+  joinedAt         DateTime?         @map("joined_at")
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+  // Relations
   assessments      Assessment[]
   documents        Document[]
   findings         Finding[]
-  reviewsAsHost    Review[]         @relation("HostANSP")
+  reviewsAsHost    Review[]          @relation("HostANSP")
   users            User[]
+  // Reviewer-related relations
+  homeReviewers    ReviewerProfile[] @relation("HomeReviewers")
+  conflictCOIs     ReviewerCOI[]     @relation("ConflictReviewers")
 
   @@map("organizations")
 }
 
 model User {
-  id                  String                 @id @default(cuid())
-  email               String                 @unique
-  passwordHash        String?                @map("password_hash")
-  emailVerified       DateTime?              @map("email_verified")
-  firstName           String                 @map("first_name")
-  lastName            String                 @map("last_name")
-  title               String?
-  phone               String?
-  locale              Locale                 @default(EN)
-  timezone            String                 @default("UTC")
-  theme               Theme                  @default(SYSTEM)
-  role                UserRole               @default(STAFF)
-  organizationId      String?                @map("organization_id")
-  lastLoginAt         DateTime?              @map("last_login_at")
-  isActive            Boolean                @default(true) @map("is_active")
-  createdAt           DateTime               @default(now()) @map("created_at")
-  updatedAt           DateTime               @updatedAt @map("updated_at")
+  id                     String                 @id @default(cuid())
+  email                  String                 @unique
+  passwordHash           String?                @map("password_hash")
+  emailVerified          DateTime?              @map("email_verified")
+  firstName              String                 @map("first_name")
+  lastName               String                 @map("last_name")
+  title                  String?
+  phone                  String?
+  locale                 Locale                 @default(EN)
+  timezone               String                 @default("UTC")
+  theme                  Theme                  @default(SYSTEM)
+  role                   UserRole               @default(STAFF)
+  organizationId         String?                @map("organization_id")
+  lastLoginAt            DateTime?              @map("last_login_at")
+  isActive               Boolean                @default(true) @map("is_active")
+  createdAt              DateTime               @default(now()) @map("created_at")
+  updatedAt              DateTime               @updatedAt @map("updated_at")
   assessmentResponses    AssessmentResponse[]
   auditLogs              AuditLog[]
-  assignedCAPs           CorrectiveActionPlan[]  @relation("AssignedTo")
-  assignedFindings       Finding[]               @relation("AssignedTo")
+  assignedCAPs           CorrectiveActionPlan[] @relation("AssignedTo")
+  assignedFindings       Finding[]              @relation("AssignedTo")
   notifications          Notification[]
   reviewTeamMembers      ReviewTeamMember[]
   reviewerProfile        ReviewerProfile?
-  organization           Organization?           @relation(fields: [organizationId], references: [id])
-  uploadedDocuments      Document[]              @relation("UploadedDocuments")
-  addedResponseDocuments ResponseDocument[]      @relation("AddedResponseDocuments")
+  organization           Organization?          @relation(fields: [organizationId], references: [id])
+  uploadedDocuments      Document[]             @relation("UploadedDocuments")
+  addedResponseDocuments ResponseDocument[]     @relation("AddedResponseDocuments")
   assessmentEvents       AssessmentEvent[]
 
   @@map("users")
@@ -156,46 +160,76 @@ model ICAOReference {
 }
 
 model ReviewerProfile {
-  id                    String                  @id @default(cuid())
-  userId                String                  @unique @map("user_id")
-  organizationId        String                  @map("organization_id")
-  status                ReviewerStatus          @default(NOMINATED)
-  nominatedAt           DateTime?               @map("nominated_at")
-  selectedAt            DateTime?               @map("selected_at")
-  certifiedAt           DateTime?               @map("certified_at")
-  currentPosition       String                  @map("current_position")
-  yearsExperience       Int                     @map("years_experience")
-  biography             String?
-  biographyFr           String?                 @map("biography_fr")
-  expertiseAreas        ExpertiseArea[]         @default([])
-  specializations       String[]                @default([])
-  reviewsCompleted      Int                     @default(0) @map("reviews_completed")
-  reviewsAsLead         Int                     @default(0) @map("reviews_as_lead")
-  lastReviewDate        DateTime?               @map("last_review_date")
-  isAvailable           Boolean                 @default(true) @map("is_available")
-  availableFrom         DateTime?               @map("available_from")
-  availableTo           DateTime?               @map("available_to")
-  conflictOrganizations String[]                @default([]) @map("conflict_organizations")
-  averageRating         Float?                  @map("average_rating")
-  feedbackCount         Int                     @default(0) @map("feedback_count")
-  createdAt             DateTime                @default(now()) @map("created_at")
-  updatedAt             DateTime                @updatedAt @map("updated_at")
-  teamAssignments       ReviewTeamMember[]
-  certifications        ReviewerCertification[]
-  languages             ReviewerLanguage[]
-  user                  User                    @relation(fields: [userId], references: [id])
-  trainingRecords       ReviewerTraining[]
+  id                     String                  @id @default(cuid())
+  userId                 String                  @unique @map("user_id")
+  organizationId         String                  @map("organization_id")
+  homeOrganizationId     String                  @map("home_organization_id")
+  status                 ReviewerStatus          @default(NOMINATED)
+  selectionStatus        ReviewerSelectionStatus @default(NOMINATED) @map("selection_status")
+  reviewerType           ReviewerType            @default(PEER_REVIEWER) @map("reviewer_type")
+  nominatedAt            DateTime?               @map("nominated_at")
+  selectedAt             DateTime?               @map("selected_at")
+  certifiedAt            DateTime?               @map("certified_at")
+  currentPosition        String                  @map("current_position")
+  yearsExperience        Int                     @map("years_experience")
+  biography              String?
+  biographyFr            String?                 @map("biography_fr")
+  expertiseAreas         ExpertiseArea[]         @default([])
+  specializations        String[]                @default([])
+  isLeadQualified        Boolean                 @default(false) @map("is_lead_qualified")
+  leadQualifiedAt        DateTime?               @map("lead_qualified_at")
+  reviewsCompleted       Int                     @default(0) @map("reviews_completed")
+  reviewsAsLead          Int                     @default(0) @map("reviews_as_lead")
+  lastReviewDate         DateTime?               @map("last_review_date")
+  isAvailable            Boolean                 @default(true) @map("is_available")
+  availableFrom          DateTime?               @map("available_from")
+  availableTo            DateTime?               @map("available_to")
+  conflictOrganizations  String[]                @default([]) @map("conflict_organizations")
+  averageRating          Float?                  @map("average_rating")
+  feedbackCount          Int                     @default(0) @map("feedback_count")
+  // Contact preferences
+  preferredContactMethod ContactMethod           @default(EMAIL) @map("preferred_contact_method")
+  alternativeEmail       String?                 @map("alternative_email")
+  alternativePhone       String?                 @map("alternative_phone")
+  // Travel information
+  passportCountry        String?                 @map("passport_country")
+  visaCountries          String[]                @default([]) @map("visa_countries")
+  travelRestrictions     String?                 @map("travel_restrictions")
+  // Timestamps
+  createdAt              DateTime                @default(now()) @map("created_at")
+  updatedAt              DateTime                @updatedAt @map("updated_at")
+  // Relations
+  user                   User                    @relation(fields: [userId], references: [id])
+  homeOrganization       Organization            @relation("HomeReviewers", fields: [homeOrganizationId], references: [id])
+  teamAssignments        ReviewTeamMember[]
+  certifications         ReviewerCertification[]
+  languages              ReviewerLanguage[]
+  trainingRecords        ReviewerTraining[]
+  expertiseRecords       ReviewerExpertise[]
+  availabilityPeriods    ReviewerAvailability[]
+  conflictsOfInterest    ReviewerCOI[]
 
+  @@index([homeOrganizationId])
+  @@index([selectionStatus, reviewerType])
+  @@index([isAvailable, selectionStatus])
   @@map("reviewer_profiles")
 }
 
 model ReviewerLanguage {
-  id                String              @id @default(cuid())
-  reviewerProfileId String              @map("reviewer_profile_id")
-  language          Language
-  proficiency       LanguageProficiency
-  isNative          Boolean             @default(false) @map("is_native")
-  reviewerProfile   ReviewerProfile     @relation(fields: [reviewerProfileId], references: [id])
+  id                   String              @id @default(cuid())
+  reviewerProfileId    String              @map("reviewer_profile_id")
+  language             Language
+  proficiency          LanguageProficiency
+  isNative             Boolean             @default(false) @map("is_native")
+  // ICAO Language Proficiency (for aviation context)
+  icaoLevel            Int?                @map("icao_level") // 1-6 ICAO scale
+  icaoAssessmentDate   DateTime?           @map("icao_assessment_date")
+  icaoExpiryDate       DateTime?           @map("icao_expiry_date")
+  // Work capability
+  canWriteReports      Boolean             @default(false) @map("can_write_reports")
+  canConductInterviews Boolean             @default(false) @map("can_conduct_interviews")
+  // Relation
+  reviewerProfile      ReviewerProfile     @relation(fields: [reviewerProfileId], references: [id])
 
   @@unique([reviewerProfileId, language])
   @@map("reviewer_languages")
@@ -237,6 +271,86 @@ model ReviewerTraining {
   @@map("reviewer_trainings")
 }
 
+// ============================================
+// REVIEWER PROFILE MODULE - NEW MODELS
+// ============================================
+
+model ReviewerExpertise {
+  id                String           @id @default(cuid())
+  reviewerProfileId String           @map("reviewer_profile_id")
+  area              ExpertiseArea
+  proficiencyLevel  ProficiencyLevel @default(COMPETENT) @map("proficiency_level")
+  yearsExperience   Int              @default(0) @map("years_experience")
+  // Verification
+  isVerified        Boolean          @default(false) @map("is_verified")
+  verifiedAt        DateTime?        @map("verified_at")
+  verifiedBy        String?          @map("verified_by")
+  // Supporting information
+  description       String?
+  descriptionFr     String?          @map("description_fr")
+  certifications    String[]         @default([])
+  // For questionnaire matching
+  canAssessANS      Boolean          @default(false) @map("can_assess_ans")
+  canAssessSMS      Boolean          @default(false) @map("can_assess_sms")
+  // Timestamps
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+  // Relation
+  reviewerProfile   ReviewerProfile  @relation(fields: [reviewerProfileId], references: [id])
+
+  @@unique([reviewerProfileId, area])
+  @@index([area, proficiencyLevel])
+  @@map("reviewer_expertises")
+}
+
+model ReviewerAvailability {
+  id                String           @id @default(cuid())
+  reviewerProfileId String           @map("reviewer_profile_id")
+  availabilityType  AvailabilityType @map("availability_type")
+  startDate         DateTime         @map("start_date")
+  endDate           DateTime         @map("end_date")
+  reason            String?
+  notes             String?
+  // Timestamps
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+  // Relation
+  reviewerProfile   ReviewerProfile  @relation(fields: [reviewerProfileId], references: [id])
+
+  @@index([reviewerProfileId, startDate, endDate])
+  @@index([availabilityType, startDate])
+  @@map("reviewer_availabilities")
+}
+
+model ReviewerCOI {
+  id                String          @id @default(cuid())
+  reviewerProfileId String          @map("reviewer_profile_id")
+  organizationId    String          @map("organization_id")
+  coiType           COIType         @map("coi_type")
+  description       String?
+  // Timing
+  startDate         DateTime?       @map("start_date")
+  endDate           DateTime?       @map("end_date")
+  isCurrent         Boolean         @default(true) @map("is_current")
+  // Cooling-off period management
+  coolingOffEnds    DateTime?       @map("cooling_off_ends")
+  // Declaration and validation
+  declaredAt        DateTime        @default(now()) @map("declared_at")
+  validatedAt       DateTime?       @map("validated_at")
+  validatedBy       String?         @map("validated_by")
+  // Timestamps
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
+  // Relations
+  reviewerProfile   ReviewerProfile @relation(fields: [reviewerProfileId], references: [id])
+  organization      Organization    @relation("ConflictReviewers", fields: [organizationId], references: [id])
+
+  @@unique([reviewerProfileId, organizationId, coiType])
+  @@index([organizationId])
+  @@index([reviewerProfileId, isCurrent])
+  @@map("reviewer_cois")
+}
+
 model Assessment {
   id              String               @id @default(cuid())
   type            AssessmentType       @default(SELF_ASSESSMENT)
@@ -269,41 +383,41 @@ model Assessment {
 }
 
 model AssessmentEvent {
-  id           String     @id @default(cuid())
-  assessmentId String     @map("assessment_id")
+  id           String    @id @default(cuid())
+  assessmentId String    @map("assessment_id")
   type         EventType
   description  String
   metadata     Json?
-  userId       String     @map("user_id")
-  createdAt    DateTime   @default(now()) @map("created_at")
+  userId       String    @map("user_id")
+  createdAt    DateTime  @default(now()) @map("created_at")
 
   // Relations
-  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
-  user         User       @relation(fields: [userId], references: [id])
+  assessment Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id])
 
   @@index([assessmentId, createdAt])
   @@map("assessment_events")
 }
 
 model AssessmentResponse {
-  id            String             @id @default(cuid())
-  assessmentId  String             @map("assessment_id")
-  questionId    String             @map("question_id")
-  responseValue String?            @map("response_value")
-  maturityLevel MaturityLevel?     @map("maturity_level")
+  id            String         @id @default(cuid())
+  assessmentId  String         @map("assessment_id")
+  questionId    String         @map("question_id")
+  responseValue String?        @map("response_value")
+  maturityLevel MaturityLevel? @map("maturity_level")
   score         Float?
   notes         String?
-  evidenceUrls  String[]           @default([]) @map("evidence_urls")
-  respondedById String?            @map("responded_by_id")
-  respondedAt   DateTime?          @map("responded_at")
-  createdAt     DateTime           @default(now()) @map("created_at")
-  updatedAt     DateTime           @updatedAt @map("updated_at")
+  evidenceUrls  String[]       @default([]) @map("evidence_urls")
+  respondedById String?        @map("responded_by_id")
+  respondedAt   DateTime?      @map("responded_at")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
 
   // Relations
-  assessment    Assessment         @relation(fields: [assessmentId], references: [id])
-  question      Question           @relation(fields: [questionId], references: [id])
-  respondedBy   User?              @relation(fields: [respondedById], references: [id])
-  documents     ResponseDocument[]
+  assessment  Assessment         @relation(fields: [assessmentId], references: [id])
+  question    Question           @relation(fields: [questionId], references: [id])
+  respondedBy User?              @relation(fields: [respondedById], references: [id])
+  documents   ResponseDocument[]
 
   @@unique([assessmentId, questionId])
   @@map("assessment_responses")
@@ -492,36 +606,36 @@ model TrainingResource {
 }
 
 model Document {
-  id             String                @id @default(cuid())
+  id             String           @id @default(cuid())
   name           String
-  originalName   String?               @map("original_name")
+  originalName   String?          @map("original_name")
   description    String?
-  fileUrl        String                @map("file_url")
-  fileType       String                @map("file_type")
-  fileSize       Int                   @map("file_size")
-  category       DocumentCategory      @default(EVIDENCE)
-  tags           String[]              @default([])
+  fileUrl        String           @map("file_url")
+  fileType       String           @map("file_type")
+  fileSize       Int              @map("file_size")
+  category       DocumentCategory @default(EVIDENCE)
+  tags           String[]         @default([])
   language       Locale?
-  organizationId String?               @map("organization_id")
-  assessmentId   String?               @map("assessment_id")
-  reviewId       String?               @map("review_id")
-  findingId      String?               @map("finding_id")
-  capId          String?               @map("cap_id")
-  uploadedById   String                @map("uploaded_by_id")
-  uploadedAt     DateTime              @default(now()) @map("uploaded_at")
-  isDeleted      Boolean               @default(false) @map("is_deleted")
-  deletedAt      DateTime?             @map("deleted_at")
-  createdAt      DateTime              @default(now()) @map("created_at")
-  updatedAt      DateTime              @updatedAt @map("updated_at")
+  organizationId String?          @map("organization_id")
+  assessmentId   String?          @map("assessment_id")
+  reviewId       String?          @map("review_id")
+  findingId      String?          @map("finding_id")
+  capId          String?          @map("cap_id")
+  uploadedById   String           @map("uploaded_by_id")
+  uploadedAt     DateTime         @default(now()) @map("uploaded_at")
+  isDeleted      Boolean          @default(false) @map("is_deleted")
+  deletedAt      DateTime?        @map("deleted_at")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
 
   // Relations
-  assessment     Assessment?           @relation(fields: [assessmentId], references: [id])
-  cap            CorrectiveActionPlan? @relation(fields: [capId], references: [id])
-  finding        Finding?              @relation(fields: [findingId], references: [id])
-  organization   Organization?         @relation(fields: [organizationId], references: [id])
-  review         Review?               @relation(fields: [reviewId], references: [id])
-  uploadedBy     User                  @relation("UploadedDocuments", fields: [uploadedById], references: [id])
-  responses      ResponseDocument[]
+  assessment   Assessment?           @relation(fields: [assessmentId], references: [id])
+  cap          CorrectiveActionPlan? @relation(fields: [capId], references: [id])
+  finding      Finding?              @relation(fields: [findingId], references: [id])
+  organization Organization?         @relation(fields: [organizationId], references: [id])
+  review       Review?               @relation(fields: [reviewId], references: [id])
+  uploadedBy   User                  @relation("UploadedDocuments", fields: [uploadedById], references: [id])
+  responses    ResponseDocument[]
 
   @@index([organizationId, isDeleted])
   @@index([assessmentId])
@@ -529,17 +643,17 @@ model Document {
 }
 
 model ResponseDocument {
-  id         String             @id @default(cuid())
-  responseId String             @map("response_id")
-  documentId String             @map("document_id")
+  id         String   @id @default(cuid())
+  responseId String   @map("response_id")
+  documentId String   @map("document_id")
   notes      String?
-  addedAt    DateTime           @default(now()) @map("added_at")
-  addedById  String             @map("added_by_id")
+  addedAt    DateTime @default(now()) @map("added_at")
+  addedById  String   @map("added_by_id")
 
   // Relations
-  response   AssessmentResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
-  document   Document           @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  addedBy    User               @relation("AddedResponseDocuments", fields: [addedById], references: [id])
+  response AssessmentResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  document Document           @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  addedBy  User               @relation("AddedResponseDocuments", fields: [addedById], references: [id])
 
   @@unique([responseId, documentId])
   @@index([documentId])
@@ -721,6 +835,56 @@ enum ReviewerStatus {
   LEAD_QUALIFIED
   INACTIVE
   RETIRED
+}
+
+// ============================================
+// REVIEWER PROFILE MODULE - ENHANCED ENUMS
+// ============================================
+
+enum ReviewerSelectionStatus {
+  NOMINATED // Initial nomination by ANSP
+  UNDER_REVIEW // Being evaluated by Steering Committee
+  SELECTED // Approved for reviewer pool
+  INACTIVE // Temporarily inactive
+  WITHDRAWN // Withdrawn from programme
+  REJECTED // Not selected
+}
+
+enum ReviewerType {
+  PEER_REVIEWER // Standard peer reviewer
+  LEAD_REVIEWER // Can lead review teams
+  SENIOR_REVIEWER // Experienced reviewer (5+ reviews)
+  OBSERVER // In training/observation mode
+}
+
+enum ContactMethod {
+  EMAIL
+  PHONE
+  WHATSAPP
+  TEAMS
+}
+
+enum ProficiencyLevel {
+  BASIC // Foundational knowledge
+  COMPETENT // Working proficiency
+  PROFICIENT // Advanced proficiency
+  EXPERT // Subject matter expert
+}
+
+enum AvailabilityType {
+  AVAILABLE // Fully available for assignment
+  TENTATIVE // Possibly available (needs confirmation)
+  UNAVAILABLE // Not available (blackout period)
+  ON_ASSIGNMENT // Already assigned to a review
+}
+
+enum COIType {
+  EMPLOYMENT // Current or recent employment
+  FINANCIAL // Financial interest
+  CONTRACTUAL // Contractual relationship
+  PERSONAL // Personal relationship
+  PREVIOUS_REVIEW // Recently reviewed (cooling-off period)
+  OTHER // Other conflict
 }
 
 enum ExpertiseArea {

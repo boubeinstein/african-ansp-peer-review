@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect, useRef, useCallback } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -11,7 +11,6 @@ import {
   Circle,
   CheckCircle,
   Flag,
-  AlertTriangle,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -19,7 +18,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -27,6 +25,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   useAssessmentWorkspace,
   type QuestionFilter,
@@ -41,6 +45,133 @@ interface QuestionGroup {
   totalCount: number;
 }
 
+type QuestionStatus = "complete" | "answered" | "flagged" | "unanswered";
+
+interface QuestionNavItemProps {
+  question: QuestionData;
+  globalIndex: number;
+  status: QuestionStatus;
+  isActive: boolean;
+  onClick: () => void;
+  questionText: string;
+  itemRef?: React.RefObject<HTMLButtonElement | null>;
+}
+
+function QuestionNavItem({
+  question,
+  globalIndex,
+  status,
+  isActive,
+  onClick,
+  questionText,
+  itemRef,
+}: QuestionNavItemProps) {
+  return (
+    <TooltipProvider delayDuration={300}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            ref={itemRef}
+            onClick={onClick}
+            className={cn(
+              "flex w-full items-start gap-2 rounded-md px-2 py-2 text-left text-sm transition-colors",
+              "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1",
+              isActive
+                ? "bg-primary text-primary-foreground"
+                : "hover:bg-muted"
+            )}
+          >
+            {/* Status indicator */}
+            <span className="shrink-0 mt-0.5">
+              {status === "complete" && (
+                <CheckCircle
+                  className={cn(
+                    "h-4 w-4",
+                    isActive ? "text-primary-foreground" : "text-green-600"
+                  )}
+                />
+              )}
+              {status === "answered" && (
+                <Circle
+                  className={cn(
+                    "h-4 w-4 fill-current",
+                    isActive ? "text-primary-foreground" : "text-blue-600"
+                  )}
+                />
+              )}
+              {status === "flagged" && (
+                <Flag
+                  className={cn(
+                    "h-4 w-4",
+                    isActive ? "text-primary-foreground" : "text-yellow-600"
+                  )}
+                />
+              )}
+              {status === "unanswered" && (
+                <Circle
+                  className={cn(
+                    "h-4 w-4",
+                    isActive ? "text-primary-foreground" : "text-muted-foreground"
+                  )}
+                />
+              )}
+            </span>
+
+            {/* Question content */}
+            <div className="flex-1 min-w-0">
+              {/* Question number and badges */}
+              <div className="flex items-center gap-1 mb-0.5 flex-wrap">
+                <span
+                  className={cn(
+                    "font-mono text-xs shrink-0 font-medium",
+                    isActive ? "text-primary-foreground" : "text-foreground"
+                  )}
+                >
+                  {question.pqNumber || `Q${globalIndex + 1}`}
+                </span>
+                {question.isPriorityPQ && (
+                  <Badge
+                    variant="destructive"
+                    className="text-[10px] px-1 py-0 h-4"
+                  >
+                    PPQ
+                  </Badge>
+                )}
+              </div>
+
+              {/* Question text - 2 lines with ellipsis */}
+              <p
+                className={cn(
+                  "text-xs leading-relaxed line-clamp-2",
+                  isActive
+                    ? "text-primary-foreground opacity-90"
+                    : "text-muted-foreground"
+                )}
+              >
+                {questionText}
+              </p>
+            </div>
+          </button>
+        </TooltipTrigger>
+
+        {/* Full question text on hover */}
+        <TooltipContent
+          side="right"
+          className="max-w-sm p-3"
+          sideOffset={5}
+        >
+          <p className="text-sm">
+            <strong className="font-mono">
+              {question.pqNumber || `Q${globalIndex + 1}`}:
+            </strong>{" "}
+            {questionText}
+          </p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
 export function QuestionNavigationSidebar() {
   const locale = useLocale();
   const t = useTranslations("workspace");
@@ -49,11 +180,14 @@ export function QuestionNavigationSidebar() {
     responses,
     filteredQuestions,
     currentQuestion,
+    currentQuestionIndex,
     filter,
     setFilter,
     searchQuery,
     setSearchQuery,
     goToQuestionById,
+    goToNextQuestion,
+    goToPreviousQuestion,
     isSidebarOpen,
     toggleSidebar,
     answeredCount,
@@ -62,6 +196,62 @@ export function QuestionNavigationSidebar() {
   } = useAssessmentWorkspace();
 
   const isANS = assessment?.questionnaireType === "ANS_USOAP_CMA";
+
+  // Ref for the active question item for auto-scrolling
+  const activeItemRef = useRef<HTMLButtonElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to active question when it changes
+  useEffect(() => {
+    if (activeItemRef.current && scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const activeItem = activeItemRef.current;
+
+      // Calculate if the item is outside the visible area
+      const containerRect = container.getBoundingClientRect();
+      const itemRect = activeItem.getBoundingClientRect();
+
+      const isAboveViewport = itemRect.top < containerRect.top;
+      const isBelowViewport = itemRect.bottom > containerRect.bottom;
+
+      if (isAboveViewport || isBelowViewport) {
+        activeItem.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+      }
+    }
+  }, [currentQuestionIndex]);
+
+  // Keyboard navigation
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      // Only handle if sidebar is focused or we're in the workspace
+      if (!isSidebarOpen) return;
+
+      // Don't interfere with input fields
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      ) {
+        return;
+      }
+
+      if (e.key === "ArrowUp" || e.key === "k") {
+        e.preventDefault();
+        goToPreviousQuestion();
+      } else if (e.key === "ArrowDown" || e.key === "j") {
+        e.preventDefault();
+        goToNextQuestion();
+      }
+    },
+    [isSidebarOpen, goToNextQuestion, goToPreviousQuestion]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
 
   // Group questions by category
   const groupedQuestions = useMemo(() => {
@@ -104,7 +294,7 @@ export function QuestionNavigationSidebar() {
   }, [filteredQuestions, responses, isANS]);
 
   // Get question status
-  const getQuestionStatus = (question: QuestionData) => {
+  const getQuestionStatus = (question: QuestionData): QuestionStatus => {
     const response = responses.get(question.id);
     if (!response) return "unanswered";
 
@@ -119,11 +309,18 @@ export function QuestionNavigationSidebar() {
     return "answered";
   };
 
+  // Get question text in current locale
+  const getQuestionText = (question: QuestionData): string => {
+    return locale === "fr" ? question.questionTextFr : question.questionTextEn;
+  };
+
   const filterOptions: { value: QuestionFilter; label: string }[] = [
     { value: "all", label: t("filters.all") },
     { value: "unanswered", label: t("filters.unanswered") },
     { value: "flagged", label: t("filters.flagged") },
-    ...(isANS ? [{ value: "priority" as QuestionFilter, label: t("filters.priority") }] : []),
+    ...(isANS
+      ? [{ value: "priority" as QuestionFilter, label: t("filters.priority") }]
+      : []),
   ];
 
   return (
@@ -136,10 +333,10 @@ export function QuestionNavigationSidebar() {
             animate={{ width: 320, opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="flex h-full flex-col border-r bg-background"
+            className="flex flex-col border-r bg-background h-full min-h-0"
           >
-            {/* Header */}
-            <div className="flex items-center justify-between border-b p-4">
+            {/* Header - fixed */}
+            <div className="flex-shrink-0 flex items-center justify-between border-b p-4">
               <div>
                 <h2 className="font-semibold">{t("sidebar.title")}</h2>
                 <p className="text-sm text-muted-foreground">
@@ -159,8 +356,8 @@ export function QuestionNavigationSidebar() {
               </Button>
             </div>
 
-            {/* Progress bar */}
-            <div className="px-4 py-3 border-b">
+            {/* Progress bar - fixed */}
+            <div className="flex-shrink-0 px-4 py-3 border-b">
               <div className="flex items-center justify-between text-sm mb-2">
                 <span className="text-muted-foreground">
                   {t("sidebar.overallProgress")}
@@ -170,8 +367,8 @@ export function QuestionNavigationSidebar() {
               <Progress value={progressPercent} className="h-2" />
             </div>
 
-            {/* Search and filter */}
-            <div className="space-y-3 p-4 border-b">
+            {/* Search and filter - fixed */}
+            <div className="flex-shrink-0 space-y-3 p-4 border-b">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
@@ -192,7 +389,10 @@ export function QuestionNavigationSidebar() {
                 )}
               </div>
 
-              <Select value={filter} onValueChange={(v) => setFilter(v as QuestionFilter)}>
+              <Select
+                value={filter}
+                onValueChange={(v) => setFilter(v as QuestionFilter)}
+              >
                 <SelectTrigger>
                   <Filter className="h-4 w-4 mr-2" />
                   <SelectValue />
@@ -207,8 +407,11 @@ export function QuestionNavigationSidebar() {
               </Select>
             </div>
 
-            {/* Question list */}
-            <ScrollArea className="flex-1">
+            {/* Question list - SCROLLABLE */}
+            <div
+              ref={scrollContainerRef}
+              className="flex-1 min-h-0 overflow-y-auto question-list-scroll"
+            >
               <div className="p-2">
                 {groupedQuestions.length === 0 ? (
                   <div className="p-4 text-center text-muted-foreground">
@@ -218,7 +421,7 @@ export function QuestionNavigationSidebar() {
                   groupedQuestions.map((group) => (
                     <div key={group.code} className="mb-4">
                       {/* Group header */}
-                      <div className="flex items-center justify-between px-2 py-1.5 mb-1">
+                      <div className="flex items-center justify-between px-2 py-1.5 mb-1 sticky top-0 bg-background z-10">
                         <div className="flex items-center gap-2">
                           <Badge variant="outline" className="text-xs">
                             {group.code}
@@ -238,7 +441,7 @@ export function QuestionNavigationSidebar() {
                       </div>
 
                       {/* Questions in group */}
-                      <div className="space-y-0.5">
+                      <div className="space-y-1">
                         {group.questions.map((question) => {
                           const status = getQuestionStatus(question);
                           const isActive = currentQuestion?.id === question.id;
@@ -247,84 +450,16 @@ export function QuestionNavigationSidebar() {
                           );
 
                           return (
-                            <button
+                            <QuestionNavItem
                               key={question.id}
+                              question={question}
+                              globalIndex={globalIndex}
+                              status={status}
+                              isActive={isActive}
                               onClick={() => goToQuestionById(question.id)}
-                              className={cn(
-                                "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors",
-                                isActive
-                                  ? "bg-primary text-primary-foreground"
-                                  : "hover:bg-muted"
-                              )}
-                            >
-                              {/* Status indicator */}
-                              <span className="shrink-0">
-                                {status === "complete" && (
-                                  <CheckCircle
-                                    className={cn(
-                                      "h-4 w-4",
-                                      isActive
-                                        ? "text-primary-foreground"
-                                        : "text-green-600"
-                                    )}
-                                  />
-                                )}
-                                {status === "answered" && (
-                                  <Circle
-                                    className={cn(
-                                      "h-4 w-4 fill-current",
-                                      isActive
-                                        ? "text-primary-foreground"
-                                        : "text-blue-600"
-                                    )}
-                                  />
-                                )}
-                                {status === "flagged" && (
-                                  <Flag
-                                    className={cn(
-                                      "h-4 w-4",
-                                      isActive
-                                        ? "text-primary-foreground"
-                                        : "text-yellow-600"
-                                    )}
-                                  />
-                                )}
-                                {status === "unanswered" && (
-                                  <Circle
-                                    className={cn(
-                                      "h-4 w-4",
-                                      isActive
-                                        ? "text-primary-foreground"
-                                        : "text-muted-foreground"
-                                    )}
-                                  />
-                                )}
-                              </span>
-
-                              {/* Question number */}
-                              <span className="font-mono text-xs shrink-0">
-                                {question.pqNumber || `Q${globalIndex + 1}`}
-                              </span>
-
-                              {/* Priority indicator */}
-                              {question.isPriorityPQ && (
-                                <AlertTriangle
-                                  className={cn(
-                                    "h-3 w-3 shrink-0",
-                                    isActive
-                                      ? "text-primary-foreground"
-                                      : "text-orange-500"
-                                  )}
-                                />
-                              )}
-
-                              {/* Question text preview */}
-                              <span className="truncate flex-1 text-xs">
-                                {locale === "fr"
-                                  ? question.questionTextFr
-                                  : question.questionTextEn}
-                              </span>
-                            </button>
+                              questionText={getQuestionText(question)}
+                              itemRef={isActive ? activeItemRef : undefined}
+                            />
                           );
                         })}
                       </div>
@@ -332,25 +467,27 @@ export function QuestionNavigationSidebar() {
                   ))
                 )}
               </div>
-            </ScrollArea>
+            </div>
 
-            {/* Footer with keyboard shortcuts hint */}
-            <div className="border-t p-3 text-xs text-muted-foreground">
+            {/* Footer with keyboard shortcuts hint - fixed */}
+            <div className="flex-shrink-0 border-t p-3 text-xs text-muted-foreground bg-muted/30">
               <div className="flex flex-wrap gap-x-4 gap-y-1">
                 <span>
-                  <kbd className="px-1 py-0.5 rounded bg-muted font-mono">
-                    {"\u2190"}
+                  <kbd className="px-1 py-0.5 rounded bg-muted font-mono text-[10px]">
+                    ↑/k
                   </kbd>{" "}
                   {t("shortcuts.prev")}
                 </span>
                 <span>
-                  <kbd className="px-1 py-0.5 rounded bg-muted font-mono">
-                    {"\u2192"}
+                  <kbd className="px-1 py-0.5 rounded bg-muted font-mono text-[10px]">
+                    ↓/j
                   </kbd>{" "}
                   {t("shortcuts.next")}
                 </span>
                 <span>
-                  <kbd className="px-1 py-0.5 rounded bg-muted font-mono">F</kbd>{" "}
+                  <kbd className="px-1 py-0.5 rounded bg-muted font-mono text-[10px]">
+                    F
+                  </kbd>{" "}
                   {t("shortcuts.flag")}
                 </span>
               </div>

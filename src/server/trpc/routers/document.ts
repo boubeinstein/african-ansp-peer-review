@@ -19,7 +19,7 @@ const CreateDocumentInput = z.object({
   name: z.string().min(1).max(255),
   originalName: z.string().optional(),
   description: z.string().max(1000).optional(),
-  fileUrl: z.string().url(),
+  fileUrl: z.string().min(1).refine((val) => val.startsWith("/") || val.startsWith("http"), { message: "Must be a valid URL or path" }),
   fileType: z.string(),
   fileSize: z.number().min(0),
   category: z

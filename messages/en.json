@@ -24,6 +24,7 @@
       "loading": "Loading...",
       "retry": "Retry"
     },
+    "submitting": "Submitting...",
     "status": {
       "active": "Active",
       "inactive": "Inactive",
@@ -171,6 +172,12 @@
       "title": "Assessments",
       "description": "Manage your self-assessments and track progress",
       "newAssessment": "New Assessment",
+      "loading": "Loading assessments...",
+      "updated": "Updated",
+      "due": "Due",
+      "progress": "Progress",
+      "view": "View",
+      "continue": "Continue",
       "empty": {
         "title": "No assessments yet",
         "description": "Start your first self-assessment to evaluate compliance with ICAO standards or SMS maturity.",
@@ -184,6 +191,12 @@
       "submitted": "Submitted"
     },
     "status": {
+      "draft": "Draft",
+      "inProgress": "In Progress",
+      "submitted": "Submitted",
+      "underReview": "Under Review",
+      "completed": "Completed",
+      "archived": "Archived",
       "DRAFT": "Draft",
       "IN_PROGRESS": "In Progress",
       "SUBMITTED": "Submitted",
@@ -298,6 +311,15 @@
       "archive": "Archive Assessment",
       "export": "Export Assessment",
       "compare": "Compare Assessments"
+    },
+    "submitSuccess": "Assessment submitted successfully",
+    "submitError": "Failed to submit assessment",
+    "alreadySubmitted": "Already Submitted",
+    "submittedReadOnly": "This assessment has been submitted and is under review. It is currently read-only.",
+    "completedReadOnly": "This assessment has been completed and is now read-only.",
+    "confirmSubmit": {
+      "title": "Submit Assessment",
+      "description": "Are you sure you want to submit this assessment? Once submitted, you will not be able to make changes until it is reopened."
     },
     "validation": {
       "incompleteQuestions": "{count} questions still need to be answered",
@@ -653,9 +675,6 @@
       "sms": "SMS CANSO SoE"
     },
     "components": {
-      "title": "SMS Components",
-      "selected": "Selected Component",
-      "weight": "weight",
       "1": {
         "short": "Component 1"
       },
@@ -667,7 +686,10 @@
       },
       "4": {
         "short": "Component 4"
-      }
+      },
+      "title": "SMS Components",
+      "selected": "Selected Component",
+      "weight": "weight"
     },
     "studyArea": {
       "title": "Study Areas",

@@ -24,6 +24,7 @@
       "loading": "Chargement...",
       "retry": "Réessayer"
     },
+    "submitting": "Soumission en cours...",
     "status": {
       "active": "Actif",
       "inactive": "Inactif",
@@ -171,6 +172,12 @@
       "title": "Évaluations",
       "description": "Gérez vos auto-évaluations et suivez votre progression",
       "newAssessment": "Nouvelle évaluation",
+      "loading": "Chargement des évaluations...",
+      "updated": "Mis à jour",
+      "due": "Échéance",
+      "progress": "Progression",
+      "view": "Voir",
+      "continue": "Continuer",
       "empty": {
         "title": "Aucune évaluation",
         "description": "Commencez votre première auto-évaluation pour évaluer la conformité aux normes de l'OACI ou la maturité SMS.",
@@ -184,6 +191,12 @@
       "submitted": "Soumises"
     },
     "status": {
+      "draft": "Brouillon",
+      "inProgress": "En cours",
+      "submitted": "Soumis",
+      "underReview": "En révision",
+      "completed": "Terminé",
+      "archived": "Archivé",
       "DRAFT": "Brouillon",
       "IN_PROGRESS": "En cours",
       "SUBMITTED": "Soumis",
@@ -298,6 +311,15 @@
       "archive": "Archiver l'évaluation",
       "export": "Exporter l'évaluation",
       "compare": "Comparer les évaluations"
+    },
+    "submitSuccess": "Évaluation soumise avec succès",
+    "submitError": "Échec de la soumission de l'évaluation",
+    "alreadySubmitted": "Déjà soumise",
+    "submittedReadOnly": "Cette évaluation a été soumise et est en cours de révision. Elle est actuellement en lecture seule.",
+    "completedReadOnly": "Cette évaluation a été terminée et est maintenant en lecture seule.",
+    "confirmSubmit": {
+      "title": "Soumettre l'évaluation",
+      "description": "Êtes-vous sûr de vouloir soumettre cette évaluation ? Une fois soumise, vous ne pourrez plus la modifier jusqu'à sa réouverture."
     },
     "validation": {
       "incompleteQuestions": "{count} questions doivent encore être répondues",
@@ -653,9 +675,6 @@
       "sms": "SGS CANSO SoE"
     },
     "components": {
-      "title": "Composantes SGS",
-      "selected": "Composante Sélectionnée",
-      "weight": "pondération",
       "1": {
         "short": "Composante 1"
       },
@@ -667,7 +686,10 @@
       },
       "4": {
         "short": "Composante 4"
-      }
+      },
+      "title": "Composantes SGS",
+      "selected": "Composante Sélectionnée",
+      "weight": "pondération"
     },
     "studyArea": {
       "title": "Domaines d'Étude",

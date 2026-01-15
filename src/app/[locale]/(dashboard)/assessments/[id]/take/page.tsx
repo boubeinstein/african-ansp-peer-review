@@ -2,6 +2,7 @@
 
 import { use } from "react";
 import { useTranslations, useLocale } from "next-intl";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -11,9 +12,14 @@ import {
   Maximize2,
   Minimize2,
   Send,
+  AlertTriangle,
+  CheckCircle2,
+  AlertCircle,
+  Lock,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -24,20 +30,24 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
   AssessmentWorkspaceProvider,
   useAssessmentWorkspace,
 } from "@/components/features/assessment/assessment-workspace-context";
 import { QuestionNavigationSidebar } from "@/components/features/assessment/question-navigation-sidebar";
 import { QuestionResponsePanel } from "@/components/features/assessment/question-response-panel";
+import { trpc } from "@/lib/trpc/client";
+import { toast } from "sonner";
 
 interface PageProps {
   params: Promise<{ id: string; locale: string }>;
@@ -46,16 +56,30 @@ interface PageProps {
 function WorkspaceHeader() {
   const t = useTranslations("workspace");
   const tAssessment = useTranslations("assessment");
+  const tCommon = useTranslations("common");
   const locale = useLocale();
+  const router = useRouter();
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false);
   const {
     assessment,
     progressPercent,
     answeredCount,
     totalCount,
     saveStatus,
+    isSubmitDialogOpen,
+    setIsSubmitDialogOpen,
   } = useAssessmentWorkspace();
+
+  // Submit mutation
+  const submitMutation = trpc.assessment.submit.useMutation({
+    onSuccess: () => {
+      toast.success(tAssessment("submitSuccess"));
+      router.push(`/${locale}/assessments`);
+    },
+    onError: (error) => {
+      toast.error(error.message || tAssessment("submitError"));
+    },
+  });
 
   if (!assessment) return null;
 
@@ -69,7 +93,16 @@ function WorkspaceHeader() {
     }
   };
 
-  const canSubmit = progressPercent === 100;
+  const handleSubmit = async () => {
+    if (!assessment?.id) return;
+    await submitMutation.mutateAsync({ id: assessment.id });
+  };
+
+  // Check if assessment can be edited/submitted
+  const isEditable = assessment.status === "IN_PROGRESS" || assessment.status === "DRAFT";
+  const isAlreadySubmitted = assessment.status === "SUBMITTED" || assessment.status === "UNDER_REVIEW" || assessment.status === "COMPLETED";
+  const canSubmit = progressPercent === 100 && isEditable;
+  const isSubmitting = submitMutation.isPending;
 
   const questionnaireTitle =
     locale === "fr"
@@ -138,47 +171,77 @@ function WorkspaceHeader() {
       </div>
 
       <div className="flex items-center gap-2">
-        {/* Submit button */}
-        <Dialog open={isSubmitDialogOpen} onOpenChange={setIsSubmitDialogOpen}>
-          <DialogTrigger asChild>
-            <Button
-              variant={canSubmit ? "default" : "outline"}
-              size="sm"
-              disabled={!canSubmit}
-            >
-              <Send className="h-4 w-4 mr-2" />
-              {tAssessment("actions.submit")}
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{tAssessment("actions.submit")}</DialogTitle>
-              <DialogDescription>
-                {tAssessment("validation.canSubmit")}
-              </DialogDescription>
-            </DialogHeader>
+        {/* Submit button - only show if assessment is editable */}
+        {isAlreadySubmitted ? (
+          <Button variant="outline" size="sm" disabled>
+            <Lock className="h-4 w-4 mr-2" />
+            {tAssessment("alreadySubmitted")}
+          </Button>
+        ) : (
+          <AlertDialog open={isSubmitDialogOpen} onOpenChange={setIsSubmitDialogOpen}>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant={canSubmit ? "default" : "outline"}
+                size="sm"
+                disabled={!canSubmit || isSubmitting}
+              >
+                {isSubmitting ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4 mr-2" />
+                )}
+                {isSubmitting ? tCommon("submitting") : tAssessment("actions.submit")}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center gap-2">
+                {canSubmit ? (
+                  <CheckCircle2 className="h-5 w-5 text-green-500" />
+                ) : (
+                  <AlertTriangle className="h-5 w-5 text-amber-500" />
+                )}
+                {tAssessment("confirmSubmit.title")}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                {tAssessment("confirmSubmit.description")}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
             <div className="py-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm">{tAssessment("progress.percentComplete", { percent: progressPercent })}</span>
                 <span className="text-sm font-medium">{answeredCount}/{totalCount}</span>
               </div>
               <Progress value={progressPercent} className="h-2" />
+              {canSubmit && (
+                <p className="text-sm text-green-600 mt-2 flex items-center gap-1">
+                  <CheckCircle2 className="h-4 w-4" />
+                  {tAssessment("validation.canSubmit")}
+                </p>
+              )}
             </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsSubmitDialogOpen(false)}>
-                {tAssessment("actions.continue")}
-              </Button>
-              <Button
-                onClick={() => {
-                  // TODO: Implement submit action
-                  setIsSubmitDialogOpen(false);
-                }}
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={isSubmitting}>
+                {tCommon("actions.cancel")}
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleSubmit}
+                disabled={!canSubmit || isSubmitting}
+                className="bg-primary"
               >
-                {tAssessment("actions.submit")}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    {tCommon("submitting")}
+                  </>
+                ) : (
+                  tCommon("actions.submit")
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        )}
 
         {/* Fullscreen toggle */}
         <TooltipProvider>
@@ -231,6 +294,39 @@ function WorkspaceHeader() {
         </TooltipProvider>
       </div>
     </header>
+  );
+}
+
+function ReadOnlyBanner() {
+  const tAssessment = useTranslations("assessment");
+  const { assessment } = useAssessmentWorkspace();
+
+  if (!assessment) return null;
+
+  const isSubmitted = assessment.status === "SUBMITTED" || assessment.status === "UNDER_REVIEW";
+  const isCompleted = assessment.status === "COMPLETED" || assessment.status === "ARCHIVED";
+
+  if (!isSubmitted && !isCompleted) return null;
+
+  return (
+    <div className={cn(
+      "flex items-center gap-2 px-4 py-2 text-sm",
+      isCompleted
+        ? "bg-green-50 text-green-800 border-b border-green-200"
+        : "bg-amber-50 text-amber-800 border-b border-amber-200"
+    )}>
+      {isCompleted ? (
+        <>
+          <CheckCircle2 className="h-4 w-4" />
+          <span>{tAssessment("completedReadOnly")}</span>
+        </>
+      ) : (
+        <>
+          <AlertCircle className="h-4 w-4" />
+          <span>{tAssessment("submittedReadOnly")}</span>
+        </>
+      )}
+    </div>
   );
 }
 
@@ -289,6 +385,7 @@ export default function AssessmentTakePage({ params }: PageProps) {
     <AssessmentWorkspaceProvider assessmentId={id}>
       <div className="flex flex-col h-screen bg-background">
         <WorkspaceHeader />
+        <ReadOnlyBanner />
         <WorkspaceContent />
       </div>
     </AssessmentWorkspaceProvider>

@@ -2,7 +2,10 @@
 
 import { useMemo } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
+import { trpc } from "@/lib/trpc/client";
 import {
   ChevronLeft,
   ChevronRight,
@@ -12,6 +15,8 @@ import {
   Save,
   Loader2,
   CheckCircle2,
+  Send,
+  Lock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -29,6 +34,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Progress } from "@/components/ui/progress";
 import { useAssessmentWorkspace } from "./assessment-workspace-context";
 import { ANSResponse } from "./response-types/ans-response";
 import { SMSResponse } from "./response-types/sms-response";
@@ -37,7 +54,10 @@ import { EvidencePanel } from "./evidence-panel";
 
 export function QuestionResponsePanel() {
   const locale = useLocale();
+  const router = useRouter();
   const t = useTranslations("workspace");
+  const tCommon = useTranslations("common");
+  const tAssessment = useTranslations("assessment");
   const {
     assessment,
     currentQuestion,
@@ -49,7 +69,37 @@ export function QuestionResponsePanel() {
     updateResponse,
     saveStatus,
     saveCurrentResponse,
+    isOnLastQuestion,
+    progressPercent,
+    answeredCount,
+    totalCount,
   } = useAssessmentWorkspace();
+
+  // Check if assessment can be edited/submitted
+  const isEditable = assessment?.status === "IN_PROGRESS" || assessment?.status === "DRAFT";
+  const isAlreadySubmitted = assessment?.status === "SUBMITTED" ||
+    assessment?.status === "UNDER_REVIEW" ||
+    assessment?.status === "COMPLETED" ||
+    assessment?.status === "ARCHIVED";
+  const canSubmit = progressPercent === 100 && isEditable;
+
+  // Submit mutation
+  const submitMutation = trpc.assessment.submit.useMutation({
+    onSuccess: () => {
+      toast.success(tAssessment("submitSuccess"));
+      router.push(`/${locale}/assessments`);
+    },
+    onError: (error) => {
+      toast.error(error.message || tAssessment("submitError"));
+    },
+  });
+
+  const handleSubmit = async () => {
+    if (!assessment?.id) return;
+    await submitMutation.mutateAsync({ id: assessment.id });
+  };
+
+  const isSubmitting = submitMutation.isPending;
 
   const isANS = assessment?.questionnaireType === "ANS_USOAP_CMA";
   const response = currentQuestion ? responses.get(currentQuestion.id) : null;
@@ -322,13 +372,89 @@ export function QuestionResponsePanel() {
             {t("panel.keyboardHint")}
           </div>
 
-          <Button
-            onClick={goToNextQuestion}
-            disabled={currentQuestionIndex >= filteredQuestions.length - 1}
-          >
-            {t("panel.next")}
-            <ChevronRight className="h-4 w-4 ml-2" />
-          </Button>
+          {isOnLastQuestion ? (
+            isAlreadySubmitted ? (
+              <Button variant="outline" disabled>
+                <Lock className="h-4 w-4 mr-2" />
+                {tAssessment("alreadySubmitted")}
+              </Button>
+            ) : (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant={canSubmit ? "default" : "outline"}
+                    className={cn(canSubmit && "bg-green-600 hover:bg-green-700")}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Send className="h-4 w-4 mr-2" />
+                    )}
+                    {isSubmitting ? tCommon("submitting") : tAssessment("actions.submit")}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="flex items-center gap-2">
+                      {canSubmit ? (
+                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      ) : (
+                        <AlertTriangle className="h-5 w-5 text-amber-500" />
+                      )}
+                      {tAssessment("confirmSubmit.title")}
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {tAssessment("confirmSubmit.description")}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <div className="py-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm">{tAssessment("progress.percentComplete", { percent: progressPercent })}</span>
+                      <span className="text-sm font-medium">{answeredCount}/{totalCount}</span>
+                    </div>
+                    <Progress value={progressPercent} className="h-2" />
+                    {canSubmit && (
+                      <p className="text-sm text-green-600 mt-2 flex items-center gap-1">
+                        <CheckCircle2 className="h-4 w-4" />
+                        {tAssessment("validation.canSubmit")}
+                      </p>
+                    )}
+                    {!canSubmit && (
+                      <p className="text-sm text-amber-600 mt-2 flex items-center gap-1">
+                        <AlertTriangle className="h-4 w-4" />
+                        {tAssessment("validation.cannotSubmit")}
+                      </p>
+                    )}
+                  </div>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel disabled={isSubmitting}>
+                      {tCommon("actions.cancel")}
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleSubmit}
+                      disabled={!canSubmit || isSubmitting}
+                      className="bg-primary"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          {tCommon("submitting")}
+                        </>
+                      ) : (
+                        tCommon("actions.submit")
+                      )}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )
+          ) : (
+            <Button onClick={goToNextQuestion}>
+              {t("panel.next")}
+              <ChevronRight className="h-4 w-4 ml-2" />
+            </Button>
+          )}
         </div>
       </div>
     </div>

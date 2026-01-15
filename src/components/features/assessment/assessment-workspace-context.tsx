@@ -114,6 +114,11 @@ interface AssessmentWorkspaceContextValue {
   toggleSidebar: () => void;
   isEvidencePanelOpen: boolean;
   toggleEvidencePanel: () => void;
+  isSubmitDialogOpen: boolean;
+  setIsSubmitDialogOpen: (open: boolean) => void;
+
+  // Navigation helpers
+  isOnLastQuestion: boolean;
 
   // Save status
   saveStatus: "saved" | "saving" | "unsaved" | "error";
@@ -152,6 +157,7 @@ export function AssessmentWorkspaceProvider({
   const [searchQuery, setSearchQuery] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isEvidencePanelOpen, setIsEvidencePanelOpen] = useState(false);
+  const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false);
   const [saveStatus, setSaveStatus] = useState<"saved" | "saving" | "unsaved" | "error">("saved");
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [localEdits, setLocalEdits] = useState<Map<string, Partial<ResponseData>>>(new Map());
@@ -419,6 +425,7 @@ export function AssessmentWorkspaceProvider({
 
   const totalCount = questions.length;
   const progressPercent = totalCount > 0 ? Math.round((answeredCount / totalCount) * 100) : 0;
+  const isOnLastQuestion = currentQuestionIndex >= filteredQuestions.length - 1;
 
   // Auto-save effect (debounced)
   useEffect(() => {
@@ -593,6 +600,9 @@ export function AssessmentWorkspaceProvider({
     toggleSidebar,
     isEvidencePanelOpen,
     toggleEvidencePanel,
+    isSubmitDialogOpen,
+    setIsSubmitDialogOpen,
+    isOnLastQuestion,
     saveStatus,
     lastSavedAt,
     answeredCount,

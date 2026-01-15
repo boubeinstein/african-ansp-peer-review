@@ -57,10 +57,12 @@ export const QuestionnaireTypeSchema = z.enum([
 
 /**
  * Schema for creating a new assessment
+ * Note: organizationId is obtained from the session, not from the client
  */
 export const CreateAssessmentSchema = z.object({
-  organizationId: z.string().cuid(),
-  questionnaireId: z.string().cuid(),
+  // Either questionnaireId OR questionnaireType (API resolves the other)
+  questionnaireId: z.string().cuid().optional(),
+  questionnaireType: z.enum(["ANS_USOAP_CMA", "SMS_CANSO_SOE"]).optional(),
   assessmentType: AssessmentTypeSchema,
   title: z
     .string()
@@ -71,7 +73,11 @@ export const CreateAssessmentSchema = z.object({
     .max(2000, "Description must be less than 2000 characters")
     .optional(),
   dueDate: z.coerce.date().optional(),
-});
+  scope: z.array(z.string()).optional(), // Audit areas or SMS components
+}).refine(
+  (data) => data.questionnaireId || data.questionnaireType,
+  { message: "Either questionnaireId or questionnaireType is required" }
+);
 
 export type CreateAssessmentInput = z.infer<typeof CreateAssessmentSchema>;
 

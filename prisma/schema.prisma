@@ -14,6 +14,7 @@ model Organization {
   country          String
   region           AfricanRegion
   city             String?
+  peerReviewTeam   Int?             @map("peer_review_team")
   membershipStatus MembershipStatus @default(PENDING)
   joinedAt         DateTime?        @map("joined_at")
   createdAt        DateTime         @default(now()) @map("created_at")
@@ -236,10 +237,13 @@ model ReviewerTraining {
 model Assessment {
   id              String               @id @default(cuid())
   type            AssessmentType       @default(SELF_ASSESSMENT)
+  title           String
+  description     String?
   questionnaireId String               @map("questionnaire_id")
   organizationId  String               @map("organization_id")
   status          AssessmentStatus     @default(DRAFT)
   progress        Float                @default(0)
+  dueDate         DateTime?            @map("due_date")
   startedAt       DateTime?            @map("started_at")
   submittedAt     DateTime?            @map("submitted_at")
   completedAt     DateTime?            @map("completed_at")

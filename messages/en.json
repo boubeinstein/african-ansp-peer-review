@@ -97,6 +97,22 @@
   "assessment": {
     "title": "Self-Assessment",
     "subtitle": "Evaluate your organization against ICAO and CANSO standards",
+    "list": {
+      "title": "Assessments",
+      "description": "Manage your self-assessments and track progress",
+      "newAssessment": "New Assessment",
+      "empty": {
+        "title": "No assessments yet",
+        "description": "Start your first self-assessment to evaluate compliance with ICAO standards or SMS maturity.",
+        "create": "Create Assessment"
+      }
+    },
+    "stats": {
+      "total": "Total Assessments",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "submitted": "Submitted"
+    },
     "status": {
       "DRAFT": "Draft",
       "IN_PROGRESS": "In Progress",
@@ -947,6 +963,139 @@
     },
     "errors": {
       "createFailed": "Failed to create assessment. Please try again."
+    }
+  },
+  "workspace": {
+    "loading": "Loading assessment...",
+    "error": {
+      "title": "Error Loading Assessment",
+      "description": "We couldn't load the assessment. Please try again.",
+      "backButton": "Back to Assessments"
+    },
+    "header": {
+      "backToAssessments": "Back to Assessments",
+      "progress": "{answered} of {total} answered ({percent}%)",
+      "help": "Help & Shortcuts",
+      "settings": "Settings"
+    },
+    "sidebar": {
+      "title": "Questions",
+      "progress": "{answered} of {total} answered",
+      "overallProgress": "Overall Progress",
+      "searchPlaceholder": "Search questions...",
+      "noQuestions": "No questions match your filters"
+    },
+    "filters": {
+      "all": "All Questions",
+      "unanswered": "Unanswered",
+      "flagged": "Flagged for Review",
+      "priority": "Priority Questions"
+    },
+    "shortcuts": {
+      "prev": "Previous",
+      "next": "Next",
+      "flag": "Flag"
+    },
+    "panel": {
+      "noQuestion": "No Question Selected",
+      "selectQuestion": "Select a question from the sidebar to begin",
+      "questionOf": "Question {current} of {total}",
+      "saving": "Saving...",
+      "saved": "Saved",
+      "saveError": "Save failed",
+      "save": "Save",
+      "flag": "Flag for review",
+      "unflag": "Remove flag",
+      "guidance": "Guidance",
+      "yourResponse": "Your Response",
+      "ansInstructions": "Select the appropriate response based on your review of the evidence.",
+      "smsInstructions": "Select the maturity level that best describes your organization's current state.",
+      "notes": "Notes & Comments",
+      "previous": "Previous",
+      "next": "Next",
+      "keyboardHint": "Use arrow keys to navigate",
+      "priority": "Priority PQ"
+    },
+    "ansResponse": {
+      "title": "Response",
+      "protocol": "Protocol Question",
+      "satisfactory": "Satisfactory",
+      "satisfactoryDescription": "Meets requirements",
+      "satisfactoryMessage": "Evidence confirms compliance with the protocol question requirements.",
+      "notSatisfactory": "Not Satisfactory",
+      "notSatisfactoryDescription": "Does not meet requirements",
+      "notSatisfactoryMessage": "Evidence indicates non-compliance. Consider documenting findings.",
+      "notApplicable": "Not Applicable",
+      "notApplicableDescription": "Does not apply",
+      "notApplicableMessage": "This question is not applicable to your organization.",
+      "notReviewed": "Not Reviewed",
+      "notReviewedDescription": "Not yet assessed"
+    },
+    "smsResponse": {
+      "title": "Maturity Level",
+      "cansoSoE": "CANSO SoE",
+      "maturityScale": "Maturity:",
+      "score": "Score: {score}",
+      "selectedLevel": "Selected Level",
+      "level": "Level",
+      "levelA": "Informal",
+      "levelADescription": "Ad-hoc safety management. No systematic approach.",
+      "levelB": "Defined",
+      "levelBDescription": "Safety processes are documented and implemented.",
+      "levelC": "Managed",
+      "levelCDescription": "Safety processes are systematically applied and monitored.",
+      "levelD": "Assured",
+      "levelDDescription": "Safety performance is measured against targets.",
+      "levelE": "Excellence",
+      "levelEDescription": "Continuous improvement and predictive safety management."
+    },
+    "comments": {
+      "assessorNotes": "Assessor Notes",
+      "assessorNotesDescription": "Notes visible to peer reviewers",
+      "assessorNotesTooltip": "These notes will be shared with peer reviewers during the review process. Include any context that would help them understand your response.",
+      "assessorNotesPlaceholder": "Add notes for reviewers about this response...",
+      "internalNotes": "Internal Notes",
+      "internalNotesDescription": "Private notes for your team",
+      "internalNotesTooltip": "These notes are only visible to your organization's team and will not be shared with peer reviewers.",
+      "internalNotesPlaceholder": "Add private notes for your team...",
+      "hasContent": "Has content",
+      "characters": "characters",
+      "visibleToReviewers": "Visible to reviewers",
+      "privateNote": "Private to your team",
+      "tips": {
+        "title": "Tips for Good Notes",
+        "tip1": "Reference specific documents or procedures",
+        "tip2": "Note any assumptions made in your response",
+        "tip3": "Flag areas needing further investigation"
+      }
+    },
+    "evidence": {
+      "title": "Supporting Evidence",
+      "description": "Provide evidence to support your response. Include document references, links, or descriptions.",
+      "hasEvidence": "Evidence provided",
+      "noEvidence": "No evidence yet",
+      "descriptionLabel": "Evidence Description",
+      "descriptionPlaceholder": "Describe the evidence supporting your response...",
+      "descriptionHint": "Reference specific documents, procedures, or records",
+      "linksLabel": "Document Links",
+      "urlPlaceholder": "https://example.com/document",
+      "errors": {
+        "emptyUrl": "Please enter a URL",
+        "invalidUrl": "Please enter a valid URL",
+        "duplicateUrl": "This URL has already been added"
+      },
+      "removeDialog": {
+        "title": "Remove Link?",
+        "description": "Are you sure you want to remove this evidence link?",
+        "cancel": "Cancel",
+        "confirm": "Remove"
+      },
+      "dropzone": {
+        "title": "Drop files here",
+        "subtitle": "or click to browse your files",
+        "button": "Upload Files"
+      },
+      "supportedFormats": "Supported: PDF, Word, Excel, images (max 10MB each)"
     }
   }
 }

@@ -97,6 +97,22 @@
   "assessment": {
     "title": "Auto-évaluation",
     "subtitle": "Évaluez votre organisation selon les normes OACI et CANSO",
+    "list": {
+      "title": "Évaluations",
+      "description": "Gérez vos auto-évaluations et suivez votre progression",
+      "newAssessment": "Nouvelle évaluation",
+      "empty": {
+        "title": "Aucune évaluation",
+        "description": "Commencez votre première auto-évaluation pour évaluer la conformité aux normes de l'OACI ou la maturité SMS.",
+        "create": "Créer une évaluation"
+      }
+    },
+    "stats": {
+      "total": "Total des évaluations",
+      "inProgress": "En cours",
+      "completed": "Terminées",
+      "submitted": "Soumises"
+    },
     "status": {
       "DRAFT": "Brouillon",
       "IN_PROGRESS": "En cours",
@@ -947,6 +963,139 @@
     },
     "errors": {
       "createFailed": "Échec de la création de l'évaluation. Veuillez réessayer."
+    }
+  },
+  "workspace": {
+    "loading": "Chargement de l'évaluation...",
+    "error": {
+      "title": "Erreur de chargement de l'évaluation",
+      "description": "Nous n'avons pas pu charger l'évaluation. Veuillez réessayer.",
+      "backButton": "Retour aux évaluations"
+    },
+    "header": {
+      "backToAssessments": "Retour aux évaluations",
+      "progress": "{answered} sur {total} répondues ({percent}%)",
+      "help": "Aide et raccourcis",
+      "settings": "Paramètres"
+    },
+    "sidebar": {
+      "title": "Questions",
+      "progress": "{answered} sur {total} répondues",
+      "overallProgress": "Progression globale",
+      "searchPlaceholder": "Rechercher des questions...",
+      "noQuestions": "Aucune question ne correspond à vos filtres"
+    },
+    "filters": {
+      "all": "Toutes les questions",
+      "unanswered": "Non répondues",
+      "flagged": "Marquées pour révision",
+      "priority": "Questions prioritaires"
+    },
+    "shortcuts": {
+      "prev": "Précédent",
+      "next": "Suivant",
+      "flag": "Marquer"
+    },
+    "panel": {
+      "noQuestion": "Aucune question sélectionnée",
+      "selectQuestion": "Sélectionnez une question dans la barre latérale pour commencer",
+      "questionOf": "Question {current} sur {total}",
+      "saving": "Enregistrement...",
+      "saved": "Enregistré",
+      "saveError": "Échec de l'enregistrement",
+      "save": "Enregistrer",
+      "flag": "Marquer pour révision",
+      "unflag": "Retirer le marquage",
+      "guidance": "Orientations",
+      "yourResponse": "Votre réponse",
+      "ansInstructions": "Sélectionnez la réponse appropriée en fonction de votre examen des preuves.",
+      "smsInstructions": "Sélectionnez le niveau de maturité qui décrit le mieux l'état actuel de votre organisation.",
+      "notes": "Notes et commentaires",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "keyboardHint": "Utilisez les touches fléchées pour naviguer",
+      "priority": "QP prioritaire"
+    },
+    "ansResponse": {
+      "title": "Réponse",
+      "protocol": "Question de protocole",
+      "satisfactory": "Satisfaisant",
+      "satisfactoryDescription": "Répond aux exigences",
+      "satisfactoryMessage": "Les preuves confirment la conformité aux exigences de la question de protocole.",
+      "notSatisfactory": "Non satisfaisant",
+      "notSatisfactoryDescription": "Ne répond pas aux exigences",
+      "notSatisfactoryMessage": "Les preuves indiquent une non-conformité. Envisagez de documenter les constatations.",
+      "notApplicable": "Non applicable",
+      "notApplicableDescription": "Ne s'applique pas",
+      "notApplicableMessage": "Cette question n'est pas applicable à votre organisation.",
+      "notReviewed": "Non examiné",
+      "notReviewedDescription": "Pas encore évalué"
+    },
+    "smsResponse": {
+      "title": "Niveau de maturité",
+      "cansoSoE": "CANSO SoE",
+      "maturityScale": "Maturité :",
+      "score": "Score : {score}",
+      "selectedLevel": "Niveau sélectionné",
+      "level": "Niveau",
+      "levelA": "Informel",
+      "levelADescription": "Gestion de la sécurité ad hoc. Pas d'approche systématique.",
+      "levelB": "Défini",
+      "levelBDescription": "Les processus de sécurité sont documentés et mis en œuvre.",
+      "levelC": "Géré",
+      "levelCDescription": "Les processus de sécurité sont systématiquement appliqués et surveillés.",
+      "levelD": "Assuré",
+      "levelDDescription": "Les performances de sécurité sont mesurées par rapport aux objectifs.",
+      "levelE": "Excellence",
+      "levelEDescription": "Amélioration continue et gestion prédictive de la sécurité."
+    },
+    "comments": {
+      "assessorNotes": "Notes de l'évaluateur",
+      "assessorNotesDescription": "Notes visibles par les réviseurs",
+      "assessorNotesTooltip": "Ces notes seront partagées avec les réviseurs pendant le processus de révision. Incluez tout contexte qui les aiderait à comprendre votre réponse.",
+      "assessorNotesPlaceholder": "Ajoutez des notes pour les réviseurs concernant cette réponse...",
+      "internalNotes": "Notes internes",
+      "internalNotesDescription": "Notes privées pour votre équipe",
+      "internalNotesTooltip": "Ces notes ne sont visibles que par l'équipe de votre organisation et ne seront pas partagées avec les réviseurs.",
+      "internalNotesPlaceholder": "Ajoutez des notes privées pour votre équipe...",
+      "hasContent": "Contenu présent",
+      "characters": "caractères",
+      "visibleToReviewers": "Visible par les réviseurs",
+      "privateNote": "Privé pour votre équipe",
+      "tips": {
+        "title": "Conseils pour de bonnes notes",
+        "tip1": "Référencez des documents ou procédures spécifiques",
+        "tip2": "Notez les hypothèses faites dans votre réponse",
+        "tip3": "Signalez les domaines nécessitant une investigation plus approfondie"
+      }
+    },
+    "evidence": {
+      "title": "Preuves à l'appui",
+      "description": "Fournissez des preuves pour appuyer votre réponse. Incluez des références de documents, des liens ou des descriptions.",
+      "hasEvidence": "Preuves fournies",
+      "noEvidence": "Pas encore de preuves",
+      "descriptionLabel": "Description des preuves",
+      "descriptionPlaceholder": "Décrivez les preuves appuyant votre réponse...",
+      "descriptionHint": "Référencez des documents, procédures ou dossiers spécifiques",
+      "linksLabel": "Liens vers les documents",
+      "urlPlaceholder": "https://exemple.com/document",
+      "errors": {
+        "emptyUrl": "Veuillez entrer une URL",
+        "invalidUrl": "Veuillez entrer une URL valide",
+        "duplicateUrl": "Cette URL a déjà été ajoutée"
+      },
+      "removeDialog": {
+        "title": "Supprimer le lien ?",
+        "description": "Êtes-vous sûr de vouloir supprimer ce lien de preuve ?",
+        "cancel": "Annuler",
+        "confirm": "Supprimer"
+      },
+      "dropzone": {
+        "title": "Déposez les fichiers ici",
+        "subtitle": "ou cliquez pour parcourir vos fichiers",
+        "button": "Télécharger des fichiers"
+      },
+      "supportedFormats": "Supportés : PDF, Word, Excel, images (max 10 Mo chacun)"
     }
   }
 }

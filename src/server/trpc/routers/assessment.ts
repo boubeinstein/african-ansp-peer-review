@@ -259,7 +259,8 @@ const CreateAssessmentInput = z.object({
   // Either questionnaireId or questionnaireType must be provided
   questionnaireId: z.string().cuid().optional(),
   questionnaireType: z.nativeEnum(QuestionnaireType).optional(),
-  type: z.nativeEnum(AssessmentType).default("SELF_ASSESSMENT"),
+  assessmentType: z.nativeEnum(AssessmentType),
+  title: z.string().min(3).max(200),
   description: z.string().max(2000).optional(),
   dueDate: z.date().optional(),
   scope: z.array(z.string()).optional(), // Audit areas or SMS components to include
@@ -406,7 +407,7 @@ export const assessmentRouter = router({
         where: {
           organizationId: user.organizationId,
           questionnaireId: questionnaire.id,
-          type: input.type,
+          type: input.assessmentType,
           status: { notIn: ["COMPLETED", "ARCHIVED"] },
         },
       });
@@ -414,7 +415,7 @@ export const assessmentRouter = router({
       if (existingAssessment) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: `An active ${input.type.toLowerCase().replace("_", " ")} already exists for this questionnaire. Please complete or archive it before creating a new one.`,
+          message: `An active ${input.assessmentType.toLowerCase().replace("_", " ")} already exists for this questionnaire. Please complete or archive it before creating a new one.`,
         });
       }
 
@@ -435,7 +436,10 @@ export const assessmentRouter = router({
         // Create the assessment
         const newAssessment = await tx.assessment.create({
           data: {
-            type: input.type,
+            type: input.assessmentType,
+            title: input.title,
+            description: input.description,
+            dueDate: input.dueDate,
             questionnaireId: questionnaire.id,
             organizationId: user.organizationId!,
             status: "DRAFT",
@@ -468,7 +472,8 @@ export const assessmentRouter = router({
 
       // Log audit entry
       await logAuditEntry(user.id, "CREATE", "Assessment", assessment.id, {
-        type: input.type,
+        type: input.assessmentType,
+        title: input.title,
         questionnaireId: questionnaire.id,
         questionnaireType: questionnaire.type,
         organizationId: user.organizationId,

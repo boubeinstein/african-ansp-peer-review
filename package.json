@@ -15,8 +15,11 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:push": "prisma db push",
     "prisma:seed": "npx tsx prisma/seed.ts",
+    "prisma:seed:users": "npx tsx prisma/seed-dev-users.ts",
     "prisma:reset": "prisma migrate reset",
-    "db:seed": "npx tsx prisma/seed.ts"
+    "db:seed": "npx tsx prisma/seed.ts",
+    "db:seed:users": "npx tsx prisma/seed-dev-users.ts",
+    "db:seed:all": "npx tsx prisma/seed.ts && npx tsx prisma/seed-dev-users.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",

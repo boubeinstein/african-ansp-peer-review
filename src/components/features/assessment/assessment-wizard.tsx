@@ -146,12 +146,13 @@ export function AssessmentWizard() {
 
   // Handle create assessment
   const handleCreate = useCallback(() => {
-    if (!data.questionnaireType || !data.assessmentType) return;
+    if (!data.questionnaireType || !data.assessmentType || !data.title.trim()) return;
 
     setState("creating");
     createMutation.mutate({
       questionnaireType: data.questionnaireType,
-      type: data.assessmentType,
+      assessmentType: data.assessmentType,
+      title: data.title,
       description: data.description || undefined,
       dueDate: data.dueDate || undefined,
       scope: data.selectedAreas,

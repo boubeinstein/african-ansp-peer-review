@@ -94,6 +94,133 @@
     "welcome": "Welcome back",
     "overview": "Here's an overview of your peer review activities."
   },
+  "assessment": {
+    "title": "Self-Assessment",
+    "subtitle": "Evaluate your organization against ICAO and CANSO standards",
+    "status": {
+      "DRAFT": "Draft",
+      "IN_PROGRESS": "In Progress",
+      "SUBMITTED": "Submitted",
+      "UNDER_REVIEW": "Under Review",
+      "COMPLETED": "Completed",
+      "ARCHIVED": "Archived"
+    },
+    "statusDescription": {
+      "DRAFT": "Assessment has been created but not started",
+      "IN_PROGRESS": "Assessment is actively being completed",
+      "SUBMITTED": "Assessment submitted for review",
+      "UNDER_REVIEW": "Assessment is being reviewed",
+      "COMPLETED": "Assessment has been finalized",
+      "ARCHIVED": "Assessment has been archived"
+    },
+    "types": {
+      "SELF_ASSESSMENT": "Self-Assessment",
+      "GAP_ANALYSIS": "Gap Analysis",
+      "PRE_REVIEW": "Pre-Review Assessment",
+      "MOCK_REVIEW": "Mock Review"
+    },
+    "typeDescription": {
+      "SELF_ASSESSMENT": "Initial self-evaluation against standards",
+      "GAP_ANALYSIS": "Identify gaps between current state and requirements",
+      "PRE_REVIEW": "Preparation assessment before formal peer review",
+      "MOCK_REVIEW": "Practice assessment simulating peer review"
+    },
+    "responses": {
+      "SATISFACTORY": "Satisfactory",
+      "NOT_SATISFACTORY": "Not Satisfactory",
+      "NOT_APPLICABLE": "Not Applicable",
+      "NOT_REVIEWED": "Not Reviewed"
+    },
+    "responseDescription": {
+      "SATISFACTORY": "Evidence confirms compliance with the protocol question requirements",
+      "NOT_SATISFACTORY": "Evidence indicates non-compliance or insufficient implementation",
+      "NOT_APPLICABLE": "Protocol question is not applicable to this organization",
+      "NOT_REVIEWED": "Question has not been reviewed yet"
+    },
+    "maturity": {
+      "A": "Level A - Informal",
+      "B": "Level B - Defined",
+      "C": "Level C - Managed",
+      "D": "Level D - Assured",
+      "E": "Level E - Excellence"
+    },
+    "maturityDescription": {
+      "A": "Ad-hoc safety management. No systematic approach.",
+      "B": "Safety processes are documented and implemented.",
+      "C": "Safety processes are systematically applied and monitored.",
+      "D": "Safety performance is measured against targets.",
+      "E": "Continuous improvement and predictive safety management."
+    },
+    "evidence": {
+      "types": {
+        "DOCUMENT": "Document",
+        "PROCEDURE": "Procedure",
+        "RECORD": "Record",
+        "INTERVIEW": "Interview",
+        "OBSERVATION": "Observation",
+        "OTHER": "Other"
+      },
+      "typeDescription": {
+        "DOCUMENT": "Written documentation such as manuals, plans, or policies",
+        "PROCEDURE": "Documented procedures, work instructions, or guidelines",
+        "RECORD": "Records of activities, logs, or audit trails",
+        "INTERVIEW": "Information gathered through interviews or discussions",
+        "OBSERVATION": "Direct observation of activities or conditions",
+        "OTHER": "Other types of evidence not fitting above categories"
+      },
+      "upload": "Upload Evidence",
+      "attach": "Attach Evidence",
+      "remove": "Remove Evidence",
+      "verified": "Verified",
+      "unverified": "Unverified",
+      "validFrom": "Valid From",
+      "validUntil": "Valid Until",
+      "expired": "Expired"
+    },
+    "scoring": {
+      "eiScore": "EI Score",
+      "eiScoreDescription": "Effective Implementation score calculated as percentage of satisfactory questions",
+      "smsMaturity": "SMS Maturity",
+      "smsMaturityDescription": "Overall SMS maturity level based on CANSO Standard of Excellence",
+      "overallScore": "Overall Score",
+      "categoryScore": "Category Score",
+      "componentScore": "Component Score",
+      "weightedAverage": "Weighted Average",
+      "lowestLevel": "Lowest Level",
+      "targetNotMet": "Target Not Met",
+      "targetMet": "Target Met",
+      "exceededTarget": "Exceeded Target"
+    },
+    "progress": {
+      "notStarted": "Not Started",
+      "justStarted": "Just Started",
+      "inProgress": "In Progress",
+      "halfwayComplete": "Halfway Complete",
+      "almostComplete": "Almost Complete",
+      "complete": "Complete",
+      "percentComplete": "{percent}% Complete",
+      "questionsAnswered": "{answered} of {total} questions answered",
+      "estimatedTime": "Estimated time remaining: {time}",
+      "lastActivity": "Last activity: {date}"
+    },
+    "actions": {
+      "start": "Start Assessment",
+      "continue": "Continue Assessment",
+      "submit": "Submit Assessment",
+      "review": "Review Assessment",
+      "complete": "Complete Assessment",
+      "archive": "Archive Assessment",
+      "export": "Export Assessment",
+      "compare": "Compare Assessments"
+    },
+    "validation": {
+      "incompleteQuestions": "{count} questions still need to be answered",
+      "missingEvidence": "Only {percent}% of questions have supporting evidence",
+      "incompleteCategories": "{count} categories have unanswered questions",
+      "canSubmit": "Assessment is ready for submission",
+      "cannotSubmit": "Assessment cannot be submitted yet"
+    }
+  },
   "questionnaire": {
     "title": "Questionnaires",
     "subtitle": "Browse USOAP CMA Protocol Questions and CANSO SoE assessments",
@@ -683,5 +810,143 @@
     "to": "to",
     "entries": "entries",
     "perPage": "per page"
+  },
+  "wizard": {
+    "pageTitle": "New Assessment",
+    "pageDescription": "Create a new self-assessment to evaluate your organization",
+    "common": {
+      "recommended": "Recommended"
+    },
+    "steps": {
+      "questionnaireType": "Questionnaire",
+      "questionnaireTypeDesc": "Select type",
+      "assessmentType": "Assessment",
+      "assessmentTypeDesc": "Choose purpose",
+      "details": "Details",
+      "detailsDesc": "Configure scope",
+      "review": "Review",
+      "reviewDesc": "Confirm & create",
+      "stepOf": "Step {current} of {total}"
+    },
+    "questionnaireType": {
+      "title": "Select Questionnaire Type",
+      "description": "Choose the framework for your assessment",
+      "helpText": "Not sure which to choose? ANS USOAP CMA is recommended for most organizations.",
+      "ans": {
+        "title": "ANS USOAP CMA",
+        "subtitle": "ICAO Universal Safety Oversight Audit Programme",
+        "description": "Evaluate compliance with ICAO standards across 9 audit areas using the Continuous Monitoring Approach protocol questions.",
+        "feature1": "Protocol Questions",
+        "feature2": "Audit Areas",
+        "feature3": "Critical Elements",
+        "keyDifference": "Best for: Compliance assessment against international aviation safety standards"
+      },
+      "sms": {
+        "title": "SMS CANSO SoE",
+        "subtitle": "CANSO Standard of Excellence",
+        "description": "Assess Safety Management System maturity across 4 components using the CANSO framework with maturity levels A-E.",
+        "feature1": "Maturity Levels",
+        "feature2": "SMS Components",
+        "feature3": "Study Areas",
+        "keyDifference": "Best for: SMS maturity assessment and continuous improvement"
+      }
+    },
+    "assessmentType": {
+      "title": "Select Assessment Type",
+      "description": "What is the purpose of this assessment?",
+      "bestFor": "Best for",
+      "types": {
+        "self_assessment": {
+          "title": "Self-Assessment",
+          "short": "Self-Assessment",
+          "description": "Standard internal evaluation against the selected framework requirements.",
+          "bestFor": "Initial baseline evaluation and ongoing compliance monitoring"
+        },
+        "gap_analysis": {
+          "title": "Gap Analysis",
+          "short": "Gap Analysis",
+          "description": "Identify gaps between current state and target requirements or maturity levels.",
+          "bestFor": "Pre-improvement planning and identifying priority areas"
+        },
+        "peer_review": {
+          "title": "Peer Review Preparation",
+          "short": "Pre-Review",
+          "description": "Prepare for an upcoming peer review by completing a thorough self-evaluation.",
+          "bestFor": "Organizations preparing for external peer review"
+        },
+        "follow_up": {
+          "title": "Follow-up Assessment",
+          "short": "Follow-up",
+          "description": "Track progress on previously identified findings and corrective actions.",
+          "bestFor": "Monitoring improvement progress after initial assessment"
+        }
+      }
+    },
+    "details": {
+      "title": "Assessment Details",
+      "description": "Configure your assessment scope and timeline",
+      "titleLabel": "Assessment Title",
+      "titlePlaceholder": "Enter a descriptive title",
+      "titleHint": "A clear title helps you identify this assessment later",
+      "regenerateTitle": "Regenerate title",
+      "descriptionLabel": "Description (Optional)",
+      "descriptionPlaceholder": "Add any notes or objectives for this assessment...",
+      "dueDateLabel": "Target Completion Date (Optional)",
+      "dueDateHint": "Set a target date to help track progress",
+      "scope": {
+        "ansTitle": "Audit Areas",
+        "ansDescription": "Select which ICAO audit areas to include in this assessment",
+        "smsTitle": "SMS Components",
+        "smsDescription": "Select which SMS components to assess",
+        "selectAll": "Select All",
+        "deselectAll": "Deselect All",
+        "noneSelected": "No areas selected - please select at least one",
+        "allSelected": "All areas selected",
+        "someSelected": "{count} of {total} areas selected"
+      }
+    },
+    "review": {
+      "title": "Review & Confirm",
+      "description": "Review your selections before creating the assessment",
+      "summaryTitle": "Assessment Summary",
+      "assessmentTitle": "Title",
+      "descriptionLabel": "Description",
+      "auditAreas": "Audit Areas",
+      "smsComponents": "SMS Components",
+      "estimatedQuestions": "Est. Questions",
+      "estimatedTime": "Est. Time",
+      "hours": "hrs",
+      "targetDate": "Target Date",
+      "noDueDate": "No target set",
+      "tipsTitle": "Tips for a Successful Assessment",
+      "tips": {
+        "gather": "Gather relevant documentation and evidence before starting",
+        "collaborate": "Involve key stakeholders from different departments",
+        "evidence": "Document evidence for each response to support your findings",
+        "honest": "Be honest in your responses - this assessment is for your improvement"
+      },
+      "confirmLabel": "I understand and am ready to create this assessment",
+      "confirmDescription": "By confirming, a new assessment will be created with the settings above. You can begin answering questions immediately or return later.",
+      "confirmRequired": "Please confirm to continue",
+      "createButton": "Create Assessment"
+    },
+    "creating": {
+      "title": "Creating Your Assessment",
+      "description": "Please wait while we set up your assessment...",
+      "button": "Creating..."
+    },
+    "success": {
+      "title": "Assessment Created Successfully!",
+      "description": "Your assessment is ready. You can start answering questions now or return later.",
+      "created": "Assessment created successfully",
+      "assessmentId": "Assessment ID",
+      "assessmentTitle": "Title",
+      "startAssessment": "Start Assessment",
+      "viewDashboard": "View Dashboard",
+      "createAnother": "Create Another Assessment"
+    },
+    "errors": {
+      "createFailed": "Failed to create assessment. Please try again."
+    }
   }
 }

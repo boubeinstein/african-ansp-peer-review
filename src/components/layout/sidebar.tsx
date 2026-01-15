@@ -17,6 +17,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useState } from "react";
 
 interface NavItem {
@@ -68,29 +74,55 @@ export function Sidebar({ locale }: SidebarProps) {
       </div>
 
       <ScrollArea className="flex-1 px-3 py-4">
-        <nav className="flex flex-col gap-1">
-          {navItems.map((item) => {
-            const fullHref = item.href === "/" ? `/${locale}` : `/${locale}${item.href}`;
-            const isActive = item.href === "/"
-              ? pathname === `/${locale}` || pathname === `/${locale}/`
-              : pathname.startsWith(fullHref);
-            return (
-              <Link
-                key={item.titleKey}
-                href={fullHref}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
-                  isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                )}
-              >
-                <item.icon className="h-4 w-4 shrink-0" />
-                {!collapsed && <span>{t(item.titleKey)}</span>}
-              </Link>
-            );
-          })}
-        </nav>
+        <TooltipProvider delayDuration={0}>
+          <nav className="flex flex-col gap-1">
+            {navItems.map((item) => {
+              const fullHref = item.href === "/" ? `/${locale}` : `/${locale}${item.href}`;
+              const isActive = item.href === "/"
+                ? pathname === `/${locale}` || pathname === `/${locale}/`
+                : pathname.startsWith(fullHref);
+
+              const navLink = (
+                <Link
+                  href={fullHref}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
+                    isActive
+                      ? "bg-primary/10 text-primary font-medium border-l-2 border-primary ml-[-2px]"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    collapsed && "justify-center px-2"
+                  )}
+                >
+                  <item.icon className={cn("h-4 w-4 shrink-0", isActive && "text-primary")} />
+                  {!collapsed && <span>{t(item.titleKey)}</span>}
+                </Link>
+              );
+
+              // Show tooltip only when collapsed
+              if (collapsed) {
+                return (
+                  <Tooltip key={item.titleKey}>
+                    <TooltipTrigger asChild>
+                      {navLink}
+                    </TooltipTrigger>
+                    <TooltipContent side="right" className="flex items-center gap-2">
+                      <span>{t(item.titleKey)}</span>
+                      {isActive && (
+                        <span className="text-xs text-muted-foreground">(current)</span>
+                      )}
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              }
+
+              return (
+                <div key={item.titleKey}>
+                  {navLink}
+                </div>
+              );
+            })}
+          </nav>
+        </TooltipProvider>
       </ScrollArea>
 
       <Button

@@ -117,8 +117,8 @@ export function StudyAreaAccordion({
             className="border-0"
           >
             <Card className={cn("transition-all", borderColor)}>
-              <AccordionTrigger asChild>
-                <CardHeader className="p-4 cursor-pointer hover:bg-muted/30 transition-colors [&[data-state=open]>div>svg]:rotate-180">
+              <CardHeader className="p-0">
+                <AccordionTrigger className="p-4 hover:bg-muted/30 hover:no-underline w-full [&[data-state=open]>div>svg]:rotate-180">
                   <div className="flex items-center gap-4 w-full">
                     {/* Study Area Code Badge */}
                     <div
@@ -154,8 +154,8 @@ export function StudyAreaAccordion({
                     {/* Chevron */}
                     <ChevronDown className="h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200" />
                   </div>
-                </CardHeader>
-              </AccordionTrigger>
+                </AccordionTrigger>
+              </CardHeader>
 
               <AccordionContent>
                 <CardContent className="pt-0 px-4 pb-4">

@@ -1,6 +1,7 @@
 import { router, createCallerFactory } from "../trpc";
 import { questionnaireRouter } from "./questionnaire";
 import { adminRouter } from "./admin";
+import { assessmentRouter } from "./assessment";
 
 /**
  * Main app router combining all sub-routers
@@ -8,6 +9,7 @@ import { adminRouter } from "./admin";
 export const appRouter = router({
   questionnaire: questionnaireRouter,
   admin: adminRouter,
+  assessment: assessmentRouter,
 });
 
 /**

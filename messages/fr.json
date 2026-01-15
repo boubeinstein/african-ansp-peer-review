@@ -94,6 +94,133 @@
     "welcome": "Bon retour",
     "overview": "Voici un aperçu de vos activités de revue par les pairs."
   },
+  "assessment": {
+    "title": "Auto-évaluation",
+    "subtitle": "Évaluez votre organisation selon les normes OACI et CANSO",
+    "status": {
+      "DRAFT": "Brouillon",
+      "IN_PROGRESS": "En cours",
+      "SUBMITTED": "Soumis",
+      "UNDER_REVIEW": "En révision",
+      "COMPLETED": "Terminé",
+      "ARCHIVED": "Archivé"
+    },
+    "statusDescription": {
+      "DRAFT": "L'évaluation a été créée mais pas encore commencée",
+      "IN_PROGRESS": "L'évaluation est en cours de réalisation",
+      "SUBMITTED": "L'évaluation a été soumise pour révision",
+      "UNDER_REVIEW": "L'évaluation est en cours de révision",
+      "COMPLETED": "L'évaluation a été finalisée",
+      "ARCHIVED": "L'évaluation a été archivée"
+    },
+    "types": {
+      "SELF_ASSESSMENT": "Auto-évaluation",
+      "GAP_ANALYSIS": "Analyse des écarts",
+      "PRE_REVIEW": "Évaluation pré-revue",
+      "MOCK_REVIEW": "Revue simulée"
+    },
+    "typeDescription": {
+      "SELF_ASSESSMENT": "Auto-évaluation initiale par rapport aux normes",
+      "GAP_ANALYSIS": "Identifier les écarts entre l'état actuel et les exigences",
+      "PRE_REVIEW": "Évaluation préparatoire avant la revue formelle par les pairs",
+      "MOCK_REVIEW": "Évaluation pratique simulant une revue par les pairs"
+    },
+    "responses": {
+      "SATISFACTORY": "Satisfaisant",
+      "NOT_SATISFACTORY": "Non satisfaisant",
+      "NOT_APPLICABLE": "Non applicable",
+      "NOT_REVIEWED": "Non examiné"
+    },
+    "responseDescription": {
+      "SATISFACTORY": "Les preuves confirment la conformité aux exigences de la question de protocole",
+      "NOT_SATISFACTORY": "Les preuves indiquent une non-conformité ou une mise en œuvre insuffisante",
+      "NOT_APPLICABLE": "La question de protocole n'est pas applicable à cette organisation",
+      "NOT_REVIEWED": "La question n'a pas encore été examinée"
+    },
+    "maturity": {
+      "A": "Niveau A - Informel",
+      "B": "Niveau B - Défini",
+      "C": "Niveau C - Géré",
+      "D": "Niveau D - Assuré",
+      "E": "Niveau E - Excellence"
+    },
+    "maturityDescription": {
+      "A": "Gestion de la sécurité ad hoc. Pas d'approche systématique.",
+      "B": "Les processus de sécurité sont documentés et mis en œuvre.",
+      "C": "Les processus de sécurité sont systématiquement appliqués et surveillés.",
+      "D": "Les performances de sécurité sont mesurées par rapport aux objectifs.",
+      "E": "Amélioration continue et gestion prédictive de la sécurité."
+    },
+    "evidence": {
+      "types": {
+        "DOCUMENT": "Document",
+        "PROCEDURE": "Procédure",
+        "RECORD": "Enregistrement",
+        "INTERVIEW": "Entretien",
+        "OBSERVATION": "Observation",
+        "OTHER": "Autre"
+      },
+      "typeDescription": {
+        "DOCUMENT": "Documentation écrite telle que manuels, plans ou politiques",
+        "PROCEDURE": "Procédures documentées, instructions de travail ou directives",
+        "RECORD": "Enregistrements d'activités, journaux ou pistes d'audit",
+        "INTERVIEW": "Informations recueillies lors d'entretiens ou de discussions",
+        "OBSERVATION": "Observation directe des activités ou des conditions",
+        "OTHER": "Autres types de preuves ne correspondant pas aux catégories ci-dessus"
+      },
+      "upload": "Télécharger une preuve",
+      "attach": "Joindre une preuve",
+      "remove": "Supprimer la preuve",
+      "verified": "Vérifié",
+      "unverified": "Non vérifié",
+      "validFrom": "Valide à partir du",
+      "validUntil": "Valide jusqu'au",
+      "expired": "Expiré"
+    },
+    "scoring": {
+      "eiScore": "Score EI",
+      "eiScoreDescription": "Score de mise en œuvre effective calculé en pourcentage de questions satisfaisantes",
+      "smsMaturity": "Maturité SGS",
+      "smsMaturityDescription": "Niveau de maturité SGS global basé sur la Norme d'Excellence CANSO",
+      "overallScore": "Score global",
+      "categoryScore": "Score par catégorie",
+      "componentScore": "Score par composante",
+      "weightedAverage": "Moyenne pondérée",
+      "lowestLevel": "Niveau le plus bas",
+      "targetNotMet": "Objectif non atteint",
+      "targetMet": "Objectif atteint",
+      "exceededTarget": "Objectif dépassé"
+    },
+    "progress": {
+      "notStarted": "Non commencé",
+      "justStarted": "Tout juste commencé",
+      "inProgress": "En cours",
+      "halfwayComplete": "À moitié terminé",
+      "almostComplete": "Presque terminé",
+      "complete": "Terminé",
+      "percentComplete": "{percent}% terminé",
+      "questionsAnswered": "{answered} sur {total} questions répondues",
+      "estimatedTime": "Temps restant estimé : {time}",
+      "lastActivity": "Dernière activité : {date}"
+    },
+    "actions": {
+      "start": "Commencer l'évaluation",
+      "continue": "Continuer l'évaluation",
+      "submit": "Soumettre l'évaluation",
+      "review": "Réviser l'évaluation",
+      "complete": "Terminer l'évaluation",
+      "archive": "Archiver l'évaluation",
+      "export": "Exporter l'évaluation",
+      "compare": "Comparer les évaluations"
+    },
+    "validation": {
+      "incompleteQuestions": "{count} questions doivent encore être répondues",
+      "missingEvidence": "Seulement {percent}% des questions ont des preuves à l'appui",
+      "incompleteCategories": "{count} catégories ont des questions sans réponse",
+      "canSubmit": "L'évaluation est prête à être soumise",
+      "cannotSubmit": "L'évaluation ne peut pas encore être soumise"
+    }
+  },
   "questionnaire": {
     "title": "Questionnaires",
     "subtitle": "Parcourir les Questions de Protocole USOAP CMA et les évaluations CANSO SoE",
@@ -683,5 +810,143 @@
     "to": "à",
     "entries": "entrées",
     "perPage": "par page"
+  },
+  "wizard": {
+    "pageTitle": "Nouvelle évaluation",
+    "pageDescription": "Créez une nouvelle auto-évaluation pour évaluer votre organisation",
+    "common": {
+      "recommended": "Recommandé"
+    },
+    "steps": {
+      "questionnaireType": "Questionnaire",
+      "questionnaireTypeDesc": "Choisir le type",
+      "assessmentType": "Évaluation",
+      "assessmentTypeDesc": "Choisir l'objectif",
+      "details": "Détails",
+      "detailsDesc": "Configurer le périmètre",
+      "review": "Révision",
+      "reviewDesc": "Confirmer et créer",
+      "stepOf": "Étape {current} sur {total}"
+    },
+    "questionnaireType": {
+      "title": "Sélectionner le type de questionnaire",
+      "description": "Choisissez le cadre de référence pour votre évaluation",
+      "helpText": "Vous ne savez pas lequel choisir ? ANS USOAP CMA est recommandé pour la plupart des organisations.",
+      "ans": {
+        "title": "ANS USOAP CMA",
+        "subtitle": "Programme universel d'audit de supervision de la sécurité de l'OACI",
+        "description": "Évaluez la conformité aux normes de l'OACI dans 9 domaines d'audit en utilisant les questions du protocole de l'approche de surveillance continue.",
+        "feature1": "Questions du protocole",
+        "feature2": "Domaines d'audit",
+        "feature3": "Éléments critiques",
+        "keyDifference": "Idéal pour : Évaluation de conformité aux normes internationales de sécurité aérienne"
+      },
+      "sms": {
+        "title": "SMS CANSO SoE",
+        "subtitle": "Standard d'excellence CANSO",
+        "description": "Évaluez la maturité du système de gestion de la sécurité dans 4 composantes en utilisant le cadre CANSO avec des niveaux de maturité A-E.",
+        "feature1": "Niveaux de maturité",
+        "feature2": "Composantes SMS",
+        "feature3": "Domaines d'étude",
+        "keyDifference": "Idéal pour : Évaluation de la maturité SMS et amélioration continue"
+      }
+    },
+    "assessmentType": {
+      "title": "Sélectionner le type d'évaluation",
+      "description": "Quel est l'objectif de cette évaluation ?",
+      "bestFor": "Idéal pour",
+      "types": {
+        "self_assessment": {
+          "title": "Auto-évaluation",
+          "short": "Auto-évaluation",
+          "description": "Évaluation interne standard par rapport aux exigences du cadre sélectionné.",
+          "bestFor": "Évaluation initiale de référence et suivi continu de la conformité"
+        },
+        "gap_analysis": {
+          "title": "Analyse des écarts",
+          "short": "Analyse écarts",
+          "description": "Identifier les écarts entre l'état actuel et les exigences ou niveaux de maturité cibles.",
+          "bestFor": "Planification pré-amélioration et identification des domaines prioritaires"
+        },
+        "peer_review": {
+          "title": "Préparation à la revue par les pairs",
+          "short": "Pré-revue",
+          "description": "Préparez-vous à une prochaine revue par les pairs en effectuant une auto-évaluation approfondie.",
+          "bestFor": "Organisations se préparant à une revue externe par les pairs"
+        },
+        "follow_up": {
+          "title": "Évaluation de suivi",
+          "short": "Suivi",
+          "description": "Suivre les progrès sur les constatations précédemment identifiées et les actions correctives.",
+          "bestFor": "Suivi des progrès d'amélioration après l'évaluation initiale"
+        }
+      }
+    },
+    "details": {
+      "title": "Détails de l'évaluation",
+      "description": "Configurez le périmètre et le calendrier de votre évaluation",
+      "titleLabel": "Titre de l'évaluation",
+      "titlePlaceholder": "Entrez un titre descriptif",
+      "titleHint": "Un titre clair vous aide à identifier cette évaluation plus tard",
+      "regenerateTitle": "Régénérer le titre",
+      "descriptionLabel": "Description (Optionnel)",
+      "descriptionPlaceholder": "Ajoutez des notes ou objectifs pour cette évaluation...",
+      "dueDateLabel": "Date cible d'achèvement (Optionnel)",
+      "dueDateHint": "Définissez une date cible pour aider à suivre les progrès",
+      "scope": {
+        "ansTitle": "Domaines d'audit",
+        "ansDescription": "Sélectionnez les domaines d'audit OACI à inclure dans cette évaluation",
+        "smsTitle": "Composantes SMS",
+        "smsDescription": "Sélectionnez les composantes SMS à évaluer",
+        "selectAll": "Tout sélectionner",
+        "deselectAll": "Tout désélectionner",
+        "noneSelected": "Aucun domaine sélectionné - veuillez en sélectionner au moins un",
+        "allSelected": "Tous les domaines sélectionnés",
+        "someSelected": "{count} sur {total} domaines sélectionnés"
+      }
+    },
+    "review": {
+      "title": "Révision et confirmation",
+      "description": "Vérifiez vos sélections avant de créer l'évaluation",
+      "summaryTitle": "Résumé de l'évaluation",
+      "assessmentTitle": "Titre",
+      "descriptionLabel": "Description",
+      "auditAreas": "Domaines d'audit",
+      "smsComponents": "Composantes SMS",
+      "estimatedQuestions": "Questions estimées",
+      "estimatedTime": "Temps estimé",
+      "hours": "heures",
+      "targetDate": "Date cible",
+      "noDueDate": "Aucune cible définie",
+      "tipsTitle": "Conseils pour une évaluation réussie",
+      "tips": {
+        "gather": "Rassemblez la documentation et les preuves pertinentes avant de commencer",
+        "collaborate": "Impliquez les principales parties prenantes de différents départements",
+        "evidence": "Documentez les preuves pour chaque réponse pour étayer vos conclusions",
+        "honest": "Soyez honnête dans vos réponses - cette évaluation est pour votre amélioration"
+      },
+      "confirmLabel": "Je comprends et suis prêt à créer cette évaluation",
+      "confirmDescription": "En confirmant, une nouvelle évaluation sera créée avec les paramètres ci-dessus. Vous pouvez commencer à répondre aux questions immédiatement ou revenir plus tard.",
+      "confirmRequired": "Veuillez confirmer pour continuer",
+      "createButton": "Créer l'évaluation"
+    },
+    "creating": {
+      "title": "Création de votre évaluation",
+      "description": "Veuillez patienter pendant que nous configurons votre évaluation...",
+      "button": "Création..."
+    },
+    "success": {
+      "title": "Évaluation créée avec succès !",
+      "description": "Votre évaluation est prête. Vous pouvez commencer à répondre aux questions maintenant ou revenir plus tard.",
+      "created": "Évaluation créée avec succès",
+      "assessmentId": "ID de l'évaluation",
+      "assessmentTitle": "Titre",
+      "startAssessment": "Commencer l'évaluation",
+      "viewDashboard": "Voir le tableau de bord",
+      "createAnother": "Créer une autre évaluation"
+    },
+    "errors": {
+      "createFailed": "Échec de la création de l'évaluation. Veuillez réessayer."
+    }
   }
 }

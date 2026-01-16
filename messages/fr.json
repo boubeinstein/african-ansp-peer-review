@@ -1907,5 +1907,193 @@
       "FOLLOW_UP": "Revue de suivi",
       "SURVEILLANCE": "Surveillance"
     }
+  },
+  "organizations": {
+    "title": "Organisations",
+    "description": "Gérer les organisations membres de l'AFI",
+    "card": {
+      "users": "utilisateurs",
+      "usersTooltip": "{count} utilisateurs enregistrés",
+      "assessments": "évaluations",
+      "joined": "Rejoint le {date}"
+    },
+    "table": {
+      "name": "Organisation",
+      "icaoCode": "Code OACI",
+      "country": "Pays",
+      "city": "Ville",
+      "region": "Région",
+      "status": "Statut",
+      "joined": "Adhésion",
+      "actions": "Actions",
+      "usersCount": "utilisateurs",
+      "assessmentsCount": "évaluations",
+      "openMenu": "Ouvrir le menu",
+      "noResults": "Aucune organisation trouvée"
+    },
+    "actions": {
+      "view": "Voir",
+      "edit": "Modifier",
+      "create": "Ajouter une organisation",
+      "delete": "Supprimer"
+    },
+    "filters": {
+      "title": "Filtres",
+      "description": "Filtrer les organisations par différents critères",
+      "search": "Rechercher des organisations...",
+      "region": "Région",
+      "country": "Pays",
+      "status": "Statut",
+      "allRegions": "Toutes les régions",
+      "allCountries": "Tous les pays",
+      "allStatuses": "Tous les statuts",
+      "noCountries": "Aucun pays disponible",
+      "reset": "Réinitialiser les filtres",
+      "apply": "Appliquer"
+    },
+    "regions": {
+      "WACAF": "Afrique occidentale et centrale (WACAF)",
+      "ESAF": "Afrique orientale et australe (ESAF)",
+      "NORTHERN": "Afrique du Nord"
+    },
+    "status": {
+      "ACTIVE": "Actif",
+      "PENDING": "En attente",
+      "SUSPENDED": "Suspendu",
+      "INACTIVE": "Inactif"
+    },
+    "stats": {
+      "total": "Total des organisations",
+      "totalDescription": "Toutes les organisations enregistrées",
+      "active": "Actives",
+      "activePercentage": "{percentage}% du total",
+      "noOrganizations": "Aucune organisation",
+      "byRegion": "Par région",
+      "byStatus": "Par statut",
+      "regionDistribution": "Distribution régionale",
+      "noData": "Aucune donnée disponible"
+    },
+    "viewToggle": {
+      "label": "Mode d'affichage",
+      "card": "Vue en cartes",
+      "table": "Vue en tableau"
+    },
+    "results": {
+      "showing": "Affichage de {count} sur {total} organisations"
+    },
+    "pagination": {
+      "showing": "Affichage de {from} à {to} sur {total}",
+      "page": "Page",
+      "of": "sur",
+      "perPage": "Par page",
+      "first": "Première page",
+      "previous": "Page précédente",
+      "next": "Page suivante",
+      "last": "Dernière page"
+    },
+    "error": {
+      "title": "Erreur lors du chargement des organisations",
+      "description": "Une erreur s'est produite lors du chargement des organisations. Veuillez réessayer."
+    },
+    "empty": {
+      "title": "Aucune organisation",
+      "description": "Commencez par ajouter votre première organisation.",
+      "noResults": "Aucune organisation ne correspond à vos critères de recherche. Essayez d'ajuster vos filtres."
+    },
+    "detail": {
+      "backToList": "Retour aux organisations",
+      "tabs": {
+        "overview": "Aperçu",
+        "assessments": "Évaluations",
+        "reviews": "Revues",
+        "users": "Utilisateurs",
+        "location": "Localisation",
+        "membership": "Adhésion",
+        "statistics": "Statistiques"
+      },
+      "country": "Pays",
+      "city": "Ville",
+      "region": "Région",
+      "membershipStatus": "Statut d'adhésion",
+      "joinedDate": "Date d'adhésion",
+      "createdDate": "Date de création",
+      "users": "Utilisateurs",
+      "usersTooltip": "Total des utilisateurs enregistrés dans cette organisation",
+      "assessments": "Évaluations",
+      "assessmentsTooltip": "Total des évaluations réalisées",
+      "reviews": "Revues",
+      "reviewsTooltip": "Revues par les pairs en tant qu'organisation hôte",
+      "reviewers": "Évaluateurs",
+      "noAssessments": "Aucune évaluation",
+      "noAssessmentsDescription": "Cette organisation n'a pas encore effectué d'évaluations.",
+      "assessmentsDescription": "{count} évaluation(s) enregistrée(s)",
+      "assessmentName": "Nom de l'évaluation",
+      "assessmentType": "Type",
+      "assessmentStatus": "Statut",
+      "assessmentDate": "Date",
+      "noReviews": "Aucune revue par les pairs",
+      "noReviewsDescription": "Cette organisation n'a pas encore accueilli de revues par les pairs.",
+      "noUsers": "Aucun utilisateur trouvé",
+      "noUsersDescription": "Aucun utilisateur n'est enregistré pour cette organisation.",
+      "usersDescription": "{count} utilisateur(s) enregistré(s)",
+      "userName": "Nom",
+      "userEmail": "E-mail",
+      "userRole": "Rôle",
+      "userStatus": "Statut",
+      "userActive": "Actif",
+      "userInactive": "Inactif",
+      "notFound": "Organisation non trouvée",
+      "notFoundDescription": "L'organisation que vous recherchez n'existe pas ou a été supprimée."
+    },
+    "form": {
+      "createTitle": "Ajouter une organisation",
+      "createDescription": "Ajouter une nouvelle organisation au Programme AFI de revue par les pairs",
+      "editTitle": "Modifier l'organisation",
+      "editDescription": "Mettre à jour les informations de {name}",
+      "createOrganization": "Créer l'organisation",
+      "sections": {
+        "basicInfo": "Informations de base",
+        "location": "Localisation",
+        "contact": "Coordonnées",
+        "description": "Description",
+        "status": "Statut d'adhésion"
+      },
+      "nameEn": "Nom (Anglais)",
+      "nameEnPlaceholder": "Entrez le nom en anglais",
+      "nameFr": "Nom (Français)",
+      "nameFrPlaceholder": "Entrez le nom en français",
+      "icaoCode": "Code OACI",
+      "icaoCodePlaceholder": "ex., ASEC",
+      "icaoCodeDescription": "Code OACI à 4 lettres (doit être unique)",
+      "icaoCodeTaken": "Ce code OACI est déjà utilisé par {name}",
+      "country": "Pays",
+      "selectCountry": "Sélectionner un pays",
+      "searchCountry": "Rechercher un pays...",
+      "noCountryFound": "Aucun pays trouvé",
+      "city": "Ville",
+      "cityPlaceholder": "Entrez le nom de la ville",
+      "region": "Région africaine",
+      "selectRegion": "Sélectionner une région",
+      "address": "Adresse",
+      "addressPlaceholder": "Entrez l'adresse complète",
+      "contactEmail": "E-mail de contact",
+      "contactEmailPlaceholder": "contact@organisation.org",
+      "contactPhone": "Téléphone de contact",
+      "contactPhonePlaceholder": "+XXX XXX XXX XXX",
+      "website": "Site web",
+      "websitePlaceholder": "https://www.organisation.org",
+      "descriptionEn": "Description (Anglais)",
+      "descriptionEnPlaceholder": "Brève description de l'organisation en anglais...",
+      "descriptionFr": "Description (Français)",
+      "descriptionFrPlaceholder": "Brève description de l'organisation...",
+      "descriptionHint": "Maximum 2000 caractères",
+      "membershipStatus": "Statut d'adhésion",
+      "selectStatus": "Sélectionner le statut",
+      "membershipStatusDescription": "Statut actuel d'adhésion au Programme AFI",
+      "createSuccess": "Organisation créée avec succès",
+      "createError": "Échec de la création de l'organisation",
+      "updateSuccess": "Organisation mise à jour avec succès",
+      "updateError": "Échec de la mise à jour de l'organisation"
+    }
   }
 }

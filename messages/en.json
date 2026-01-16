@@ -1907,5 +1907,193 @@
       "FOLLOW_UP": "Follow-up Review",
       "SURVEILLANCE": "Surveillance"
     }
+  },
+  "organizations": {
+    "title": "Organizations",
+    "description": "Manage AFI member organizations",
+    "card": {
+      "users": "users",
+      "usersTooltip": "{count} registered users",
+      "assessments": "assessments",
+      "joined": "Joined {date}"
+    },
+    "table": {
+      "name": "Organization",
+      "icaoCode": "ICAO Code",
+      "country": "Country",
+      "city": "City",
+      "region": "Region",
+      "status": "Status",
+      "joined": "Joined",
+      "actions": "Actions",
+      "usersCount": "users",
+      "assessmentsCount": "assessments",
+      "openMenu": "Open menu",
+      "noResults": "No organizations found"
+    },
+    "actions": {
+      "view": "View",
+      "edit": "Edit",
+      "create": "Add Organization",
+      "delete": "Delete"
+    },
+    "filters": {
+      "title": "Filters",
+      "description": "Filter organizations by various criteria",
+      "search": "Search organizations...",
+      "region": "Region",
+      "country": "Country",
+      "status": "Status",
+      "allRegions": "All Regions",
+      "allCountries": "All Countries",
+      "allStatuses": "All Statuses",
+      "noCountries": "No countries available",
+      "reset": "Reset Filters",
+      "apply": "Apply"
+    },
+    "regions": {
+      "WACAF": "Western & Central Africa (WACAF)",
+      "ESAF": "Eastern & Southern Africa (ESAF)",
+      "NORTHERN": "Northern Africa"
+    },
+    "status": {
+      "ACTIVE": "Active",
+      "PENDING": "Pending",
+      "SUSPENDED": "Suspended",
+      "INACTIVE": "Inactive"
+    },
+    "stats": {
+      "total": "Total Organizations",
+      "totalDescription": "All registered organizations",
+      "active": "Active",
+      "activePercentage": "{percentage}% of total",
+      "noOrganizations": "No organizations yet",
+      "byRegion": "By Region",
+      "byStatus": "By Status",
+      "regionDistribution": "Regional distribution",
+      "noData": "No data available"
+    },
+    "viewToggle": {
+      "label": "View mode",
+      "card": "Card view",
+      "table": "Table view"
+    },
+    "results": {
+      "showing": "Showing {count} of {total} organizations"
+    },
+    "pagination": {
+      "showing": "Showing {from} to {to} of {total}",
+      "page": "Page",
+      "of": "of",
+      "perPage": "Per page",
+      "first": "First page",
+      "previous": "Previous page",
+      "next": "Next page",
+      "last": "Last page"
+    },
+    "error": {
+      "title": "Error loading organizations",
+      "description": "An error occurred while loading organizations. Please try again."
+    },
+    "empty": {
+      "title": "No organizations",
+      "description": "Get started by adding your first organization.",
+      "noResults": "No organizations match your search criteria. Try adjusting your filters."
+    },
+    "detail": {
+      "backToList": "Back to Organizations",
+      "tabs": {
+        "overview": "Overview",
+        "assessments": "Assessments",
+        "reviews": "Reviews",
+        "users": "Users",
+        "location": "Location",
+        "membership": "Membership",
+        "statistics": "Statistics"
+      },
+      "country": "Country",
+      "city": "City",
+      "region": "Region",
+      "membershipStatus": "Membership Status",
+      "joinedDate": "Joined Date",
+      "createdDate": "Created Date",
+      "users": "Users",
+      "usersTooltip": "Total registered users in this organization",
+      "assessments": "Assessments",
+      "assessmentsTooltip": "Total assessments conducted",
+      "reviews": "Reviews",
+      "reviewsTooltip": "Peer reviews as host organization",
+      "reviewers": "Reviewers",
+      "noAssessments": "No assessments yet",
+      "noAssessmentsDescription": "This organization has not completed any assessments yet.",
+      "assessmentsDescription": "{count} assessment(s) on record",
+      "assessmentName": "Assessment Name",
+      "assessmentType": "Type",
+      "assessmentStatus": "Status",
+      "assessmentDate": "Date",
+      "noReviews": "No peer reviews yet",
+      "noReviewsDescription": "This organization has not hosted any peer reviews yet.",
+      "noUsers": "No users found",
+      "noUsersDescription": "No users are registered for this organization.",
+      "usersDescription": "{count} user(s) registered",
+      "userName": "Name",
+      "userEmail": "Email",
+      "userRole": "Role",
+      "userStatus": "Status",
+      "userActive": "Active",
+      "userInactive": "Inactive",
+      "notFound": "Organization Not Found",
+      "notFoundDescription": "The organization you're looking for doesn't exist or has been removed."
+    },
+    "form": {
+      "createTitle": "Add Organization",
+      "createDescription": "Add a new organization to the AFI Peer Review Programme",
+      "editTitle": "Edit Organization",
+      "editDescription": "Update information for {name}",
+      "createOrganization": "Create Organization",
+      "sections": {
+        "basicInfo": "Basic Information",
+        "location": "Location",
+        "contact": "Contact Information",
+        "description": "Description",
+        "status": "Membership Status"
+      },
+      "nameEn": "Name (English)",
+      "nameEnPlaceholder": "Enter organization name in English",
+      "nameFr": "Name (French)",
+      "nameFrPlaceholder": "Enter organization name in French",
+      "icaoCode": "ICAO Code",
+      "icaoCodePlaceholder": "e.g., ASEC",
+      "icaoCodeDescription": "4-letter ICAO designator code (must be unique)",
+      "icaoCodeTaken": "This ICAO code is already used by {name}",
+      "country": "Country",
+      "selectCountry": "Select a country",
+      "searchCountry": "Search countries...",
+      "noCountryFound": "No country found",
+      "city": "City",
+      "cityPlaceholder": "Enter city name",
+      "region": "African Region",
+      "selectRegion": "Select a region",
+      "address": "Address",
+      "addressPlaceholder": "Enter full address",
+      "contactEmail": "Contact Email",
+      "contactEmailPlaceholder": "contact@organization.org",
+      "contactPhone": "Contact Phone",
+      "contactPhonePlaceholder": "+XXX XXX XXX XXX",
+      "website": "Website",
+      "websitePlaceholder": "https://www.organization.org",
+      "descriptionEn": "Description (English)",
+      "descriptionEnPlaceholder": "Brief description of the organization...",
+      "descriptionFr": "Description (French)",
+      "descriptionFrPlaceholder": "Brève description de l'organisation...",
+      "descriptionHint": "Max 2000 characters",
+      "membershipStatus": "Membership Status",
+      "selectStatus": "Select status",
+      "membershipStatusDescription": "Current membership status in the AFI Programme",
+      "createSuccess": "Organization created successfully",
+      "createError": "Failed to create organization",
+      "updateSuccess": "Organization updated successfully",
+      "updateError": "Failed to update organization"
+    }
   }
 }

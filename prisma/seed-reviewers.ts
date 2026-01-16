@@ -57,8 +57,6 @@ const EXPERTISE_AREAS: ExpertiseArea[] = [
   "HUMAN_FACTORS",
 ];
 
-const LANGUAGES: Language[] = ["EN", "FR", "PT", "AR", "ES"];
-
 const PROFICIENCY_LEVELS: ProficiencyLevel[] = ["BASIC", "COMPETENT", "PROFICIENT", "EXPERT"];
 
 const LANGUAGE_PROFICIENCIES: LanguageProficiency[] = ["BASIC", "INTERMEDIATE", "ADVANCED", "NATIVE"];
@@ -678,14 +676,21 @@ async function main() {
   }
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-    await pool.end();
-  });
+// Only run main() when executed directly (not when imported)
+const isMainModule = import.meta.url === `file://${process.argv[1]}` ||
+                     process.argv[1]?.endsWith("seed-reviewers.ts");
 
-export { seedReviewers };
+if (isMainModule) {
+  main()
+    .catch((e) => {
+      console.error(e);
+      process.exit(1);
+    })
+    .finally(async () => {
+      await prisma.$disconnect();
+      await pool.end();
+    });
+}
+
+// Export for use by main seed.ts
+export { seedOrganizations, seedReviewers, prisma as reviewerPrisma, pool as reviewerPool };

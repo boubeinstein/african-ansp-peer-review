@@ -5,10 +5,9 @@
  * scoring, filtering, and team building.
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import {
   findMatchingReviewers,
-  calculateMatchScore,
   buildOptimalTeam,
   filterByMinScore,
   filterEligibleOnly,
@@ -660,12 +659,7 @@ describe("Reviewer Matching Algorithm", () => {
 
       it("should return false with reasons for ineligible reviewer", () => {
         const criteria = createDefaultCriteria();
-        const ineligibleReviewer = createMockReviewerProfile({
-          homeOrganizationId: "org_target", // Same as target = COI
-        });
-
-        // This reviewer won't even be processed due to auto-COI filter
-        // Let's test with a different ineligibility
+        // Test with a reviewer that has no expertise (ineligible)
         const noExpertiseReviewer = createMockReviewerProfile({
           expertise: [], // No expertise
           languages: [],

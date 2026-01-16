@@ -16,6 +16,9 @@ import type {
 import * as fs from "fs";
 import * as path from "path";
 
+// Import reviewer seeding functions
+import { seedOrganizations, seedReviewers, reviewerPrisma, reviewerPool } from "./seed-reviewers";
+
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
@@ -442,6 +445,28 @@ async function main() {
     console.log(`  - Categories: ${smsResult.categoryCount}`);
     console.log(`  - Questions: ${smsResult.questionCount}`);
 
+    // Seed reviewers
+    console.log("\n--- Seeding Reviewers ---\n");
+    const organizationIds = await seedOrganizations();
+    await seedReviewers(organizationIds);
+
+    // Print reviewer summary
+    const stats = await reviewerPrisma.reviewerProfile.groupBy({
+      by: ["selectionStatus"],
+      _count: { id: true },
+    });
+
+    console.log("\nReviewer Summary:");
+    console.log(`  - Organizations: ${organizationIds.length}`);
+    for (const stat of stats) {
+      console.log(`  - ${stat.selectionStatus}: ${stat._count.id}`);
+    }
+
+    const leadCount = await reviewerPrisma.reviewerProfile.count({
+      where: { isLeadQualified: true },
+    });
+    console.log(`  - Lead Qualified: ${leadCount}`);
+
     console.log("\n✓ Database seed completed successfully!");
   } catch (error) {
     console.error("\n✗ Database seed failed:", error);
@@ -456,4 +481,6 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
+    await reviewerPrisma.$disconnect();
+    await reviewerPool.end();
   });

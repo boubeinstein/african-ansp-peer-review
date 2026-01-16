@@ -28,13 +28,18 @@ const COORDINATOR_ROLES: UserRole[] = [
 ];
 
 /**
- * Roles that can view reviewer information
+ * Roles that can view all reviewer profiles in the directory
+ * The reviewer directory is a professional directory, not sensitive data.
+ * Most authenticated users need access for coordination purposes.
  */
 const VIEWER_ROLES: UserRole[] = [
   ...COORDINATOR_ROLES,
   "LEAD_REVIEWER",
   "PEER_REVIEWER",
   "OBSERVER",
+  "ANSP_ADMIN",       // Coordinates reviews for their ANSP, can nominate reviewers
+  "SAFETY_MANAGER",   // May need to identify reviewer expertise for safety matters
+  "QUALITY_MANAGER",  // May need to identify reviewer expertise for quality matters
 ];
 
 /**
@@ -44,6 +49,15 @@ const REVIEWER_ROLES: UserRole[] = [
   "LEAD_REVIEWER",
   "PEER_REVIEWER",
   "OBSERVER",
+];
+
+/**
+ * Roles that can view sensitive reviewer information
+ * (contact details, passport info, performance ratings, COI details)
+ */
+const SENSITIVE_DATA_ROLES: UserRole[] = [
+  ...COORDINATOR_ROLES,
+  "LEAD_REVIEWER",  // Lead reviewers need contact info for team coordination
 ];
 
 // ============================================
@@ -174,6 +188,32 @@ export function canManageCOI(
 
   // Reviewers can declare their own COIs
   if (session.user.id === reviewerUserId && action === "declare") {
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Check if user can view sensitive reviewer data
+ * (contact details, passport/visa info, performance ratings)
+ * - Admins and coordinators can view all sensitive data
+ * - Lead reviewers can view their team members' contact info
+ * - Reviewers can view their own sensitive data
+ */
+export function canViewSensitiveData(
+  session: Session | null,
+  reviewerUserId: string
+): boolean {
+  if (!session?.user?.role) return false;
+
+  // Admins, coordinators, and lead reviewers can view sensitive data
+  if (SENSITIVE_DATA_ROLES.includes(session.user.role as UserRole)) {
+    return true;
+  }
+
+  // Users can always view their own sensitive data
+  if (session.user.id === reviewerUserId) {
     return true;
   }
 
@@ -330,9 +370,64 @@ export function assertCanApproveNominations(session: Session | null): void {
   }
 }
 
+/**
+ * Assert user can view sensitive reviewer data
+ * @throws TRPCError if permission denied
+ */
+export function assertCanViewSensitiveData(
+  session: Session | null,
+  reviewerUserId: string
+): void {
+  if (!canViewSensitiveData(session, reviewerUserId)) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "You do not have permission to view sensitive reviewer information",
+    });
+  }
+}
+
 // ============================================
 // FIELD-LEVEL PERMISSIONS
 // ============================================
+
+/**
+ * Sensitive fields that require elevated permissions to view
+ * These are hidden from ANSP roles and basic viewers
+ */
+export const SENSITIVE_FIELDS = [
+  "alternativeEmail",
+  "alternativePhone",
+  "passportCountry",
+  "passportExpiry",
+  "visaCountries",
+  "travelRestrictions",
+  "averageRating",
+  "feedbackCount",
+] as const;
+
+/**
+ * Fields visible to all viewers (non-sensitive)
+ */
+export const PUBLIC_PROFILE_FIELDS = [
+  "id",
+  "userId",
+  "organizationId",
+  "homeOrganizationId",
+  "status",
+  "selectionStatus",
+  "reviewerType",
+  "currentPosition",
+  "yearsExperience",
+  "biography",
+  "biographyFr",
+  "expertiseAreas",
+  "specializations",
+  "isLeadQualified",
+  "isAvailable",
+  "reviewsCompleted",
+  "reviewsAsLead",
+  "createdAt",
+] as const;
 
 /**
  * Fields that reviewers can edit on their own profile

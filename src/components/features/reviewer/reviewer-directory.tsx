@@ -11,6 +11,7 @@ import { useState, useMemo } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,11 +22,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   ArrowDownAZ,
   ArrowUpAZ,
   Download,
   Grid3X3,
+  Loader2,
   Search,
   Table2,
   Users,
@@ -59,149 +62,61 @@ interface ReviewerDirectoryProps {
 }
 
 // =============================================================================
-// MOCK DATA (for demonstration)
+// HELPER FUNCTION
 // =============================================================================
 
-const MOCK_REVIEWERS: ReviewerListItem[] = [
-  {
-    id: "1",
-    userId: "u1",
-    fullName: "Dr. Amadou Diallo",
-    email: "amadou.diallo@asecna.org",
-    title: "Dr.",
-    currentPosition: "ATS Safety Manager",
-    homeOrganization: {
-      id: "org1",
-      nameEn: "Agency for Aerial Navigation Safety in Africa",
-      nameFr: "Agence pour la Sécurité de la Navigation Aérienne en Afrique",
-      icaoCode: "ASECNA",
-      country: "Senegal",
-    },
-    reviewerType: "LEAD_REVIEWER",
-    selectionStatus: "SELECTED",
-    isLeadQualified: true,
-    isAvailable: true,
-    primaryExpertise: ["ATS", "SMS_RISK"],
-    languages: ["FR", "EN"],
-    reviewsCompleted: 12,
-    yearsExperience: 18,
-  },
-  {
-    id: "2",
-    userId: "u2",
-    fullName: "Ms. Fatima Al-Hassan",
-    email: "f.alhassan@nansc.gov.ng",
-    title: "Ms.",
-    currentPosition: "Chief Safety Officer",
-    homeOrganization: {
-      id: "org2",
-      nameEn: "Nigerian Airspace Management Agency",
-      nameFr: "Agence de Gestion de l'Espace Aérien Nigérian",
-      icaoCode: "NAMA",
-      country: "Nigeria",
-    },
-    reviewerType: "SENIOR_REVIEWER",
-    selectionStatus: "SELECTED",
-    isLeadQualified: true,
-    isAvailable: false,
-    primaryExpertise: ["SMS_POLICY", "SMS_ASSURANCE", "QMS"],
-    languages: ["EN"],
-    reviewsCompleted: 8,
-    yearsExperience: 15,
-  },
-  {
-    id: "3",
-    userId: "u3",
-    fullName: "Mr. Jean-Pierre Kabongo",
-    email: "jp.kabongo@rva.cd",
-    title: "Mr.",
-    currentPosition: "CNS/ATM Specialist",
-    homeOrganization: {
-      id: "org3",
-      nameEn: "Air Navigation Authority of DRC",
-      nameFr: "Régie des Voies Aériennes",
-      icaoCode: "RVA",
-      country: "DRC",
-    },
-    reviewerType: "PEER_REVIEWER",
-    selectionStatus: "NOMINATED",
-    isLeadQualified: false,
-    isAvailable: true,
-    primaryExpertise: ["CNS", "ENGINEERING"],
-    languages: ["FR", "EN"],
-    reviewsCompleted: 3,
-    yearsExperience: 10,
-  },
-  {
-    id: "4",
-    userId: "u4",
-    fullName: "Ms. Amina Osei",
-    email: "a.osei@gcaa.gov.gh",
-    title: "Ms.",
-    currentPosition: "AIM Supervisor",
-    homeOrganization: {
-      id: "org4",
-      nameEn: "Ghana Civil Aviation Authority",
-      nameFr: "Autorité de l'Aviation Civile du Ghana",
-      icaoCode: "GCAA",
-      country: "Ghana",
-    },
-    reviewerType: "PEER_REVIEWER",
-    selectionStatus: "UNDER_REVIEW",
-    isLeadQualified: false,
-    isAvailable: true,
-    primaryExpertise: ["AIM_AIS", "PANS_OPS"],
-    languages: ["EN"],
-    reviewsCompleted: 0,
-    yearsExperience: 7,
-  },
-  {
-    id: "5",
-    userId: "u5",
-    fullName: "Dr. Mohamed Ben Ali",
-    email: "m.benali@oaca.nat.tn",
-    title: "Dr.",
-    currentPosition: "Director of Safety",
-    homeOrganization: {
-      id: "org5",
-      nameEn: "Office of Civil Aviation and Airports",
-      nameFr: "Office de l'Aviation Civile et des Aéroports",
-      icaoCode: "OACA",
-      country: "Tunisia",
-    },
-    reviewerType: "LEAD_REVIEWER",
-    selectionStatus: "SELECTED",
-    isLeadQualified: true,
-    isAvailable: true,
-    primaryExpertise: ["SMS_RISK", "SMS_ASSURANCE", "HUMAN_FACTORS"],
-    languages: ["AR", "FR", "EN"],
-    reviewsCompleted: 15,
-    yearsExperience: 22,
-  },
-  {
-    id: "6",
-    userId: "u6",
-    fullName: "Mr. Paulo Santos",
-    email: "p.santos@nav.pt.ao",
-    title: "Mr.",
-    currentPosition: "ATC Training Manager",
-    homeOrganization: {
-      id: "org6",
-      nameEn: "ENANA Angola",
-      nameFr: "ENANA Angola",
-      icaoCode: "ENANA",
-      country: "Angola",
-    },
-    reviewerType: "PEER_REVIEWER",
-    selectionStatus: "NOMINATED",
-    isLeadQualified: false,
-    isAvailable: false,
-    primaryExpertise: ["ATS", "TRAINING"],
-    languages: ["PT", "EN"],
-    reviewsCompleted: 2,
-    yearsExperience: 12,
-  },
-];
+/**
+ * Transform API response to ReviewerListItem format
+ */
+function transformToListItem(profile: {
+  id: string;
+  userId: string;
+  currentPosition: string | null;
+  reviewerType: string;
+  selectionStatus: string;
+  isLeadQualified: boolean;
+  isAvailable: boolean;
+  reviewsCompleted: number;
+  yearsExperience: number;
+  user: { id: string; firstName: string; lastName: string; email: string } | null;
+  homeOrganization: { id: string; nameEn: string; nameFr: string; icaoCode: string | null; country: string } | null;
+  expertiseRecords: { area: string; proficiencyLevel: string }[];
+  languages: { language: string; proficiency: string }[];
+}): ReviewerListItem {
+  return {
+    id: profile.id,
+    userId: profile.userId,
+    fullName: profile.user
+      ? `${profile.user.firstName} ${profile.user.lastName}`
+      : "Unknown",
+    email: profile.user?.email ?? "",
+    title: null,
+    currentPosition: profile.currentPosition ?? "",
+    homeOrganization: profile.homeOrganization
+      ? {
+          id: profile.homeOrganization.id,
+          nameEn: profile.homeOrganization.nameEn,
+          nameFr: profile.homeOrganization.nameFr,
+          icaoCode: profile.homeOrganization.icaoCode,
+          country: profile.homeOrganization.country,
+        }
+      : {
+          id: "",
+          nameEn: "Unknown Organization",
+          nameFr: "Organisation inconnue",
+          icaoCode: null,
+          country: "",
+        },
+    reviewerType: profile.reviewerType as ReviewerListItem["reviewerType"],
+    selectionStatus: profile.selectionStatus as ReviewerListItem["selectionStatus"],
+    isLeadQualified: profile.isLeadQualified,
+    isAvailable: profile.isAvailable,
+    primaryExpertise: profile.expertiseRecords.map((e) => e.area) as ExpertiseArea[],
+    languages: profile.languages.map((l) => l.language) as Language[],
+    reviewsCompleted: profile.reviewsCompleted,
+    yearsExperience: profile.yearsExperience,
+  };
+}
 
 // =============================================================================
 // COMPONENT
@@ -228,91 +143,47 @@ export function ReviewerDirectory({
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = viewMode === "card" ? 12 : 10;
 
-  // Filter and sort data
-  const filteredReviewers = useMemo(() => {
-    let result = [...MOCK_REVIEWERS];
-
-    // Search filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        (r) =>
-          r.fullName.toLowerCase().includes(query) ||
-          r.email.toLowerCase().includes(query) ||
-          r.homeOrganization.nameEn.toLowerCase().includes(query) ||
-          r.homeOrganization.nameFr.toLowerCase().includes(query) ||
-          r.homeOrganization.icaoCode?.toLowerCase().includes(query) ||
-          r.homeOrganization.country.toLowerCase().includes(query)
-      );
+  // Map sortBy to API sort field
+  const apiSortBy = useMemo(() => {
+    switch (sortBy) {
+      case "fullName":
+        return "name" as const;
+      case "organization":
+        return "organization" as const;
+      case "reviewsCompleted":
+        return "reviewsCompleted" as const;
+      case "yearsExperience":
+        return "experience" as const;
+      case "selectionStatus":
+        return "createdAt" as const;
+      default:
+        return "name" as const;
     }
+  }, [sortBy]);
 
-    // Expertise filter
-    if (filters.expertiseAreas && filters.expertiseAreas.length > 0) {
-      result = result.filter((r) =>
-        filters.expertiseAreas!.some((area) => r.primaryExpertise.includes(area))
-      );
-    }
+  // Fetch reviewers from API
+  const { data, isLoading, error } = trpc.reviewer.list.useQuery({
+    page: currentPage,
+    pageSize: itemsPerPage,
+    sortBy: apiSortBy,
+    sortOrder,
+    search: searchQuery || undefined,
+    expertiseAreas: filters.expertiseAreas,
+    languages: filters.languages,
+    selectionStatus: filters.selectionStatus?.[0],
+    isLeadQualified: filters.isLeadQualified,
+    isActive: filters.isAvailable,
+  });
 
-    // Language filter
-    if (filters.languages && filters.languages.length > 0) {
-      result = result.filter((r) =>
-        filters.languages!.some((lang) => r.languages.includes(lang))
-      );
-    }
+  // Transform API data to list items
+  const items = data?.items;
+  const reviewers = useMemo(() => {
+    if (!items) return [];
+    return items.map(transformToListItem);
+  }, [items]);
 
-    // Selection status filter
-    if (filters.selectionStatus && filters.selectionStatus.length > 0) {
-      result = result.filter((r) =>
-        filters.selectionStatus!.includes(r.selectionStatus)
-      );
-    }
-
-    // Availability filter
-    if (filters.isAvailable !== undefined) {
-      result = result.filter((r) => r.isAvailable === filters.isAvailable);
-    }
-
-    // Lead qualified filter
-    if (filters.isLeadQualified !== undefined) {
-      result = result.filter((r) => r.isLeadQualified === filters.isLeadQualified);
-    }
-
-    // Sort
-    result.sort((a, b) => {
-      let comparison = 0;
-      switch (sortBy) {
-        case "fullName":
-          comparison = a.fullName.localeCompare(b.fullName);
-          break;
-        case "organization":
-          comparison = a.homeOrganization.nameEn.localeCompare(
-            b.homeOrganization.nameEn
-          );
-          break;
-        case "reviewsCompleted":
-          comparison = a.reviewsCompleted - b.reviewsCompleted;
-          break;
-        case "yearsExperience":
-          comparison = a.yearsExperience - b.yearsExperience;
-          break;
-        case "selectionStatus":
-          comparison = a.selectionStatus.localeCompare(b.selectionStatus);
-          break;
-        default:
-          comparison = 0;
-      }
-      return sortOrder === "asc" ? comparison : -comparison;
-    });
-
-    return result;
-  }, [searchQuery, filters, sortBy, sortOrder]);
-
-  // Pagination
-  const totalPages = Math.ceil(filteredReviewers.length / itemsPerPage);
-  const paginatedReviewers = filteredReviewers.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const totalPages = data?.totalPages ?? 1;
+  const totalCount = data?.total ?? 0;
 
   // Get active filter count
   const activeFilterCount = useMemo(() => {
@@ -442,10 +313,14 @@ export function ReviewerDirectory({
       {/* Results Info */}
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <span>
-          {t("results.showing", {
-            count: filteredReviewers.length,
-            total: MOCK_REVIEWERS.length,
-          })}
+          {isLoading ? (
+            <Skeleton className="h-4 w-32" />
+          ) : (
+            t("results.showing", {
+              count: reviewers.length,
+              total: totalCount,
+            })
+          )}
         </span>
         {activeFilterCount > 0 && (
           <Button
@@ -460,7 +335,23 @@ export function ReviewerDirectory({
       </div>
 
       {/* Content */}
-      {filteredReviewers.length === 0 ? (
+      {isLoading ? (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      ) : error ? (
+        <Card className="py-12">
+          <CardContent className="flex flex-col items-center justify-center text-center">
+            <div className="rounded-full bg-destructive/10 p-6 mb-4">
+              <Users className="h-12 w-12 text-destructive" />
+            </div>
+            <h3 className="text-lg font-medium">Error loading reviewers</h3>
+            <p className="text-muted-foreground max-w-sm mt-2">
+              {error.message}
+            </p>
+          </CardContent>
+        </Card>
+      ) : reviewers.length === 0 ? (
         <Card className="py-12">
           <CardContent className="flex flex-col items-center justify-center text-center">
             <div className="rounded-full bg-muted p-6 mb-4">
@@ -483,7 +374,7 @@ export function ReviewerDirectory({
         </Card>
       ) : viewMode === "card" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {paginatedReviewers.map((reviewer) => (
+          {reviewers.map((reviewer) => (
             <ReviewerCard
               key={reviewer.id}
               reviewer={reviewer}
@@ -494,7 +385,7 @@ export function ReviewerDirectory({
         </div>
       ) : (
         <ReviewerTable
-          reviewers={paginatedReviewers}
+          reviewers={reviewers}
           onView={handleViewProfile}
           onEdit={handleEditProfile}
           sortBy={sortBy}

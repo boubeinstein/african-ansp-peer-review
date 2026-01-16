@@ -1374,8 +1374,14 @@
   "reviewer": {
     "title": "Profil d'évaluateur",
     "titlePlural": "Profils d'évaluateurs",
+    "createTitle": "Ajouter un nouvel évaluateur",
+    "createDescription": "Enregistrer un nouvel évaluateur par les pairs pour le programme",
     "common": {
       "cancel": "Annuler"
+    },
+    "messages": {
+      "created": "Évaluateur créé avec succès",
+      "createError": "Échec de la création de l'évaluateur"
     },
     "profile": {
       "title": "Informations du profil",
@@ -1412,7 +1418,22 @@
       "alternatePhone": "Téléphone alternatif",
       "alternatePhonePlaceholder": "+1 234 567 8900",
       "preferredContact": "Méthode de contact préférée",
-      "selectContactMethod": "Sélectionner la méthode de contact"
+      "selectContactMethod": "Sélectionner la méthode de contact",
+      "userSelection": "Sélection de l'utilisateur",
+      "selectUser": "Sélectionner un utilisateur",
+      "selectUserPlaceholder": "Choisir un utilisateur pour créer le profil...",
+      "selectUserDescription": "Sélectionner un utilisateur existant qui n'a pas encore de profil d'évaluateur",
+      "noUsersAvailable": "Aucun utilisateur disponible sans profil d'évaluateur",
+      "selectedUserInfo": "Utilisateur sélectionné",
+      "email": "Email",
+      "organization": "Organisation",
+      "organizationSection": "Organisation",
+      "homeOrganization": "Organisation d'appartenance",
+      "selectOrganization": "Sélectionner une organisation...",
+      "homeOrganizationDescription": "L'organisation ANSP que cet évaluateur représente",
+      "reviewerType": "Type d'évaluateur",
+      "selectionStatus": "Statut de sélection",
+      "contactSection": "Informations de contact"
     },
     "stats": {
       "reviewsCompleted": "Revues effectuées",

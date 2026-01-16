@@ -1374,8 +1374,14 @@
   "reviewer": {
     "title": "Reviewer Profile",
     "titlePlural": "Reviewer Profiles",
+    "createTitle": "Add New Reviewer",
+    "createDescription": "Register a new peer reviewer for the programme",
     "common": {
       "cancel": "Cancel"
+    },
+    "messages": {
+      "created": "Reviewer created successfully",
+      "createError": "Failed to create reviewer"
     },
     "profile": {
       "title": "Profile Information",
@@ -1412,7 +1418,22 @@
       "alternatePhone": "Alternate Phone",
       "alternatePhonePlaceholder": "+1 234 567 8900",
       "preferredContact": "Preferred Contact Method",
-      "selectContactMethod": "Select contact method"
+      "selectContactMethod": "Select contact method",
+      "userSelection": "User Selection",
+      "selectUser": "Select User",
+      "selectUserPlaceholder": "Choose a user to create profile for...",
+      "selectUserDescription": "Select an existing user who does not yet have a reviewer profile",
+      "noUsersAvailable": "No users available without reviewer profiles",
+      "selectedUserInfo": "Selected User",
+      "email": "Email",
+      "organization": "Organization",
+      "organizationSection": "Organization",
+      "homeOrganization": "Home Organization",
+      "selectOrganization": "Select organization...",
+      "homeOrganizationDescription": "The ANSP organization this reviewer represents",
+      "reviewerType": "Reviewer Type",
+      "selectionStatus": "Selection Status",
+      "contactSection": "Contact Information"
     },
     "stats": {
       "reviewsCompleted": "Reviews Completed",

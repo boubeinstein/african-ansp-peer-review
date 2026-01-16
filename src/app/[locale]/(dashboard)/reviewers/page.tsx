@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { auth } from "@/lib/auth";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,6 +10,9 @@ import {
   Calendar,
 } from "lucide-react";
 import { ReviewerDirectory } from "@/components/features/reviewer/reviewer-directory";
+
+// Admin roles that can add reviewers
+const ADMIN_ROLES = ["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"];
 
 interface ReviewersPageProps {
   params: Promise<{ locale: string }>;
@@ -25,6 +30,10 @@ export default async function ReviewersPage({ params }: ReviewersPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "reviewers" });
+  const session = await auth();
+
+  // Check if current user is admin
+  const isAdmin = session?.user?.role && ADMIN_ROLES.includes(session.user.role);
 
   // Stats - these would come from API in production
   const stats = {
@@ -42,10 +51,14 @@ export default async function ReviewersPage({ params }: ReviewersPageProps) {
           <h1 className="text-3xl font-bold">{t("title")}</h1>
           <p className="text-muted-foreground">{t("description")}</p>
         </div>
-        <Button disabled>
-          <UserPlus className="h-4 w-4 mr-2" />
-          {t("actions.addReviewer")}
-        </Button>
+        {isAdmin && (
+          <Button asChild>
+            <Link href={`/${locale}/reviewers/new`}>
+              <UserPlus className="h-4 w-4 mr-2" />
+              {t("actions.addReviewer")}
+            </Link>
+          </Button>
+        )}
       </div>
 
       {/* Stats Cards */}

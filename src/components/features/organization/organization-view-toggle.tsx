@@ -9,12 +9,6 @@
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { LayoutGrid, List } from "lucide-react";
 
 // =============================================================================
@@ -49,55 +43,39 @@ export function OrganizationViewToggle({
       role="group"
       aria-label={t("viewToggle.label")}
     >
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant={view === "card" ? "default" : "ghost"}
-              size="sm"
-              className={cn(
-                "h-8 px-3",
-                view === "card"
-                  ? "bg-background shadow-sm"
-                  : "hover:bg-background/50"
-              )}
-              onClick={() => onChange("card")}
-              aria-pressed={view === "card"}
-            >
-              <LayoutGrid className="h-4 w-4" />
-              <span className="sr-only">{t("viewToggle.card")}</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>{t("viewToggle.card")}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Button
+        variant={view === "card" ? "default" : "ghost"}
+        size="sm"
+        className={cn(
+          "h-8 px-3",
+          view === "card"
+            ? "bg-background shadow-sm"
+            : "hover:bg-background/50"
+        )}
+        onClick={() => onChange("card")}
+        aria-pressed={view === "card"}
+        title={t("viewToggle.card")}
+      >
+        <LayoutGrid className="h-4 w-4" />
+        <span className="sr-only">{t("viewToggle.card")}</span>
+      </Button>
 
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant={view === "table" ? "default" : "ghost"}
-              size="sm"
-              className={cn(
-                "h-8 px-3",
-                view === "table"
-                  ? "bg-background shadow-sm"
-                  : "hover:bg-background/50"
-              )}
-              onClick={() => onChange("table")}
-              aria-pressed={view === "table"}
-            >
-              <List className="h-4 w-4" />
-              <span className="sr-only">{t("viewToggle.table")}</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>{t("viewToggle.table")}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Button
+        variant={view === "table" ? "default" : "ghost"}
+        size="sm"
+        className={cn(
+          "h-8 px-3",
+          view === "table"
+            ? "bg-background shadow-sm"
+            : "hover:bg-background/50"
+        )}
+        onClick={() => onChange("table")}
+        aria-pressed={view === "table"}
+        title={t("viewToggle.table")}
+      >
+        <List className="h-4 w-4" />
+        <span className="sr-only">{t("viewToggle.table")}</span>
+      </Button>
     </div>
   );
 }

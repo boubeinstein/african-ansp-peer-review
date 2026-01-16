@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: EditOrganizationPageProps) {
 
   return {
     title: t("form.editTitle"),
-    description: t("form.editDescription"),
+    description: t("form.editDescriptionMeta"),
   };
 }
 

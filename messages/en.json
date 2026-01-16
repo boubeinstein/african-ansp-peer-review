@@ -2050,6 +2050,7 @@
       "createDescription": "Add a new organization to the AFI Peer Review Programme",
       "editTitle": "Edit Organization",
       "editDescription": "Update information for {name}",
+      "editDescriptionMeta": "Update organization information",
       "createOrganization": "Create Organization",
       "sections": {
         "basicInfo": "Basic Information",

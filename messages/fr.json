@@ -2050,6 +2050,7 @@
       "createDescription": "Ajouter une nouvelle organisation au Programme AFI de revue par les pairs",
       "editTitle": "Modifier l'organisation",
       "editDescription": "Mettre à jour les informations de {name}",
+      "editDescriptionMeta": "Mettre à jour les informations de l'organisation",
       "createOrganization": "Créer l'organisation",
       "sections": {
         "basicInfo": "Informations de base",

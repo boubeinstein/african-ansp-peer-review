@@ -7,20 +7,13 @@
  * Supports card and table views with pagination and URL state management.
  */
 
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -110,65 +103,70 @@ export function OrganizationDirectory({ className }: OrganizationDirectoryProps)
     setCurrentPage(1);
   }, []);
 
-  // Update URL when state changes
-  const updateURL = useCallback(
-    (updates: Record<string, string | undefined>) => {
-      const params = new URLSearchParams(searchParams.toString());
+  // Track previous URL state to avoid infinite sync loops
+  const lastSyncedUrlRef = useRef<string>("");
+  const isInitialMountRef = useRef(true);
 
-      Object.entries(updates).forEach(([key, value]) => {
-        if (value === undefined || value === "" || value === "1" && key === "page") {
-          params.delete(key);
-        } else {
-          params.set(key, value);
-        }
-      });
-
-      // Remove default values
-      if (params.get("view") === "card") params.delete("view");
-      if (params.get("pageSize") === "12") params.delete("pageSize");
-      if (params.get("sortBy") === "nameEn") params.delete("sortBy");
-      if (params.get("sortOrder") === "asc") params.delete("sortOrder");
-
-      const queryString = params.toString();
-      router.push(`${pathname}${queryString ? `?${queryString}` : ""}`, {
-        scroll: false,
-      });
-    },
-    [searchParams, pathname, router]
-  );
-
-  // Sync URL on filter changes
+  // Sync URL on filter changes - use refs to avoid dependency on searchParams
   useEffect(() => {
-    updateURL({
-      search: debouncedSearch || undefined,
-      region: filters.region?.join(","),
-      country: filters.country?.join(","),
-      status: filters.membershipStatus?.join(","),
-      view: viewMode,
-      page: String(currentPage),
-      pageSize: String(pageSize),
-      sortBy,
-      sortOrder,
-    });
-  }, [debouncedSearch, filters, viewMode, currentPage, pageSize, sortBy, sortOrder, updateURL]);
+    // Skip initial mount to avoid overwriting URL params on page load
+    if (isInitialMountRef.current) {
+      isInitialMountRef.current = false;
+      return;
+    }
 
-  // Fetch organizations
-  const { data, isLoading, error } = trpc.organization.list.useQuery({
+    // Build the new URL params
+    const params = new URLSearchParams();
+
+    if (debouncedSearch) params.set("search", debouncedSearch);
+    if (filters.region?.length) params.set("region", filters.region.join(","));
+    if (filters.country?.length) params.set("country", filters.country.join(","));
+    if (filters.membershipStatus?.length) params.set("status", filters.membershipStatus.join(","));
+    if (viewMode !== "card") params.set("view", viewMode);
+    if (currentPage > 1) params.set("page", String(currentPage));
+    if (pageSize !== 12) params.set("pageSize", String(pageSize));
+    if (sortBy !== "nameEn") params.set("sortBy", sortBy);
+    if (sortOrder !== "asc") params.set("sortOrder", sortOrder);
+
+    const queryString = params.toString();
+    const newUrl = `${pathname}${queryString ? `?${queryString}` : ""}`;
+
+    // Only push if URL actually changed to avoid infinite loop
+    if (newUrl !== lastSyncedUrlRef.current) {
+      lastSyncedUrlRef.current = newUrl;
+      router.push(newUrl, { scroll: false });
+    }
+  }, [debouncedSearch, filters.region, filters.country, filters.membershipStatus, viewMode, currentPage, pageSize, sortBy, sortOrder, pathname, router]);
+
+  // Memoize query input to prevent unnecessary refetches
+  const listQueryInput = useMemo(() => ({
     search: debouncedSearch || undefined,
-    region: filters.region,
-    country: filters.country,
-    membershipStatus: filters.membershipStatus,
+    region: filters.region?.length ? filters.region : undefined,
+    country: filters.country?.length ? filters.country : undefined,
+    membershipStatus: filters.membershipStatus?.length ? filters.membershipStatus : undefined,
     page: currentPage,
     pageSize,
     sortBy,
     sortOrder,
+  }), [debouncedSearch, filters.region, filters.country, filters.membershipStatus, currentPage, pageSize, sortBy, sortOrder]);
+
+  // Fetch organizations with staleTime to prevent constant refetching
+  const { data, isLoading, error } = trpc.organization.list.useQuery(listQueryInput, {
+    staleTime: 30000, // 30 seconds
+    refetchOnWindowFocus: false,
   });
 
-  // Fetch stats
-  const { data: stats, isLoading: statsLoading } = trpc.organization.getStats.useQuery();
+  // Fetch stats with longer staleTime
+  const { data: stats, isLoading: statsLoading } = trpc.organization.getStats.useQuery(undefined, {
+    staleTime: 60000, // 1 minute
+    refetchOnWindowFocus: false,
+  });
 
-  // Fetch countries for filter
-  const { data: countries = [] } = trpc.organization.getCountries.useQuery();
+  // Fetch countries for filter - these rarely change
+  const { data: countries = [] } = trpc.organization.getCountries.useQuery(undefined, {
+    staleTime: 300000, // 5 minutes
+    refetchOnWindowFocus: false,
+  });
 
   const organizations = (data?.items || []) as OrganizationListItem[];
   const totalPages = data?.totalPages ?? 1;
@@ -209,7 +207,13 @@ export function OrganizationDirectory({ className }: OrganizationDirectoryProps)
   }, [sortBy]);
 
   const handleFiltersChange = useCallback((newFilters: Partial<OrganizationFilters>) => {
-    setFilters(newFilters);
+    setFilters(prev => {
+      // Only update if actually changed to avoid unnecessary re-renders
+      if (JSON.stringify(prev) === JSON.stringify(newFilters)) {
+        return prev;
+      }
+      return newFilters;
+    });
     setCurrentPage(1);
   }, []);
 
@@ -414,16 +418,16 @@ export function OrganizationDirectory({ className }: OrganizationDirectoryProps)
             <span className="text-sm text-muted-foreground">
               {t("pagination.perPage")}
             </span>
-            <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
-              <SelectTrigger className="w-[70px] h-8">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="12">12</SelectItem>
-                <SelectItem value="24">24</SelectItem>
-                <SelectItem value="48">48</SelectItem>
-              </SelectContent>
-            </Select>
+            <select
+              value={pageSize}
+              onChange={(e) => handlePageSizeChange(e.target.value)}
+              className="h-8 w-[70px] rounded-md border border-input bg-background px-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              aria-label={t("pagination.perPage")}
+            >
+              <option value="12">12</option>
+              <option value="24">24</option>
+              <option value="48">48</option>
+            </select>
           </div>
         </div>
       )}

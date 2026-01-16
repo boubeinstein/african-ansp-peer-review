@@ -18,12 +18,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Building2, Edit2, Eye, MapPin } from "lucide-react";
 import type { OrganizationListItem } from "@/types/organization";
 
@@ -175,19 +169,13 @@ export function OrganizationCard({
         {/* Stats */}
         {organization._count && (
           <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="flex items-center gap-1">
-                    <Building2 className="h-3 w-3" />
-                    {organization._count.users} {t("card.users")}
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{t("card.usersTooltip", { count: organization._count.users })}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <span
+              className="flex items-center gap-1"
+              title={t("card.usersTooltip", { count: organization._count.users })}
+            >
+              <Building2 className="h-3 w-3" />
+              {organization._count.users} {t("card.users")}
+            </span>
             <span>
               {organization._count.assessments} {t("card.assessments")}
             </span>

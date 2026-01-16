@@ -7,7 +7,7 @@
  * Supports search, multi-select filters for region, country, and status.
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -113,15 +113,28 @@ export function OrganizationFilterPanel({
   // Debounce search input
   const debouncedSearch = useDebounce(searchInput, 300);
 
-  // Update filters when debounced search changes
+  // Track if this is the initial mount to avoid calling onChange on first render
+  const isInitialMount = useRef(true);
+  const prevSearchRef = useRef(filters.search);
+
+  // Update parent filters when debounced search changes
+  // Only call onChange when the search value actually changes (not on parent re-renders)
   useEffect(() => {
-    if (debouncedSearch !== filters.search) {
+    // Skip initial mount
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    // Only call onChange if the debounced value actually differs from what parent has
+    if (debouncedSearch !== prevSearchRef.current) {
+      prevSearchRef.current = debouncedSearch;
       onChange({
         ...filters,
         search: debouncedSearch || undefined,
       });
     }
-  }, [debouncedSearch, filters, onChange]);
+  }, [debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Calculate active filter count
   const activeFilterCount =

@@ -29,6 +29,7 @@ interface NavItem {
   titleKey: string;
   href: string;
   icon: React.ElementType;
+  disabled?: boolean;
 }
 
 const navItems: NavItem[] = [
@@ -78,23 +79,43 @@ export function Sidebar({ locale }: SidebarProps) {
           <nav className="flex flex-col gap-1">
             {navItems.map((item) => {
               const fullHref = item.href === "/" ? `/${locale}` : `/${locale}${item.href}`;
-              const isActive = item.href === "/"
+              const isActive = !item.disabled && (item.href === "/"
                 ? pathname === `/${locale}` || pathname === `/${locale}/`
-                : pathname.startsWith(fullHref);
+                : pathname.startsWith(fullHref));
 
-              const navLink = (
-                <Link
-                  href={fullHref}
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
-                    isActive
-                      ? "bg-primary/10 text-primary font-medium border-l-2 border-primary ml-[-2px]"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                    collapsed && "justify-center px-2"
-                  )}
-                >
+              const navLinkContent = (
+                <>
                   <item.icon className={cn("h-4 w-4 shrink-0", isActive && "text-primary")} />
-                  {!collapsed && <span>{t(item.titleKey)}</span>}
+                  {!collapsed && (
+                    <span className="flex items-center gap-2">
+                      {t(item.titleKey)}
+                      {item.disabled && (
+                        <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
+                          Soon
+                        </span>
+                      )}
+                    </span>
+                  )}
+                </>
+              );
+
+              const linkClassName = cn(
+                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
+                item.disabled
+                  ? "text-muted-foreground/50 cursor-not-allowed"
+                  : isActive
+                    ? "bg-primary/10 text-primary font-medium border-l-2 border-primary ml-[-2px]"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                collapsed && "justify-center px-2"
+              );
+
+              const navLink = item.disabled ? (
+                <span className={linkClassName}>
+                  {navLinkContent}
+                </span>
+              ) : (
+                <Link href={fullHref} className={linkClassName}>
+                  {navLinkContent}
                 </Link>
               );
 
@@ -107,6 +128,9 @@ export function Sidebar({ locale }: SidebarProps) {
                     </TooltipTrigger>
                     <TooltipContent side="right" className="flex items-center gap-2">
                       <span>{t(item.titleKey)}</span>
+                      {item.disabled && (
+                        <span className="text-xs text-muted-foreground">(coming soon)</span>
+                      )}
                       {isActive && (
                         <span className="text-xs text-muted-foreground">(current)</span>
                       )}

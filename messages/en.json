@@ -40,7 +40,8 @@
       "invalidEmail": "Please enter a valid email address",
       "minLength": "Minimum {min} characters required",
       "maxLength": "Maximum {max} characters allowed"
-    }
+    },
+    "comingSoon": "Coming Soon"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -1366,6 +1367,107 @@
       "close": "Close",
       "noPreview": "Preview not available",
       "uploadedBy": "Uploaded by"
+    }
+  },
+  "reviewer": {
+    "title": "Reviewer Profile",
+    "titlePlural": "Reviewer Profiles",
+    "profile": {
+      "title": "Profile Information",
+      "currentPosition": "Current Position",
+      "yearsOfExperience": "Years of Experience",
+      "biography": "Biography",
+      "homeOrganization": "Home Organization"
+    },
+    "expertise": {
+      "title": "Expertise Areas",
+      "area": "Area",
+      "proficiency": "Proficiency Level",
+      "years": "Years in Area",
+      "primary": "Primary Expertise",
+      "add": "Add Expertise"
+    },
+    "language": {
+      "title": "Language Proficiencies",
+      "proficiency": "Proficiency",
+      "native": "Native Speaker",
+      "canConduct": "Can Conduct Reviews",
+      "add": "Add Language"
+    },
+    "certification": {
+      "title": "Certifications",
+      "type": "Type",
+      "name": "Name",
+      "issuer": "Issuing Authority",
+      "issueDate": "Issue Date",
+      "expiryDate": "Expiry Date",
+      "valid": "Valid",
+      "expired": "Expired",
+      "add": "Add Certification"
+    },
+    "training": {
+      "title": "Training Records",
+      "type": "Type",
+      "name": "Name",
+      "provider": "Provider",
+      "status": "Status",
+      "add": "Add Training"
+    },
+    "availability": {
+      "title": "Availability",
+      "set": "Set Availability"
+    },
+    "coi": {
+      "title": "Conflict of Interest",
+      "organization": "Organization",
+      "type": "Conflict Type",
+      "reason": "Reason",
+      "declare": "Declare Conflict"
+    },
+    "actions": {
+      "create": "Create Profile",
+      "edit": "Edit Profile",
+      "view": "View Profile"
+    },
+    "messages": {
+      "createSuccess": "Reviewer profile created successfully",
+      "updateSuccess": "Reviewer profile updated successfully",
+      "coiWarning": "This reviewer has a conflict of interest"
+    }
+  },
+  "reviews": {
+    "title": "Peer Reviews",
+    "description": "Manage and coordinate peer review activities",
+    "stats": {
+      "total": "Total Reviews",
+      "scheduled": "Scheduled",
+      "inProgress": "In Progress",
+      "completed": "Completed"
+    },
+    "empty": {
+      "title": "No peer reviews yet",
+      "description": "Peer reviews will appear here once the review cycle begins."
+    },
+    "actions": {
+      "requestReview": "Request Review",
+      "viewAll": "View All"
+    },
+    "status": {
+      "REQUESTED": "Requested",
+      "APPROVED": "Approved",
+      "PLANNING": "Planning",
+      "SCHEDULED": "Scheduled",
+      "IN_PROGRESS": "In Progress",
+      "REPORT_DRAFTING": "Report Drafting",
+      "REPORT_REVIEW": "Report Review",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled"
+    },
+    "type": {
+      "FULL": "Full Review",
+      "FOCUSED": "Focused Review",
+      "FOLLOW_UP": "Follow-up Review",
+      "SURVEILLANCE": "Surveillance"
     }
   }
 }

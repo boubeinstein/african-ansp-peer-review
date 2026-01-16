@@ -216,58 +216,106 @@ model ReviewerProfile {
 }
 
 model ReviewerLanguage {
-  id                   String              @id @default(cuid())
-  reviewerProfileId    String              @map("reviewer_profile_id")
-  language             Language
-  proficiency          LanguageProficiency
-  isNative             Boolean             @default(false) @map("is_native")
-  // ICAO Language Proficiency (for aviation context)
-  icaoLevel            Int?                @map("icao_level") // 1-6 ICAO scale
-  icaoAssessmentDate   DateTime?           @map("icao_assessment_date")
-  icaoExpiryDate       DateTime?           @map("icao_expiry_date")
-  // Work capability
-  canWriteReports      Boolean             @default(false) @map("can_write_reports")
-  canConductInterviews Boolean             @default(false) @map("can_conduct_interviews")
-  // Relation
-  reviewerProfile      ReviewerProfile     @relation(fields: [reviewerProfileId], references: [id])
+  id String @id @default(cuid())
+
+  // === Parent ===
+  reviewerProfileId String          @map("reviewer_profile_id")
+  reviewerProfile   ReviewerProfile @relation(fields: [reviewerProfileId], references: [id], onDelete: Cascade)
+
+  // === Language Details ===
+  language    Language
+  proficiency LanguageProficiency
+  isNative    Boolean             @default(false) @map("is_native")
+
+  // === ICAO Language Proficiency (for aviation context) ===
+  icaoLevel          Int?      @map("icao_level") // 1-6 ICAO scale
+  icaoAssessmentDate DateTime? @map("icao_assessment_date")
+  icaoExpiryDate     DateTime? @map("icao_expiry_date")
+
+  // === Work capability ===
+  canWriteReports      Boolean @default(false) @map("can_write_reports")
+  canConductInterviews Boolean @default(false) @map("can_conduct_interviews")
 
   @@unique([reviewerProfileId, language])
+  @@index([reviewerProfileId])
   @@map("reviewer_languages")
 }
 
-model ReviewerCertification {
-  id                String            @id @default(cuid())
-  reviewerProfileId String            @map("reviewer_profile_id")
-  type              CertificationType
-  name              String
-  issuingBody       String            @map("issuing_body")
-  certificateNumber String?           @map("certificate_number")
-  issuedDate        DateTime          @map("issued_date")
-  expiryDate        DateTime?         @map("expiry_date")
-  isValid           Boolean           @default(true) @map("is_valid")
-  documentUrl       String?           @map("document_url")
-  reviewerProfile   ReviewerProfile   @relation(fields: [reviewerProfileId], references: [id])
+// ============================================
+// REVIEWER CERTIFICATIONS
+// ============================================
 
+model ReviewerCertification {
+  id String @id @default(cuid())
+
+  // === Parent ===
+  reviewerProfileId String          @map("reviewer_profile_id")
+  reviewerProfile   ReviewerProfile @relation(fields: [reviewerProfileId], references: [id], onDelete: Cascade)
+
+  // === Certification Details ===
+  certificationType   CertificationType @map("certification_type")
+  certificationName   String            @map("certification_name")
+  certificationNameFr String?           @map("certification_name_fr")
+  issuingAuthority    String            @map("issuing_authority")
+
+  // === Validity Period ===
+  issueDate  DateTime  @map("issue_date")
+  expiryDate DateTime? @map("expiry_date")
+  isValid    Boolean   @default(true) @map("is_valid")
+
+  // === Documentation ===
+  certificateNumber String? @map("certificate_number")
+  documentUrl       String? @map("document_url")
+
+  // === Metadata ===
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([reviewerProfileId])
+  @@index([certificationType])
+  @@index([expiryDate])
   @@map("reviewer_certifications")
 }
 
-model ReviewerTraining {
-  id                String          @id @default(cuid())
-  reviewerProfileId String          @map("reviewer_profile_id")
-  trainingType      TrainingType    @map("training_type")
-  courseName        String          @map("course_name")
-  courseNameFr      String?         @map("course_name_fr")
-  provider          String
-  startDate         DateTime        @map("start_date")
-  completionDate    DateTime?       @map("completion_date")
-  status            TrainingStatus  @default(IN_PROGRESS)
-  grade             String?
-  location          String?
-  isOnline          Boolean         @default(false) @map("is_online")
-  certificateUrl    String?         @map("certificate_url")
-  createdAt         DateTime        @default(now()) @map("created_at")
-  reviewerProfile   ReviewerProfile @relation(fields: [reviewerProfileId], references: [id])
+// ============================================
+// REVIEWER TRAINING RECORDS
+// ============================================
 
+model ReviewerTraining {
+  id String @id @default(cuid())
+
+  // === Parent ===
+  reviewerProfileId String          @map("reviewer_profile_id")
+  reviewerProfile   ReviewerProfile @relation(fields: [reviewerProfileId], references: [id], onDelete: Cascade)
+
+  // === Training Details ===
+  trainingType   TrainingType @map("training_type")
+  trainingName   String       @map("training_name")
+  trainingNameFr String?      @map("training_name_fr")
+  provider       String
+
+  // === Completion ===
+  startDate      DateTime       @map("start_date")
+  completionDate DateTime?      @map("completion_date")
+  status         TrainingStatus @default(SCHEDULED)
+
+  // === Details ===
+  location       String?
+  isOnline       Boolean @default(false) @map("is_online")
+  hoursCompleted Int?    @map("hours_completed")
+  grade          String?
+
+  // === Documentation ===
+  certificateUrl String? @map("certificate_url")
+  notes          String? @db.Text
+
+  // === Metadata ===
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([reviewerProfileId])
+  @@index([trainingType])
+  @@index([status])
   @@map("reviewer_trainings")
 }
 
@@ -276,79 +324,111 @@ model ReviewerTraining {
 // ============================================
 
 model ReviewerExpertise {
-  id                String           @id @default(cuid())
-  reviewerProfileId String           @map("reviewer_profile_id")
-  area              ExpertiseArea
-  proficiencyLevel  ProficiencyLevel @default(COMPETENT) @map("proficiency_level")
-  yearsExperience   Int              @default(0) @map("years_experience")
-  // Verification
-  isVerified        Boolean          @default(false) @map("is_verified")
-  verifiedAt        DateTime?        @map("verified_at")
-  verifiedBy        String?          @map("verified_by")
-  // Supporting information
-  description       String?
-  descriptionFr     String?          @map("description_fr")
-  certifications    String[]         @default([])
-  // For questionnaire matching
-  canAssessANS      Boolean          @default(false) @map("can_assess_ans")
-  canAssessSMS      Boolean          @default(false) @map("can_assess_sms")
-  // Timestamps
-  createdAt         DateTime         @default(now()) @map("created_at")
-  updatedAt         DateTime         @updatedAt @map("updated_at")
-  // Relation
-  reviewerProfile   ReviewerProfile  @relation(fields: [reviewerProfileId], references: [id])
+  id String @id @default(cuid())
+
+  // === Parent ===
+  reviewerProfileId String          @map("reviewer_profile_id")
+  reviewerProfile   ReviewerProfile @relation(fields: [reviewerProfileId], references: [id], onDelete: Cascade)
+
+  // === Expertise Details ===
+  area             ExpertiseArea
+  proficiencyLevel ProficiencyLevel @default(COMPETENT) @map("proficiency_level")
+  yearsExperience  Int              @default(0) @map("years_experience")
+
+  // === Verification ===
+  isVerified Boolean   @default(false) @map("is_verified")
+  verifiedAt DateTime? @map("verified_at")
+  verifiedBy String?   @map("verified_by")
+
+  // === Supporting information ===
+  description    String?
+  descriptionFr  String?  @map("description_fr")
+  certifications String[] @default([])
+
+  // === For questionnaire matching ===
+  canAssessANS Boolean @default(false) @map("can_assess_ans")
+  canAssessSMS Boolean @default(false) @map("can_assess_sms")
+
+  // === Metadata ===
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([reviewerProfileId, area])
   @@index([area, proficiencyLevel])
   @@map("reviewer_expertises")
 }
 
-model ReviewerAvailability {
-  id                String           @id @default(cuid())
-  reviewerProfileId String           @map("reviewer_profile_id")
-  availabilityType  AvailabilityType @map("availability_type")
-  startDate         DateTime         @map("start_date")
-  endDate           DateTime         @map("end_date")
-  reason            String?
-  notes             String?
-  // Timestamps
-  createdAt         DateTime         @default(now()) @map("created_at")
-  updatedAt         DateTime         @updatedAt @map("updated_at")
-  // Relation
-  reviewerProfile   ReviewerProfile  @relation(fields: [reviewerProfileId], references: [id])
+// ============================================
+// REVIEWER AVAILABILITY
+// ============================================
 
-  @@index([reviewerProfileId, startDate, endDate])
-  @@index([availabilityType, startDate])
-  @@map("reviewer_availabilities")
+model ReviewerAvailability {
+  id String @id @default(cuid())
+
+  // === Parent ===
+  reviewerProfileId String          @map("reviewer_profile_id")
+  reviewerProfile   ReviewerProfile @relation(fields: [reviewerProfileId], references: [id], onDelete: Cascade)
+
+  // === Time Period ===
+  startDate DateTime @map("start_date")
+  endDate   DateTime @map("end_date")
+
+  // === Availability Type ===
+  availabilityType AvailabilityType @default(AVAILABLE) @map("availability_type")
+
+  // === Details ===
+  notes             String?
+  isRecurring       Boolean @default(false) @map("is_recurring")
+  recurrencePattern String? @map("recurrence_pattern") // RRULE format
+
+  // === Metadata ===
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([reviewerProfileId])
+  @@index([startDate, endDate])
+  @@index([availabilityType])
+  @@map("reviewer_availability")
 }
 
+// ============================================
+// CONFLICT OF INTEREST TRACKING
+// Per ICAO Doc 9734 and programme COI policy
+// ============================================
+
 model ReviewerCOI {
-  id                String          @id @default(cuid())
+  id String @id @default(cuid())
+
+  // === Reviewer ===
   reviewerProfileId String          @map("reviewer_profile_id")
-  organizationId    String          @map("organization_id")
-  coiType           COIType         @map("coi_type")
-  description       String?
-  // Timing
-  startDate         DateTime?       @map("start_date")
-  endDate           DateTime?       @map("end_date")
-  isCurrent         Boolean         @default(true) @map("is_current")
-  // Cooling-off period management
-  coolingOffEnds    DateTime?       @map("cooling_off_ends")
-  // Declaration and validation
-  declaredAt        DateTime        @default(now()) @map("declared_at")
-  validatedAt       DateTime?       @map("validated_at")
-  validatedBy       String?         @map("validated_by")
-  // Timestamps
-  createdAt         DateTime        @default(now()) @map("created_at")
-  updatedAt         DateTime        @updatedAt @map("updated_at")
-  // Relations
-  reviewerProfile   ReviewerProfile @relation(fields: [reviewerProfileId], references: [id])
-  organization      Organization    @relation("ConflictReviewers", fields: [organizationId], references: [id])
+  reviewerProfile   ReviewerProfile @relation(fields: [reviewerProfileId], references: [id], onDelete: Cascade)
+
+  // === Conflicting Organization ===
+  organizationId String       @map("organization_id")
+  organization   Organization @relation("ConflictReviewers", fields: [organizationId], references: [id])
+
+  // === COI Details ===
+  coiType COIType @map("coi_type")
+  reason  String? @db.Text
+
+  // === Validity Period ===
+  startDate DateTime  @default(now()) @map("start_date")
+  endDate   DateTime? @map("end_date") // null = indefinite
+  isActive  Boolean   @default(true) @map("is_active")
+
+  // === Verification (by Programme Coordinator) ===
+  verifiedById      String?   @map("verified_by_id")
+  verifiedAt        DateTime? @map("verified_at")
+  verificationNotes String?   @map("verification_notes") @db.Text
+
+  // === Metadata ===
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([reviewerProfileId, organizationId, coiType])
   @@index([organizationId])
-  @@index([reviewerProfileId, isCurrent])
-  @@map("reviewer_cois")
+  @@index([isActive])
+  @@map("reviewer_coi")
 }
 
 model Assessment {

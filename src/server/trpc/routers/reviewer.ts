@@ -1,0 +1,1711 @@
+/**
+ * Reviewer Router - Reviewer Profile Module API
+ *
+ * Provides CRUD operations for reviewer profiles, expertise management,
+ * COI tracking, and reviewer matching aligned with ICAO Doc 9734
+ * and CANSO peer review standards.
+ */
+
+import { z } from "zod";
+import { TRPCError } from "@trpc/server";
+import { router, protectedProcedure, adminProcedure } from "../trpc";
+import { prisma } from "@/lib/db";
+import {
+  ReviewerStatus,
+  ReviewerSelectionStatus,
+  ReviewerType,
+  Prisma,
+} from "@prisma/client";
+import {
+  createReviewerProfileSchema,
+  updateReviewerProfileSchema,
+  reviewerProfileFilterSchema,
+  createExpertiseSchema,
+  updateExpertiseSchema,
+  batchExpertiseSchema,
+  createLanguageSchema,
+  updateLanguageSchema,
+  batchLanguageSchema,
+  createCertificationSchema,
+  updateCertificationSchema,
+  createAvailabilitySchemaBase,
+  updateAvailabilitySchema,
+  createTrainingSchema,
+  updateTrainingSchema,
+  createCOISchema,
+  updateCOISchema,
+  verifyCOISchema,
+} from "@/lib/validations/reviewer";
+import {
+  getReviewerById,
+  getReviewerByUserId,
+  searchReviewers,
+  checkCOIConflict,
+  getReviewerStats,
+  reviewerProfileInclude,
+  reviewerProfileListInclude,
+} from "@/server/db/queries/reviewer";
+import {
+  canManageReviewers,
+  canViewReviewer,
+  assertCanManageReviewers,
+  assertCanEditReviewer,
+  assertCanViewReviewer,
+  assertCanCoordinateReviewers,
+} from "../lib/reviewer-permissions";
+
+// =============================================================================
+// CONSTANTS
+// =============================================================================
+
+/**
+ * Maximum number of selected reviewers in the pool (per programme guidelines)
+ */
+const MAX_SELECTED_REVIEWERS = 45;
+
+/**
+ * Valid status transitions for reviewer profiles
+ */
+const SELECTION_STATUS_TRANSITIONS: Record<
+  ReviewerSelectionStatus,
+  ReviewerSelectionStatus[]
+> = {
+  NOMINATED: ["UNDER_REVIEW", "WITHDRAWN", "REJECTED"],
+  UNDER_REVIEW: ["SELECTED", "NOMINATED", "REJECTED"],
+  SELECTED: ["INACTIVE", "WITHDRAWN"],
+  INACTIVE: ["SELECTED", "WITHDRAWN"],
+  WITHDRAWN: [],
+  REJECTED: ["NOMINATED"],
+};
+
+// =============================================================================
+// HELPERS
+// =============================================================================
+
+/**
+ * Log audit entry for reviewer operations
+ */
+async function logAuditEntry(
+  userId: string,
+  action: string,
+  entityId: string,
+  newData?: Record<string, unknown>
+): Promise<void> {
+  try {
+    await prisma.auditLog.create({
+      data: {
+        userId,
+        action,
+        entityType: "ReviewerProfile",
+        entityId,
+        newData: newData ? JSON.stringify(newData) : Prisma.JsonNull,
+      },
+    });
+  } catch (error) {
+    console.error("[Audit] Failed to log reviewer entry:", error);
+  }
+}
+
+// =============================================================================
+// REVIEWER ROUTER
+// =============================================================================
+
+export const reviewerRouter = router({
+  // ============================================
+  // READ OPERATIONS
+  // ============================================
+
+  /**
+   * Get reviewer profile by ID
+   */
+  getById: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .query(async ({ ctx, input }) => {
+      const reviewer = await getReviewerById(input.id);
+
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer profile not found",
+        });
+      }
+
+      // Check view permission
+      assertCanViewReviewer(ctx.session, reviewer.userId);
+
+      return reviewer;
+    }),
+
+  /**
+   * Get reviewer profile by user ID
+   */
+  getByUserId: protectedProcedure
+    .input(z.object({ userId: z.string().cuid().optional() }))
+    .query(async ({ ctx, input }) => {
+      const userId = input.userId || ctx.user.id;
+
+      // Users can always view their own profile
+      if (userId !== ctx.user.id) {
+        assertCanViewReviewer(ctx.session, userId);
+      }
+
+      const reviewer = await getReviewerByUserId(userId);
+      return reviewer;
+    }),
+
+  /**
+   * Get current user's reviewer profile
+   */
+  me: protectedProcedure.query(async ({ ctx }) => {
+    return getReviewerByUserId(ctx.user.id);
+  }),
+
+  /**
+   * Check if current user has a reviewer profile
+   */
+  hasProfile: protectedProcedure.query(async ({ ctx }) => {
+    const profile = await prisma.reviewerProfile.findUnique({
+      where: { userId: ctx.user.id },
+      select: { id: true, selectionStatus: true },
+    });
+    return {
+      hasProfile: !!profile,
+      profileId: profile?.id,
+      selectionStatus: profile?.selectionStatus,
+    };
+  }),
+
+  /**
+   * List reviewers with filters and pagination
+   */
+  list: protectedProcedure
+    .input(reviewerProfileFilterSchema)
+    .query(async ({ ctx, input }) => {
+      // Check if user can view all reviewers
+      if (!canViewReviewer(ctx.session, "")) {
+        // Return only the user's own profile if they can't view all
+        const ownProfile = await getReviewerByUserId(ctx.user.id);
+        return {
+          items: ownProfile ? [ownProfile] : [],
+          total: ownProfile ? 1 : 0,
+          page: 1,
+          pageSize: input.pageSize,
+          totalPages: 1,
+        };
+      }
+
+      return searchReviewers({
+        page: input.page,
+        pageSize: input.pageSize,
+        sortBy: input.sortBy,
+        sortOrder: input.sortOrder,
+        search: input.search,
+        organizationId: input.organizationId,
+        selectionStatus: input.selectionStatus
+          ? [input.selectionStatus]
+          : undefined,
+        reviewerType: input.reviewerType ? [input.reviewerType] : undefined,
+        expertiseAreas: input.expertiseAreas,
+        languages: input.languages,
+        isLeadQualified: input.isLeadQualified,
+        isAvailable: input.isActive,
+      });
+    }),
+
+  /**
+   * Get reviewer statistics
+   */
+  getStats: protectedProcedure.query(async ({ ctx }) => {
+    assertCanCoordinateReviewers(ctx.session);
+    return getReviewerStats();
+  }),
+
+  // ============================================
+  // CREATE OPERATIONS
+  // ============================================
+
+  /**
+   * Create a new reviewer profile (admin or self-nomination)
+   */
+  create: protectedProcedure
+    .input(createReviewerProfileSchema)
+    .mutation(async ({ ctx, input }) => {
+      const user = ctx.user;
+      const isCreatingOwnProfile = input.userId === user.id;
+
+      // Only admins can create profiles for others
+      if (!isCreatingOwnProfile) {
+        assertCanManageReviewers(ctx.session);
+      }
+
+      // Check if user already has a reviewer profile
+      const existing = await prisma.reviewerProfile.findUnique({
+        where: { userId: input.userId },
+      });
+
+      if (existing) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "User already has a reviewer profile",
+        });
+      }
+
+      // Verify the user exists
+      const targetUser = await prisma.user.findUnique({
+        where: { id: input.userId },
+        select: { id: true, organizationId: true },
+      });
+
+      if (!targetUser) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found",
+        });
+      }
+
+      // Verify the organization exists
+      const organization = await prisma.organization.findUnique({
+        where: { id: input.homeOrganizationId },
+      });
+
+      if (!organization) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Organization not found",
+        });
+      }
+
+      // Create the reviewer profile
+      const reviewer = await prisma.reviewerProfile.create({
+        data: {
+          userId: input.userId,
+          organizationId: input.homeOrganizationId,
+          homeOrganizationId: input.homeOrganizationId,
+          status: ReviewerStatus.NOMINATED,
+          selectionStatus: input.selectionStatus || ReviewerSelectionStatus.NOMINATED,
+          reviewerType: input.reviewerType || ReviewerType.PEER_REVIEWER,
+          currentPosition: input.currentPosition,
+          yearsExperience: input.yearsOfExperience,
+          biography: input.biography,
+          biographyFr: input.biographyFr,
+          nominatedAt: input.nominationDate || new Date(),
+          isLeadQualified: input.isLeadQualified || false,
+          preferredContactMethod: input.preferredContactMethod || "EMAIL",
+          alternativeEmail: input.alternateEmail,
+          alternativePhone: input.alternatePhone,
+        },
+        include: reviewerProfileInclude,
+      });
+
+      await logAuditEntry(user.id, "CREATE", reviewer.id, {
+        userId: input.userId,
+        homeOrganizationId: input.homeOrganizationId,
+        reviewerType: reviewer.reviewerType,
+      });
+
+      console.log(
+        `[Reviewer] User ${user.id} created reviewer profile ${reviewer.id} for user ${input.userId}`
+      );
+
+      return reviewer;
+    }),
+
+  // ============================================
+  // UPDATE OPERATIONS
+  // ============================================
+
+  /**
+   * Update reviewer profile
+   */
+  update: protectedProcedure
+    .input(updateReviewerProfileSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...data } = input;
+      const user = ctx.user;
+
+      // Get existing reviewer to check permissions
+      const existing = await prisma.reviewerProfile.findUnique({
+        where: { id },
+        select: { id: true, userId: true },
+      });
+
+      if (!existing) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer profile not found",
+        });
+      }
+
+      // Check edit permission
+      assertCanEditReviewer(ctx.session, existing.userId);
+
+      // If user is editing their own profile, restrict to allowed fields
+      const isSelfEdit = existing.userId === user.id;
+      const isAdmin = canManageReviewers(ctx.session);
+
+      // Build update data based on permissions
+      const updateData: Prisma.ReviewerProfileUpdateInput = {};
+
+      // Fields anyone can edit on their own profile
+      if (data.currentPosition !== undefined) {
+        updateData.currentPosition = data.currentPosition;
+      }
+      if (data.biography !== undefined) {
+        updateData.biography = data.biography;
+      }
+      if (data.biographyFr !== undefined) {
+        updateData.biographyFr = data.biographyFr;
+      }
+      if (data.yearsOfExperience !== undefined) {
+        updateData.yearsExperience = data.yearsOfExperience;
+      }
+      if (data.preferredContactMethod !== undefined) {
+        updateData.preferredContactMethod = data.preferredContactMethod;
+      }
+      if (data.alternateEmail !== undefined) {
+        updateData.alternativeEmail = data.alternateEmail;
+      }
+      if (data.alternatePhone !== undefined) {
+        updateData.alternativePhone = data.alternatePhone;
+      }
+      if (data.title !== undefined) {
+        updateData.user = {
+          update: { title: data.title },
+        };
+      }
+
+      // Admin-only fields
+      if (isAdmin) {
+        if (data.selectionStatus !== undefined) {
+          updateData.selectionStatus = data.selectionStatus;
+          // Update related timestamp based on new status
+          if (data.selectionStatus === "SELECTED") {
+            updateData.selectedAt = new Date();
+          }
+        }
+        if (data.reviewerType !== undefined) {
+          updateData.reviewerType = data.reviewerType;
+        }
+        if (data.isLeadQualified !== undefined) {
+          updateData.isLeadQualified = data.isLeadQualified;
+          if (data.isLeadQualified) {
+            updateData.leadQualifiedAt = new Date();
+          }
+        }
+        if (data.isActive !== undefined) {
+          updateData.isAvailable = data.isActive;
+        }
+      }
+
+      const reviewer = await prisma.reviewerProfile.update({
+        where: { id },
+        data: updateData,
+        include: reviewerProfileInclude,
+      });
+
+      await logAuditEntry(user.id, "UPDATE", id, {
+        updatedFields: Object.keys(data),
+        isSelfEdit,
+      });
+
+      console.log(
+        `[Reviewer] User ${user.id} updated reviewer profile ${id}`
+      );
+
+      return reviewer;
+    }),
+
+  /**
+   * Update reviewer selection status (admin only)
+   */
+  updateSelectionStatus: adminProcedure
+    .input(
+      z.object({
+        id: z.string().cuid(),
+        selectionStatus: z.nativeEnum(ReviewerSelectionStatus),
+        notes: z.string().max(500).optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const reviewer = await prisma.reviewerProfile.findUnique({
+        where: { id: input.id },
+        select: { id: true, selectionStatus: true },
+      });
+
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer profile not found",
+        });
+      }
+
+      // Validate status transition
+      const allowedTransitions =
+        SELECTION_STATUS_TRANSITIONS[reviewer.selectionStatus];
+      if (!allowedTransitions.includes(input.selectionStatus)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Cannot transition from ${reviewer.selectionStatus} to ${input.selectionStatus}`,
+        });
+      }
+
+      // If selecting, check the limit
+      if (input.selectionStatus === "SELECTED") {
+        const selectedCount = await prisma.reviewerProfile.count({
+          where: { selectionStatus: "SELECTED" },
+        });
+        if (selectedCount >= MAX_SELECTED_REVIEWERS) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `Maximum of ${MAX_SELECTED_REVIEWERS} selected reviewers reached`,
+          });
+        }
+      }
+
+      // Build update data with timestamps
+      const updateData: Prisma.ReviewerProfileUpdateInput = {
+        selectionStatus: input.selectionStatus,
+      };
+
+      if (input.selectionStatus === "SELECTED") {
+        updateData.selectedAt = new Date();
+        updateData.status = ReviewerStatus.SELECTED;
+      } else if (input.selectionStatus === "INACTIVE") {
+        updateData.status = ReviewerStatus.INACTIVE;
+      } else if (input.selectionStatus === "WITHDRAWN") {
+        updateData.status = ReviewerStatus.RETIRED;
+      }
+
+      const updated = await prisma.reviewerProfile.update({
+        where: { id: input.id },
+        data: updateData,
+        include: reviewerProfileListInclude,
+      });
+
+      await logAuditEntry(ctx.user.id, "UPDATE_STATUS", input.id, {
+        previousStatus: reviewer.selectionStatus,
+        newStatus: input.selectionStatus,
+        notes: input.notes,
+      });
+
+      console.log(
+        `[Reviewer] Admin ${ctx.user.id} changed status of ${input.id} from ${reviewer.selectionStatus} to ${input.selectionStatus}`
+      );
+
+      return updated;
+    }),
+
+  /**
+   * Toggle reviewer availability
+   */
+  toggleAvailability: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().cuid(),
+        isAvailable: z.boolean(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const reviewer = await prisma.reviewerProfile.findUnique({
+        where: { id: input.id },
+        select: { id: true, userId: true },
+      });
+
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer profile not found",
+        });
+      }
+
+      // User can toggle their own availability, or admin can do it
+      if (reviewer.userId !== ctx.user.id) {
+        assertCanManageReviewers(ctx.session);
+      }
+
+      const updated = await prisma.reviewerProfile.update({
+        where: { id: input.id },
+        data: { isAvailable: input.isAvailable },
+      });
+
+      return updated;
+    }),
+
+  // ============================================
+  // COI (CONFLICT OF INTEREST) OPERATIONS
+  // ============================================
+
+  /**
+   * Check COI between reviewer and organization
+   */
+  checkCOI: protectedProcedure
+    .input(
+      z.object({
+        reviewerId: z.string().cuid(),
+        targetOrganizationId: z.string().cuid(),
+      })
+    )
+    .query(async ({ input }) => {
+      return checkCOIConflict(input.reviewerId, input.targetOrganizationId);
+    }),
+
+  /**
+   * Get all COIs for a reviewer
+   */
+  getCOIs: protectedProcedure
+    .input(z.object({ reviewerProfileId: z.string().cuid() }))
+    .query(async ({ ctx, input }) => {
+      const reviewer = await prisma.reviewerProfile.findUnique({
+        where: { id: input.reviewerProfileId },
+        select: { userId: true },
+      });
+
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer profile not found",
+        });
+      }
+
+      // User can view their own COIs
+      if (reviewer.userId !== ctx.user.id) {
+        assertCanCoordinateReviewers(ctx.session);
+      }
+
+      return prisma.reviewerCOI.findMany({
+        where: { reviewerProfileId: input.reviewerProfileId },
+        include: {
+          organization: {
+            select: {
+              id: true,
+              nameEn: true,
+              nameFr: true,
+              icaoCode: true,
+              country: true,
+            },
+          },
+        },
+        orderBy: { startDate: "desc" },
+      });
+    }),
+
+  // ============================================
+  // EXPERTISE MANAGEMENT
+  // ============================================
+
+  /**
+   * Add expertise area to reviewer
+   */
+  addExpertise: protectedProcedure
+    .input(
+      z.object({
+        reviewerId: z.string().cuid(),
+        expertise: createExpertiseSchema.omit({ reviewerProfileId: true }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const reviewer = await getReviewerById(input.reviewerId);
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer not found",
+        });
+      }
+      assertCanEditReviewer(ctx.session, reviewer.userId);
+
+      // Check if expertise already exists for this area
+      const existing = await prisma.reviewerExpertise.findFirst({
+        where: {
+          reviewerProfileId: input.reviewerId,
+          area: input.expertise.expertiseArea,
+        },
+      });
+
+      if (existing) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Expertise area already added",
+        });
+      }
+
+      return prisma.reviewerExpertise.create({
+        data: {
+          reviewerProfileId: input.reviewerId,
+          area: input.expertise.expertiseArea,
+          proficiencyLevel: input.expertise.proficiencyLevel,
+          yearsExperience: input.expertise.yearsInArea ?? 0,
+          description: input.expertise.qualificationDetails,
+        },
+      });
+    }),
+
+  /**
+   * Update expertise area
+   */
+  updateExpertise: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().cuid(),
+        data: updateExpertiseSchema.omit({ id: true }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const expertise = await prisma.reviewerExpertise.findUnique({
+        where: { id: input.id },
+        include: { reviewerProfile: true },
+      });
+
+      if (!expertise) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Expertise not found",
+        });
+      }
+
+      assertCanEditReviewer(ctx.session, expertise.reviewerProfile.userId);
+
+      return prisma.reviewerExpertise.update({
+        where: { id: input.id },
+        data: {
+          proficiencyLevel: input.data.proficiencyLevel,
+          yearsExperience: input.data.yearsInArea ?? undefined,
+          description: input.data.qualificationDetails,
+        },
+      });
+    }),
+
+  /**
+   * Remove expertise area
+   */
+  removeExpertise: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const expertise = await prisma.reviewerExpertise.findUnique({
+        where: { id: input.id },
+        include: { reviewerProfile: true },
+      });
+
+      if (!expertise) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Expertise not found",
+        });
+      }
+
+      assertCanEditReviewer(ctx.session, expertise.reviewerProfile.userId);
+
+      await prisma.reviewerExpertise.delete({ where: { id: input.id } });
+      return { success: true };
+    }),
+
+  /**
+   * Batch update expertise areas (replace all)
+   */
+  batchUpdateExpertise: protectedProcedure
+    .input(
+      z.object({
+        reviewerId: z.string().cuid(),
+        expertise: batchExpertiseSchema.shape.expertise,
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const reviewer = await getReviewerById(input.reviewerId);
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer not found",
+        });
+      }
+      assertCanEditReviewer(ctx.session, reviewer.userId);
+
+      // Delete existing and create new
+      await prisma.reviewerExpertise.deleteMany({
+        where: { reviewerProfileId: input.reviewerId },
+      });
+
+      const expertiseData = input.expertise.map((item) => ({
+        reviewerProfileId: input.reviewerId,
+        area: item.expertiseArea,
+        proficiencyLevel: item.proficiencyLevel,
+        yearsExperience: item.yearsInArea ?? 0,
+      }));
+
+      await prisma.reviewerExpertise.createMany({ data: expertiseData });
+
+      return prisma.reviewerExpertise.findMany({
+        where: { reviewerProfileId: input.reviewerId },
+        orderBy: { area: "asc" },
+      });
+    }),
+
+  // ============================================
+  // LANGUAGE MANAGEMENT
+  // ============================================
+
+  /**
+   * Add language proficiency to reviewer
+   */
+  addLanguage: protectedProcedure
+    .input(
+      z.object({
+        reviewerId: z.string().cuid(),
+        language: createLanguageSchema.omit({ reviewerProfileId: true }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const reviewer = await getReviewerById(input.reviewerId);
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer not found",
+        });
+      }
+      assertCanEditReviewer(ctx.session, reviewer.userId);
+
+      // Check if language already exists
+      const existing = await prisma.reviewerLanguage.findFirst({
+        where: {
+          reviewerProfileId: input.reviewerId,
+          language: input.language.language,
+        },
+      });
+
+      if (existing) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Language proficiency already added",
+        });
+      }
+
+      return prisma.reviewerLanguage.create({
+        data: {
+          reviewerProfileId: input.reviewerId,
+          language: input.language.language,
+          proficiency: input.language.proficiencyLevel,
+          isNative: input.language.isNative ?? false,
+          canConductInterviews: input.language.canConduct ?? false,
+          icaoLevel: input.language.icaoLevel,
+          icaoAssessmentDate: input.language.certificationDate,
+          icaoExpiryDate: input.language.expiryDate,
+        },
+      });
+    }),
+
+  /**
+   * Update language proficiency
+   */
+  updateLanguage: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().cuid(),
+        data: updateLanguageSchema.omit({ id: true }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const language = await prisma.reviewerLanguage.findUnique({
+        where: { id: input.id },
+        include: { reviewerProfile: true },
+      });
+
+      if (!language) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Language proficiency not found",
+        });
+      }
+
+      assertCanEditReviewer(ctx.session, language.reviewerProfile.userId);
+
+      return prisma.reviewerLanguage.update({
+        where: { id: input.id },
+        data: {
+          proficiency: input.data.proficiencyLevel,
+          isNative: input.data.isNative,
+          canConductInterviews: input.data.canConduct,
+          icaoLevel: input.data.icaoLevel,
+          icaoAssessmentDate: input.data.certificationDate,
+          icaoExpiryDate: input.data.expiryDate,
+        },
+      });
+    }),
+
+  /**
+   * Remove language proficiency
+   */
+  removeLanguage: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const language = await prisma.reviewerLanguage.findUnique({
+        where: { id: input.id },
+        include: { reviewerProfile: true },
+      });
+
+      if (!language) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Language proficiency not found",
+        });
+      }
+
+      assertCanEditReviewer(ctx.session, language.reviewerProfile.userId);
+
+      await prisma.reviewerLanguage.delete({ where: { id: input.id } });
+      return { success: true };
+    }),
+
+  /**
+   * Batch update language proficiencies (replace all)
+   */
+  batchUpdateLanguages: protectedProcedure
+    .input(
+      z.object({
+        reviewerId: z.string().cuid(),
+        languages: batchLanguageSchema.shape.languages,
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const reviewer = await getReviewerById(input.reviewerId);
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer not found",
+        });
+      }
+      assertCanEditReviewer(ctx.session, reviewer.userId);
+
+      // Validate EN and FR are included (required for peer reviews)
+      const hasEnglish = input.languages.some((l) => l.language === "EN");
+      const hasFrench = input.languages.some((l) => l.language === "FR");
+
+      if (!hasEnglish || !hasFrench) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "English and French proficiency are required for peer reviewers",
+        });
+      }
+
+      // Delete existing and create new
+      await prisma.reviewerLanguage.deleteMany({
+        where: { reviewerProfileId: input.reviewerId },
+      });
+
+      const languageData = input.languages.map((item) => ({
+        reviewerProfileId: input.reviewerId,
+        language: item.language,
+        proficiency: item.proficiencyLevel,
+        isNative: item.isNative ?? false,
+        canConductInterviews: item.canConduct ?? false,
+      }));
+
+      await prisma.reviewerLanguage.createMany({ data: languageData });
+
+      return prisma.reviewerLanguage.findMany({
+        where: { reviewerProfileId: input.reviewerId },
+        orderBy: { language: "asc" },
+      });
+    }),
+
+  // ============================================
+  // CERTIFICATION MANAGEMENT
+  // ============================================
+
+  /**
+   * Add certification to reviewer
+   */
+  addCertification: protectedProcedure
+    .input(
+      z.object({
+        reviewerId: z.string().cuid(),
+        certification: createCertificationSchema.omit({ reviewerProfileId: true }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const reviewer = await getReviewerById(input.reviewerId);
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer not found",
+        });
+      }
+      assertCanEditReviewer(ctx.session, reviewer.userId);
+
+      return prisma.reviewerCertification.create({
+        data: {
+          reviewerProfileId: input.reviewerId,
+          certificationType: input.certification.certificationType,
+          certificationName: input.certification.certificationName,
+          certificationNameFr: input.certification.certificationNameFr,
+          issuingAuthority: input.certification.issuingAuthority,
+          issueDate: input.certification.issueDate,
+          expiryDate: input.certification.expiryDate,
+          certificateNumber: input.certification.certificateNumber,
+          documentUrl: input.certification.documentUrl,
+          isValid: input.certification.expiryDate
+            ? new Date(input.certification.expiryDate) > new Date()
+            : true,
+        },
+      });
+    }),
+
+  /**
+   * Update certification
+   */
+  updateCertification: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().cuid(),
+        data: updateCertificationSchema.omit({ id: true }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const certification = await prisma.reviewerCertification.findUnique({
+        where: { id: input.id },
+        include: { reviewerProfile: true },
+      });
+
+      if (!certification) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Certification not found",
+        });
+      }
+
+      assertCanEditReviewer(ctx.session, certification.reviewerProfile.userId);
+
+      // Recalculate validity if expiry date changed
+      let isValid = certification.isValid;
+      if (input.data.expiryDate !== undefined) {
+        isValid = input.data.expiryDate
+          ? new Date(input.data.expiryDate) > new Date()
+          : true;
+      }
+      if (input.data.isValid !== undefined) {
+        isValid = input.data.isValid;
+      }
+
+      return prisma.reviewerCertification.update({
+        where: { id: input.id },
+        data: {
+          certificationName: input.data.certificationName,
+          certificationNameFr: input.data.certificationNameFr,
+          issuingAuthority: input.data.issuingAuthority,
+          expiryDate: input.data.expiryDate,
+          documentUrl: input.data.documentUrl,
+          isValid,
+        },
+      });
+    }),
+
+  /**
+   * Remove certification
+   */
+  removeCertification: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const certification = await prisma.reviewerCertification.findUnique({
+        where: { id: input.id },
+        include: { reviewerProfile: true },
+      });
+
+      if (!certification) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Certification not found",
+        });
+      }
+
+      assertCanEditReviewer(ctx.session, certification.reviewerProfile.userId);
+
+      await prisma.reviewerCertification.delete({ where: { id: input.id } });
+      return { success: true };
+    }),
+
+  // ============================================
+  // AVAILABILITY MANAGEMENT
+  // ============================================
+
+  /**
+   * Get availability slots for a reviewer
+   */
+  getAvailability: protectedProcedure
+    .input(
+      z.object({
+        reviewerId: z.string().cuid(),
+        startDate: z.coerce.date().optional(),
+        endDate: z.coerce.date().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const reviewer = await prisma.reviewerProfile.findUnique({
+        where: { id: input.reviewerId },
+        select: { userId: true },
+      });
+
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer not found",
+        });
+      }
+
+      // Build where clause for date range filtering
+      const where: Prisma.ReviewerAvailabilityWhereInput = {
+        reviewerProfileId: input.reviewerId,
+      };
+
+      if (input.startDate && input.endDate) {
+        where.OR = [
+          {
+            startDate: { gte: input.startDate, lte: input.endDate },
+          },
+          {
+            endDate: { gte: input.startDate, lte: input.endDate },
+          },
+          {
+            AND: [
+              { startDate: { lte: input.startDate } },
+              { endDate: { gte: input.endDate } },
+            ],
+          },
+        ];
+      }
+
+      return prisma.reviewerAvailability.findMany({
+        where,
+        orderBy: { startDate: "asc" },
+      });
+    }),
+
+  /**
+   * Add availability slot to reviewer
+   */
+  addAvailability: protectedProcedure
+    .input(
+      z.object({
+        reviewerId: z.string().cuid(),
+        availability: createAvailabilitySchemaBase.omit({ reviewerProfileId: true }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const reviewer = await getReviewerById(input.reviewerId);
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer not found",
+        });
+      }
+      assertCanEditReviewer(ctx.session, reviewer.userId);
+
+      return prisma.reviewerAvailability.create({
+        data: {
+          reviewerProfileId: input.reviewerId,
+          startDate: input.availability.startDate,
+          endDate: input.availability.endDate,
+          availabilityType: input.availability.availabilityType,
+          notes: input.availability.notes,
+          isRecurring: input.availability.isRecurring ?? false,
+          recurrencePattern: input.availability.recurrencePattern,
+        },
+      });
+    }),
+
+  /**
+   * Update availability slot
+   */
+  updateAvailability: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().cuid(),
+        data: updateAvailabilitySchema.omit({ id: true }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const availability = await prisma.reviewerAvailability.findUnique({
+        where: { id: input.id },
+        include: { reviewerProfile: true },
+      });
+
+      if (!availability) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Availability slot not found",
+        });
+      }
+
+      assertCanEditReviewer(ctx.session, availability.reviewerProfile.userId);
+
+      return prisma.reviewerAvailability.update({
+        where: { id: input.id },
+        data: {
+          startDate: input.data.startDate,
+          endDate: input.data.endDate,
+          availabilityType: input.data.availabilityType,
+          notes: input.data.notes,
+        },
+      });
+    }),
+
+  /**
+   * Remove availability slot
+   */
+  removeAvailability: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const availability = await prisma.reviewerAvailability.findUnique({
+        where: { id: input.id },
+        include: { reviewerProfile: true },
+      });
+
+      if (!availability) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Availability slot not found",
+        });
+      }
+
+      assertCanEditReviewer(ctx.session, availability.reviewerProfile.userId);
+
+      await prisma.reviewerAvailability.delete({ where: { id: input.id } });
+      return { success: true };
+    }),
+
+  /**
+   * Batch update availability slots (replace all)
+   */
+  batchUpdateAvailability: protectedProcedure
+    .input(
+      z.object({
+        reviewerId: z.string().cuid(),
+        slots: z.array(
+          z.object({
+            startDate: z.coerce.date(),
+            endDate: z.coerce.date(),
+            availabilityType: z.enum(["AVAILABLE", "TENTATIVE", "UNAVAILABLE", "ON_ASSIGNMENT"]).default("AVAILABLE"),
+            notes: z.string().max(500).optional().nullable(),
+          })
+        ),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const reviewer = await getReviewerById(input.reviewerId);
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer not found",
+        });
+      }
+      assertCanEditReviewer(ctx.session, reviewer.userId);
+
+      // Delete existing and create new
+      await prisma.reviewerAvailability.deleteMany({
+        where: { reviewerProfileId: input.reviewerId },
+      });
+
+      const availabilityData = input.slots.map((slot) => ({
+        reviewerProfileId: input.reviewerId,
+        startDate: slot.startDate,
+        endDate: slot.endDate,
+        availabilityType: slot.availabilityType,
+        notes: slot.notes,
+      }));
+
+      await prisma.reviewerAvailability.createMany({ data: availabilityData });
+
+      return prisma.reviewerAvailability.findMany({
+        where: { reviewerProfileId: input.reviewerId },
+        orderBy: { startDate: "asc" },
+      });
+    }),
+
+  // ============================================
+  // TRAINING RECORDS MANAGEMENT
+  // ============================================
+
+  /**
+   * Get training records for a reviewer
+   */
+  getTrainingRecords: protectedProcedure
+    .input(z.object({ reviewerId: z.string().cuid() }))
+    .query(async ({ input }) => {
+      const reviewer = await prisma.reviewerProfile.findUnique({
+        where: { id: input.reviewerId },
+        select: { userId: true },
+      });
+
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer not found",
+        });
+      }
+
+      return prisma.reviewerTraining.findMany({
+        where: { reviewerProfileId: input.reviewerId },
+        orderBy: { startDate: "desc" },
+      });
+    }),
+
+  /**
+   * Add training record to reviewer
+   */
+  addTraining: protectedProcedure
+    .input(
+      z.object({
+        reviewerId: z.string().cuid(),
+        training: createTrainingSchema.omit({ reviewerProfileId: true }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const reviewer = await getReviewerById(input.reviewerId);
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer not found",
+        });
+      }
+      assertCanEditReviewer(ctx.session, reviewer.userId);
+
+      return prisma.reviewerTraining.create({
+        data: {
+          reviewerProfileId: input.reviewerId,
+          trainingType: input.training.trainingType,
+          trainingName: input.training.trainingName,
+          trainingNameFr: input.training.trainingNameFr,
+          provider: input.training.provider,
+          startDate: input.training.startDate,
+          completionDate: input.training.completionDate,
+          status: input.training.status,
+          location: input.training.location,
+          isOnline: input.training.isOnline ?? false,
+          hoursCompleted: input.training.hoursCompleted,
+          grade: input.training.grade,
+          certificateUrl: input.training.certificateUrl,
+          notes: input.training.notes,
+        },
+      });
+    }),
+
+  /**
+   * Update training record
+   */
+  updateTraining: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().cuid(),
+        data: updateTrainingSchema.omit({ id: true }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const training = await prisma.reviewerTraining.findUnique({
+        where: { id: input.id },
+        include: { reviewerProfile: true },
+      });
+
+      if (!training) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Training record not found",
+        });
+      }
+
+      assertCanEditReviewer(ctx.session, training.reviewerProfile.userId);
+
+      return prisma.reviewerTraining.update({
+        where: { id: input.id },
+        data: {
+          completionDate: input.data.completionDate,
+          status: input.data.status,
+          hoursCompleted: input.data.hoursCompleted,
+          grade: input.data.grade,
+          certificateUrl: input.data.certificateUrl,
+          notes: input.data.notes,
+        },
+      });
+    }),
+
+  /**
+   * Remove training record
+   */
+  removeTraining: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const training = await prisma.reviewerTraining.findUnique({
+        where: { id: input.id },
+        include: { reviewerProfile: true },
+      });
+
+      if (!training) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Training record not found",
+        });
+      }
+
+      assertCanEditReviewer(ctx.session, training.reviewerProfile.userId);
+
+      await prisma.reviewerTraining.delete({ where: { id: input.id } });
+      return { success: true };
+    }),
+
+  // ============================================
+  // CONFLICT OF INTEREST MANAGEMENT (Extended)
+  // ============================================
+
+  /**
+   * Add conflict of interest declaration
+   */
+  addCOI: protectedProcedure
+    .input(
+      z.object({
+        reviewerId: z.string().cuid(),
+        coi: createCOISchema.omit({ reviewerProfileId: true }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const reviewer = await getReviewerById(input.reviewerId);
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer not found",
+        });
+      }
+      assertCanEditReviewer(ctx.session, reviewer.userId);
+
+      // Check if COI already exists for this organization and type
+      const existing = await prisma.reviewerCOI.findFirst({
+        where: {
+          reviewerProfileId: input.reviewerId,
+          organizationId: input.coi.organizationId,
+          coiType: input.coi.coiType,
+          isActive: true,
+        },
+      });
+
+      if (existing) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Active COI already exists for this organization and type",
+        });
+      }
+
+      return prisma.reviewerCOI.create({
+        data: {
+          reviewerProfileId: input.reviewerId,
+          organizationId: input.coi.organizationId,
+          coiType: input.coi.coiType,
+          reason: input.coi.reason,
+          startDate: input.coi.startDate ?? new Date(),
+          endDate: input.coi.endDate,
+          isActive: true,
+        },
+        include: {
+          organization: {
+            select: {
+              id: true,
+              nameEn: true,
+              nameFr: true,
+              icaoCode: true,
+              country: true,
+            },
+          },
+        },
+      });
+    }),
+
+  /**
+   * Update conflict of interest declaration
+   */
+  updateCOI: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().cuid(),
+        data: updateCOISchema.omit({ id: true }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const coi = await prisma.reviewerCOI.findUnique({
+        where: { id: input.id },
+        include: { reviewerProfile: true },
+      });
+
+      if (!coi) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "COI declaration not found",
+        });
+      }
+
+      assertCanEditReviewer(ctx.session, coi.reviewerProfile.userId);
+
+      return prisma.reviewerCOI.update({
+        where: { id: input.id },
+        data: {
+          reason: input.data.reason,
+          endDate: input.data.endDate,
+          isActive: input.data.isActive,
+        },
+        include: {
+          organization: {
+            select: {
+              id: true,
+              nameEn: true,
+              nameFr: true,
+              icaoCode: true,
+              country: true,
+            },
+          },
+        },
+      });
+    }),
+
+  /**
+   * Deactivate conflict of interest declaration
+   */
+  deactivateCOI: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const coi = await prisma.reviewerCOI.findUnique({
+        where: { id: input.id },
+        include: { reviewerProfile: true },
+      });
+
+      if (!coi) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "COI declaration not found",
+        });
+      }
+
+      assertCanEditReviewer(ctx.session, coi.reviewerProfile.userId);
+
+      // Soft delete - mark as inactive
+      await prisma.reviewerCOI.update({
+        where: { id: input.id },
+        data: { isActive: false },
+      });
+
+      return { success: true };
+    }),
+
+  /**
+   * Verify COI declaration (coordinator/admin only)
+   */
+  verifyCOI: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().cuid(),
+        verification: verifyCOISchema.omit({ id: true }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      assertCanCoordinateReviewers(ctx.session);
+
+      const coi = await prisma.reviewerCOI.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!coi) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "COI declaration not found",
+        });
+      }
+
+      return prisma.reviewerCOI.update({
+        where: { id: input.id },
+        data: {
+          verifiedAt: new Date(),
+          verifiedById: ctx.user.id,
+          verificationNotes: input.verification.verificationNotes,
+        },
+        include: {
+          organization: {
+            select: {
+              id: true,
+              nameEn: true,
+              nameFr: true,
+              icaoCode: true,
+              country: true,
+            },
+          },
+        },
+      });
+    }),
+
+  /**
+   * Check COI for a team of reviewers against a target organization
+   */
+  checkTeamCOI: protectedProcedure
+    .input(
+      z.object({
+        reviewerIds: z.array(z.string().cuid()),
+        targetOrganizationId: z.string().cuid(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      assertCanCoordinateReviewers(ctx.session);
+
+      const results = await Promise.all(
+        input.reviewerIds.map(async (reviewerId) => ({
+          reviewerId,
+          ...(await checkCOIConflict(reviewerId, input.targetOrganizationId)),
+        }))
+      );
+
+      return {
+        results,
+        hasAnyConflict: results.some((r) => r.hasConflict),
+        hasHardBlock: results.some((r) => r.severity === "HARD_BLOCK"),
+      };
+    }),
+
+  // ============================================
+  // DELETE OPERATIONS
+  // ============================================
+
+  /**
+   * Delete reviewer profile (admin only)
+   */
+  delete: adminProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const reviewer = await prisma.reviewerProfile.findUnique({
+        where: { id: input.id },
+        include: {
+          teamAssignments: { select: { id: true } },
+        },
+      });
+
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer profile not found",
+        });
+      }
+
+      // Don't allow deletion if reviewer has active team assignments
+      if (reviewer.teamAssignments.length > 0) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Cannot delete reviewer with active review team assignments. Remove them from all teams first.",
+        });
+      }
+
+      // Delete the reviewer profile (cascades to related records)
+      await prisma.reviewerProfile.delete({
+        where: { id: input.id },
+      });
+
+      await logAuditEntry(ctx.user.id, "DELETE", input.id, {
+        deletedUserId: reviewer.userId,
+      });
+
+      console.log(
+        `[Reviewer] Admin ${ctx.user.id} deleted reviewer profile ${input.id}`
+      );
+
+      return { success: true };
+    }),
+
+  // ============================================
+  // MATCHING OPERATIONS
+  // ============================================
+
+  /**
+   * Find available reviewers for a review assignment
+   */
+  findAvailable: protectedProcedure
+    .input(
+      z.object({
+        targetOrganizationId: z.string().cuid(),
+        startDate: z.coerce.date(),
+        endDate: z.coerce.date(),
+        requiredExpertise: z.array(z.string()).optional(),
+        requiredLanguages: z.array(z.string()).optional(),
+        requireLeadQualified: z.boolean().default(false),
+        maxResults: z.number().int().min(1).max(50).default(10),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      assertCanCoordinateReviewers(ctx.session);
+
+      // Build where clause
+      const where: Prisma.ReviewerProfileWhereInput = {
+        selectionStatus: "SELECTED",
+        isAvailable: true,
+        // Exclude reviewers from target organization
+        homeOrganizationId: { not: input.targetOrganizationId },
+        // Exclude reviewers with COI against target organization
+        conflictsOfInterest: {
+          none: {
+            organizationId: input.targetOrganizationId,
+            isActive: true,
+          },
+        },
+        // Check availability period overlap
+        availabilityPeriods: {
+          some: {
+            availabilityType: "AVAILABLE",
+            startDate: { lte: input.startDate },
+            endDate: { gte: input.endDate },
+          },
+        },
+      };
+
+      // Add lead qualification filter
+      if (input.requireLeadQualified) {
+        where.isLeadQualified = true;
+      }
+
+      // Add expertise filter
+      if (input.requiredExpertise?.length) {
+        where.expertiseRecords = {
+          some: {
+            area: {
+              in: input.requiredExpertise as Prisma.EnumExpertiseAreaFilter["in"],
+            },
+          },
+        };
+      }
+
+      // Add language filter
+      if (input.requiredLanguages?.length) {
+        where.languages = {
+          some: {
+            language: {
+              in: input.requiredLanguages as Prisma.EnumLanguageFilter["in"],
+            },
+          },
+        };
+      }
+
+      const reviewers = await prisma.reviewerProfile.findMany({
+        where,
+        include: reviewerProfileListInclude,
+        orderBy: [
+          { reviewsCompleted: "desc" },
+          { isLeadQualified: "desc" },
+        ],
+        take: input.maxResults,
+      });
+
+      // Check COI for each reviewer and add to result
+      const results = await Promise.all(
+        reviewers.map(async (reviewer) => {
+          const coiCheck = await checkCOIConflict(
+            reviewer.id,
+            input.targetOrganizationId
+          );
+          return {
+            ...reviewer,
+            coiStatus: coiCheck,
+          };
+        })
+      );
+
+      return results;
+    }),
+});
+
+export type ReviewerRouter = typeof reviewerRouter;

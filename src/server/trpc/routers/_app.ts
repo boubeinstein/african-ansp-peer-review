@@ -6,6 +6,7 @@ import { responseRouter } from "./response";
 import { scoringRouter } from "./scoring";
 import { documentRouter } from "./document";
 import { progressRouter } from "./progress";
+import { reviewerRouter } from "./reviewer";
 
 /**
  * Main app router combining all sub-routers
@@ -18,6 +19,7 @@ export const appRouter = router({
   scoring: scoringRouter,
   document: documentRouter,
   progress: progressRouter,
+  reviewer: reviewerRouter,
 });
 
 /**

@@ -40,7 +40,8 @@
       "invalidEmail": "Veuillez entrer une adresse e-mail valide",
       "minLength": "Minimum {min} caractères requis",
       "maxLength": "Maximum {max} caractères autorisés"
-    }
+    },
+    "comingSoon": "Bientôt disponible"
   },
   "navigation": {
     "dashboard": "Tableau de bord",
@@ -1366,6 +1367,107 @@
       "close": "Fermer",
       "noPreview": "Aperçu non disponible",
       "uploadedBy": "Téléchargé par"
+    }
+  },
+  "reviewer": {
+    "title": "Profil d'évaluateur",
+    "titlePlural": "Profils d'évaluateurs",
+    "profile": {
+      "title": "Informations du profil",
+      "currentPosition": "Poste actuel",
+      "yearsOfExperience": "Années d'expérience",
+      "biography": "Biographie",
+      "homeOrganization": "Organisation d'appartenance"
+    },
+    "expertise": {
+      "title": "Domaines d'expertise",
+      "area": "Domaine",
+      "proficiency": "Niveau de compétence",
+      "years": "Années dans le domaine",
+      "primary": "Expertise principale",
+      "add": "Ajouter une expertise"
+    },
+    "language": {
+      "title": "Compétences linguistiques",
+      "proficiency": "Niveau",
+      "native": "Langue maternelle",
+      "canConduct": "Peut conduire des revues",
+      "add": "Ajouter une langue"
+    },
+    "certification": {
+      "title": "Certifications",
+      "type": "Type",
+      "name": "Nom",
+      "issuer": "Organisme émetteur",
+      "issueDate": "Date d'émission",
+      "expiryDate": "Date d'expiration",
+      "valid": "Valide",
+      "expired": "Expiré",
+      "add": "Ajouter une certification"
+    },
+    "training": {
+      "title": "Formations",
+      "type": "Type",
+      "name": "Nom",
+      "provider": "Prestataire",
+      "status": "Statut",
+      "add": "Ajouter une formation"
+    },
+    "availability": {
+      "title": "Disponibilité",
+      "set": "Définir la disponibilité"
+    },
+    "coi": {
+      "title": "Conflit d'intérêts",
+      "organization": "Organisation",
+      "type": "Type de conflit",
+      "reason": "Motif",
+      "declare": "Déclarer un conflit"
+    },
+    "actions": {
+      "create": "Créer un profil",
+      "edit": "Modifier le profil",
+      "view": "Voir le profil"
+    },
+    "messages": {
+      "createSuccess": "Profil d'évaluateur créé avec succès",
+      "updateSuccess": "Profil d'évaluateur mis à jour avec succès",
+      "coiWarning": "Cet évaluateur a un conflit d'intérêts"
+    }
+  },
+  "reviews": {
+    "title": "Revues par les pairs",
+    "description": "Gérer et coordonner les activités de revue par les pairs",
+    "stats": {
+      "total": "Total des revues",
+      "scheduled": "Planifiées",
+      "inProgress": "En cours",
+      "completed": "Terminées"
+    },
+    "empty": {
+      "title": "Aucune revue par les pairs",
+      "description": "Les revues par les pairs apparaîtront ici une fois le cycle de revue commencé."
+    },
+    "actions": {
+      "requestReview": "Demander une revue",
+      "viewAll": "Voir tout"
+    },
+    "status": {
+      "REQUESTED": "Demandée",
+      "APPROVED": "Approuvée",
+      "PLANNING": "Planification",
+      "SCHEDULED": "Programmée",
+      "IN_PROGRESS": "En cours",
+      "REPORT_DRAFTING": "Rédaction du rapport",
+      "REPORT_REVIEW": "Revue du rapport",
+      "COMPLETED": "Terminée",
+      "CANCELLED": "Annulée"
+    },
+    "type": {
+      "FULL": "Revue complète",
+      "FOCUSED": "Revue ciblée",
+      "FOLLOW_UP": "Revue de suivi",
+      "SURVEILLANCE": "Surveillance"
     }
   }
 }

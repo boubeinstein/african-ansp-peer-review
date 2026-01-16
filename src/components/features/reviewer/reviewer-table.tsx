@@ -26,6 +26,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   ArrowDown,
   ArrowUp,
@@ -52,6 +53,11 @@ interface ReviewerTableProps {
   sortBy: ReviewerSortField;
   sortOrder: "asc" | "desc";
   onSort: (field: ReviewerSortField) => void;
+  // Selection props
+  selectAll?: boolean;
+  onSelectAll?: (checked: boolean) => void;
+  isSelected?: (id: string) => boolean;
+  onSelectOne?: (id: string, checked: boolean) => void;
   className?: string;
 }
 
@@ -106,16 +112,31 @@ export function ReviewerTable({
   sortBy,
   sortOrder,
   onSort,
+  selectAll,
+  onSelectAll,
+  isSelected,
+  onSelectOne,
   className,
 }: ReviewerTableProps) {
   const t = useTranslations("reviewers");
   const locale = useLocale() as "en" | "fr";
+
+  const hasSelection = Boolean(onSelectAll && onSelectOne && isSelected);
 
   return (
     <div className={cn("rounded-md border", className)}>
       <Table>
         <TableHeader>
           <TableRow>
+            {hasSelection && (
+              <TableHead className="w-12">
+                <Checkbox
+                  checked={selectAll}
+                  onCheckedChange={(checked) => onSelectAll?.(checked as boolean)}
+                  aria-label={t("selection.selectAll")}
+                />
+              </TableHead>
+            )}
             <TableHead className="w-[280px]">
               <SortableHeader
                 field="fullName"
@@ -179,6 +200,18 @@ export function ReviewerTable({
 
             return (
               <TableRow key={reviewer.id}>
+                {/* Selection Checkbox */}
+                {hasSelection && (
+                  <TableCell>
+                    <Checkbox
+                      checked={isSelected?.(reviewer.id)}
+                      onCheckedChange={(checked) =>
+                        onSelectOne?.(reviewer.id, checked as boolean)
+                      }
+                      aria-label={`Select ${reviewer.fullName}`}
+                    />
+                  </TableCell>
+                )}
                 {/* Name */}
                 <TableCell>
                   <div className="flex items-center gap-3">

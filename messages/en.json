@@ -1131,7 +1131,9 @@
       "progress": "{answered} of {total} answered",
       "overallProgress": "Overall Progress",
       "searchPlaceholder": "Search questions...",
-      "noQuestions": "No questions match your filters"
+      "noQuestions": "No questions match your filters",
+      "expand": "Expand questions panel",
+      "collapse": "Collapse questions panel"
     },
     "filters": {
       "all": "All Questions",
@@ -1378,6 +1380,8 @@
     "profile": {
       "title": "Profile Information",
       "edit": "Edit Profile",
+      "editTitle": "Edit Reviewer Profile",
+      "editDescription": "Update profile information for {name}",
       "create": "Create Profile",
       "personalInfo": "Personal Information",
       "professionalInfo": "Professional Information",
@@ -1385,7 +1389,10 @@
       "noBiography": "No biography provided",
       "currentPosition": "Current Position",
       "yearsOfExperience": "Years of Experience",
-      "homeOrganization": "Home Organization"
+      "homeOrganization": "Home Organization",
+      "updateSuccess": "Profile updated successfully",
+      "updateError": "Failed to update profile",
+      "unknownReviewer": "Unknown Reviewer"
     },
     "form": {
       "title": "Title",
@@ -1668,7 +1675,14 @@
     "actions": {
       "create": "Create Profile",
       "edit": "Edit Profile",
-      "view": "View Profile"
+      "view": "View Profile",
+      "backToDirectory": "Back to Directory",
+      "backToProfile": "Back to Profile"
+    },
+    "error": {
+      "loadFailed": "Failed to load reviewer profile",
+      "notFound": "Reviewer Not Found",
+      "notFoundDescription": "The reviewer profile you're looking for doesn't exist or has been removed."
     },
     "messages": {
       "createSuccess": "Reviewer profile created successfully",
@@ -1790,9 +1804,14 @@
       "showing": "Showing {count} of {total} reviewers"
     },
     "pagination": {
+      "showing": "Showing {from}-{to} of {total}",
+      "page": "Page",
+      "of": "of",
+      "perPage": "Per page",
+      "first": "First",
+      "last": "Last",
       "previous": "Previous",
-      "next": "Next",
-      "page": "Page {current} of {total}"
+      "next": "Next"
     },
     "card": {
       "leadQualified": "Lead Reviewer Qualified",
@@ -1813,7 +1832,41 @@
       "view": "View Profile",
       "edit": "Edit Profile",
       "export": "Export",
-      "addReviewer": "Add Reviewer"
+      "addReviewer": "Add Reviewer",
+      "bulkActions": "Bulk Actions",
+      "exportSelected": "Export Selected",
+      "changeStatus": "Change Status",
+      "createTeam": "Create Review Team"
+    },
+    "selection": {
+      "selectAll": "Select all",
+      "selected": "{count} selected",
+      "clearSelection": "Clear selection",
+      "exportStarted": "Export started",
+      "exportingCount": "Exporting {count} reviewers...",
+      "statusChangeUnavailable": "Bulk status change will be available soon",
+      "teamCreationUnavailable": "Team creation will be available soon"
+    },
+    "export": {
+      "title": "Export Reviewers",
+      "descriptionSelected": "Export {count} selected reviewers to a file",
+      "descriptionAll": "Export all {count} reviewers to a file",
+      "format": "Export Format",
+      "formatExcelDesc": "Best for data analysis and spreadsheet applications",
+      "formatCsvDesc": "Universal format compatible with most applications",
+      "formatPdfDesc": "Best for printing and sharing as a document",
+      "options": "Export Options",
+      "includeContactInfo": "Include contact information",
+      "includeContactInfoDesc": "Includes email addresses (requires appropriate permissions)",
+      "summary": "Ready to export {count} reviewers as {format}",
+      "cancel": "Cancel",
+      "export": "Export",
+      "exporting": "Exporting...",
+      "success": "Export completed",
+      "successDescription": "Successfully exported {count} reviewers to {format} format",
+      "error": "Export failed",
+      "errorDescription": "There was an error exporting the data. Please try again.",
+      "noData": "No data to export"
     },
     "empty": {
       "title": "No reviewers found",

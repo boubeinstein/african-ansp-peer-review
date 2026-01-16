@@ -2,7 +2,6 @@
 
 import { useMemo, useEffect, useRef, useCallback } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
   ChevronRight,
@@ -324,189 +323,229 @@ export function QuestionNavigationSidebar() {
   ];
 
   return (
-    <>
-      {/* Sidebar */}
-      <AnimatePresence mode="wait">
-        {isSidebarOpen && (
-          <motion.aside
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: 320, opacity: 1 }}
-            exit={{ width: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="flex flex-col border-r bg-background h-full min-h-0"
-          >
-            {/* Header - fixed */}
-            <div className="flex-shrink-0 flex items-center justify-between border-b p-4">
-              <div>
-                <h2 className="font-semibold">{t("sidebar.title")}</h2>
-                <p className="text-sm text-muted-foreground">
-                  {t("sidebar.progress", {
-                    answered: answeredCount,
-                    total: totalCount,
-                  })}
-                </p>
-              </div>
+    <div className="relative flex h-full">
+      {/* Toggle button - always visible */}
+      <div
+        className={cn(
+          "flex flex-col border-r bg-muted/30 transition-all duration-200",
+          isSidebarOpen ? "w-0 overflow-hidden" : "w-12"
+        )}
+      >
+        {!isSidebarOpen && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggleSidebar}
+                  aria-expanded={isSidebarOpen}
+                  aria-label={t("sidebar.expand")}
+                  className="mx-auto mt-4 h-8 w-8 rounded-full border bg-background shadow-sm hover:bg-primary hover:text-primary-foreground transition-colors"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>{t("sidebar.expand")}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+
+        {/* Collapsed progress indicator */}
+        {!isSidebarOpen && (
+          <div className="flex flex-col items-center mt-4 px-2">
+            <div className="w-1.5 bg-muted rounded-full h-24 overflow-hidden">
+              <div
+                className="bg-primary rounded-full transition-all duration-300"
+                style={{ height: `${progressPercent}%` }}
+              />
+            </div>
+            <span className="text-[10px] text-muted-foreground mt-1 font-medium">
+              {progressPercent}%
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Sidebar content - collapsible */}
+      <aside
+        className={cn(
+          "flex flex-col border-r bg-background h-full min-h-0 transition-all duration-200 overflow-hidden",
+          isSidebarOpen ? "w-[320px] opacity-100" : "w-0 opacity-0"
+        )}
+        aria-hidden={!isSidebarOpen}
+      >
+        {/* Header - fixed */}
+        <div className="flex-shrink-0 flex items-center justify-between border-b p-4">
+          <div>
+            <h2 className="font-semibold">{t("sidebar.title")}</h2>
+            <p className="text-sm text-muted-foreground">
+              {t("sidebar.progress", {
+                answered: answeredCount,
+                total: totalCount,
+              })}
+            </p>
+          </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggleSidebar}
+                  aria-expanded={isSidebarOpen}
+                  aria-label={t("sidebar.collapse")}
+                  className="shrink-0"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>{t("sidebar.collapse")}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+
+        {/* Progress bar - fixed */}
+        <div className="flex-shrink-0 px-4 py-3 border-b">
+          <div className="flex items-center justify-between text-sm mb-2">
+            <span className="text-muted-foreground">
+              {t("sidebar.overallProgress")}
+            </span>
+            <span className="font-medium">{progressPercent}%</span>
+          </div>
+          <Progress value={progressPercent} className="h-2" />
+        </div>
+
+        {/* Search and filter - fixed */}
+        <div className="flex-shrink-0 space-y-3 p-4 border-b">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder={t("sidebar.searchPlaceholder")}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 pr-9"
+            />
+            {searchQuery && (
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={toggleSidebar}
-                className="shrink-0"
+                className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2"
+                onClick={() => setSearchQuery("")}
               >
-                <ChevronLeft className="h-4 w-4" />
+                <X className="h-3 w-3" />
               </Button>
-            </div>
+            )}
+          </div>
 
-            {/* Progress bar - fixed */}
-            <div className="flex-shrink-0 px-4 py-3 border-b">
-              <div className="flex items-center justify-between text-sm mb-2">
-                <span className="text-muted-foreground">
-                  {t("sidebar.overallProgress")}
-                </span>
-                <span className="font-medium">{progressPercent}%</span>
-              </div>
-              <Progress value={progressPercent} className="h-2" />
-            </div>
+          <Select
+            value={filter}
+            onValueChange={(v) => setFilter(v as QuestionFilter)}
+          >
+            <SelectTrigger>
+              <Filter className="h-4 w-4 mr-2" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {filterOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-            {/* Search and filter - fixed */}
-            <div className="flex-shrink-0 space-y-3 p-4 border-b">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder={t("sidebar.searchPlaceholder")}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 pr-9"
-                />
-                {searchQuery && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2"
-                    onClick={() => setSearchQuery("")}
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-                )}
-              </div>
-
-              <Select
-                value={filter}
-                onValueChange={(v) => setFilter(v as QuestionFilter)}
-              >
-                <SelectTrigger>
-                  <Filter className="h-4 w-4 mr-2" />
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {filterOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Question list - SCROLLABLE */}
-            <div
-              ref={scrollContainerRef}
-              className="flex-1 min-h-0 overflow-y-auto question-list-scroll"
-            >
-              <div className="p-2">
-                {groupedQuestions.length === 0 ? (
-                  <div className="p-4 text-center text-muted-foreground">
-                    {t("sidebar.noQuestions")}
-                  </div>
-                ) : (
-                  groupedQuestions.map((group) => (
-                    <div key={group.code} className="mb-4">
-                      {/* Group header */}
-                      <div className="flex items-center justify-between px-2 py-1.5 mb-1 sticky top-0 bg-background z-10">
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="text-xs">
-                            {group.code}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {group.answeredCount}/{group.totalCount}
-                          </span>
-                        </div>
-                        <Progress
-                          value={
-                            group.totalCount > 0
-                              ? (group.answeredCount / group.totalCount) * 100
-                              : 0
-                          }
-                          className="w-16 h-1.5"
-                        />
-                      </div>
-
-                      {/* Questions in group */}
-                      <div className="space-y-1">
-                        {group.questions.map((question) => {
-                          const status = getQuestionStatus(question);
-                          const isActive = currentQuestion?.id === question.id;
-                          const globalIndex = filteredQuestions.findIndex(
-                            (q) => q.id === question.id
-                          );
-
-                          return (
-                            <QuestionNavItem
-                              key={question.id}
-                              question={question}
-                              globalIndex={globalIndex}
-                              status={status}
-                              isActive={isActive}
-                              onClick={() => goToQuestionById(question.id)}
-                              questionText={getQuestionText(question)}
-                              itemRef={isActive ? activeItemRef : undefined}
-                            />
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-
-            {/* Footer with keyboard shortcuts hint - fixed */}
-            <div className="flex-shrink-0 border-t p-3 text-xs text-muted-foreground bg-muted/30">
-              <div className="flex flex-wrap gap-x-4 gap-y-1">
-                <span>
-                  <kbd className="px-1 py-0.5 rounded bg-muted font-mono text-[10px]">
-                    ↑/k
-                  </kbd>{" "}
-                  {t("shortcuts.prev")}
-                </span>
-                <span>
-                  <kbd className="px-1 py-0.5 rounded bg-muted font-mono text-[10px]">
-                    ↓/j
-                  </kbd>{" "}
-                  {t("shortcuts.next")}
-                </span>
-                <span>
-                  <kbd className="px-1 py-0.5 rounded bg-muted font-mono text-[10px]">
-                    F
-                  </kbd>{" "}
-                  {t("shortcuts.flag")}
-                </span>
-              </div>
-            </div>
-          </motion.aside>
-        )}
-      </AnimatePresence>
-
-      {/* Collapsed toggle button */}
-      {!isSidebarOpen && (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleSidebar}
-          className="absolute left-2 top-20 z-10 h-8 w-8 rounded-full border bg-background shadow-sm"
+        {/* Question list - SCROLLABLE */}
+        <div
+          ref={scrollContainerRef}
+          className="flex-1 min-h-0 overflow-y-auto question-list-scroll"
         >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      )}
-    </>
+          <div className="p-2">
+            {groupedQuestions.length === 0 ? (
+              <div className="p-4 text-center text-muted-foreground">
+                {t("sidebar.noQuestions")}
+              </div>
+            ) : (
+              groupedQuestions.map((group) => (
+                <div key={group.code} className="mb-4">
+                  {/* Group header */}
+                  <div className="flex items-center justify-between px-2 py-1.5 mb-1 sticky top-0 bg-background z-10">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">
+                        {group.code}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {group.answeredCount}/{group.totalCount}
+                      </span>
+                    </div>
+                    <Progress
+                      value={
+                        group.totalCount > 0
+                          ? (group.answeredCount / group.totalCount) * 100
+                          : 0
+                      }
+                      className="w-16 h-1.5"
+                    />
+                  </div>
+
+                  {/* Questions in group */}
+                  <div className="space-y-1">
+                    {group.questions.map((question) => {
+                      const status = getQuestionStatus(question);
+                      const isActive = currentQuestion?.id === question.id;
+                      const globalIndex = filteredQuestions.findIndex(
+                        (q) => q.id === question.id
+                      );
+
+                      return (
+                        <QuestionNavItem
+                          key={question.id}
+                          question={question}
+                          globalIndex={globalIndex}
+                          status={status}
+                          isActive={isActive}
+                          onClick={() => goToQuestionById(question.id)}
+                          questionText={getQuestionText(question)}
+                          itemRef={isActive ? activeItemRef : undefined}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Footer with keyboard shortcuts hint - fixed */}
+        <div className="flex-shrink-0 border-t p-3 text-xs text-muted-foreground bg-muted/30">
+          <div className="flex flex-wrap gap-x-4 gap-y-1">
+            <span>
+              <kbd className="px-1 py-0.5 rounded bg-muted font-mono text-[10px]">
+                ↑/k
+              </kbd>{" "}
+              {t("shortcuts.prev")}
+            </span>
+            <span>
+              <kbd className="px-1 py-0.5 rounded bg-muted font-mono text-[10px]">
+                ↓/j
+              </kbd>{" "}
+              {t("shortcuts.next")}
+            </span>
+            <span>
+              <kbd className="px-1 py-0.5 rounded bg-muted font-mono text-[10px]">
+                F
+              </kbd>{" "}
+              {t("shortcuts.flag")}
+            </span>
+          </div>
+        </div>
+      </aside>
+    </div>
   );
 }

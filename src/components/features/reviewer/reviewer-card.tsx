@@ -24,6 +24,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Building2,
   Edit2,
@@ -53,6 +54,9 @@ interface ReviewerCardProps {
   onEdit?: (id: string) => void;
   showCOICheck?: string; // organizationId to check against
   hasCOI?: boolean;
+  // Selection props
+  isSelected?: boolean;
+  onSelect?: (checked: boolean) => void;
   className?: string;
 }
 
@@ -66,6 +70,8 @@ export function ReviewerCard({
   onEdit,
   showCOICheck,
   hasCOI,
+  isSelected,
+  onSelect,
   className,
 }: ReviewerCardProps) {
   const t = useTranslations("reviewers");
@@ -83,9 +89,34 @@ export function ReviewerCard({
       ? reviewer.homeOrganization.nameFr
       : reviewer.homeOrganization.nameEn;
 
+  const hasSelection = Boolean(onSelect);
+
   return (
-    <Card className={cn("flex flex-col", className)}>
-      <CardHeader className="pb-3">
+    <Card
+      className={cn(
+        "flex flex-col group relative",
+        isSelected && "ring-2 ring-primary",
+        className
+      )}
+    >
+      {/* Selection Checkbox */}
+      {hasSelection && (
+        <div
+          className={cn(
+            "absolute top-3 left-3 z-10 transition-opacity",
+            isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+          )}
+        >
+          <Checkbox
+            checked={isSelected}
+            onCheckedChange={(checked) => onSelect?.(checked as boolean)}
+            onClick={(e) => e.stopPropagation()}
+            aria-label={`Select ${reviewer.fullName}`}
+            className="bg-background"
+          />
+        </div>
+      )}
+      <CardHeader className={cn("pb-3", hasSelection && "pl-10")}>
         <div className="flex items-start gap-3">
           {/* Avatar */}
           <Avatar className="h-12 w-12">

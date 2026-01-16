@@ -1131,7 +1131,9 @@
       "progress": "{answered} sur {total} répondues",
       "overallProgress": "Progression globale",
       "searchPlaceholder": "Rechercher des questions...",
-      "noQuestions": "Aucune question ne correspond à vos filtres"
+      "noQuestions": "Aucune question ne correspond à vos filtres",
+      "expand": "Afficher le panneau des questions",
+      "collapse": "Masquer le panneau des questions"
     },
     "filters": {
       "all": "Toutes les questions",
@@ -1378,6 +1380,8 @@
     "profile": {
       "title": "Informations du profil",
       "edit": "Modifier le profil",
+      "editTitle": "Modifier le profil d'évaluateur",
+      "editDescription": "Mettre à jour les informations du profil pour {name}",
       "create": "Créer un profil",
       "personalInfo": "Informations personnelles",
       "professionalInfo": "Informations professionnelles",
@@ -1385,7 +1389,10 @@
       "noBiography": "Aucune biographie fournie",
       "currentPosition": "Poste actuel",
       "yearsOfExperience": "Années d'expérience",
-      "homeOrganization": "Organisation d'appartenance"
+      "homeOrganization": "Organisation d'appartenance",
+      "updateSuccess": "Profil mis à jour avec succès",
+      "updateError": "Échec de la mise à jour du profil",
+      "unknownReviewer": "Évaluateur inconnu"
     },
     "form": {
       "title": "Titre",
@@ -1668,7 +1675,14 @@
     "actions": {
       "create": "Créer un profil",
       "edit": "Modifier le profil",
-      "view": "Voir le profil"
+      "view": "Voir le profil",
+      "backToDirectory": "Retour au répertoire",
+      "backToProfile": "Retour au profil"
+    },
+    "error": {
+      "loadFailed": "Échec du chargement du profil d'évaluateur",
+      "notFound": "Évaluateur non trouvé",
+      "notFoundDescription": "Le profil d'évaluateur que vous recherchez n'existe pas ou a été supprimé."
     },
     "messages": {
       "createSuccess": "Profil d'évaluateur créé avec succès",
@@ -1790,9 +1804,14 @@
       "showing": "Affichage de {count} sur {total} évaluateurs"
     },
     "pagination": {
+      "showing": "Affichage {from}-{to} sur {total}",
+      "page": "Page",
+      "of": "sur",
+      "perPage": "Par page",
+      "first": "Première",
+      "last": "Dernière",
       "previous": "Précédent",
-      "next": "Suivant",
-      "page": "Page {current} sur {total}"
+      "next": "Suivant"
     },
     "card": {
       "leadQualified": "Qualifié évaluateur principal",
@@ -1813,7 +1832,41 @@
       "view": "Voir le profil",
       "edit": "Modifier le profil",
       "export": "Exporter",
-      "addReviewer": "Ajouter un évaluateur"
+      "addReviewer": "Ajouter un évaluateur",
+      "bulkActions": "Actions groupées",
+      "exportSelected": "Exporter la sélection",
+      "changeStatus": "Changer le statut",
+      "createTeam": "Créer une équipe"
+    },
+    "selection": {
+      "selectAll": "Tout sélectionner",
+      "selected": "{count} sélectionné(s)",
+      "clearSelection": "Effacer la sélection",
+      "exportStarted": "Export démarré",
+      "exportingCount": "Export de {count} évaluateurs...",
+      "statusChangeUnavailable": "Le changement de statut groupé sera bientôt disponible",
+      "teamCreationUnavailable": "La création d'équipe sera bientôt disponible"
+    },
+    "export": {
+      "title": "Exporter les évaluateurs",
+      "descriptionSelected": "Exporter {count} évaluateurs sélectionnés vers un fichier",
+      "descriptionAll": "Exporter tous les {count} évaluateurs vers un fichier",
+      "format": "Format d'export",
+      "formatExcelDesc": "Idéal pour l'analyse de données et les tableurs",
+      "formatCsvDesc": "Format universel compatible avec la plupart des applications",
+      "formatPdfDesc": "Idéal pour l'impression et le partage de documents",
+      "options": "Options d'export",
+      "includeContactInfo": "Inclure les coordonnées",
+      "includeContactInfoDesc": "Inclut les adresses email (nécessite les permissions appropriées)",
+      "summary": "Prêt à exporter {count} évaluateurs au format {format}",
+      "cancel": "Annuler",
+      "export": "Exporter",
+      "exporting": "Export en cours...",
+      "success": "Export terminé",
+      "successDescription": "Export réussi de {count} évaluateurs au format {format}",
+      "error": "Échec de l'export",
+      "errorDescription": "Une erreur s'est produite lors de l'export. Veuillez réessayer.",
+      "noData": "Aucune donnée à exporter"
     },
     "empty": {
       "title": "Aucun évaluateur trouvé",

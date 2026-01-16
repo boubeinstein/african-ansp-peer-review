@@ -17,25 +17,43 @@ import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   ArrowDownAZ,
   ArrowUpAZ,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
   Download,
   Grid3X3,
   Loader2,
+  MoreHorizontal,
   Search,
   Table2,
+  UserCheck,
   Users,
 } from "lucide-react";
+import { toast } from "sonner";
 import { ReviewerCard } from "./reviewer-card";
 import { ReviewerTable } from "./reviewer-table";
 import { ReviewerSearchFilters } from "./reviewer-search-filters";
+import { ExportDialog } from "./export-dialog";
 import type {
   ReviewerListItem,
   ReviewerFilterOptions,
@@ -141,7 +159,20 @@ export function ReviewerDirectory({
   const [sortBy, setSortBy] = useState<ReviewerSortField>("fullName");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = viewMode === "card" ? 12 : 10;
+  const [pageSize, setPageSize] = useState(25);
+
+  // Selection state
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selectAll, setSelectAll] = useState(false);
+
+  // Export dialog state
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+
+  // Reset to page 1 when page size changes
+  const handlePageSizeChange = (value: string) => {
+    setPageSize(Number(value));
+    setCurrentPage(1);
+  };
 
   // Map sortBy to API sort field
   const apiSortBy = useMemo(() => {
@@ -164,7 +195,7 @@ export function ReviewerDirectory({
   // Fetch reviewers from API
   const { data, isLoading, error } = trpc.reviewer.list.useQuery({
     page: currentPage,
-    pageSize: itemsPerPage,
+    pageSize,
     sortBy: apiSortBy,
     sortOrder,
     search: searchQuery || undefined,
@@ -216,6 +247,56 @@ export function ReviewerDirectory({
   function handleClearFilters() {
     setFilters({});
     setSearchQuery("");
+  }
+
+  // Selection handlers
+  function handleSelectAll(checked: boolean) {
+    if (checked && reviewers.length > 0) {
+      setSelectedIds(new Set(reviewers.map((r) => r.id)));
+      setSelectAll(true);
+    } else {
+      setSelectedIds(new Set());
+      setSelectAll(false);
+    }
+  }
+
+  function handleSelectOne(id: string, checked: boolean) {
+    const newSelected = new Set(selectedIds);
+    if (checked) {
+      newSelected.add(id);
+    } else {
+      newSelected.delete(id);
+    }
+    setSelectedIds(newSelected);
+    setSelectAll(newSelected.size === reviewers.length && reviewers.length > 0);
+  }
+
+  function clearSelection() {
+    setSelectedIds(new Set());
+    setSelectAll(false);
+  }
+
+  const isSelected = (id: string) => selectedIds.has(id);
+  const hasSelection = selectedIds.size > 0;
+
+  // Get reviewers to export (selected or all)
+  const reviewersToExport = hasSelection
+    ? reviewers.filter((r) => selectedIds.has(r.id))
+    : reviewers;
+
+  // Bulk action handlers
+  function handleBulkExport() {
+    setExportDialogOpen(true);
+  }
+
+  function handleBulkStatusChange() {
+    // For now, just show a toast - status change dialog will be implemented later
+    toast.info(t("selection.statusChangeUnavailable"));
+  }
+
+  function handleCreateTeam() {
+    // For now, just show a toast - team creation will be implemented later
+    toast.info(t("selection.teamCreationUnavailable"));
   }
 
   return (
@@ -304,11 +385,73 @@ export function ReviewerDirectory({
         </div>
 
         {/* Export */}
-        <Button variant="outline" disabled>
+        <Button
+          variant="outline"
+          onClick={handleBulkExport}
+          disabled={!reviewers.length}
+        >
           <Download className="h-4 w-4 mr-2" />
-          <span className="hidden sm:inline">{t("actions.export")}</span>
+          <span className="hidden sm:inline">
+            {hasSelection
+              ? t("actions.exportSelected")
+              : t("actions.export")}
+          </span>
         </Button>
       </div>
+
+      {/* Selection Header Bar */}
+      {hasSelection && (
+        <div className="flex items-center justify-between bg-muted/50 border rounded-lg px-4 py-2">
+          <div className="flex items-center gap-3">
+            <Checkbox
+              checked={selectAll}
+              onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
+              aria-label={t("selection.selectAll")}
+            />
+            <span className="text-sm font-medium">
+              {t("selection.selected", { count: selectedIds.size })}
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearSelection}
+              className="text-muted-foreground"
+            >
+              {t("selection.clearSelection")}
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {/* Bulk Actions */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <MoreHorizontal className="h-4 w-4 mr-2" />
+                  {t("actions.bulkActions")}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleBulkExport}>
+                  <Download className="h-4 w-4 mr-2" />
+                  {t("actions.exportSelected")}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleBulkStatusChange}>
+                  <UserCheck className="h-4 w-4 mr-2" />
+                  {t("actions.changeStatus")}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={handleCreateTeam}
+                  disabled={selectedIds.size < 2}
+                >
+                  <Users className="h-4 w-4 mr-2" />
+                  {t("actions.createTeam")}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      )}
 
       {/* Results Info */}
       <div className="flex items-center justify-between text-sm text-muted-foreground">
@@ -380,6 +523,8 @@ export function ReviewerDirectory({
               reviewer={reviewer}
               onView={handleViewProfile}
               onEdit={handleEditProfile}
+              isSelected={isSelected(reviewer.id)}
+              onSelect={(checked) => handleSelectOne(reviewer.id, checked)}
             />
           ))}
         </div>
@@ -391,33 +536,101 @@ export function ReviewerDirectory({
           sortBy={sortBy}
           sortOrder={sortOrder}
           onSort={handleSort}
+          selectAll={selectAll}
+          onSelectAll={handleSelectAll}
+          isSelected={isSelected}
+          onSelectOne={handleSelectOne}
         />
       )}
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 pt-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-          >
-            {t("pagination.previous")}
-          </Button>
-          <span className="text-sm text-muted-foreground">
-            {t("pagination.page", { current: currentPage, total: totalPages })}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}
-          >
-            {t("pagination.next")}
-          </Button>
+      {/* Enhanced Pagination */}
+      {totalCount > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t pt-4">
+          {/* Left: Showing info */}
+          <div className="text-sm text-muted-foreground">
+            {t("pagination.showing", {
+              from: (currentPage - 1) * pageSize + 1,
+              to: Math.min(currentPage * pageSize, totalCount),
+              total: totalCount,
+            })}
+          </div>
+
+          {/* Center: Page navigation */}
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+              title={t("pagination.first")}
+            >
+              <ChevronsLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setCurrentPage((p) => p - 1)}
+              disabled={currentPage === 1}
+              title={t("pagination.previous")}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+
+            <span className="text-sm px-2">
+              {t("pagination.page")} {currentPage} {t("pagination.of")} {totalPages}
+            </span>
+
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setCurrentPage((p) => p + 1)}
+              disabled={currentPage === totalPages}
+              title={t("pagination.next")}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages}
+              title={t("pagination.last")}
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* Right: Page size selector */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">
+              {t("pagination.perPage")}
+            </span>
+            <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
+              <SelectTrigger className="w-[70px] h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="25">25</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+                <SelectItem value="100">100</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       )}
+
+      {/* Export Dialog */}
+      <ExportDialog
+        open={exportDialogOpen}
+        onOpenChange={setExportDialogOpen}
+        reviewers={reviewersToExport}
+        selectedCount={hasSelection ? selectedIds.size : undefined}
+      />
     </div>
   );
 }

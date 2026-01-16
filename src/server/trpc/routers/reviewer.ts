@@ -53,6 +53,11 @@ import {
   assertCanViewReviewer,
   assertCanCoordinateReviewers,
 } from "../lib/reviewer-permissions";
+import {
+  MATCHING_WEIGHTS,
+  REVIEWER_CAPACITY,
+} from "@/lib/reviewer/constants";
+import { matchingCriteriaSchema } from "@/lib/validations/reviewer";
 
 // =============================================================================
 // CONSTANTS
@@ -1705,6 +1710,440 @@ export const reviewerRouter = router({
       );
 
       return results;
+    }),
+
+  /**
+   * Advanced search for reviewers with detailed filtering
+   */
+  search: protectedProcedure
+    .input(
+      z.object({
+        query: z.string().max(100).optional(),
+        organizationId: z.string().cuid().optional(),
+        excludeOrganizationId: z.string().cuid().optional(),
+        selectionStatus: z.array(z.nativeEnum(ReviewerSelectionStatus)).optional(),
+        reviewerType: z.array(z.nativeEnum(ReviewerType)).optional(),
+        expertiseAreas: z.array(z.string()).optional(),
+        languages: z.array(z.string()).optional(),
+        isLeadQualified: z.boolean().optional(),
+        isAvailable: z.boolean().optional(),
+        availableFrom: z.coerce.date().optional(),
+        availableTo: z.coerce.date().optional(),
+        page: z.number().int().min(1).default(1),
+        pageSize: z.number().int().min(1).max(100).default(20),
+        sortBy: z.enum(["name", "organization", "experience", "createdAt", "reviewsCompleted"]).default("name"),
+        sortOrder: z.enum(["asc", "desc"]).default("asc"),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      // Check view permission
+      if (!canViewReviewer(ctx.session, "")) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to search reviewers",
+        });
+      }
+
+      return searchReviewers({
+        page: input.page,
+        pageSize: input.pageSize,
+        sortBy: input.sortBy,
+        sortOrder: input.sortOrder,
+        search: input.query,
+        organizationId: input.organizationId,
+        excludeOrganizationId: input.excludeOrganizationId,
+        selectionStatus: input.selectionStatus,
+        reviewerType: input.reviewerType,
+        expertiseAreas: input.expertiseAreas,
+        languages: input.languages,
+        isLeadQualified: input.isLeadQualified,
+        isAvailable: input.isAvailable,
+        availableFrom: input.availableFrom,
+        availableTo: input.availableTo,
+      });
+    }),
+
+  /**
+   * Hard delete COI declaration (admin only)
+   */
+  removeCOI: adminProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const coi = await prisma.reviewerCOI.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!coi) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "COI declaration not found",
+        });
+      }
+
+      await prisma.reviewerCOI.delete({ where: { id: input.id } });
+
+      await logAuditEntry(ctx.user.id, "DELETE_COI", input.id, {
+        reviewerProfileId: coi.reviewerProfileId,
+        organizationId: coi.organizationId,
+        coiType: coi.coiType,
+      });
+
+      return { success: true };
+    }),
+
+  /**
+   * Find matching reviewers based on criteria with scoring
+   */
+  findMatches: protectedProcedure
+    .input(matchingCriteriaSchema)
+    .query(async ({ ctx, input }) => {
+      assertCanCoordinateReviewers(ctx.session);
+
+      // Get all eligible reviewers (selected, available, no COI)
+      const eligibleReviewers = await prisma.reviewerProfile.findMany({
+        where: {
+          selectionStatus: "SELECTED",
+          isAvailable: true,
+          homeOrganizationId: { not: input.targetOrganizationId },
+          conflictsOfInterest: {
+            none: {
+              organizationId: input.targetOrganizationId,
+              isActive: true,
+            },
+          },
+          ...(input.excludeReviewerIds?.length && {
+            id: { notIn: input.excludeReviewerIds },
+          }),
+          ...(input.requireLeadQualified && { isLeadQualified: true }),
+        },
+        include: {
+          ...reviewerProfileListInclude,
+          availabilityPeriods: {
+            where: {
+              availabilityType: "AVAILABLE",
+              startDate: { lte: input.startDate },
+              endDate: { gte: input.endDate },
+            },
+          },
+        },
+      });
+
+      // Calculate match scores for each reviewer
+      const scoredReviewers = eligibleReviewers.map((reviewer) => {
+        // Expertise score
+        const requiredExpertise = new Set(input.requiredExpertise);
+        const preferredExpertise = new Set(input.preferredExpertise || []);
+        const reviewerExpertise = new Set(reviewer.expertiseRecords.map((e) => e.area));
+
+        let expertiseScore = 0;
+        const matchedRequired = [...requiredExpertise].filter((e) => reviewerExpertise.has(e));
+        const matchedPreferred = [...preferredExpertise].filter((e) => reviewerExpertise.has(e));
+
+        if (requiredExpertise.size > 0) {
+          expertiseScore = (matchedRequired.length / requiredExpertise.size) * 80;
+        }
+        if (preferredExpertise.size > 0) {
+          expertiseScore += (matchedPreferred.length / preferredExpertise.size) * 20;
+        }
+
+        // Language score
+        const requiredLanguages = new Set(input.requiredLanguages);
+        const preferredLanguages = new Set(input.preferredLanguages || []);
+        const reviewerLanguages = new Set(reviewer.languages.map((l) => l.language));
+
+        let languageScore = 0;
+        const matchedRequiredLangs = [...requiredLanguages].filter((l) => reviewerLanguages.has(l));
+        const matchedPreferredLangs = [...preferredLanguages].filter((l) => reviewerLanguages.has(l));
+
+        if (requiredLanguages.size > 0) {
+          languageScore = (matchedRequiredLangs.length / requiredLanguages.size) * 80;
+        }
+        if (preferredLanguages.size > 0) {
+          languageScore += (matchedPreferredLangs.length / preferredLanguages.size) * 20;
+        }
+
+        // Availability score (100 if available for full period, 0 otherwise)
+        const availabilityScore = reviewer.availabilityPeriods.length > 0 ? 100 : 0;
+
+        // Experience score (based on reviews completed, max 20 reviews = 100%)
+        const experienceScore = Math.min((reviewer.reviewsCompleted / 20) * 100, 100);
+
+        // Calculate weighted total score
+        const totalScore =
+          (expertiseScore * MATCHING_WEIGHTS.EXPERTISE +
+            languageScore * MATCHING_WEIGHTS.LANGUAGE +
+            availabilityScore * MATCHING_WEIGHTS.AVAILABILITY +
+            experienceScore * MATCHING_WEIGHTS.EXPERIENCE) /
+          100;
+
+        return {
+          reviewer,
+          score: Math.round(totalScore * 100) / 100,
+          breakdown: {
+            expertise: Math.round(expertiseScore * 100) / 100,
+            language: Math.round(languageScore * 100) / 100,
+            availability: availabilityScore,
+            experience: Math.round(experienceScore * 100) / 100,
+          },
+          matchedExpertise: matchedRequired,
+          matchedLanguages: matchedRequiredLangs,
+          isFullyQualified: matchedRequired.length === requiredExpertise.size &&
+            matchedRequiredLangs.length === requiredLanguages.size,
+        };
+      });
+
+      // Sort by score descending and return top results
+      scoredReviewers.sort((a, b) => b.score - a.score);
+
+      return {
+        matches: scoredReviewers.slice(0, input.maxResults),
+        totalEligible: eligibleReviewers.length,
+        fullyQualifiedCount: scoredReviewers.filter((r) => r.isFullyQualified).length,
+      };
+    }),
+
+  /**
+   * Calculate match score for a single reviewer against criteria
+   */
+  calculateMatchScore: protectedProcedure
+    .input(
+      z.object({
+        reviewerId: z.string().cuid(),
+        targetOrganizationId: z.string().cuid(),
+        requiredExpertise: z.array(z.string()),
+        requiredLanguages: z.array(z.string()),
+        startDate: z.coerce.date(),
+        endDate: z.coerce.date(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      assertCanCoordinateReviewers(ctx.session);
+
+      const reviewer = await prisma.reviewerProfile.findUnique({
+        where: { id: input.reviewerId },
+        include: {
+          expertiseRecords: true,
+          languages: true,
+          availabilityPeriods: {
+            where: {
+              availabilityType: "AVAILABLE",
+              startDate: { lte: input.startDate },
+              endDate: { gte: input.endDate },
+            },
+          },
+        },
+      });
+
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer not found",
+        });
+      }
+
+      // Check COI
+      const coiResult = await checkCOIConflict(input.reviewerId, input.targetOrganizationId);
+      if (coiResult.hasConflict && coiResult.severity === "HARD_BLOCK") {
+        return {
+          reviewerId: input.reviewerId,
+          score: 0,
+          isEligible: false,
+          disqualificationReason: `COI: ${coiResult.description || coiResult.reason}`,
+          breakdown: null,
+        };
+      }
+
+      // Calculate scores (convert enums to strings for comparison)
+      const requiredExpertise = new Set(input.requiredExpertise);
+      const reviewerExpertise = new Set(reviewer.expertiseRecords.map((e) => String(e.area)));
+      const matchedExpertise = [...requiredExpertise].filter((e) => reviewerExpertise.has(e));
+      const expertiseScore = requiredExpertise.size > 0
+        ? (matchedExpertise.length / requiredExpertise.size) * 100
+        : 100;
+
+      const requiredLanguages = new Set(input.requiredLanguages);
+      const reviewerLanguages = new Set(reviewer.languages.map((l) => String(l.language)));
+      const matchedLanguages = [...requiredLanguages].filter((l) => reviewerLanguages.has(l));
+      const languageScore = requiredLanguages.size > 0
+        ? (matchedLanguages.length / requiredLanguages.size) * 100
+        : 100;
+
+      const availabilityScore = reviewer.availabilityPeriods.length > 0 ? 100 : 0;
+      const experienceScore = Math.min((reviewer.reviewsCompleted / 20) * 100, 100);
+
+      const totalScore =
+        (expertiseScore * MATCHING_WEIGHTS.EXPERTISE +
+          languageScore * MATCHING_WEIGHTS.LANGUAGE +
+          availabilityScore * MATCHING_WEIGHTS.AVAILABILITY +
+          experienceScore * MATCHING_WEIGHTS.EXPERIENCE) /
+        100;
+
+      return {
+        reviewerId: input.reviewerId,
+        score: Math.round(totalScore * 100) / 100,
+        isEligible: reviewer.selectionStatus === "SELECTED" && reviewer.isAvailable,
+        disqualificationReason: null,
+        breakdown: {
+          expertise: Math.round(expertiseScore * 100) / 100,
+          language: Math.round(languageScore * 100) / 100,
+          availability: availabilityScore,
+          experience: Math.round(experienceScore * 100) / 100,
+        },
+        matchedExpertise,
+        matchedLanguages,
+        coiStatus: coiResult,
+      };
+    }),
+
+  /**
+   * Build an optimal review team based on criteria
+   */
+  buildOptimalTeam: protectedProcedure
+    .input(
+      z.object({
+        targetOrganizationId: z.string().cuid(),
+        requiredExpertise: z.array(z.string()).min(1),
+        requiredLanguages: z.array(z.string()).min(1),
+        startDate: z.coerce.date(),
+        endDate: z.coerce.date(),
+        teamSize: z.number().int().min(REVIEWER_CAPACITY.MIN_TEAM_SIZE).max(REVIEWER_CAPACITY.MAX_TEAM_SIZE).default(REVIEWER_CAPACITY.IDEAL_TEAM_SIZE),
+        requireLeadReviewer: z.boolean().default(true),
+        excludeReviewerIds: z.array(z.string().cuid()).optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      assertCanCoordinateReviewers(ctx.session);
+
+      // Get all eligible reviewers
+      const eligibleReviewers = await prisma.reviewerProfile.findMany({
+        where: {
+          selectionStatus: "SELECTED",
+          isAvailable: true,
+          homeOrganizationId: { not: input.targetOrganizationId },
+          conflictsOfInterest: {
+            none: {
+              organizationId: input.targetOrganizationId,
+              isActive: true,
+            },
+          },
+          ...(input.excludeReviewerIds?.length && {
+            id: { notIn: input.excludeReviewerIds },
+          }),
+        },
+        include: {
+          ...reviewerProfileListInclude,
+          availabilityPeriods: {
+            where: {
+              availabilityType: "AVAILABLE",
+              startDate: { lte: input.startDate },
+              endDate: { gte: input.endDate },
+            },
+          },
+        },
+      });
+
+      // Filter to only those available for the full period
+      const availableReviewers = eligibleReviewers.filter(
+        (r) => r.availabilityPeriods.length > 0
+      );
+
+      if (availableReviewers.length < input.teamSize) {
+        return {
+          success: false,
+          message: `Only ${availableReviewers.length} reviewers available, need ${input.teamSize}`,
+          team: [],
+          coverageAnalysis: null,
+        };
+      }
+
+      // Score and sort reviewers (convert enums to strings for comparison)
+      const scoredReviewers = availableReviewers.map((reviewer) => {
+        const reviewerExpertise = new Set(reviewer.expertiseRecords.map((e) => String(e.area)));
+        const reviewerLanguages = new Set(reviewer.languages.map((l) => String(l.language)));
+
+        const expertiseMatch = input.requiredExpertise.filter((e) => reviewerExpertise.has(e));
+        const languageMatch = input.requiredLanguages.filter((l) => reviewerLanguages.has(l));
+
+        return {
+          reviewer,
+          expertiseMatch,
+          languageMatch,
+          isLeadQualified: reviewer.isLeadQualified,
+          score: expertiseMatch.length * 10 + languageMatch.length * 5 + (reviewer.isLeadQualified ? 20 : 0),
+        };
+      });
+
+      scoredReviewers.sort((a, b) => b.score - a.score);
+
+      // Build team using greedy algorithm to maximize coverage
+      const team: typeof scoredReviewers = [];
+      const coveredExpertise = new Set<string>();
+      const coveredLanguages = new Set<string>();
+
+      // If lead required, select lead first
+      if (input.requireLeadReviewer) {
+        const leadCandidates = scoredReviewers.filter((r) => r.isLeadQualified);
+        if (leadCandidates.length === 0) {
+          return {
+            success: false,
+            message: "No lead-qualified reviewers available",
+            team: [],
+            coverageAnalysis: null,
+          };
+        }
+        const lead = leadCandidates[0];
+        team.push(lead);
+        lead.expertiseMatch.forEach((e) => coveredExpertise.add(e));
+        lead.languageMatch.forEach((l) => coveredLanguages.add(l));
+      }
+
+      // Fill remaining slots
+      for (const candidate of scoredReviewers) {
+        if (team.length >= input.teamSize) break;
+        if (team.some((t) => t.reviewer.id === candidate.reviewer.id)) continue;
+
+        // Calculate marginal contribution (new expertise/languages this candidate adds)
+        const newExpertise = candidate.expertiseMatch.filter((e) => !coveredExpertise.has(e));
+        const newLanguages = candidate.languageMatch.filter((l) => !coveredLanguages.has(l));
+
+        // Prioritize candidates who add new coverage
+        if (newExpertise.length > 0 || newLanguages.length > 0 || team.length < input.teamSize) {
+          team.push(candidate);
+          candidate.expertiseMatch.forEach((e) => coveredExpertise.add(e));
+          candidate.languageMatch.forEach((l) => coveredLanguages.add(l));
+        }
+      }
+
+      // Calculate coverage analysis
+      const uncoveredExpertise = input.requiredExpertise.filter((e) => !coveredExpertise.has(e));
+      const uncoveredLanguages = input.requiredLanguages.filter((l) => !coveredLanguages.has(l));
+
+      return {
+        success: team.length >= input.teamSize,
+        message: team.length >= input.teamSize
+          ? "Optimal team built successfully"
+          : `Could only select ${team.length} of ${input.teamSize} required reviewers`,
+        team: team.map((t) => ({
+          reviewer: t.reviewer,
+          role: t.isLeadQualified && team.indexOf(t) === 0 ? "LEAD" : "MEMBER",
+          expertiseContribution: t.expertiseMatch,
+          languageContribution: t.languageMatch,
+        })),
+        coverageAnalysis: {
+          requiredExpertise: input.requiredExpertise,
+          coveredExpertise: [...coveredExpertise],
+          uncoveredExpertise,
+          expertiseCoveragePercent: Math.round(
+            (coveredExpertise.size / input.requiredExpertise.length) * 100
+          ),
+          requiredLanguages: input.requiredLanguages,
+          coveredLanguages: [...coveredLanguages],
+          uncoveredLanguages,
+          languageCoveragePercent: Math.round(
+            (coveredLanguages.size / input.requiredLanguages.length) * 100
+          ),
+        },
+      };
     }),
 });
 

@@ -205,3 +205,65 @@ export interface ReviewerSortOptions {
   field: ReviewerSortField;
   direction: "asc" | "desc";
 }
+
+// ============================================
+// AVAILABILITY TYPES
+// ============================================
+
+/**
+ * Availability slot for calendar display
+ */
+export interface AvailabilitySlot {
+  id: string;
+  reviewerProfileId: string;
+  startDate: Date;
+  endDate: Date;
+  availabilityType: PrismaReviewerAvailability["availabilityType"];
+  notes?: string | null;
+  isRecurring: boolean;
+  recurrencePattern?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * Input for creating availability slot
+ */
+export interface CreateAvailabilityInput {
+  startDate: Date;
+  endDate: Date;
+  availabilityType: PrismaReviewerAvailability["availabilityType"];
+  notes?: string;
+  isRecurring?: boolean;
+  recurrencePattern?: string;
+}
+
+/**
+ * Input for updating availability slot
+ */
+export interface UpdateAvailabilityInput extends Partial<CreateAvailabilityInput> {
+  id: string;
+}
+
+/**
+ * Recurring availability pattern
+ */
+export interface RecurringPattern {
+  frequency: "weekly" | "biweekly" | "monthly";
+  daysOfWeek?: number[]; // 0-6, Sunday=0
+  dayOfMonth?: number; // 1-31
+  endDate?: Date;
+  exceptions?: Date[]; // Blackout dates
+}
+
+/**
+ * Availability summary for a date range
+ */
+export interface AvailabilitySummaryData {
+  totalDays: number;
+  availableDays: number;
+  tentativeDays: number;
+  unavailableDays: number;
+  onAssignmentDays: number;
+  availabilityPercentage: number;
+}

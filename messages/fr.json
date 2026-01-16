@@ -1372,38 +1372,109 @@
   "reviewer": {
     "title": "Profil d'évaluateur",
     "titlePlural": "Profils d'évaluateurs",
+    "common": {
+      "cancel": "Annuler"
+    },
     "profile": {
       "title": "Informations du profil",
+      "edit": "Modifier le profil",
+      "create": "Créer un profil",
+      "personalInfo": "Informations personnelles",
+      "professionalInfo": "Informations professionnelles",
+      "biography": "Biographie",
+      "noBiography": "Aucune biographie fournie",
       "currentPosition": "Poste actuel",
       "yearsOfExperience": "Années d'expérience",
-      "biography": "Biographie",
       "homeOrganization": "Organisation d'appartenance"
+    },
+    "form": {
+      "title": "Titre",
+      "titlePlaceholder": "ex., Dr., M., Mme",
+      "titleDescription": "Titre professionnel ou honorifique",
+      "position": "Poste actuel",
+      "positionPlaceholder": "ex., Responsable ATS, Directeur de la sécurité",
+      "yearsExperience": "Années d'expérience en aviation",
+      "yearsExperienceDescription": "Total des années dans l'industrie aviation/ANS",
+      "biographyEn": "Biographie (Anglais)",
+      "biographyFr": "Biographie (Français)",
+      "biographyPlaceholder": "Brief professional biography highlighting relevant experience...",
+      "biographyPlaceholderFr": "Brève biographie professionnelle mettant en avant l'expérience pertinente...",
+      "biographyDescription": "Max 2000 caractères. Sera visible par les coordinateurs de revue par les pairs.",
+      "alternateEmail": "Email alternatif",
+      "alternateEmailPlaceholder": "backup@example.com",
+      "alternatePhone": "Téléphone alternatif",
+      "alternatePhonePlaceholder": "+1 234 567 8900",
+      "preferredContact": "Méthode de contact préférée",
+      "selectContactMethod": "Sélectionner la méthode de contact"
+    },
+    "stats": {
+      "reviewsCompleted": "Revues effectuées",
+      "yearsExperience": "Années d'expérience",
+      "leadQualified": "Qualifié Lead"
     },
     "expertise": {
       "title": "Domaines d'expertise",
+      "subtitle": "Domaines de compétence professionnelle",
       "area": "Domaine",
       "proficiency": "Niveau de compétence",
-      "years": "Années dans le domaine",
-      "primary": "Expertise principale",
-      "add": "Ajouter une expertise"
+      "years": "ans",
+      "yearsExperience": "Années d'expérience",
+      "primary": "Principal",
+      "add": "Ajouter une expertise",
+      "addExpertise": "Ajouter un domaine d'expertise",
+      "selected": "Expertise sélectionnée",
+      "requirementMet": "Exigence satisfaite",
+      "minimumRequired": "Minimum {min} domaine d'expertise requis",
+      "maxReached": "Nombre maximum de domaines d'expertise atteint",
+      "noData": "Aucun domaine d'expertise défini"
     },
     "language": {
       "title": "Compétences linguistiques",
+      "subtitle": "Capacités linguistiques de travail",
+      "add": "Ajouter une langue",
+      "addTitle": "Ajouter une compétence linguistique",
+      "addDescription": "Sélectionnez une langue et votre niveau de compétence",
+      "selectLanguage": "Langue",
+      "selectPlaceholder": "Sélectionner une langue",
+      "level": "Niveau de compétence",
       "proficiency": "Niveau",
-      "native": "Langue maternelle",
+      "native": "Maternelle",
+      "isNative": "Langue maternelle",
       "canConduct": "Peut conduire des revues",
-      "add": "Ajouter une langue"
+      "required": "Requis (EN & FR)",
+      "requirementMet": "EN & FR présents",
+      "requiredMissing": "L'anglais et le français sont requis pour les évaluateurs du Programme Africain",
+      "noData": "Aucune langue définie"
     },
     "certification": {
       "title": "Certifications",
+      "subtitle": "Certifications et qualifications professionnelles",
+      "add": "Ajouter une certification",
+      "addTitle": "Ajouter une certification",
+      "editTitle": "Modifier la certification",
+      "addDescription": "Ajouter une certification ou qualification professionnelle",
       "type": "Type",
-      "name": "Nom",
+      "name": "Nom de la certification",
+      "namePlaceholder": "ex., Certification d'évaluateur principal",
+      "nameFr": "Nom de la certification (Français)",
+      "namePlaceholderFr": "ex., Lead Reviewer Certification",
+      "issuingAuthority": "Organisme émetteur",
+      "authorityPlaceholder": "ex., CANSO, OACI, CAA Nationale",
       "issuer": "Organisme émetteur",
-      "issueDate": "Date d'émission",
+      "issued": "Émis",
+      "issuedDate": "Date d'émission",
       "expiryDate": "Date d'expiration",
+      "expires": "Expire",
+      "number": "Numéro de certificat",
+      "numberPlaceholder": "ex., CERT-2024-001",
       "valid": "Valide",
-      "expired": "Expiré",
-      "add": "Ajouter une certification"
+      "status": {
+        "valid": "Valide",
+        "expired": "Expiré",
+        "expiringSoon": "Expire bientôt"
+      },
+      "noData": "Aucune certification enregistrée",
+      "expiringSoonWarning": "Certaines certifications expirent bientôt"
     },
     "training": {
       "title": "Formations",
@@ -1414,15 +1485,185 @@
       "add": "Ajouter une formation"
     },
     "availability": {
-      "title": "Disponibilité",
-      "set": "Définir la disponibilité"
+      "title": "Calendrier de disponibilité",
+      "set": "Définir la disponibilité",
+      "addSlot": "Ajouter une disponibilité",
+      "editSlot": "Modifier la disponibilité",
+      "more": "autres",
+      "type": {
+        "AVAILABLE": "Disponible",
+        "TENTATIVE": "Provisoire",
+        "UNAVAILABLE": "Indisponible",
+        "ON_ASSIGNMENT": "En mission"
+      },
+      "typeLabel": "Type de disponibilité",
+      "dateRange": "Période",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "notes": "Notes",
+      "notesPlaceholder": "Ajoutez des notes sur cette période...",
+      "legend": "Légende",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "dialog": {
+        "addDescription": "Ajouter une nouvelle période de disponibilité à votre calendrier",
+        "editDescription": "Modifier cette période de disponibilité"
+      },
+      "validation": {
+        "startDateRequired": "La date de début est requise",
+        "endDateRequired": "La date de fin est requise",
+        "endDateAfterStart": "La date de fin doit être postérieure à la date de début"
+      },
+      "deleteConfirm": {
+        "title": "Supprimer la disponibilité",
+        "description": "Êtes-vous sûr de vouloir supprimer cette période de disponibilité ? Cette action est irréversible.",
+        "cancel": "Annuler",
+        "confirm": "Supprimer"
+      },
+      "summary": {
+        "title": "Résumé de disponibilité",
+        "available": "Jours disponibles",
+        "tentative": "Jours provisoires",
+        "unavailable": "Jours indisponibles",
+        "onAssignment": "jours en mission",
+        "totalDays": "Total des jours",
+        "percentage": "Disponibilité"
+      },
+      "view": {
+        "month": "Mois",
+        "week": "Semaine"
+      },
+      "navigation": {
+        "today": "Aujourd'hui",
+        "previous": "Précédent",
+        "next": "Suivant"
+      },
+      "legend": {
+        "requestedPeriod": "Période de revue demandée"
+      },
+      "bulk": {
+        "title": "Disponibilité en masse",
+        "description": "Définir une disponibilité récurrente ou copier depuis les mois précédents",
+        "recurring": "Modèle récurrent",
+        "recurringTitle": "Définir une disponibilité récurrente",
+        "recurringDescription": "Créer des créneaux de disponibilité qui se répètent selon un calendrier",
+        "copy": "Copier depuis un mois",
+        "copyTitle": "Copier la disponibilité",
+        "copyDescription": "Copier tous les créneaux de disponibilité d'un mois précédent",
+        "frequency": "Fréquence",
+        "weekly": "Hebdomadaire",
+        "biweekly": "Toutes les 2 semaines",
+        "monthly": "Mensuel",
+        "daysOfWeek": "Jours de la semaine",
+        "startDate": "Date de début",
+        "endDate": "Date de fin",
+        "availabilityType": "Définir la disponibilité comme",
+        "blackoutDates": "Dates d'exclusion (Exceptions)",
+        "sourceMonth": "Mois source",
+        "targetMonth": "Mois cible",
+        "selectMonth": "Sélectionner un mois...",
+        "willCreate": "{count} créneaux de disponibilité seront créés",
+        "existingSlots": "{count} créneaux de disponibilité définis",
+        "noSlots": "Aucun créneau de disponibilité défini",
+        "create": "Créer les créneaux",
+        "cancel": "Annuler"
+      }
     },
     "coi": {
-      "title": "Conflit d'intérêts",
+      "title": "Conflits d'intérêts",
+      "subtitle": "Conflits déclarés empêchant les affectations de revue",
       "organization": "Organisation",
+      "conflictType": "Type de conflit",
       "type": "Type de conflit",
       "reason": "Motif",
-      "declare": "Déclarer un conflit"
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "declare": "Déclarer un conflit",
+      "manage": "Gérer les conflits",
+      "noConflicts": "Aucun conflit déclaré",
+      "homeOrgConflict": "Organisation d'appartenance - conflit automatique",
+      "addNew": "Déclarer un nouveau conflit",
+      "severity": {
+        "HARD": "Conflit majeur",
+        "SOFT": "Conflit mineur",
+        "hardDescription": "Ne peut être affecté en aucune circonstance",
+        "softDescription": "Peut être affecté avec justification documentée"
+      },
+      "status": {
+        "ACTIVE": "Actif",
+        "WAIVED": "Levé",
+        "EXPIRED": "Expiré"
+      },
+      "types": {
+        "EMPLOYMENT": "Emploi actuel",
+        "FORMER_EMPLOYMENT": "Emploi antérieur",
+        "FINANCIAL": "Intérêt financier",
+        "CONSULTANCY": "Conseil",
+        "BOARD_MEMBERSHIP": "Membre du conseil",
+        "FAMILIAL": "Relation familiale",
+        "INSTITUTIONAL": "Affiliation institutionnelle",
+        "OTHER": "Autre conflit"
+      },
+      "check": {
+        "checking": "Vérification des conflits...",
+        "noConflict": "Aucun conflit détecté",
+        "hasConflict": "Conflit mineur",
+        "cannotAssign": "Conflit majeur - ne peut pas assigner",
+        "canOverride": "Peut être levé",
+        "conflictWith": "Conflit avec {org}"
+      },
+      "verification": {
+        "title": "Vérifier le conflit d'intérêts",
+        "description": "Examiner et vérifier cette déclaration de conflit",
+        "decision": "Décision de vérification",
+        "confirm": "Confirmer le conflit",
+        "confirmDescription": "Valider le conflit déclaré et appliquer les restrictions",
+        "confirmAction": "Confirmer le conflit",
+        "waive": "Lever le conflit",
+        "waiveDescription": "Autoriser l'affectation malgré le conflit (justification requise)",
+        "waiveAction": "Lever le conflit",
+        "reject": "Rejeter la déclaration",
+        "rejectDescription": "Rejeter cette déclaration de conflit comme invalide",
+        "rejectAction": "Rejeter",
+        "justification": "Justification",
+        "justificationPlaceholder": "Fournir une justification détaillée pour cette décision...",
+        "justificationRequired": "La justification est requise pour la levée ou le rejet",
+        "waiverExpiry": "Date d'expiration de la levée",
+        "waiverExpiryDescription": "Optionnel : Définir quand cette levée expire",
+        "previouslyVerified": "Vérifié précédemment le {date} par {by}"
+      },
+      "add": {
+        "title": "Déclarer un conflit d'intérêts",
+        "description": "Déclarer un nouveau conflit d'intérêts",
+        "selectOrganization": "Sélectionner l'organisation",
+        "selectType": "Sélectionner le type de conflit",
+        "reasonPlaceholder": "Décrire la nature du conflit...",
+        "reasonDescription": "Fournir des détails sur ce conflit",
+        "startDateLabel": "Date de début",
+        "endDateLabel": "Date de fin (si applicable)",
+        "isActive": "Ce conflit est actuellement actif",
+        "submit": "Soumettre la déclaration"
+      },
+      "remove": {
+        "title": "Supprimer le conflit",
+        "confirm": "Êtes-vous sûr de vouloir supprimer cette déclaration de conflit ?",
+        "success": "Conflit supprimé avec succès"
+      },
+      "messages": {
+        "addSuccess": "Conflit d'intérêts déclaré avec succès",
+        "addError": "Échec de la déclaration du conflit d'intérêts",
+        "verifySuccess": "Vérification du conflit mise à jour",
+        "verifyError": "Échec de la mise à jour de la vérification"
+      }
+    },
+    "status": {
+      "NOMINATED": "Nominé",
+      "UNDER_REVIEW": "En cours d'évaluation",
+      "SELECTED": "Sélectionné",
+      "INACTIVE": "Inactif",
+      "WITHDRAWN": "Retiré",
+      "REJECTED": "Rejeté"
     },
     "actions": {
       "create": "Créer un profil",
@@ -1433,6 +1674,150 @@
       "createSuccess": "Profil d'évaluateur créé avec succès",
       "updateSuccess": "Profil d'évaluateur mis à jour avec succès",
       "coiWarning": "Cet évaluateur a un conflit d'intérêts"
+    },
+    "matching": {
+      "title": "Trouver des évaluateurs correspondants",
+      "criteria": "Critères de recherche",
+      "criteriaDescription": "Définir les exigences pour l'équipe d'évaluation par les pairs",
+      "targetOrganization": "Organisation cible",
+      "requiredExpertise": "Expertise requise",
+      "preferredExpertise": "Expertise préférée",
+      "requiredLanguages": "Langues requises",
+      "reviewPeriod": "Période de revue",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "teamSize": "Taille de l'équipe",
+      "reviewers": "évaluateurs",
+      "findMatches": "Rechercher",
+      "searching": "Recherche en cours...",
+      "autoSelect": "Sélection auto",
+      "export": "Exporter",
+      "confirmTeam": "Confirmer la sélection",
+      "results": "Résultats",
+      "eligible": "éligibles",
+      "ineligible": "non éligibles",
+      "selected": "sélectionnés",
+      "score": "Score de correspondance",
+      "leadQualified": "Chef d'équipe qualifié",
+      "notEligible": "Non éligible",
+      "reviewsCompleted": "revues effectuées",
+      "available": "disponible",
+      "viewProfile": "Voir le profil",
+      "noSearchYet": "Prêt pour la recherche",
+      "noSearchYetDescription": "Configurez vos critères et cliquez sur Rechercher",
+      "noResults": "Aucun évaluateur correspondant",
+      "noResultsDescription": "Essayez d'ajuster vos critères de recherche",
+      "ineligibleReviewers": "Évaluateurs non éligibles",
+      "breakdown": {
+        "expertise": "Expertise",
+        "language": "Langues",
+        "availability": "Disponibilité",
+        "experience": "Expérience"
+      },
+      "team": {
+        "title": "Composition d'équipe",
+        "selected": "Membres sélectionnés",
+        "membersSelected": "membres d'équipe sélectionnés",
+        "members": "Membres",
+        "coverage": "Couverture de l'équipe",
+        "missing": "Manquant",
+        "noSelection": "Aucune équipe sélectionnée",
+        "noSelectionDescription": "Sélectionnez des évaluateurs dans les résultats pour constituer votre équipe",
+        "expertiseCoverage": "Expertise",
+        "languageCoverage": "Langues",
+        "expertiseTitle": "Couverture d'expertise",
+        "languageTitle": "Couverture linguistique",
+        "hasLead": "L'équipe a un chef d'équipe",
+        "hasLeadDescription": "Au moins un membre est qualifié pour diriger la revue",
+        "noLead": "Pas de chef d'équipe",
+        "noLeadDescription": "Envisagez d'ajouter un évaluateur qualifié comme chef",
+        "balance": {
+          "GOOD": "Bien équilibrée",
+          "FAIR": "À améliorer",
+          "POOR": "Insuffisante"
+        },
+        "suggestions": "Suggestions",
+        "suggestExpertise": "Ajouter un évaluateur avec expertise en {areas}",
+        "suggestLanguage": "Ajouter un évaluateur maîtrisant {languages}",
+        "suggestLead": "Ajouter un évaluateur qualifié comme chef d'équipe"
+      },
+      "warnings": {
+        "coiConflict": "A un conflit d'intérêts",
+        "notAvailable": "Non entièrement disponible pour la période de revue",
+        "missingExpertise": "Expertise requise manquante"
+      }
+    }
+  },
+  "reviewers": {
+    "title": "Évaluateurs Pairs",
+    "description": "Gérer les profils et les affectations des évaluateurs pairs",
+    "stats": {
+      "total": "Total Nominés",
+      "selected": "Sélectionnés",
+      "active": "Actifs",
+      "available": "Disponibles"
+    },
+    "search": {
+      "placeholder": "Rechercher par nom, organisation, pays...",
+      "filters": "Filtres",
+      "clearFilters": "Effacer les filtres",
+      "activeFilters": "Filtres actifs"
+    },
+    "sort": {
+      "label": "Trier",
+      "name": "Nom",
+      "organization": "Organisation",
+      "status": "Statut",
+      "experience": "Expérience",
+      "reviews": "Revues effectuées"
+    },
+    "view": {
+      "card": "Vue carte",
+      "table": "Vue tableau"
+    },
+    "filters": {
+      "title": "Filtrer les évaluateurs",
+      "description": "Affiner la liste des évaluateurs",
+      "expertise": "Domaines d'expertise",
+      "languages": "Langues",
+      "status": "Statut de sélection",
+      "other": "Autres filtres",
+      "availableOnly": "Disponibles uniquement",
+      "leadQualifiedOnly": "Qualifiés Lead uniquement",
+      "apply": "Appliquer les filtres"
+    },
+    "results": {
+      "showing": "Affichage de {count} sur {total} évaluateurs"
+    },
+    "pagination": {
+      "previous": "Précédent",
+      "next": "Suivant",
+      "page": "Page {current} sur {total}"
+    },
+    "card": {
+      "leadQualified": "Qualifié évaluateur principal",
+      "available": "Disponible",
+      "reviews": "{count} revues",
+      "experience": "{years} ans exp."
+    },
+    "table": {
+      "name": "Nom",
+      "organization": "Organisation",
+      "expertise": "Expertise",
+      "languages": "Langues",
+      "status": "Statut",
+      "reviews": "Revues",
+      "actions": "Actions"
+    },
+    "actions": {
+      "view": "Voir le profil",
+      "edit": "Modifier le profil",
+      "export": "Exporter",
+      "addReviewer": "Ajouter un évaluateur"
+    },
+    "empty": {
+      "title": "Aucun évaluateur trouvé",
+      "description": "Essayez d'ajuster votre recherche ou vos filtres pour trouver des évaluateurs."
     }
   },
   "reviews": {

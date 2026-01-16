@@ -1372,38 +1372,109 @@
   "reviewer": {
     "title": "Reviewer Profile",
     "titlePlural": "Reviewer Profiles",
+    "common": {
+      "cancel": "Cancel"
+    },
     "profile": {
       "title": "Profile Information",
+      "edit": "Edit Profile",
+      "create": "Create Profile",
+      "personalInfo": "Personal Information",
+      "professionalInfo": "Professional Information",
+      "biography": "Biography",
+      "noBiography": "No biography provided",
       "currentPosition": "Current Position",
       "yearsOfExperience": "Years of Experience",
-      "biography": "Biography",
       "homeOrganization": "Home Organization"
+    },
+    "form": {
+      "title": "Title",
+      "titlePlaceholder": "e.g., Dr., Mr., Ms.",
+      "titleDescription": "Professional title or honorific",
+      "position": "Current Position",
+      "positionPlaceholder": "e.g., ATS Manager, Safety Director",
+      "yearsExperience": "Years of Aviation Experience",
+      "yearsExperienceDescription": "Total years in aviation/ANS industry",
+      "biographyEn": "Biography (English)",
+      "biographyFr": "Biography (French)",
+      "biographyPlaceholder": "Brief professional biography highlighting relevant experience...",
+      "biographyPlaceholderFr": "Biographie professionnelle brève...",
+      "biographyDescription": "Max 2000 characters. Will be visible to peer review coordinators.",
+      "alternateEmail": "Alternate Email",
+      "alternateEmailPlaceholder": "backup@example.com",
+      "alternatePhone": "Alternate Phone",
+      "alternatePhonePlaceholder": "+1 234 567 8900",
+      "preferredContact": "Preferred Contact Method",
+      "selectContactMethod": "Select contact method"
+    },
+    "stats": {
+      "reviewsCompleted": "Reviews Completed",
+      "yearsExperience": "Years Experience",
+      "leadQualified": "Lead Qualified"
     },
     "expertise": {
       "title": "Expertise Areas",
+      "subtitle": "Areas of professional competence",
       "area": "Area",
       "proficiency": "Proficiency Level",
-      "years": "Years in Area",
-      "primary": "Primary Expertise",
-      "add": "Add Expertise"
+      "years": "years",
+      "yearsExperience": "Years Experience",
+      "primary": "Primary",
+      "add": "Add Expertise",
+      "addExpertise": "Add Expertise Area",
+      "selected": "Selected Expertise",
+      "requirementMet": "Requirement Met",
+      "minimumRequired": "Minimum {min} expertise area required",
+      "maxReached": "Maximum expertise areas reached",
+      "noData": "No expertise areas defined"
     },
     "language": {
       "title": "Language Proficiencies",
+      "subtitle": "Working language capabilities",
+      "add": "Add Language",
+      "addTitle": "Add Language Proficiency",
+      "addDescription": "Select a language and your proficiency level",
+      "selectLanguage": "Language",
+      "selectPlaceholder": "Select a language",
+      "level": "Proficiency Level",
       "proficiency": "Proficiency",
-      "native": "Native Speaker",
+      "native": "Native",
+      "isNative": "Native Speaker",
       "canConduct": "Can Conduct Reviews",
-      "add": "Add Language"
+      "required": "Required (EN & FR)",
+      "requirementMet": "EN & FR Present",
+      "requiredMissing": "English and French are required for African Programme reviewers",
+      "noData": "No languages defined"
     },
     "certification": {
       "title": "Certifications",
+      "subtitle": "Professional certifications and qualifications",
+      "add": "Add Certification",
+      "addTitle": "Add Certification",
+      "editTitle": "Edit Certification",
+      "addDescription": "Add a professional certification or qualification",
       "type": "Type",
-      "name": "Name",
+      "name": "Certification Name",
+      "namePlaceholder": "e.g., Lead Reviewer Certification",
+      "nameFr": "Certification Name (French)",
+      "namePlaceholderFr": "e.g., Certification d'évaluateur principal",
+      "issuingAuthority": "Issuing Authority",
+      "authorityPlaceholder": "e.g., CANSO, ICAO, National CAA",
       "issuer": "Issuing Authority",
-      "issueDate": "Issue Date",
+      "issued": "Issued",
+      "issuedDate": "Issue Date",
       "expiryDate": "Expiry Date",
+      "expires": "Expires",
+      "number": "Certificate Number",
+      "numberPlaceholder": "e.g., CERT-2024-001",
       "valid": "Valid",
-      "expired": "Expired",
-      "add": "Add Certification"
+      "status": {
+        "valid": "Valid",
+        "expired": "Expired",
+        "expiringSoon": "Expiring Soon"
+      },
+      "noData": "No certifications recorded",
+      "expiringSoonWarning": "Some certifications are expiring soon"
     },
     "training": {
       "title": "Training Records",
@@ -1414,15 +1485,185 @@
       "add": "Add Training"
     },
     "availability": {
-      "title": "Availability",
-      "set": "Set Availability"
+      "title": "Availability Calendar",
+      "set": "Set Availability",
+      "addSlot": "Add Availability",
+      "editSlot": "Edit Availability",
+      "more": "more",
+      "type": {
+        "AVAILABLE": "Available",
+        "TENTATIVE": "Tentative",
+        "UNAVAILABLE": "Unavailable",
+        "ON_ASSIGNMENT": "On Assignment"
+      },
+      "typeLabel": "Availability Type",
+      "dateRange": "Date Range",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "notes": "Notes",
+      "notesPlaceholder": "Add any notes about this period...",
+      "legend": "Legend",
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "dialog": {
+        "addDescription": "Add a new availability period to your calendar",
+        "editDescription": "Update this availability period"
+      },
+      "validation": {
+        "startDateRequired": "Start date is required",
+        "endDateRequired": "End date is required",
+        "endDateAfterStart": "End date must be after start date"
+      },
+      "deleteConfirm": {
+        "title": "Delete Availability",
+        "description": "Are you sure you want to delete this availability period? This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete"
+      },
+      "summary": {
+        "title": "Availability Summary",
+        "available": "Days Available",
+        "tentative": "Days Tentative",
+        "unavailable": "Days Unavailable",
+        "onAssignment": "days on assignment",
+        "totalDays": "Total Days",
+        "percentage": "Availability"
+      },
+      "view": {
+        "month": "Month",
+        "week": "Week"
+      },
+      "navigation": {
+        "today": "Today",
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "legend": {
+        "requestedPeriod": "Requested Review Period"
+      },
+      "bulk": {
+        "title": "Bulk Availability",
+        "description": "Set recurring availability or copy from previous months",
+        "recurring": "Recurring Pattern",
+        "recurringTitle": "Set Recurring Availability",
+        "recurringDescription": "Create availability slots that repeat on a schedule",
+        "copy": "Copy from Month",
+        "copyTitle": "Copy Availability",
+        "copyDescription": "Copy all availability slots from a previous month",
+        "frequency": "Frequency",
+        "weekly": "Weekly",
+        "biweekly": "Every 2 Weeks",
+        "monthly": "Monthly",
+        "daysOfWeek": "Days of Week",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "availabilityType": "Set Availability As",
+        "blackoutDates": "Blackout Dates (Exceptions)",
+        "sourceMonth": "Source Month",
+        "targetMonth": "Target Month",
+        "selectMonth": "Select month...",
+        "willCreate": "Will create {count} availability slots",
+        "existingSlots": "{count} availability slots defined",
+        "noSlots": "No availability slots defined yet",
+        "create": "Create Slots",
+        "cancel": "Cancel"
+      }
     },
     "coi": {
-      "title": "Conflict of Interest",
+      "title": "Conflicts of Interest",
+      "subtitle": "Declared conflicts preventing review assignments",
       "organization": "Organization",
+      "conflictType": "Conflict Type",
       "type": "Conflict Type",
       "reason": "Reason",
-      "declare": "Declare Conflict"
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "declare": "Declare Conflict",
+      "manage": "Manage Conflicts",
+      "noConflicts": "No conflicts declared",
+      "homeOrgConflict": "Home organization - automatic conflict",
+      "addNew": "Declare New Conflict",
+      "severity": {
+        "HARD": "Hard Conflict",
+        "SOFT": "Soft Conflict",
+        "hardDescription": "Cannot be assigned under any circumstances",
+        "softDescription": "May be assigned with documented justification"
+      },
+      "status": {
+        "ACTIVE": "Active",
+        "WAIVED": "Waived",
+        "EXPIRED": "Expired"
+      },
+      "types": {
+        "EMPLOYMENT": "Current Employment",
+        "FORMER_EMPLOYMENT": "Former Employment",
+        "FINANCIAL": "Financial Interest",
+        "CONSULTANCY": "Consultancy",
+        "BOARD_MEMBERSHIP": "Board Membership",
+        "FAMILIAL": "Family Relationship",
+        "INSTITUTIONAL": "Institutional Affiliation",
+        "OTHER": "Other Conflict"
+      },
+      "check": {
+        "checking": "Checking conflicts...",
+        "noConflict": "No conflict detected",
+        "hasConflict": "Soft conflict",
+        "cannotAssign": "Hard conflict - cannot assign",
+        "canOverride": "Can be waived",
+        "conflictWith": "Conflict with {org}"
+      },
+      "verification": {
+        "title": "Verify Conflict of Interest",
+        "description": "Review and verify this conflict declaration",
+        "decision": "Verification Decision",
+        "confirm": "Confirm Conflict",
+        "confirmDescription": "Validate the declared conflict and enforce restrictions",
+        "confirmAction": "Confirm Conflict",
+        "waive": "Waive Conflict",
+        "waiveDescription": "Allow assignment despite conflict (requires justification)",
+        "waiveAction": "Waive Conflict",
+        "reject": "Reject Declaration",
+        "rejectDescription": "Reject this conflict declaration as invalid",
+        "rejectAction": "Reject",
+        "justification": "Justification",
+        "justificationPlaceholder": "Provide detailed justification for this decision...",
+        "justificationRequired": "Justification is required for waiver or rejection",
+        "waiverExpiry": "Waiver Expiry Date",
+        "waiverExpiryDescription": "Optional: Set when this waiver expires",
+        "previouslyVerified": "Previously verified on {date} by {by}"
+      },
+      "add": {
+        "title": "Declare Conflict of Interest",
+        "description": "Declare a new conflict of interest",
+        "selectOrganization": "Select Organization",
+        "selectType": "Select Conflict Type",
+        "reasonPlaceholder": "Describe the nature of the conflict...",
+        "reasonDescription": "Provide details about this conflict",
+        "startDateLabel": "Start Date",
+        "endDateLabel": "End Date (if applicable)",
+        "isActive": "This conflict is currently active",
+        "submit": "Submit Declaration"
+      },
+      "remove": {
+        "title": "Remove Conflict",
+        "confirm": "Are you sure you want to remove this conflict declaration?",
+        "success": "Conflict removed successfully"
+      },
+      "messages": {
+        "addSuccess": "Conflict of interest declared successfully",
+        "addError": "Failed to declare conflict of interest",
+        "verifySuccess": "Conflict verification updated",
+        "verifyError": "Failed to update verification"
+      }
+    },
+    "status": {
+      "NOMINATED": "Nominated",
+      "UNDER_REVIEW": "Under Review",
+      "SELECTED": "Selected",
+      "INACTIVE": "Inactive",
+      "WITHDRAWN": "Withdrawn",
+      "REJECTED": "Rejected"
     },
     "actions": {
       "create": "Create Profile",
@@ -1433,6 +1674,150 @@
       "createSuccess": "Reviewer profile created successfully",
       "updateSuccess": "Reviewer profile updated successfully",
       "coiWarning": "This reviewer has a conflict of interest"
+    },
+    "matching": {
+      "title": "Find Matching Reviewers",
+      "criteria": "Search Criteria",
+      "criteriaDescription": "Define requirements for the peer review team",
+      "targetOrganization": "Target Organization",
+      "requiredExpertise": "Required Expertise",
+      "preferredExpertise": "Preferred Expertise",
+      "requiredLanguages": "Required Languages",
+      "reviewPeriod": "Review Period",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "teamSize": "Team Size",
+      "reviewers": "reviewers",
+      "findMatches": "Find Matches",
+      "searching": "Searching...",
+      "autoSelect": "Auto-Select Best",
+      "export": "Export",
+      "confirmTeam": "Confirm Team Selection",
+      "results": "Results",
+      "eligible": "eligible",
+      "ineligible": "ineligible",
+      "selected": "selected",
+      "score": "Match Score",
+      "leadQualified": "Lead Qualified",
+      "notEligible": "Not Eligible",
+      "reviewsCompleted": "reviews completed",
+      "available": "available",
+      "viewProfile": "View Profile",
+      "noSearchYet": "Ready to Search",
+      "noSearchYetDescription": "Configure your criteria and click Find Matches",
+      "noResults": "No Matching Reviewers Found",
+      "noResultsDescription": "Try adjusting your search criteria",
+      "ineligibleReviewers": "Ineligible Reviewers",
+      "breakdown": {
+        "expertise": "Expertise Match",
+        "language": "Language Match",
+        "availability": "Availability",
+        "experience": "Experience"
+      },
+      "team": {
+        "title": "Team Builder",
+        "selected": "Selected Team Members",
+        "membersSelected": "team members selected",
+        "members": "Members",
+        "coverage": "Team Coverage",
+        "missing": "Missing",
+        "noSelection": "No Team Selected",
+        "noSelectionDescription": "Select reviewers from the results to build your team",
+        "expertiseCoverage": "Expertise",
+        "languageCoverage": "Languages",
+        "expertiseTitle": "Expertise Coverage",
+        "languageTitle": "Language Coverage",
+        "hasLead": "Team has Lead Reviewer",
+        "hasLeadDescription": "At least one member is qualified to lead the review",
+        "noLead": "No Lead Reviewer",
+        "noLeadDescription": "Consider adding a lead-qualified reviewer",
+        "balance": {
+          "GOOD": "Well Balanced",
+          "FAIR": "Needs Improvement",
+          "POOR": "Insufficient"
+        },
+        "suggestions": "Suggestions",
+        "suggestExpertise": "Add reviewer with {areas} expertise",
+        "suggestLanguage": "Add reviewer with {languages} proficiency",
+        "suggestLead": "Add a lead-qualified reviewer to the team"
+      },
+      "warnings": {
+        "coiConflict": "Has conflict of interest",
+        "notAvailable": "Not fully available for review period",
+        "missingExpertise": "Missing required expertise areas"
+      }
+    }
+  },
+  "reviewers": {
+    "title": "Peer Reviewers",
+    "description": "Manage peer reviewer profiles and assignments",
+    "stats": {
+      "total": "Total Nominated",
+      "selected": "Selected",
+      "active": "Active",
+      "available": "Available"
+    },
+    "search": {
+      "placeholder": "Search by name, organization, country...",
+      "filters": "Filters",
+      "clearFilters": "Clear Filters",
+      "activeFilters": "Active Filters"
+    },
+    "sort": {
+      "label": "Sort",
+      "name": "Name",
+      "organization": "Organization",
+      "status": "Status",
+      "experience": "Experience",
+      "reviews": "Reviews Completed"
+    },
+    "view": {
+      "card": "Card View",
+      "table": "Table View"
+    },
+    "filters": {
+      "title": "Filter Reviewers",
+      "description": "Narrow down the reviewer list",
+      "expertise": "Expertise Areas",
+      "languages": "Languages",
+      "status": "Selection Status",
+      "other": "Other Filters",
+      "availableOnly": "Available Only",
+      "leadQualifiedOnly": "Lead Qualified Only",
+      "apply": "Apply Filters"
+    },
+    "results": {
+      "showing": "Showing {count} of {total} reviewers"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {current} of {total}"
+    },
+    "card": {
+      "leadQualified": "Lead Reviewer Qualified",
+      "available": "Available",
+      "reviews": "{count} reviews",
+      "experience": "{years} years exp."
+    },
+    "table": {
+      "name": "Name",
+      "organization": "Organization",
+      "expertise": "Expertise",
+      "languages": "Languages",
+      "status": "Status",
+      "reviews": "Reviews",
+      "actions": "Actions"
+    },
+    "actions": {
+      "view": "View Profile",
+      "edit": "Edit Profile",
+      "export": "Export",
+      "addReviewer": "Add Reviewer"
+    },
+    "empty": {
+      "title": "No reviewers found",
+      "description": "Try adjusting your search or filters to find reviewers."
     }
   },
   "reviews": {

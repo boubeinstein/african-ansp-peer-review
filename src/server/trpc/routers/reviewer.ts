@@ -121,6 +121,37 @@ export const reviewerRouter = router({
   // ============================================
 
   /**
+   * Get users without reviewer profiles (for admin to create new reviewers)
+   */
+  getUsersWithoutProfile: adminProcedure.query(async () => {
+    const users = await prisma.user.findMany({
+      where: {
+        reviewerProfile: null,
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        organizationId: true,
+        organization: {
+          select: {
+            id: true,
+            nameEn: true,
+            nameFr: true,
+          },
+        },
+      },
+      orderBy: [{ firstName: "asc" }, { lastName: "asc" }],
+    });
+    // Transform to include a computed name field
+    return users.map(user => ({
+      ...user,
+      name: `${user.firstName} ${user.lastName}`.trim() || null,
+    }));
+  }),
+
+  /**
    * Get reviewer profile by ID
    */
   getById: protectedProcedure

@@ -439,6 +439,13 @@ function isHardConflict(type: COIType): boolean {
  */
 function getConflictReason(type: COIType): string {
   const reasons: Record<COIType, string> = {
+    // Legacy types
+    EMPLOYMENT: "Employment relationship",
+    FINANCIAL: "Financial interest",
+    CONTRACTUAL: "Contractual relationship",
+    PERSONAL: "Personal relationship",
+    PREVIOUS_REVIEW: "Previously reviewed",
+    // Current types
     HOME_ORGANIZATION: "Current employer",
     FAMILY_RELATIONSHIP: "Family relationship",
     FORMER_EMPLOYEE: "Former employee",

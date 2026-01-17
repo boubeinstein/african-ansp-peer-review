@@ -2095,6 +2095,14 @@
   "reviews": {
     "title": "Peer Reviews",
     "description": "Manage and coordinate peer review activities",
+    "searchPlaceholder": "Search by reference, organization...",
+    "filterByStatus": "Filter by status",
+    "filterByType": "Filter by type",
+    "allStatuses": "All Statuses",
+    "allTypes": "All Types",
+    "pagination": "Page {current} of {total}",
+    "teamMembers": "{count} team members",
+    "findings": "{count} findings",
     "stats": {
       "total": "Total Reviews",
       "scheduled": "Scheduled",
@@ -2103,7 +2111,7 @@
     },
     "empty": {
       "title": "No peer reviews yet",
-      "description": "Peer reviews will appear here once the review cycle begins."
+      "description": "Peer reviews will appear here once the review cycle begins. Request a peer review to get started."
     },
     "actions": {
       "requestReview": "Request Review",

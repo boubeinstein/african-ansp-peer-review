@@ -296,6 +296,13 @@ export const AVAILABILITY_TYPE_COLOR: Record<AvailabilityType, string> = {
 // ============================================
 
 export const COI_TYPE_LABELS: Record<COIType, BilingualLabel> = {
+  // Legacy values
+  EMPLOYMENT: { en: "Employment", fr: "Emploi" },
+  FINANCIAL: { en: "Financial", fr: "Financier" },
+  CONTRACTUAL: { en: "Contractual", fr: "Contractuel" },
+  PERSONAL: { en: "Personal", fr: "Personnel" },
+  PREVIOUS_REVIEW: { en: "Previous Review", fr: "Revue précédente" },
+  // Current values
   HOME_ORGANIZATION: { en: "Home Organization", fr: "Organisation d'appartenance" },
   FAMILY_RELATIONSHIP: { en: "Family Relationship", fr: "Lien familial" },
   FORMER_EMPLOYEE: { en: "Former Employee", fr: "Ancien employé" },
@@ -305,6 +312,13 @@ export const COI_TYPE_LABELS: Record<COIType, BilingualLabel> = {
 };
 
 export const COI_TYPE_COLOR: Record<COIType, string> = {
+  // Legacy values
+  EMPLOYMENT: "bg-red-100 text-red-800",
+  FINANCIAL: "bg-orange-100 text-orange-800",
+  CONTRACTUAL: "bg-yellow-100 text-yellow-800",
+  PERSONAL: "bg-red-100 text-red-800",
+  PREVIOUS_REVIEW: "bg-purple-100 text-purple-800",
+  // Current values
   HOME_ORGANIZATION: "bg-red-100 text-red-800",
   FAMILY_RELATIONSHIP: "bg-red-100 text-red-800",
   FORMER_EMPLOYEE: "bg-yellow-100 text-yellow-800",

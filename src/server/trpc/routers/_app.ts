@@ -9,6 +9,7 @@ import { progressRouter } from "./progress";
 import { reviewerRouter } from "./reviewer";
 import { organizationRouter } from "./organization";
 import { coiRouter } from "./coi";
+import { reviewRouter } from "./review";
 
 /**
  * Main app router combining all sub-routers
@@ -24,6 +25,7 @@ export const appRouter = router({
   reviewer: reviewerRouter,
   organization: organizationRouter,
   coi: coiRouter,
+  review: reviewRouter,
 });
 
 /**

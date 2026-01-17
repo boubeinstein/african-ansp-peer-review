@@ -98,6 +98,13 @@ export const availabilityTypeSchema = z.enum([
 ]);
 
 export const coiTypeSchema = z.enum([
+  // Legacy types
+  "EMPLOYMENT",
+  "FINANCIAL",
+  "CONTRACTUAL",
+  "PERSONAL",
+  "PREVIOUS_REVIEW",
+  // Current types
   "HOME_ORGANIZATION",
   "FAMILY_RELATIONSHIP",
   "FORMER_EMPLOYEE",

@@ -146,6 +146,7 @@ function createMockReviewerProfile(
       organizationId: coi.organizationId,
       coiType: coi.type,
       severity: coi.type === "HOME_ORGANIZATION" || coi.type === "FAMILY_RELATIONSHIP" ? "HARD_BLOCK" : "SOFT_WARNING",
+      reason: null,
       reasonEn: "Test conflict reason",
       reasonFr: null,
       startDate: new Date(),

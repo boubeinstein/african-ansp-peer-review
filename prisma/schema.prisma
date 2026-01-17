@@ -430,7 +430,8 @@ model ReviewerCOI {
 
   // === COI Details ===
   coiType  COIType     @map("coi_type")
-  severity COISeverity @map("severity")
+  severity COISeverity @default(SOFT_WARNING) @map("severity")
+  reason   String?     @db.Text // Legacy field
   reasonEn String?     @map("reason_en") @db.Text
   reasonFr String?     @map("reason_fr") @db.Text
 
@@ -586,6 +587,7 @@ model Review {
   id                    String                 @id @default(cuid())
   referenceNumber       String                 @unique @map("reference_number")
   reviewType            ReviewType             @default(FULL)
+  locationType          ReviewLocationType     @default(ON_SITE) @map("location_type")
   hostOrganizationId    String                 @map("host_organization_id")
   status                ReviewStatus           @default(REQUESTED)
   phase                 ReviewPhase            @default(PLANNING)
@@ -594,6 +596,8 @@ model Review {
   plannedEndDate        DateTime?              @map("planned_end_date")
   actualStartDate       DateTime?              @map("actual_start_date")
   actualEndDate         DateTime?              @map("actual_end_date")
+  objectives            String?                @db.Text
+  specialRequirements   String?                @map("special_requirements") @db.Text
   questionnairesInScope String[]               @default([]) @map("questionnaires_in_scope")
   areasInScope          String[]               @default([]) @map("areas_in_scope")
   createdAt             DateTime               @default(now()) @map("created_at")
@@ -1040,6 +1044,13 @@ enum AvailabilityType {
 }
 
 enum COIType {
+  // Legacy values (existing in database)
+  EMPLOYMENT
+  FINANCIAL
+  CONTRACTUAL
+  PERSONAL
+  PREVIOUS_REVIEW
+  // New values
   HOME_ORGANIZATION // Reviewer's current employer - auto-detected
   FAMILY_RELATIONSHIP // Immediate family works at organization
   FORMER_EMPLOYEE // Worked there within 3 years
@@ -1135,6 +1146,12 @@ enum ReviewType {
   FOCUSED
   FOLLOW_UP
   SURVEILLANCE
+}
+
+enum ReviewLocationType {
+  ON_SITE
+  REMOTE
+  HYBRID
 }
 
 enum ReviewStatus {

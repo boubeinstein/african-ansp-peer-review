@@ -1,3 +1,6 @@
+export * from "./review";
+export * from "./reviewer";
+
 export type Locale = "EN" | "FR";
 export type QuestionnaireType = "ANS_USOAP_CMA" | "SMS_CANSO_SOE";
 

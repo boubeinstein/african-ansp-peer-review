@@ -68,6 +68,48 @@ export interface COITypeConfig {
  * Configuration for each COI type
  */
 export const COI_TYPE_CONFIG: Record<COIType, COITypeConfig> = {
+  // Legacy COI types (for backwards compatibility with existing data)
+  EMPLOYMENT: {
+    labelEn: "Employment",
+    labelFr: "Emploi",
+    descriptionEn: "Current or recent employment relationship",
+    descriptionFr: "Relation d'emploi actuelle ou récente",
+    defaultSeverity: "HARD_BLOCK",
+    isAutoDetectable: false,
+  },
+  FINANCIAL: {
+    labelEn: "Financial",
+    labelFr: "Financier",
+    descriptionEn: "Financial interest or investment in the organization",
+    descriptionFr: "Intérêt financier ou investissement dans l'organisation",
+    defaultSeverity: "SOFT_WARNING",
+    isAutoDetectable: false,
+  },
+  CONTRACTUAL: {
+    labelEn: "Contractual",
+    labelFr: "Contractuel",
+    descriptionEn: "Contractual relationship with the organization",
+    descriptionFr: "Relation contractuelle avec l'organisation",
+    defaultSeverity: "SOFT_WARNING",
+    isAutoDetectable: false,
+  },
+  PERSONAL: {
+    labelEn: "Personal",
+    labelFr: "Personnel",
+    descriptionEn: "Personal relationship with organization members",
+    descriptionFr: "Relation personnelle avec des membres de l'organisation",
+    defaultSeverity: "HARD_BLOCK",
+    isAutoDetectable: false,
+  },
+  PREVIOUS_REVIEW: {
+    labelEn: "Previous Review",
+    labelFr: "Revue précédente",
+    descriptionEn: "Previously reviewed this organization",
+    descriptionFr: "A déjà évalué cette organisation",
+    defaultSeverity: "SOFT_WARNING",
+    isAutoDetectable: true,
+  },
+  // Current COI types
   HOME_ORGANIZATION: {
     labelEn: "Home Organization",
     labelFr: "Organisation d'appartenance",

@@ -506,6 +506,13 @@ export async function getCOIStats(
   ]);
 
   const typeMap: Record<COIType, number> = {
+    // Legacy types
+    EMPLOYMENT: 0,
+    FINANCIAL: 0,
+    CONTRACTUAL: 0,
+    PERSONAL: 0,
+    PREVIOUS_REVIEW: 0,
+    // Current types
     HOME_ORGANIZATION: 0,
     FAMILY_RELATIONSHIP: 0,
     FORMER_EMPLOYEE: 0,

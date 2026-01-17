@@ -2095,6 +2095,14 @@
   "reviews": {
     "title": "Revues par les pairs",
     "description": "Gérer et coordonner les activités de revue par les pairs",
+    "searchPlaceholder": "Rechercher par référence, organisation...",
+    "filterByStatus": "Filtrer par statut",
+    "filterByType": "Filtrer par type",
+    "allStatuses": "Tous les statuts",
+    "allTypes": "Tous les types",
+    "pagination": "Page {current} sur {total}",
+    "teamMembers": "{count} membres d'équipe",
+    "findings": "{count} constatations",
     "stats": {
       "total": "Total des revues",
       "scheduled": "Planifiées",
@@ -2103,7 +2111,7 @@
     },
     "empty": {
       "title": "Aucune revue par les pairs",
-      "description": "Les revues par les pairs apparaîtront ici une fois le cycle de revue commencé."
+      "description": "Les revues par les pairs apparaîtront ici une fois le cycle de revue commencé. Demandez une revue par les pairs pour commencer."
     },
     "actions": {
       "requestReview": "Demander une revue",

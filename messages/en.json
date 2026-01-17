@@ -1522,7 +1522,8 @@
         "AVAILABLE": "Available",
         "TENTATIVE": "Tentative",
         "UNAVAILABLE": "Unavailable",
-        "ON_ASSIGNMENT": "On Assignment"
+        "ON_ASSIGNMENT": "On Assignment",
+        "unspecified": "Not specified"
       },
       "typeLabel": "Availability Type",
       "dateRange": "Date Range",
@@ -1549,14 +1550,47 @@
         "cancel": "Cancel",
         "confirm": "Delete"
       },
+      "quickActions": {
+        "title": "Quick Actions",
+        "description": "Quickly set availability for common periods",
+        "markNextMonth": "Mark next month available",
+        "mark3Months": "Mark next 3 months available",
+        "blockNextMonth": "Block next month",
+        "clearFuture": "Clear future availability",
+        "clearConfirm": {
+          "title": "Clear Future Availability",
+          "description": "This will remove all your future availability slots (except review assignments). This action cannot be undone."
+        }
+      },
+      "team": {
+        "title": "Team Availability",
+        "noMembers": "No team members selected",
+        "reviewers": "reviewers",
+        "reviewer": "Reviewer",
+        "daysAllAvailable": "days all available",
+        "daysPartiallyAvailable": "days partially available",
+        "commonAvailability": "Common Availability",
+        "allReviewers": "All reviewers",
+        "available": "available",
+        "allAvailable": "All team members available"
+      },
       "summary": {
         "title": "Availability Summary",
-        "available": "Days Available",
-        "tentative": "Days Tentative",
-        "unavailable": "Days Unavailable",
-        "onAssignment": "days on assignment",
+        "available": "Available",
+        "tentative": "Tentative",
+        "unavailable": "Unavailable",
+        "onAssignment": "On Assignment",
         "totalDays": "Total Days",
-        "percentage": "Availability"
+        "percentage": "Availability",
+        "daysAvailable": "days available",
+        "days": "days",
+        "nextAvailable": "Next available",
+        "nextDays": "Next {days} days"
+      },
+      "status": {
+        "highlyAvailable": "Highly Available",
+        "partiallyAvailable": "Partially Available",
+        "limitedAvailability": "Limited Availability"
       },
       "view": {
         "month": "Month",
@@ -1624,13 +1658,11 @@
         "EXPIRED": "Expired"
       },
       "types": {
-        "EMPLOYMENT": "Current Employment",
-        "FORMER_EMPLOYMENT": "Former Employment",
-        "FINANCIAL": "Financial Interest",
-        "CONSULTANCY": "Consultancy",
-        "BOARD_MEMBERSHIP": "Board Membership",
-        "FAMILIAL": "Family Relationship",
-        "INSTITUTIONAL": "Institutional Affiliation",
+        "HOME_ORGANIZATION": "Home Organization",
+        "FAMILY_RELATIONSHIP": "Family Relationship",
+        "FORMER_EMPLOYEE": "Former Employee",
+        "BUSINESS_INTEREST": "Business Interest",
+        "RECENT_REVIEW": "Recent Review",
         "OTHER": "Other Conflict"
       },
       "check": {
@@ -1683,6 +1715,41 @@
         "addError": "Failed to declare conflict of interest",
         "verifySuccess": "Conflict verification updated",
         "verifyError": "Failed to update verification"
+      },
+      "override": {
+        "title": "Override Conflict",
+        "description": "Grant exception to soft warning conflicts",
+        "justification": "Justification",
+        "justificationPlaceholder": "Provide detailed justification for this override (minimum 50 characters)...",
+        "justificationRequired": "Justification is required for override approval",
+        "expiresAt": "Override Expires",
+        "expiresAtDescription": "Optional: Set when this override expires",
+        "cannotOverrideHard": "Hard block conflicts cannot be overridden",
+        "createSuccess": "Override approved successfully",
+        "createError": "Failed to approve override",
+        "revokeTitle": "Revoke Override",
+        "revokeReason": "Revoke Reason",
+        "revokeReasonPlaceholder": "Provide reason for revoking this override...",
+        "revokeSuccess": "Override revoked successfully",
+        "revokeError": "Failed to revoke override",
+        "active": "Active Override",
+        "expired": "Expired Override",
+        "revoked": "Revoked"
+      },
+      "list": {
+        "title": "COI Management",
+        "description": "View and manage all conflicts of interest",
+        "filters": "Filters",
+        "showActive": "Active Only",
+        "showAutoDetected": "Auto-Detected",
+        "showManual": "Manually Declared"
+      },
+      "stats": {
+        "total": "Total COIs",
+        "active": "Active",
+        "hardBlocks": "Hard Blocks",
+        "softWarnings": "Soft Warnings",
+        "activeOverrides": "Active Overrides"
       }
     },
     "status": {
@@ -1714,6 +1781,19 @@
       "title": "Find Matching Reviewers",
       "criteria": "Search Criteria",
       "criteriaDescription": "Define requirements for the peer review team",
+      "criteriaSection": {
+        "clearAll": "Clear All"
+      },
+      "presets": {
+        "title": "Quick Presets",
+        "standardANS": "Standard ANS Review",
+        "smsReview": "SMS-Focused Review",
+        "fullReview": "Comprehensive Review"
+      },
+      "quickFilters": "Quick filters",
+      "leadQualifiedOnly": "Lead Qualified",
+      "availableOnly": "100% Available",
+      "totalBeforeFilters": "total",
       "targetOrganization": "Target Organization",
       "requiredExpertise": "Required Expertise",
       "preferredExpertise": "Preferred Expertise",
@@ -1747,8 +1827,26 @@
         "expertise": "Expertise Match",
         "language": "Language Match",
         "availability": "Availability",
-        "experience": "Experience"
+        "experience": "Experience",
+        "expertiseDesc": "How well the reviewer's expertise areas match the required areas for this review",
+        "languageDesc": "Ability to conduct the review in the required working languages",
+        "availabilityDesc": "Availability during the requested review period",
+        "experienceDesc": "Relevant peer review experience and qualifications",
+        "expertiseShort": "Exp",
+        "languageShort": "Lang",
+        "availabilityShort": "Avail",
+        "experienceShort": "Xp"
       },
+      "score": {
+        "levels": {
+          "excellent": "Excellent Match",
+          "good": "Good Match",
+          "fair": "Fair Match",
+          "poor": "Poor Match"
+        },
+        "tooltipScore": "{score}/{max} points"
+      },
+      "ineligible": "Ineligible",
       "team": {
         "title": "Team Builder",
         "selected": "Selected Team Members",
@@ -1780,6 +1878,105 @@
         "coiConflict": "Has conflict of interest",
         "notAvailable": "Not fully available for review period",
         "missingExpertise": "Missing required expertise areas"
+      },
+      "ineligibilityReasons": {
+        "homeOrg": "Works at target organization",
+        "familyRelationship": "Has family member at target organization",
+        "formerEmployee": "Former employee of target organization",
+        "recentReview": "Recently reviewed this organization",
+        "unavailable": "Unavailable during review period",
+        "insufficientExpertise": "Insufficient expertise match",
+        "languageMismatch": "Cannot conduct review in required languages",
+        "conflict": "Conflict of interest with target organization"
+      },
+      "emptyState": {
+        "initial": {
+          "title": "Find Your Review Team",
+          "description": "Select a target organization and define your criteria to find matching reviewers."
+        },
+        "noResults": {
+          "title": "No Reviewers Found",
+          "description": "No reviewers match your current criteria. Try adjusting your search parameters.",
+          "clearFilters": "Clear Filters",
+          "expandSearch": "Expand Search"
+        },
+        "noEligible": {
+          "title": "No Eligible Reviewers",
+          "description": "All reviewers have conflicts of interest or are unavailable for this review period.",
+          "suggestions": "Try these suggestions:",
+          "suggestion1": "Expand the review date range to increase availability",
+          "suggestion2": "Reduce required expertise areas to widen the pool",
+          "suggestion3": "Check if COI overrides are possible for soft conflicts"
+        },
+        "incompleteTeam": {
+          "title": "Need {needed} more reviewers",
+          "description": "Not enough eligible reviewers to complete your team of {required}.",
+          "missing": "Missing expertise coverage:"
+        },
+        "noSelection": {
+          "title": "No Team Selected",
+          "description": "Select reviewers from the results to build your peer review team."
+        }
+      },
+      "shortcuts": {
+        "title": "Shortcuts",
+        "dialogTitle": "Keyboard Shortcuts",
+        "findMatches": "Find matching reviewers",
+        "autoSelect": "Auto-select best team",
+        "clearFilters": "Clear all filters",
+        "exportTeam": "Export team to CSV",
+        "resultsTab": "Switch to results tab",
+        "teamTab": "Switch to team tab",
+        "showHelp": "Show this help",
+        "closeDialog": "Close dialog",
+        "note": "Shortcuts are disabled when typing in input fields"
+      },
+      "announce": {
+        "results": "Found {eligible} eligible reviewers out of {total} total",
+        "added": "{name} added to team",
+        "removed": "{name} removed from team"
+      },
+      "tabsLabel": "Reviewer matching results and team builder",
+      "resultsAriaLabel": "List of matching reviewers",
+      "scoreHelp": {
+        "title": "How scores are calculated:",
+        "expertise": "Expertise Match (40 pts): Primary expertise +15, Secondary +5",
+        "language": "Language (25 pts): Required languages at operational level",
+        "availability": "Availability (25 pts): Coverage during review period",
+        "experience": "Experience (10 pts): Past reviews and certifications"
+      },
+      "coverageHelp": {
+        "expertise": "Percentage of required expertise areas covered by the selected team. 100% means all required areas have at least one team member with that expertise.",
+        "language": "Percentage of required languages covered by the team. Team should have native or advanced speakers for each required language."
+      },
+      "expertiseHelp": {
+        "ATS": "Air Traffic Services - Control tower, approach, and area control operations",
+        "AIM_AIS": "Aeronautical Information Management - NOTAMs, charts, publications management",
+        "MET": "Meteorology - Aviation weather services, forecasting, and briefing",
+        "CNS": "Communications, Navigation, Surveillance - Technical systems and infrastructure",
+        "SAR": "Search and Rescue - Emergency response coordination and procedures",
+        "PANS_OPS": "Flight Procedures - Instrument approach and departure procedure design",
+        "SMS_POLICY": "Safety Management - Safety policy and objectives",
+        "SMS_RISK": "Safety Risk Management - Hazard identification and risk assessment",
+        "SMS_ASSURANCE": "Safety Assurance - Performance monitoring and compliance",
+        "SMS_PROMOTION": "Safety Promotion - Training and safety communication",
+        "AERODROME": "Aerodrome Operations - Airport operations and management",
+        "RFF": "Rescue and Firefighting - Airport emergency services",
+        "ENGINEERING": "Engineering Services - Infrastructure and technical maintenance",
+        "QMS": "Quality Management System - Quality assurance processes",
+        "TRAINING": "Training - Personnel training and competency",
+        "HUMAN_FACTORS": "Human Factors - Human performance and error management"
+      },
+      "languageHelp": {
+        "title": "Working Languages",
+        "description": "Peer reviews can be conducted in multiple working languages. The team should include members who are fluent in the official working languages of the target organization to ensure effective communication during the review."
+      },
+      "eligibilityHelp": {
+        "title": "Eligibility requirements:",
+        "noCOI": "No conflict of interest with target organization",
+        "available": "Available during the review period",
+        "expertise": "Has required expertise areas",
+        "languages": "Can conduct review in required languages"
       }
     }
   },
@@ -1857,7 +2054,8 @@
       "bulkActions": "Bulk Actions",
       "exportSelected": "Export Selected",
       "changeStatus": "Change Status",
-      "createTeam": "Create Review Team"
+      "createTeam": "Create Review Team",
+      "buildTeam": "Build Review Team"
     },
     "selection": {
       "selectAll": "Select all",

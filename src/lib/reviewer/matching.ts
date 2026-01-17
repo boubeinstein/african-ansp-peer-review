@@ -98,8 +98,19 @@ export interface MatchResult {
   availabilityStatus: AvailabilityStatus;
   warnings: string[];
   isEligible: boolean;
+  ineligibilityReason?: string;
+  ineligibilityReasonFr?: string;
   isLeadQualified: boolean;
   reviewsCompleted: number;
+}
+
+/**
+ * Result of eligibility determination with reason.
+ */
+interface EligibilityResult {
+  isEligible: boolean;
+  reason?: string;
+  reasonFr?: string;
 }
 
 /**
@@ -190,7 +201,7 @@ export function calculateMatchScore(
 
   // Calculate availability score
   const availabilityResult = scoreAvailability(
-    reviewer.availabilityPeriods,
+    reviewer.availabilityPeriods ?? [],
     criteria.reviewStartDate,
     criteria.reviewEndDate
   );
@@ -211,7 +222,7 @@ export function calculateMatchScore(
 
   // Check COI status
   const coiStatus = checkCOIStatus(
-    reviewer.conflictsOfInterest,
+    reviewer.conflictsOfInterest ?? [],
     criteria.targetOrganizationId,
     reviewer.homeOrganizationId
   );
@@ -251,7 +262,7 @@ export function calculateMatchScore(
   }
 
   // Determine eligibility
-  const isEligible = determineEligibility(
+  const eligibilityResult = determineEligibility(
     coiStatus,
     expertiseResult,
     languageResult,
@@ -286,7 +297,9 @@ export function calculateMatchScore(
     coiStatus,
     availabilityStatus,
     warnings,
-    isEligible,
+    isEligible: eligibilityResult.isEligible,
+    ineligibilityReason: eligibilityResult.reason,
+    ineligibilityReasonFr: eligibilityResult.reasonFr,
     isLeadQualified: reviewer.isLeadQualified,
     reviewsCompleted: reviewer.reviewsCompleted,
   };
@@ -294,16 +307,35 @@ export function calculateMatchScore(
 
 /**
  * Determine if a reviewer is eligible for assignment.
+ * Returns eligibility status with human-readable reason if ineligible.
  */
 function determineEligibility(
   coiStatus: COIStatus,
   expertiseResult: ExpertiseScoreResult,
   languageResult: LanguageScoreResult,
   availabilityStatus: AvailabilityStatus
-): boolean {
+): EligibilityResult {
   // Hard COI = not eligible
   if (coiStatus.hasConflict && coiStatus.severity === "HARD") {
-    return false;
+    // Determine specific reason based on COI type
+    let reason = "Conflict of interest with target organization";
+    let reasonFr = "Conflit d'intérêts avec l'organisation cible";
+
+    if (coiStatus.type === "HOME_ORGANIZATION") {
+      reason = "Works at target organization";
+      reasonFr = "Travaille pour l'organisation cible";
+    } else if (coiStatus.type === "FAMILY_RELATIONSHIP") {
+      reason = "Has family member at target organization";
+      reasonFr = "A un membre de la famille dans l'organisation cible";
+    } else if (coiStatus.type === "FORMER_EMPLOYEE") {
+      reason = "Former employee of target organization";
+      reasonFr = "Ancien employé de l'organisation cible";
+    } else if (coiStatus.type === "RECENT_REVIEW") {
+      reason = "Recently reviewed this organization";
+      reasonFr = "A récemment évalué cette organisation";
+    }
+
+    return { isEligible: false, reason, reasonFr };
   }
 
   // Must have at least 50% of required expertise
@@ -311,20 +343,32 @@ function determineEligibility(
     expertiseResult.matchedRequired.length /
     (expertiseResult.matchedRequired.length + expertiseResult.missingRequired.length || 1);
   if (expertiseCoverage < 0.5) {
-    return false;
+    return {
+      isEligible: false,
+      reason: "Insufficient expertise match",
+      reasonFr: "Expertise insuffisante",
+    };
   }
 
   // Must be able to conduct review in at least one required language
   if (!languageResult.canConductReview && languageResult.missingLanguages.length > 0) {
-    return false;
+    return {
+      isEligible: false,
+      reason: "Cannot conduct review in required languages",
+      reasonFr: "Ne peut pas effectuer la revue dans les langues requises",
+    };
   }
 
   // Must have at least 50% availability
   if (availabilityStatus.coverage < 0.5) {
-    return false;
+    return {
+      isEligible: false,
+      reason: "Unavailable during review period",
+      reasonFr: "Indisponible pendant la période de revue",
+    };
   }
 
-  return true;
+  return { isEligible: true };
 }
 
 // =============================================================================
@@ -344,8 +388,17 @@ function checkCOIStatus(
     return {
       hasConflict: true,
       severity: "HARD",
-      type: "EMPLOYMENT",
+      type: "HOME_ORGANIZATION",
       reason: "Home organization",
+      isWaivable: false,
+    };
+  }
+
+  // Guard against undefined/null/non-array conflicts
+  if (!conflicts || !Array.isArray(conflicts)) {
+    return {
+      hasConflict: false,
+      severity: null,
       isWaivable: false,
     };
   }
@@ -377,7 +430,7 @@ function checkCOIStatus(
  * Determine if a COI type is a hard conflict.
  */
 function isHardConflict(type: COIType): boolean {
-  const hardConflicts: COIType[] = ["EMPLOYMENT", "FINANCIAL"];
+  const hardConflicts: COIType[] = ["HOME_ORGANIZATION", "FAMILY_RELATIONSHIP"];
   return hardConflicts.includes(type);
 }
 
@@ -386,11 +439,11 @@ function isHardConflict(type: COIType): boolean {
  */
 function getConflictReason(type: COIType): string {
   const reasons: Record<COIType, string> = {
-    EMPLOYMENT: "Current or recent employment",
-    FINANCIAL: "Financial interest",
-    CONTRACTUAL: "Contractual relationship",
-    PERSONAL: "Personal relationship",
-    PREVIOUS_REVIEW: "Recently reviewed this organization",
+    HOME_ORGANIZATION: "Current employer",
+    FAMILY_RELATIONSHIP: "Family relationship",
+    FORMER_EMPLOYEE: "Former employee",
+    BUSINESS_INTEREST: "Business interest",
+    RECENT_REVIEW: "Recently reviewed this organization",
     OTHER: "Other declared conflict",
   };
   return reasons[type] ?? "Conflict of interest";

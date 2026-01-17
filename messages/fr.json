@@ -1522,7 +1522,8 @@
         "AVAILABLE": "Disponible",
         "TENTATIVE": "Provisoire",
         "UNAVAILABLE": "Indisponible",
-        "ON_ASSIGNMENT": "En mission"
+        "ON_ASSIGNMENT": "En mission",
+        "unspecified": "Non spécifié"
       },
       "typeLabel": "Type de disponibilité",
       "dateRange": "Période",
@@ -1549,14 +1550,47 @@
         "cancel": "Annuler",
         "confirm": "Supprimer"
       },
+      "quickActions": {
+        "title": "Actions rapides",
+        "description": "Définir rapidement la disponibilité pour des périodes courantes",
+        "markNextMonth": "Marquer le mois prochain disponible",
+        "mark3Months": "Marquer les 3 prochains mois disponibles",
+        "blockNextMonth": "Bloquer le mois prochain",
+        "clearFuture": "Effacer les disponibilités futures",
+        "clearConfirm": {
+          "title": "Effacer les disponibilités futures",
+          "description": "Cela supprimera tous vos créneaux de disponibilité futurs (sauf les affectations de revue). Cette action est irréversible."
+        }
+      },
+      "team": {
+        "title": "Disponibilité de l'équipe",
+        "noMembers": "Aucun membre d'équipe sélectionné",
+        "reviewers": "évaluateurs",
+        "reviewer": "Évaluateur",
+        "daysAllAvailable": "jours tous disponibles",
+        "daysPartiallyAvailable": "jours partiellement disponibles",
+        "commonAvailability": "Disponibilité commune",
+        "allReviewers": "Tous les évaluateurs",
+        "available": "disponible(s)",
+        "allAvailable": "Tous les membres de l'équipe disponibles"
+      },
       "summary": {
         "title": "Résumé de disponibilité",
-        "available": "Jours disponibles",
-        "tentative": "Jours provisoires",
-        "unavailable": "Jours indisponibles",
-        "onAssignment": "jours en mission",
+        "available": "Disponible",
+        "tentative": "Provisoire",
+        "unavailable": "Indisponible",
+        "onAssignment": "En mission",
         "totalDays": "Total des jours",
-        "percentage": "Disponibilité"
+        "percentage": "Disponibilité",
+        "daysAvailable": "jours disponibles",
+        "days": "jours",
+        "nextAvailable": "Prochaine disponibilité",
+        "nextDays": "{days} prochains jours"
+      },
+      "status": {
+        "highlyAvailable": "Très disponible",
+        "partiallyAvailable": "Partiellement disponible",
+        "limitedAvailability": "Disponibilité limitée"
       },
       "view": {
         "month": "Mois",
@@ -1624,13 +1658,11 @@
         "EXPIRED": "Expiré"
       },
       "types": {
-        "EMPLOYMENT": "Emploi actuel",
-        "FORMER_EMPLOYMENT": "Emploi antérieur",
-        "FINANCIAL": "Intérêt financier",
-        "CONSULTANCY": "Conseil",
-        "BOARD_MEMBERSHIP": "Membre du conseil",
-        "FAMILIAL": "Relation familiale",
-        "INSTITUTIONAL": "Affiliation institutionnelle",
+        "HOME_ORGANIZATION": "Organisation d'appartenance",
+        "FAMILY_RELATIONSHIP": "Lien familial",
+        "FORMER_EMPLOYEE": "Ancien employé",
+        "BUSINESS_INTEREST": "Intérêt commercial",
+        "RECENT_REVIEW": "Revue récente",
         "OTHER": "Autre conflit"
       },
       "check": {
@@ -1683,6 +1715,41 @@
         "addError": "Échec de la déclaration du conflit d'intérêts",
         "verifySuccess": "Vérification du conflit mise à jour",
         "verifyError": "Échec de la mise à jour de la vérification"
+      },
+      "override": {
+        "title": "Dérogation au conflit",
+        "description": "Accorder une exception aux conflits d'avertissement",
+        "justification": "Justification",
+        "justificationPlaceholder": "Fournir une justification détaillée pour cette dérogation (minimum 50 caractères)...",
+        "justificationRequired": "La justification est requise pour l'approbation de la dérogation",
+        "expiresAt": "Expiration de la dérogation",
+        "expiresAtDescription": "Optionnel : Définir quand cette dérogation expire",
+        "cannotOverrideHard": "Les conflits de blocage strict ne peuvent pas être contournés",
+        "createSuccess": "Dérogation approuvée avec succès",
+        "createError": "Échec de l'approbation de la dérogation",
+        "revokeTitle": "Révoquer la dérogation",
+        "revokeReason": "Motif de révocation",
+        "revokeReasonPlaceholder": "Fournir le motif de la révocation de cette dérogation...",
+        "revokeSuccess": "Dérogation révoquée avec succès",
+        "revokeError": "Échec de la révocation de la dérogation",
+        "active": "Dérogation active",
+        "expired": "Dérogation expirée",
+        "revoked": "Révoquée"
+      },
+      "list": {
+        "title": "Gestion des COI",
+        "description": "Voir et gérer tous les conflits d'intérêts",
+        "filters": "Filtres",
+        "showActive": "Actifs uniquement",
+        "showAutoDetected": "Auto-détectés",
+        "showManual": "Déclarés manuellement"
+      },
+      "stats": {
+        "total": "Total des COI",
+        "active": "Actifs",
+        "hardBlocks": "Blocages stricts",
+        "softWarnings": "Avertissements",
+        "activeOverrides": "Dérogations actives"
       }
     },
     "status": {
@@ -1714,6 +1781,19 @@
       "title": "Trouver des évaluateurs correspondants",
       "criteria": "Critères de recherche",
       "criteriaDescription": "Définir les exigences pour l'équipe d'évaluation par les pairs",
+      "criteriaSection": {
+        "clearAll": "Tout effacer"
+      },
+      "presets": {
+        "title": "Préréglages rapides",
+        "standardANS": "Revue ANS standard",
+        "smsReview": "Revue axée SMS",
+        "fullReview": "Revue complète"
+      },
+      "quickFilters": "Filtres rapides",
+      "leadQualifiedOnly": "Chefs qualifiés",
+      "availableOnly": "100% disponibles",
+      "totalBeforeFilters": "total",
       "targetOrganization": "Organisation cible",
       "requiredExpertise": "Expertise requise",
       "preferredExpertise": "Expertise préférée",
@@ -1747,8 +1827,26 @@
         "expertise": "Expertise",
         "language": "Langues",
         "availability": "Disponibilité",
-        "experience": "Expérience"
+        "experience": "Expérience",
+        "expertiseDesc": "Correspondance entre les domaines d'expertise de l'évaluateur et les domaines requis",
+        "languageDesc": "Capacité à effectuer la revue dans les langues de travail requises",
+        "availabilityDesc": "Disponibilité pendant la période de revue demandée",
+        "experienceDesc": "Expérience et qualifications pertinentes en évaluation par les pairs",
+        "expertiseShort": "Exp",
+        "languageShort": "Lang",
+        "availabilityShort": "Disp",
+        "experienceShort": "Xp"
       },
+      "score": {
+        "levels": {
+          "excellent": "Excellente correspondance",
+          "good": "Bonne correspondance",
+          "fair": "Correspondance acceptable",
+          "poor": "Faible correspondance"
+        },
+        "tooltipScore": "{score}/{max} points"
+      },
+      "ineligible": "Non éligible",
       "team": {
         "title": "Composition d'équipe",
         "selected": "Membres sélectionnés",
@@ -1780,6 +1878,105 @@
         "coiConflict": "A un conflit d'intérêts",
         "notAvailable": "Non entièrement disponible pour la période de revue",
         "missingExpertise": "Expertise requise manquante"
+      },
+      "ineligibilityReasons": {
+        "homeOrg": "Travaille pour l'organisation cible",
+        "familyRelationship": "A un membre de la famille dans l'organisation cible",
+        "formerEmployee": "Ancien employé de l'organisation cible",
+        "recentReview": "A récemment évalué cette organisation",
+        "unavailable": "Indisponible pendant la période de revue",
+        "insufficientExpertise": "Expertise insuffisante",
+        "languageMismatch": "Ne peut pas effectuer la revue dans les langues requises",
+        "conflict": "Conflit d'intérêts avec l'organisation cible"
+      },
+      "emptyState": {
+        "initial": {
+          "title": "Constituez votre équipe de revue",
+          "description": "Sélectionnez une organisation cible et définissez vos critères pour trouver des évaluateurs correspondants."
+        },
+        "noResults": {
+          "title": "Aucun évaluateur trouvé",
+          "description": "Aucun évaluateur ne correspond à vos critères actuels. Essayez d'ajuster vos paramètres de recherche.",
+          "clearFilters": "Effacer les filtres",
+          "expandSearch": "Élargir la recherche"
+        },
+        "noEligible": {
+          "title": "Aucun évaluateur éligible",
+          "description": "Tous les évaluateurs ont des conflits d'intérêts ou sont indisponibles pour cette période de revue.",
+          "suggestions": "Essayez ces suggestions :",
+          "suggestion1": "Élargir la plage de dates pour augmenter la disponibilité",
+          "suggestion2": "Réduire les domaines d'expertise requis pour élargir le bassin",
+          "suggestion3": "Vérifier si des dérogations de COI sont possibles pour les conflits souples"
+        },
+        "incompleteTeam": {
+          "title": "Besoin de {needed} évaluateur(s) supplémentaire(s)",
+          "description": "Pas assez d'évaluateurs éligibles pour compléter votre équipe de {required}.",
+          "missing": "Couverture d'expertise manquante :"
+        },
+        "noSelection": {
+          "title": "Aucune équipe sélectionnée",
+          "description": "Sélectionnez des évaluateurs dans les résultats pour constituer votre équipe de revue par les pairs."
+        }
+      },
+      "shortcuts": {
+        "title": "Raccourcis",
+        "dialogTitle": "Raccourcis clavier",
+        "findMatches": "Rechercher des évaluateurs",
+        "autoSelect": "Sélection auto de l'équipe",
+        "clearFilters": "Effacer tous les filtres",
+        "exportTeam": "Exporter l'équipe en CSV",
+        "resultsTab": "Onglet résultats",
+        "teamTab": "Onglet équipe",
+        "showHelp": "Afficher cette aide",
+        "closeDialog": "Fermer la boîte de dialogue",
+        "note": "Les raccourcis sont désactivés lors de la saisie"
+      },
+      "announce": {
+        "results": "{eligible} évaluateurs éligibles trouvés sur {total} au total",
+        "added": "{name} ajouté à l'équipe",
+        "removed": "{name} retiré de l'équipe"
+      },
+      "tabsLabel": "Résultats de correspondance et constructeur d'équipe",
+      "resultsAriaLabel": "Liste des évaluateurs correspondants",
+      "scoreHelp": {
+        "title": "Comment les scores sont calculés :",
+        "expertise": "Expertise (40 pts) : Expertise principale +15, Secondaire +5",
+        "language": "Langue (25 pts) : Langues requises au niveau opérationnel",
+        "availability": "Disponibilité (25 pts) : Couverture pendant la période de revue",
+        "experience": "Expérience (10 pts) : Revues passées et certifications"
+      },
+      "coverageHelp": {
+        "expertise": "Pourcentage des domaines d'expertise requis couverts par l'équipe sélectionnée. 100% signifie que tous les domaines requis ont au moins un membre de l'équipe avec cette expertise.",
+        "language": "Pourcentage des langues requises couvertes par l'équipe. L'équipe doit avoir des locuteurs natifs ou avancés pour chaque langue requise."
+      },
+      "expertiseHelp": {
+        "ATS": "Services de la circulation aérienne - Tour de contrôle, approche et contrôle régional",
+        "AIM_AIS": "Gestion de l'information aéronautique - NOTAM, cartes, gestion des publications",
+        "MET": "Météorologie - Services météo aviation, prévisions et briefings",
+        "CNS": "Communications, Navigation, Surveillance - Systèmes et infrastructures techniques",
+        "SAR": "Recherche et Sauvetage - Coordination des interventions d'urgence",
+        "PANS_OPS": "Procédures de vol - Conception des procédures d'approche et de départ aux instruments",
+        "SMS_POLICY": "Gestion de la sécurité - Politique et objectifs de sécurité",
+        "SMS_RISK": "Gestion des risques de sécurité - Identification des dangers et évaluation des risques",
+        "SMS_ASSURANCE": "Assurance sécurité - Surveillance des performances et conformité",
+        "SMS_PROMOTION": "Promotion de la sécurité - Formation et communication sur la sécurité",
+        "AERODROME": "Opérations d'aérodrome - Exploitation et gestion des aéroports",
+        "RFF": "Sauvetage et lutte contre l'incendie - Services d'urgence aéroportuaires",
+        "ENGINEERING": "Services d'ingénierie - Maintenance des infrastructures et équipements",
+        "QMS": "Système de gestion de la qualité - Processus d'assurance qualité",
+        "TRAINING": "Formation - Formation du personnel et compétences",
+        "HUMAN_FACTORS": "Facteurs humains - Performance humaine et gestion des erreurs"
+      },
+      "languageHelp": {
+        "title": "Langues de travail",
+        "description": "Les revues par les pairs peuvent être menées dans plusieurs langues de travail. L'équipe doit inclure des membres maîtrisant les langues de travail officielles de l'organisation cible pour assurer une communication efficace pendant la revue."
+      },
+      "eligibilityHelp": {
+        "title": "Critères d'éligibilité :",
+        "noCOI": "Pas de conflit d'intérêts avec l'organisation cible",
+        "available": "Disponible pendant la période de revue",
+        "expertise": "Possède les domaines d'expertise requis",
+        "languages": "Peut effectuer la revue dans les langues requises"
       }
     }
   },
@@ -1857,7 +2054,8 @@
       "bulkActions": "Actions groupées",
       "exportSelected": "Exporter la sélection",
       "changeStatus": "Changer le statut",
-      "createTeam": "Créer une équipe"
+      "createTeam": "Créer une équipe",
+      "buildTeam": "Construire l'équipe de revue"
     },
     "selection": {
       "selectAll": "Tout sélectionner",

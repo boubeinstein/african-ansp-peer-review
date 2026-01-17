@@ -44,6 +44,9 @@ export { AvailabilityCalendar } from "./availability-calendar";
 export { AvailabilitySlotDialog } from "./availability-slot-dialog";
 export { AvailabilityLegend } from "./availability-legend";
 export { AvailabilitySummary } from "./availability-summary";
+export { AvailabilityQuickActions } from "./availability-quick-actions";
+export { TeamAvailabilityView } from "./team-availability-view";
+export { AvailabilitySummaryCard } from "./availability-summary-card";
 export { BulkAvailability } from "./bulk-availability";
 
 // Matching & Assignment Components

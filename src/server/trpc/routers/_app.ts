@@ -8,6 +8,7 @@ import { documentRouter } from "./document";
 import { progressRouter } from "./progress";
 import { reviewerRouter } from "./reviewer";
 import { organizationRouter } from "./organization";
+import { coiRouter } from "./coi";
 
 /**
  * Main app router combining all sub-routers
@@ -22,6 +23,7 @@ export const appRouter = router({
   progress: progressRouter,
   reviewer: reviewerRouter,
   organization: organizationRouter,
+  coi: coiRouter,
 });
 
 /**

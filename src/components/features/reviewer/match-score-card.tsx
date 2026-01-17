@@ -7,13 +7,12 @@
  * warnings, and COI indicators.
  */
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Tooltip,
@@ -24,16 +23,18 @@ import {
 import {
   AlertTriangle,
   Ban,
-  Briefcase,
-  Calendar,
   CheckCircle2,
-  Globe,
   Star,
-  User,
   XCircle,
 } from "lucide-react";
 import type { MatchResult } from "@/lib/reviewer/matching";
 import { EXPERTISE_AREA_ABBREV } from "@/lib/reviewer/labels";
+import {
+  ScoreBadge,
+  CircularScoreBadge,
+  ReviewerScoreBreakdown,
+  ExpertiseBadgeWithTooltip,
+} from "@/components/features/matching";
 
 // =============================================================================
 // TYPES
@@ -53,13 +54,6 @@ export interface MatchScoreCardProps {
 // HELPERS
 // =============================================================================
 
-function getScoreColor(percentage: number): string {
-  if (percentage >= 80) return "text-green-600";
-  if (percentage >= 60) return "text-yellow-600";
-  if (percentage >= 40) return "text-orange-600";
-  return "text-red-600";
-}
-
 function getInitials(name: string): string {
   return name
     .split(" ")
@@ -67,83 +61,6 @@ function getInitials(name: string): string {
     .join("")
     .slice(0, 2)
     .toUpperCase();
-}
-
-// =============================================================================
-// SUB-COMPONENTS
-// =============================================================================
-
-interface ScoreBreakdownBarProps {
-  label: string;
-  score: number;
-  maxScore: number;
-  icon: React.ReactNode;
-}
-
-function ScoreBreakdownBar({ label, score, maxScore, icon }: ScoreBreakdownBarProps) {
-  const percentage = maxScore > 0 ? (score / maxScore) * 100 : 0;
-
-  return (
-    <div className="space-y-1">
-      <div className="flex items-center justify-between text-xs">
-        <span className="flex items-center gap-1.5 text-muted-foreground">
-          {icon}
-          {label}
-        </span>
-        <span className="font-medium">
-          {score.toFixed(1)}/{maxScore}
-        </span>
-      </div>
-      <Progress value={percentage} className="h-1.5" />
-    </div>
-  );
-}
-
-interface CircularScoreProps {
-  percentage: number;
-  size?: "sm" | "md" | "lg";
-}
-
-function CircularScore({ percentage, size = "md" }: CircularScoreProps) {
-  const sizeClasses = {
-    sm: "h-12 w-12 text-sm",
-    md: "h-16 w-16 text-lg",
-    lg: "h-20 w-20 text-xl",
-  };
-
-  const strokeWidth = size === "sm" ? 3 : size === "md" ? 4 : 5;
-  const radius = size === "sm" ? 20 : size === "md" ? 28 : 36;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (percentage / 100) * circumference;
-
-  return (
-    <div className={cn("relative flex items-center justify-center", sizeClasses[size])}>
-      <svg className="absolute transform -rotate-90" viewBox="0 0 100 100">
-        <circle
-          cx="50"
-          cy="50"
-          r={radius}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={strokeWidth}
-          className="text-muted"
-        />
-        <circle
-          cx="50"
-          cy="50"
-          r={radius}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={strokeWidth}
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          className={getScoreColor(percentage)}
-        />
-      </svg>
-      <span className={cn("font-bold", getScoreColor(percentage))}>{percentage}%</span>
-    </div>
-  );
 }
 
 // =============================================================================
@@ -160,9 +77,15 @@ export function MatchScoreCard({
   className,
 }: MatchScoreCardProps) {
   const t = useTranslations("reviewer.matching");
+  const locale = useLocale() as "en" | "fr";
 
   const hasWarnings = result.warnings.length > 0;
   const hasCOI = result.coiStatus.hasConflict;
+
+  // Get the appropriate ineligibility reason based on locale
+  const ineligibilityReason = locale === "fr"
+    ? result.ineligibilityReasonFr
+    : result.ineligibilityReason;
 
   if (compact) {
     return (
@@ -190,7 +113,16 @@ export function MatchScoreCard({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="font-medium text-sm truncate">{result.fullName}</span>
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="font-medium text-sm truncate cursor-default">{result.fullName}</span>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <p>{result.fullName}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             {result.isLeadQualified && (
               <Star className="h-3.5 w-3.5 text-yellow-500 shrink-0" />
             )}
@@ -206,22 +138,42 @@ export function MatchScoreCard({
                 </Tooltip>
               </TooltipProvider>
             )}
+            {!result.isEligible && ineligibilityReason && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Badge variant="outline" className="text-red-600 border-red-300 gap-1 shrink-0">
+                      <XCircle className="h-3 w-3" />
+                      {t("ineligible")}
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{ineligibilityReason}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </div>
-          <p className="text-xs text-muted-foreground truncate">{result.organization}</p>
+          <TooltipProvider delayDuration={300}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <p className="text-xs text-muted-foreground truncate cursor-default">{result.organization}</p>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p className="max-w-xs">{result.organization}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge
-            variant={result.isEligible ? "default" : "secondary"}
-            className={cn(
-              "shrink-0",
-              result.percentage >= 80 && "bg-green-500",
-              result.percentage >= 60 && result.percentage < 80 && "bg-yellow-500",
-              result.percentage < 60 && "bg-orange-500"
-            )}
-          >
-            {result.percentage}%
-          </Badge>
+          <ScoreBadge
+            score={result.percentage}
+            size="sm"
+            variant={result.isEligible ? "solid" : "subtle"}
+            showTooltip={false}
+            className="shrink-0"
+          />
         </div>
       </div>
     );
@@ -263,10 +215,21 @@ export function MatchScoreCard({
                 </Badge>
               )}
               {!result.isEligible && (
-                <Badge variant="destructive" className="gap-1">
-                  <XCircle className="h-3 w-3" />
-                  {t("notEligible")}
-                </Badge>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge variant="destructive" className="gap-1 cursor-help">
+                        <XCircle className="h-3 w-3" />
+                        {t("notEligible")}
+                      </Badge>
+                    </TooltipTrigger>
+                    {ineligibilityReason && (
+                      <TooltipContent>
+                        <p>{ineligibilityReason}</p>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
               )}
             </div>
             <p className="text-sm text-muted-foreground">{result.organization}</p>
@@ -275,48 +238,32 @@ export function MatchScoreCard({
             </p>
           </div>
 
-          <CircularScore percentage={result.percentage} size="md" />
+          <CircularScoreBadge score={result.percentage} size="md" />
         </div>
       </CardHeader>
 
       <CardContent className="space-y-4">
         {/* Score Breakdown */}
         {showDetails && (
-          <div className="space-y-2">
-            <ScoreBreakdownBar
-              label={t("breakdown.expertise")}
-              score={result.breakdown.expertiseScore}
-              maxScore={40}
-              icon={<Briefcase className="h-3.5 w-3.5" />}
-            />
-            <ScoreBreakdownBar
-              label={t("breakdown.language")}
-              score={result.breakdown.languageScore}
-              maxScore={25}
-              icon={<Globe className="h-3.5 w-3.5" />}
-            />
-            <ScoreBreakdownBar
-              label={t("breakdown.availability")}
-              score={result.breakdown.availabilityScore}
-              maxScore={25}
-              icon={<Calendar className="h-3.5 w-3.5" />}
-            />
-            <ScoreBreakdownBar
-              label={t("breakdown.experience")}
-              score={result.breakdown.experienceScore}
-              maxScore={10}
-              icon={<User className="h-3.5 w-3.5" />}
-            />
-          </div>
+          <ReviewerScoreBreakdown
+            expertiseScore={result.breakdown.expertiseScore}
+            languageScore={result.breakdown.languageScore}
+            availabilityScore={result.breakdown.availabilityScore}
+            experienceScore={result.breakdown.experienceScore}
+          />
         )}
 
         {/* Expertise & Language Tags */}
         <div className="space-y-2">
           <div className="flex flex-wrap gap-1">
             {result.expertiseDetails.matchedRequired.map((exp) => (
-              <Badge key={exp} variant="secondary" className="text-xs">
-                {EXPERTISE_AREA_ABBREV[exp]}
-              </Badge>
+              <ExpertiseBadgeWithTooltip
+                key={exp}
+                area={exp}
+                abbreviation={EXPERTISE_AREA_ABBREV[exp]}
+                variant="secondary"
+                className="text-xs"
+              />
             ))}
             {result.expertiseDetails.missingRequired.length > 0 && (
               <TooltipProvider>

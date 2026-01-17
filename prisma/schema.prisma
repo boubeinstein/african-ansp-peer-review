@@ -28,6 +28,7 @@ model Organization {
   // Reviewer-related relations
   homeReviewers    ReviewerProfile[] @relation("HomeReviewers")
   conflictCOIs     ReviewerCOI[]     @relation("ConflictReviewers")
+  coiOverrides     COIOverride[]     @relation("COIOverrides")
 
   @@map("organizations")
 }
@@ -61,6 +62,15 @@ model User {
   uploadedDocuments      Document[]             @relation("UploadedDocuments")
   addedResponseDocuments ResponseDocument[]     @relation("AddedResponseDocuments")
   assessmentEvents       AssessmentEvent[]
+
+  // === COI Relations ===
+  createdCOIs            ReviewerCOI[]          @relation("COICreator")
+  verifiedCOIs           ReviewerCOI[]          @relation("COIVerifier")
+  approvedCOIOverrides   COIOverride[]          @relation("COIOverrideApprover")
+  revokedCOIOverrides    COIOverride[]          @relation("COIOverrideRevoker")
+
+  // === Availability Relations ===
+  createdAvailabilitySlots ReviewerAvailability[] @relation("AvailabilityCreator")
 
   @@map("users")
 }
@@ -208,6 +218,7 @@ model ReviewerProfile {
   expertiseRecords       ReviewerExpertise[]
   availabilityPeriods    ReviewerAvailability[]
   conflictsOfInterest    ReviewerCOI[]
+  coiOverrides           COIOverride[]
 
   @@index([homeOrganizationId])
   @@index([selectionStatus, reviewerType])
@@ -377,9 +388,18 @@ model ReviewerAvailability {
   availabilityType AvailabilityType @default(AVAILABLE) @map("availability_type")
 
   // === Details ===
-  notes             String?
+  title             String? // e.g., "Annual Leave", "ICAO Training"
+  notes             String? @db.Text
   isRecurring       Boolean @default(false) @map("is_recurring")
   recurrencePattern String? @map("recurrence_pattern") // RRULE format
+
+  // === If blocked by a review assignment ===
+  reviewId String?  @map("review_id")
+  review   Review?  @relation(fields: [reviewId], references: [id])
+
+  // === Creator ===
+  createdById String? @map("created_by_id")
+  createdBy   User?   @relation("AvailabilityCreator", fields: [createdById], references: [id])
 
   // === Metadata ===
   createdAt DateTime @default(now()) @map("created_at")
@@ -388,6 +408,7 @@ model ReviewerAvailability {
   @@index([reviewerProfileId])
   @@index([startDate, endDate])
   @@index([availabilityType])
+  @@index([reviewId])
   @@map("reviewer_availability")
 }
 
@@ -408,16 +429,25 @@ model ReviewerCOI {
   organization   Organization @relation("ConflictReviewers", fields: [organizationId], references: [id])
 
   // === COI Details ===
-  coiType COIType @map("coi_type")
-  reason  String? @db.Text
+  coiType  COIType     @map("coi_type")
+  severity COISeverity @map("severity")
+  reasonEn String?     @map("reason_en") @db.Text
+  reasonFr String?     @map("reason_fr") @db.Text
 
   // === Validity Period ===
   startDate DateTime  @default(now()) @map("start_date")
   endDate   DateTime? @map("end_date") // null = indefinite
   isActive  Boolean   @default(true) @map("is_active")
 
-  // === Verification (by Programme Coordinator) ===
+  // === Auto-Detection ===
+  isAutoDetected Boolean   @default(false) @map("is_auto_detected")
+  autoDetectedAt DateTime? @map("auto_detected_at")
+
+  // === Creator & Verification ===
+  createdById       String?   @map("created_by_id")
+  createdBy         User?     @relation("COICreator", fields: [createdById], references: [id])
   verifiedById      String?   @map("verified_by_id")
+  verifiedBy        User?     @relation("COIVerifier", fields: [verifiedById], references: [id])
   verifiedAt        DateTime? @map("verified_at")
   verificationNotes String?   @map("verification_notes") @db.Text
 
@@ -428,7 +458,56 @@ model ReviewerCOI {
   @@unique([reviewerProfileId, organizationId, coiType])
   @@index([organizationId])
   @@index([isActive])
+  @@index([severity])
+  @@index([isAutoDetected])
   @@map("reviewer_coi")
+}
+
+// ============================================
+// COI OVERRIDE (for soft warnings only)
+// Allows admin to override soft warning COIs with documented justification
+// ============================================
+
+model COIOverride {
+  id String @id @default(cuid())
+
+  // === Reviewer & Organization ===
+  reviewerProfileId String          @map("reviewer_profile_id")
+  reviewerProfile   ReviewerProfile @relation(fields: [reviewerProfileId], references: [id], onDelete: Cascade)
+  organizationId    String          @map("organization_id")
+  organization      Organization    @relation("COIOverrides", fields: [organizationId], references: [id])
+
+  // === Optional: Specific Review Context ===
+  reviewId String?  @map("review_id")
+  review   Review?  @relation(fields: [reviewId], references: [id])
+
+  // === Override Details ===
+  justification String @db.Text // Min 50 chars, documented reason
+
+  // === Approval ===
+  approvedById String   @map("approved_by_id")
+  approvedBy   User     @relation("COIOverrideApprover", fields: [approvedById], references: [id])
+  approvedAt   DateTime @default(now()) @map("approved_at")
+
+  // === Expiration ===
+  expiresAt DateTime? @map("expires_at") // null = no expiration
+
+  // === Revocation ===
+  isRevoked    Boolean   @default(false) @map("is_revoked")
+  revokedAt    DateTime? @map("revoked_at")
+  revokedById  String?   @map("revoked_by_id")
+  revokedBy    User?     @relation("COIOverrideRevoker", fields: [revokedById], references: [id])
+  revokeReason String?   @map("revoke_reason") @db.Text
+
+  // === Metadata ===
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([reviewerProfileId, organizationId, reviewId])
+  @@index([organizationId])
+  @@index([approvedById])
+  @@index([isRevoked])
+  @@map("coi_override")
 }
 
 model Assessment {
@@ -504,27 +583,29 @@ model AssessmentResponse {
 }
 
 model Review {
-  id                    String             @id @default(cuid())
-  referenceNumber       String             @unique @map("reference_number")
-  reviewType            ReviewType         @default(FULL)
-  hostOrganizationId    String             @map("host_organization_id")
-  status                ReviewStatus       @default(REQUESTED)
-  phase                 ReviewPhase        @default(PLANNING)
-  requestedDate         DateTime           @map("requested_date")
-  plannedStartDate      DateTime?          @map("planned_start_date")
-  plannedEndDate        DateTime?          @map("planned_end_date")
-  actualStartDate       DateTime?          @map("actual_start_date")
-  actualEndDate         DateTime?          @map("actual_end_date")
-  questionnairesInScope String[]           @default([]) @map("questionnaires_in_scope")
-  areasInScope          String[]           @default([]) @map("areas_in_scope")
-  createdAt             DateTime           @default(now()) @map("created_at")
-  updatedAt             DateTime           @updatedAt @map("updated_at")
+  id                    String                 @id @default(cuid())
+  referenceNumber       String                 @unique @map("reference_number")
+  reviewType            ReviewType             @default(FULL)
+  hostOrganizationId    String                 @map("host_organization_id")
+  status                ReviewStatus           @default(REQUESTED)
+  phase                 ReviewPhase            @default(PLANNING)
+  requestedDate         DateTime               @map("requested_date")
+  plannedStartDate      DateTime?              @map("planned_start_date")
+  plannedEndDate        DateTime?              @map("planned_end_date")
+  actualStartDate       DateTime?              @map("actual_start_date")
+  actualEndDate         DateTime?              @map("actual_end_date")
+  questionnairesInScope String[]               @default([]) @map("questionnaires_in_scope")
+  areasInScope          String[]               @default([]) @map("areas_in_scope")
+  createdAt             DateTime               @default(now()) @map("created_at")
+  updatedAt             DateTime               @updatedAt @map("updated_at")
   assessments           Assessment[]
   documents             Document[]
   findings              Finding[]
   report                ReviewReport?
   teamMembers           ReviewTeamMember[]
-  hostOrganization      Organization       @relation("HostANSP", fields: [hostOrganizationId], references: [id])
+  hostOrganization      Organization           @relation("HostANSP", fields: [hostOrganizationId], references: [id])
+  coiOverrides          COIOverride[]
+  blockedAvailability   ReviewerAvailability[]
 
   @@map("reviews")
 }
@@ -959,12 +1040,17 @@ enum AvailabilityType {
 }
 
 enum COIType {
-  EMPLOYMENT // Current or recent employment
-  FINANCIAL // Financial interest
-  CONTRACTUAL // Contractual relationship
-  PERSONAL // Personal relationship
-  PREVIOUS_REVIEW // Recently reviewed (cooling-off period)
-  OTHER // Other conflict
+  HOME_ORGANIZATION // Reviewer's current employer - auto-detected
+  FAMILY_RELATIONSHIP // Immediate family works at organization
+  FORMER_EMPLOYEE // Worked there within 3 years
+  BUSINESS_INTEREST // Financial/consulting ties
+  RECENT_REVIEW // Reviewed within 2-year cooldown - auto-detected
+  OTHER // Other declared conflicts
+}
+
+enum COISeverity {
+  HARD_BLOCK // Cannot be overridden - reviewer ineligible
+  SOFT_WARNING // Can be overridden with documented justification
 }
 
 enum ExpertiseArea {

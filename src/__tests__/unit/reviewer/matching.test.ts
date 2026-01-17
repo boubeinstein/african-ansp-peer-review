@@ -131,9 +131,12 @@ function createMockReviewerProfile(
       startDate: avail.startDate,
       endDate: avail.endDate,
       availabilityType: avail.type,
+      title: null,
       notes: null,
+      reviewId: null,
       isRecurring: false,
       recurrencePattern: null,
+      createdById: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     })),
@@ -142,10 +145,15 @@ function createMockReviewerProfile(
       reviewerProfileId: id,
       organizationId: coi.organizationId,
       coiType: coi.type,
-      reason: null,
+      severity: coi.type === "HOME_ORGANIZATION" || coi.type === "FAMILY_RELATIONSHIP" ? "HARD_BLOCK" : "SOFT_WARNING",
+      reasonEn: "Test conflict reason",
+      reasonFr: null,
       startDate: new Date(),
       endDate: null,
       isActive: true,
+      isAutoDetected: false,
+      autoDetectedAt: null,
+      createdById: null,
       verifiedById: null,
       verifiedAt: null,
       verificationNotes: null,
@@ -192,7 +200,7 @@ describe("Reviewer Matching Algorithm", () => {
         id: "reviewer_hard_coi",
         expertise: [{ area: "ATS", level: "EXPERT" }],
         languages: [{ language: "EN", proficiency: "NATIVE", canConductInterviews: true }],
-        coi: [{ organizationId: "org_target", type: "EMPLOYMENT" }],
+        coi: [{ organizationId: "org_target", type: "HOME_ORGANIZATION" }],
       });
       const normalReviewer = createMockReviewerProfile({
         id: "reviewer_normal",
@@ -218,7 +226,7 @@ describe("Reviewer Matching Algorithm", () => {
           { language: "FR", proficiency: "ADVANCED", canConductInterviews: true },
         ],
         availability: [{ startDate: criteria.reviewStartDate, endDate: criteria.reviewEndDate, type: "AVAILABLE" }],
-        coi: [{ organizationId: "org_target", type: "PERSONAL" }],
+        coi: [{ organizationId: "org_target", type: "FORMER_EMPLOYEE" }],
       });
 
       const results = findMatchingReviewers(criteria, [reviewerWithSoftCOI]);

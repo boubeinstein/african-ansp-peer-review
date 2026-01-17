@@ -98,11 +98,11 @@ export const availabilityTypeSchema = z.enum([
 ]);
 
 export const coiTypeSchema = z.enum([
-  "EMPLOYMENT",
-  "FINANCIAL",
-  "CONTRACTUAL",
-  "PERSONAL",
-  "PREVIOUS_REVIEW",
+  "HOME_ORGANIZATION",
+  "FAMILY_RELATIONSHIP",
+  "FORMER_EMPLOYEE",
+  "BUSINESS_INTEREST",
+  "RECENT_REVIEW",
   "OTHER",
 ]);
 

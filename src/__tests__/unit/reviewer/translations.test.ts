@@ -104,10 +104,11 @@ const requiredReviewerKeys = [
   "reviewer.coi.declare",
   "reviewer.coi.noConflicts",
   "reviewer.coi.homeOrgConflict",
-  "reviewer.coi.types.EMPLOYMENT",
-  "reviewer.coi.types.FINANCIAL",
-  "reviewer.coi.types.CONSULTANCY",
-  "reviewer.coi.types.FAMILIAL",
+  "reviewer.coi.types.HOME_ORGANIZATION",
+  "reviewer.coi.types.FAMILY_RELATIONSHIP",
+  "reviewer.coi.types.FORMER_EMPLOYEE",
+  "reviewer.coi.types.BUSINESS_INTEREST",
+  "reviewer.coi.types.RECENT_REVIEW",
   "reviewer.coi.types.OTHER",
   "reviewer.coi.severity.HARD",
   "reviewer.coi.severity.SOFT",
@@ -400,10 +401,11 @@ describe("Reviewer Module Translations", () => {
 
     it("should have all COI types translated", () => {
       const coiTypes = [
-        "EMPLOYMENT",
-        "FINANCIAL",
-        "CONSULTANCY",
-        "FAMILIAL",
+        "HOME_ORGANIZATION",
+        "FAMILY_RELATIONSHIP",
+        "FORMER_EMPLOYEE",
+        "BUSINESS_INTEREST",
+        "RECENT_REVIEW",
         "OTHER",
       ];
 

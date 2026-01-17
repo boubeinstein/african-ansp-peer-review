@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import type { CoverageReport, MatchResult } from "@/lib/reviewer/matching";
 import { EXPERTISE_AREA_ABBREV, LANGUAGE_LABELS } from "@/lib/reviewer/labels";
+import { CoverageHelpTooltip } from "@/components/features/matching";
 
 // =============================================================================
 // TYPES
@@ -149,6 +150,7 @@ export function TeamCoverageReport({
             <h4 className="font-medium flex items-center gap-2">
               <Briefcase className="h-4 w-4" />
               {t("expertiseTitle")}
+              <CoverageHelpTooltip type="expertise" side="right" />
             </h4>
             <span className={cn("text-sm font-medium", getCoverageColor(coverage.expertiseCoverage))}>
               {coverage.expertiseCovered.length}/{requiredExpertise.length}
@@ -192,6 +194,7 @@ export function TeamCoverageReport({
             <h4 className="font-medium flex items-center gap-2">
               <Globe className="h-4 w-4" />
               {t("languageTitle")}
+              <CoverageHelpTooltip type="language" side="right" />
             </h4>
             <span className={cn("text-sm font-medium", getCoverageColor(coverage.languageCoverage))}>
               {coverage.languagesCovered.length}/{requiredLanguages.length}

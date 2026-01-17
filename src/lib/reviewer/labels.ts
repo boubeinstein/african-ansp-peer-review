@@ -292,23 +292,24 @@ export const AVAILABILITY_TYPE_COLOR: Record<AvailabilityType, string> = {
 
 // ============================================
 // COI TYPE
+// Per COI Management System requirements
 // ============================================
 
 export const COI_TYPE_LABELS: Record<COIType, BilingualLabel> = {
-  EMPLOYMENT: { en: "Employment", fr: "Emploi" },
-  FINANCIAL: { en: "Financial Interest", fr: "Intérêt financier" },
-  CONTRACTUAL: { en: "Contractual", fr: "Contractuel" },
-  PERSONAL: { en: "Personal Relationship", fr: "Relation personnelle" },
-  PREVIOUS_REVIEW: { en: "Previous Review", fr: "Évaluation précédente" },
+  HOME_ORGANIZATION: { en: "Home Organization", fr: "Organisation d'appartenance" },
+  FAMILY_RELATIONSHIP: { en: "Family Relationship", fr: "Lien familial" },
+  FORMER_EMPLOYEE: { en: "Former Employee", fr: "Ancien employé" },
+  BUSINESS_INTEREST: { en: "Business Interest", fr: "Intérêt commercial" },
+  RECENT_REVIEW: { en: "Recent Review", fr: "Revue récente" },
   OTHER: { en: "Other", fr: "Autre" },
 };
 
 export const COI_TYPE_COLOR: Record<COIType, string> = {
-  EMPLOYMENT: "bg-red-100 text-red-800",
-  FINANCIAL: "bg-orange-100 text-orange-800",
-  CONTRACTUAL: "bg-yellow-100 text-yellow-800",
-  PERSONAL: "bg-pink-100 text-pink-800",
-  PREVIOUS_REVIEW: "bg-purple-100 text-purple-800",
+  HOME_ORGANIZATION: "bg-red-100 text-red-800",
+  FAMILY_RELATIONSHIP: "bg-red-100 text-red-800",
+  FORMER_EMPLOYEE: "bg-yellow-100 text-yellow-800",
+  BUSINESS_INTEREST: "bg-orange-100 text-orange-800",
+  RECENT_REVIEW: "bg-purple-100 text-purple-800",
   OTHER: "bg-gray-100 text-gray-800",
 };
 

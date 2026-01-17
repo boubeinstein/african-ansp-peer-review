@@ -118,9 +118,11 @@ interface COIManagerProps {
 // =============================================================================
 
 function getSeverityFromType(coiType: COIType): COISeverity {
-  if (coiType === "EMPLOYMENT") {
+  // HOME_ORGANIZATION and FAMILY_RELATIONSHIP are hard blocks
+  if (coiType === "HOME_ORGANIZATION" || coiType === "FAMILY_RELATIONSHIP") {
     return "HARD";
   }
+  // Everything else is soft warning
   return "SOFT";
 }
 

@@ -61,7 +61,7 @@ const PROFICIENCY_LEVELS: ProficiencyLevel[] = ["BASIC", "COMPETENT", "PROFICIEN
 
 const LANGUAGE_PROFICIENCIES: LanguageProficiency[] = ["BASIC", "INTERMEDIATE", "ADVANCED", "NATIVE"];
 
-const COI_TYPES: COIType[] = ["EMPLOYMENT", "FINANCIAL", "CONTRACTUAL", "PERSONAL", "PREVIOUS_REVIEW", "OTHER"];
+const COI_TYPES: COIType[] = ["HOME_ORGANIZATION", "FAMILY_RELATIONSHIP", "FORMER_EMPLOYEE", "BUSINESS_INTEREST", "RECENT_REVIEW", "OTHER"];
 
 const CERTIFICATION_TYPES: CertificationType[] = [
   "PEER_REVIEWER",
@@ -617,12 +617,18 @@ async function seedReviewers(organizationIds: string[]) {
 
     // Create COI records
     for (const coi of reviewerData.coi) {
+      // Determine severity based on COI type
+      const severity = coi.type === "HOME_ORGANIZATION" || coi.type === "FAMILY_RELATIONSHIP"
+        ? "HARD_BLOCK"
+        : "SOFT_WARNING";
+
       await prisma.reviewerCOI.create({
         data: {
           reviewerProfileId: profile.id,
           organizationId: coi.organizationId,
           coiType: coi.type,
-          reason: coi.reason,
+          severity,
+          reasonEn: coi.reason,
           startDate: new Date(),
           isActive: true,
         },

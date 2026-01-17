@@ -58,6 +58,14 @@ import {
   REVIEWER_CAPACITY,
 } from "@/lib/reviewer/constants";
 import { matchingCriteriaSchema } from "@/lib/validations/reviewer";
+import {
+  findMatchingReviewers,
+  buildOptimalTeam as buildOptimalTeamAlgorithm,
+  calculateMatchScore,
+  type MatchingCriteria,
+  type MatchResult,
+} from "@/lib/reviewer/matching";
+import type { ReviewerProfileFull } from "@/types/reviewer";
 
 // =============================================================================
 // CONSTANTS
@@ -1253,6 +1261,548 @@ export const reviewerRouter = router({
       });
     }),
 
+  /**
+   * Get availability for a specific month (calendar view)
+   */
+  getAvailabilityByMonth: protectedProcedure
+    .input(
+      z.object({
+        reviewerId: z.string().cuid(),
+        year: z.number().int().min(2020).max(2100),
+        month: z.number().int().min(0).max(11),
+      })
+    )
+    .query(async ({ input }) => {
+      const reviewer = await prisma.reviewerProfile.findUnique({
+        where: { id: input.reviewerId },
+        select: { userId: true },
+      });
+
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer not found",
+        });
+      }
+
+      // Get first and last day of month
+      const startDate = new Date(input.year, input.month, 1);
+      const endDate = new Date(input.year, input.month + 1, 0, 23, 59, 59);
+
+      return prisma.reviewerAvailability.findMany({
+        where: {
+          reviewerProfileId: input.reviewerId,
+          OR: [
+            { startDate: { gte: startDate, lte: endDate } },
+            { endDate: { gte: startDate, lte: endDate } },
+            {
+              AND: [
+                { startDate: { lte: startDate } },
+                { endDate: { gte: endDate } },
+              ],
+            },
+          ],
+        },
+        include: {
+          review: {
+            select: {
+              id: true,
+              referenceNumber: true,
+              hostOrganization: {
+                select: { nameEn: true, nameFr: true },
+              },
+            },
+          },
+        },
+        orderBy: { startDate: "asc" },
+      });
+    }),
+
+  /**
+   * Bulk create availability slots
+   */
+  bulkCreateAvailability: protectedProcedure
+    .input(
+      z.object({
+        reviewerId: z.string().cuid(),
+        slots: z.array(
+          z.object({
+            startDate: z.coerce.date(),
+            endDate: z.coerce.date(),
+            availabilityType: z.enum(["AVAILABLE", "TENTATIVE", "UNAVAILABLE"]).default("AVAILABLE"),
+            title: z.string().max(200).optional(),
+            notes: z.string().max(1000).optional(),
+          })
+        ).min(1).max(100),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const reviewer = await getReviewerById(input.reviewerId);
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer not found",
+        });
+      }
+      assertCanEditReviewer(ctx.session, reviewer.userId);
+
+      // Check for conflicts with ON_ASSIGNMENT slots
+      const existingAssignments = await prisma.reviewerAvailability.findMany({
+        where: {
+          reviewerProfileId: input.reviewerId,
+          availabilityType: "ON_ASSIGNMENT",
+        },
+      });
+
+      for (const slot of input.slots) {
+        for (const assignment of existingAssignments) {
+          // Check overlap
+          if (slot.startDate <= assignment.endDate && slot.endDate >= assignment.startDate) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Cannot create slot overlapping with an existing review assignment",
+            });
+          }
+        }
+      }
+
+      const availabilityData = input.slots.map((slot) => ({
+        reviewerProfileId: input.reviewerId,
+        startDate: slot.startDate,
+        endDate: slot.endDate,
+        availabilityType: slot.availabilityType,
+        title: slot.title,
+        notes: slot.notes,
+        createdById: ctx.user.id,
+      }));
+
+      await prisma.reviewerAvailability.createMany({ data: availabilityData });
+
+      return prisma.reviewerAvailability.findMany({
+        where: { reviewerProfileId: input.reviewerId },
+        orderBy: { startDate: "asc" },
+      });
+    }),
+
+  /**
+   * Bulk delete availability slots in a date range
+   */
+  bulkDeleteAvailability: protectedProcedure
+    .input(
+      z.object({
+        reviewerId: z.string().cuid(),
+        startDate: z.coerce.date(),
+        endDate: z.coerce.date(),
+        types: z.array(z.enum(["AVAILABLE", "TENTATIVE", "UNAVAILABLE"])).optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const reviewer = await getReviewerById(input.reviewerId);
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer not found",
+        });
+      }
+      assertCanEditReviewer(ctx.session, reviewer.userId);
+
+      const where: Prisma.ReviewerAvailabilityWhereInput = {
+        reviewerProfileId: input.reviewerId,
+        // Only delete slots that fall within the date range
+        startDate: { gte: input.startDate },
+        endDate: { lte: input.endDate },
+        // Never delete ON_ASSIGNMENT slots
+        availabilityType: { not: "ON_ASSIGNMENT" },
+      };
+
+      if (input.types?.length) {
+        where.availabilityType = { in: input.types };
+      }
+
+      const deleted = await prisma.reviewerAvailability.deleteMany({ where });
+
+      return { deletedCount: deleted.count };
+    }),
+
+  /**
+   * Get team availability for multiple reviewers
+   */
+  getTeamAvailability: protectedProcedure
+    .input(
+      z.object({
+        reviewerIds: z.array(z.string().cuid()).min(1).max(20),
+        startDate: z.coerce.date(),
+        endDate: z.coerce.date(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      assertCanCoordinateReviewers(ctx.session);
+
+      const reviewers = await prisma.reviewerProfile.findMany({
+        where: { id: { in: input.reviewerIds } },
+        include: {
+          user: {
+            select: { firstName: true, lastName: true },
+          },
+          homeOrganization: {
+            select: { nameEn: true, nameFr: true },
+          },
+          availabilityPeriods: {
+            where: {
+              OR: [
+                { startDate: { gte: input.startDate, lte: input.endDate } },
+                { endDate: { gte: input.startDate, lte: input.endDate } },
+                {
+                  AND: [
+                    { startDate: { lte: input.startDate } },
+                    { endDate: { gte: input.endDate } },
+                  ],
+                },
+              ],
+            },
+            orderBy: { startDate: "asc" },
+          },
+        },
+      });
+
+      return reviewers.map((r) => ({
+        id: r.id,
+        name: `${r.user.firstName} ${r.user.lastName}`,
+        organization: r.homeOrganization.nameEn,
+        organizationFr: r.homeOrganization.nameFr,
+        slots: r.availabilityPeriods,
+      }));
+    }),
+
+  /**
+   * Find common available date ranges for a team
+   */
+  findCommonAvailability: protectedProcedure
+    .input(
+      z.object({
+        reviewerIds: z.array(z.string().cuid()).min(2).max(20),
+        startDate: z.coerce.date(),
+        endDate: z.coerce.date(),
+        minDays: z.number().int().min(1).max(90).default(5),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      assertCanCoordinateReviewers(ctx.session);
+
+      const reviewers = await prisma.reviewerProfile.findMany({
+        where: { id: { in: input.reviewerIds } },
+        include: {
+          availabilityPeriods: {
+            where: {
+              availabilityType: { in: ["AVAILABLE", "TENTATIVE"] },
+              OR: [
+                { startDate: { gte: input.startDate, lte: input.endDate } },
+                { endDate: { gte: input.startDate, lte: input.endDate } },
+                {
+                  AND: [
+                    { startDate: { lte: input.startDate } },
+                    { endDate: { gte: input.endDate } },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      });
+
+      // Build a map of available dates for each reviewer
+      const reviewerAvailability = new Map<string, Set<string>>();
+
+      for (const reviewer of reviewers) {
+        const dateSet = new Set<string>();
+
+        for (const slot of reviewer.availabilityPeriods) {
+          const current = new Date(slot.startDate);
+          const end = new Date(slot.endDate);
+
+          while (current <= end && current <= input.endDate) {
+            if (current >= input.startDate) {
+              dateSet.add(current.toISOString().split("T")[0]);
+            }
+            current.setDate(current.getDate() + 1);
+          }
+        }
+
+        reviewerAvailability.set(reviewer.id, dateSet);
+      }
+
+      // Find dates where all reviewers are available
+      const commonDates: string[] = [];
+      const current = new Date(input.startDate);
+
+      while (current <= input.endDate) {
+        const dateKey = current.toISOString().split("T")[0];
+        const allAvailable = input.reviewerIds.every((id) => {
+          const dates = reviewerAvailability.get(id);
+          return dates?.has(dateKey);
+        });
+
+        if (allAvailable) {
+          commonDates.push(dateKey);
+        }
+
+        current.setDate(current.getDate() + 1);
+      }
+
+      // Group consecutive dates into ranges
+      const ranges: { start: string; end: string; days: number }[] = [];
+      let rangeStart: string | null = null;
+      let rangeEnd: string | null = null;
+
+      for (let i = 0; i < commonDates.length; i++) {
+        const date = commonDates[i];
+
+        if (!rangeStart) {
+          rangeStart = date;
+          rangeEnd = date;
+        } else {
+          const prevDate = new Date(rangeEnd!);
+          const currDate = new Date(date);
+          const diffDays = (currDate.getTime() - prevDate.getTime()) / (24 * 60 * 60 * 1000);
+
+          if (diffDays === 1) {
+            rangeEnd = date;
+          } else {
+            // End current range
+            const days = Math.floor(
+              (new Date(rangeEnd!).getTime() - new Date(rangeStart).getTime()) /
+                (24 * 60 * 60 * 1000)
+            ) + 1;
+
+            if (days >= input.minDays) {
+              ranges.push({ start: rangeStart, end: rangeEnd!, days });
+            }
+
+            rangeStart = date;
+            rangeEnd = date;
+          }
+        }
+      }
+
+      // Handle last range
+      if (rangeStart && rangeEnd) {
+        const days = Math.floor(
+          (new Date(rangeEnd).getTime() - new Date(rangeStart).getTime()) /
+            (24 * 60 * 60 * 1000)
+        ) + 1;
+
+        if (days >= input.minDays) {
+          ranges.push({ start: rangeStart, end: rangeEnd, days });
+        }
+      }
+
+      return {
+        commonDateRanges: ranges,
+        totalCommonDays: commonDates.length,
+        reviewerCount: input.reviewerIds.length,
+      };
+    }),
+
+  /**
+   * Get availability statistics for a reviewer
+   */
+  getAvailabilityStats: protectedProcedure
+    .input(
+      z.object({
+        reviewerId: z.string().cuid(),
+        daysAhead: z.number().int().min(1).max(365).default(90),
+      })
+    )
+    .query(async ({ input }) => {
+      const reviewer = await prisma.reviewerProfile.findUnique({
+        where: { id: input.reviewerId },
+        select: { userId: true },
+      });
+
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer not found",
+        });
+      }
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const endDate = new Date(today);
+      endDate.setDate(endDate.getDate() + input.daysAhead);
+
+      const slots = await prisma.reviewerAvailability.findMany({
+        where: {
+          reviewerProfileId: input.reviewerId,
+          endDate: { gte: today },
+          startDate: { lte: endDate },
+        },
+        orderBy: { startDate: "asc" },
+      });
+
+      // Count days by type
+      let availableDays = 0;
+      let tentativeDays = 0;
+      let unavailableDays = 0;
+      let onAssignmentDays = 0;
+
+      const current = new Date(today);
+      while (current <= endDate) {
+        // Find slot for this date
+        const slot = slots.find((s) => {
+          const start = new Date(s.startDate);
+          const end = new Date(s.endDate);
+          return current >= start && current <= end;
+        });
+
+        if (slot) {
+          switch (slot.availabilityType) {
+            case "AVAILABLE":
+              availableDays++;
+              break;
+            case "TENTATIVE":
+              tentativeDays++;
+              break;
+            case "UNAVAILABLE":
+              unavailableDays++;
+              break;
+            case "ON_ASSIGNMENT":
+              onAssignmentDays++;
+              break;
+          }
+        } else {
+          unavailableDays++; // No slot = unavailable
+        }
+
+        current.setDate(current.getDate() + 1);
+      }
+
+      const totalDays = input.daysAhead;
+      const availabilityRate = Math.round(
+        ((availableDays + tentativeDays * 0.5) / totalDays) * 100
+      );
+
+      // Find next available period
+      let nextAvailableStart: Date | null = null;
+      let nextAvailableEnd: Date | null = null;
+
+      for (const slot of slots) {
+        if (slot.availabilityType === "AVAILABLE" && new Date(slot.startDate) >= today) {
+          nextAvailableStart = new Date(slot.startDate);
+          nextAvailableEnd = new Date(slot.endDate);
+          break;
+        }
+      }
+
+      return {
+        period: { start: today, end: endDate },
+        totalDays,
+        availableDays,
+        tentativeDays,
+        unavailableDays,
+        onAssignmentDays,
+        availabilityRate,
+        nextAvailablePeriod: nextAvailableStart
+          ? { start: nextAvailableStart, end: nextAvailableEnd! }
+          : null,
+      };
+    }),
+
+  /**
+   * Block dates when a reviewer is assigned to a review (system procedure)
+   */
+  blockForReview: protectedProcedure
+    .input(
+      z.object({
+        reviewerId: z.string().cuid(),
+        reviewId: z.string().cuid(),
+        startDate: z.coerce.date(),
+        endDate: z.coerce.date(),
+        notes: z.string().max(500).optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      assertCanCoordinateReviewers(ctx.session);
+
+      const reviewer = await getReviewerById(input.reviewerId);
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer not found",
+        });
+      }
+
+      const review = await prisma.review.findUnique({
+        where: { id: input.reviewId },
+        select: { referenceNumber: true },
+      });
+
+      if (!review) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
+      // Check if block already exists
+      const existing = await prisma.reviewerAvailability.findFirst({
+        where: {
+          reviewerProfileId: input.reviewerId,
+          reviewId: input.reviewId,
+        },
+      });
+
+      if (existing) {
+        // Update existing block
+        return prisma.reviewerAvailability.update({
+          where: { id: existing.id },
+          data: {
+            startDate: input.startDate,
+            endDate: input.endDate,
+            notes: input.notes,
+          },
+        });
+      }
+
+      // Create new block
+      return prisma.reviewerAvailability.create({
+        data: {
+          reviewerProfileId: input.reviewerId,
+          reviewId: input.reviewId,
+          startDate: input.startDate,
+          endDate: input.endDate,
+          availabilityType: "ON_ASSIGNMENT",
+          title: `Review: ${review.referenceNumber}`,
+          notes: input.notes,
+          createdById: ctx.user.id,
+        },
+      });
+    }),
+
+  /**
+   * Unblock dates when a reviewer is removed from a review (system procedure)
+   */
+  unblockForReview: protectedProcedure
+    .input(
+      z.object({
+        reviewerId: z.string().cuid(),
+        reviewId: z.string().cuid(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      assertCanCoordinateReviewers(ctx.session);
+
+      const deleted = await prisma.reviewerAvailability.deleteMany({
+        where: {
+          reviewerProfileId: input.reviewerId,
+          reviewId: input.reviewId,
+          availabilityType: "ON_ASSIGNMENT",
+        },
+      });
+
+      return { deletedCount: deleted.count };
+    }),
+
   // ============================================
   // TRAINING RECORDS MANAGEMENT
   // ============================================
@@ -1424,12 +1974,18 @@ export const reviewerRouter = router({
         });
       }
 
+      // Determine severity based on COI type
+      const severity = input.coi.coiType === "HOME_ORGANIZATION" || input.coi.coiType === "FAMILY_RELATIONSHIP"
+        ? "HARD_BLOCK"
+        : "SOFT_WARNING";
+
       return prisma.reviewerCOI.create({
         data: {
           reviewerProfileId: input.reviewerId,
           organizationId: input.coi.organizationId,
           coiType: input.coi.coiType,
-          reason: input.coi.reason,
+          severity,
+          reasonEn: input.coi.reason,
           startDate: input.coi.startDate ?? new Date(),
           endDate: input.coi.endDate,
           isActive: true,
@@ -1476,7 +2032,7 @@ export const reviewerRouter = router({
       return prisma.reviewerCOI.update({
         where: { id: input.id },
         data: {
-          reason: input.data.reason,
+          reasonEn: input.data.reason,
           endDate: input.data.endDate,
           isActive: input.data.isActive,
         },
@@ -2173,6 +2729,244 @@ export const reviewerRouter = router({
           languageCoveragePercent: Math.round(
             (coveredLanguages.size / input.requiredLanguages.length) * 100
           ),
+        },
+      };
+    }),
+
+  // ============================================
+  // ADVANCED MATCHING API (using matching library)
+  // ============================================
+
+  /**
+   * Find matching reviewers using the full matching algorithm.
+   * Returns a ranked list of reviewers with detailed scores.
+   */
+  findMatchingReviewers: protectedProcedure
+    .input(
+      z.object({
+        targetOrganizationId: z.string().cuid(),
+        requiredExpertise: z.array(z.string()),
+        preferredExpertise: z.array(z.string()).optional(),
+        requiredLanguages: z.array(z.string()).default(["EN", "FR"]),
+        startDate: z.coerce.date(),
+        endDate: z.coerce.date(),
+        teamSize: z.number().int().min(2).max(6).default(4),
+        excludeReviewerIds: z.array(z.string().cuid()).optional(),
+        mustIncludeReviewerIds: z.array(z.string().cuid()).optional(),
+        minScore: z.number().min(0).max(100).default(30),
+        maxResults: z.number().min(1).max(50).default(20),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      assertCanCoordinateReviewers(ctx.session);
+
+      // Fetch all reviewers with full profile data for matching
+      const reviewers = await prisma.reviewerProfile.findMany({
+        where: {
+          selectionStatus: "SELECTED",
+          homeOrganizationId: { not: input.targetOrganizationId },
+          ...(input.excludeReviewerIds?.length && {
+            id: { notIn: input.excludeReviewerIds },
+          }),
+        },
+        include: reviewerProfileInclude,
+      });
+
+      // Build matching criteria
+      const criteria: MatchingCriteria = {
+        targetOrganizationId: input.targetOrganizationId,
+        requiredExpertise: input.requiredExpertise as import("@prisma/client").ExpertiseArea[],
+        preferredExpertise: input.preferredExpertise as import("@prisma/client").ExpertiseArea[] | undefined,
+        requiredLanguages: input.requiredLanguages as import("@prisma/client").Language[],
+        reviewStartDate: input.startDate,
+        reviewEndDate: input.endDate,
+        teamSize: input.teamSize,
+        mustIncludeReviewerIds: input.mustIncludeReviewerIds,
+        excludeReviewerIds: input.excludeReviewerIds,
+      };
+
+      // Run matching algorithm
+      const results = findMatchingReviewers(criteria, reviewers as ReviewerProfileFull[]);
+
+      // Filter by minimum score and limit results
+      const filteredResults = results
+        .filter((r) => r.score >= input.minScore)
+        .slice(0, input.maxResults);
+
+      // Get summary stats
+      const eligibleCount = filteredResults.filter((r) => r.isEligible).length;
+      const ineligibleCount = filteredResults.filter((r) => !r.isEligible).length;
+
+      return {
+        results: filteredResults,
+        summary: {
+          totalFound: results.length,
+          returned: filteredResults.length,
+          eligible: eligibleCount,
+          ineligible: ineligibleCount,
+          averageScore:
+            filteredResults.length > 0
+              ? Math.round(
+                  (filteredResults.reduce((sum, r) => sum + r.score, 0) / filteredResults.length) * 10
+                ) / 10
+              : 0,
+        },
+      };
+    }),
+
+  /**
+   * Validate a manually selected team.
+   * Checks coverage, COI status, and provides recommendations.
+   */
+  validateTeam: protectedProcedure
+    .input(
+      z.object({
+        reviewerIds: z.array(z.string().cuid()).min(1).max(6),
+        targetOrganizationId: z.string().cuid(),
+        requiredExpertise: z.array(z.string()),
+        requiredLanguages: z.array(z.string()).default(["EN", "FR"]),
+        startDate: z.coerce.date(),
+        endDate: z.coerce.date(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      assertCanCoordinateReviewers(ctx.session);
+
+      // Fetch the selected reviewers with full data
+      const reviewers = await prisma.reviewerProfile.findMany({
+        where: {
+          id: { in: input.reviewerIds },
+        },
+        include: reviewerProfileInclude,
+      });
+
+      if (reviewers.length !== input.reviewerIds.length) {
+        const foundIds = new Set(reviewers.map((r) => r.id));
+        const missingIds = input.reviewerIds.filter((id) => !foundIds.has(id));
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `Reviewer(s) not found: ${missingIds.join(", ")}`,
+        });
+      }
+
+      // Build matching criteria
+      const criteria: MatchingCriteria = {
+        targetOrganizationId: input.targetOrganizationId,
+        requiredExpertise: input.requiredExpertise as import("@prisma/client").ExpertiseArea[],
+        requiredLanguages: input.requiredLanguages as import("@prisma/client").Language[],
+        reviewStartDate: input.startDate,
+        reviewEndDate: input.endDate,
+        teamSize: reviewers.length,
+        mustIncludeReviewerIds: input.reviewerIds,
+      };
+
+      // Score each reviewer individually
+      const scoredReviewers: MatchResult[] = reviewers.map((reviewer) =>
+        calculateMatchScore(reviewer as ReviewerProfileFull, criteria)
+      );
+
+      // Build team result
+      const teamResult = buildOptimalTeamAlgorithm(criteria, scoredReviewers);
+
+      // Generate recommendations
+      const recommendations: string[] = [];
+
+      if (teamResult.coverageReport.expertiseMissing.length > 0) {
+        recommendations.push(
+          `Add reviewer(s) with expertise in: ${teamResult.coverageReport.expertiseMissing.join(", ")}`
+        );
+      }
+
+      if (teamResult.coverageReport.languagesMissing.length > 0) {
+        recommendations.push(
+          `Add reviewer(s) proficient in: ${teamResult.coverageReport.languagesMissing.join(", ")}`
+        );
+      }
+
+      if (!teamResult.coverageReport.hasLeadQualified) {
+        recommendations.push("Consider adding a lead-qualified reviewer to the team");
+      }
+
+      const coiIssues = scoredReviewers.filter((r) => r.coiStatus.hasConflict);
+      if (coiIssues.length > 0) {
+        recommendations.push(
+          `${coiIssues.length} team member(s) have COI conflicts that require attention`
+        );
+      }
+
+      const unavailableMembers = scoredReviewers.filter(
+        (r) => r.availabilityStatus.coverage < 0.8
+      );
+      if (unavailableMembers.length > 0) {
+        recommendations.push(
+          `${unavailableMembers.length} team member(s) have limited availability during the review period`
+        );
+      }
+
+      return {
+        isValid: teamResult.isViable,
+        team: teamResult.team,
+        coverage: teamResult.coverageReport,
+        totalScore: teamResult.totalScore,
+        averageScore: teamResult.averageScore,
+        warnings: teamResult.warnings,
+        recommendations,
+      };
+    }),
+
+  /**
+   * Get detailed match score breakdown for a single reviewer.
+   */
+  getReviewerMatchScore: protectedProcedure
+    .input(
+      z.object({
+        reviewerProfileId: z.string().cuid(),
+        targetOrganizationId: z.string().cuid(),
+        requiredExpertise: z.array(z.string()),
+        preferredExpertise: z.array(z.string()).optional(),
+        requiredLanguages: z.array(z.string()).default(["EN", "FR"]),
+        startDate: z.coerce.date(),
+        endDate: z.coerce.date(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      // Use coordinate permission since this is for matching purposes
+      assertCanCoordinateReviewers(ctx.session);
+
+      // Fetch the reviewer with full data
+      const reviewer = await getReviewerById(input.reviewerProfileId);
+
+      if (!reviewer) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer profile not found",
+        });
+      }
+
+      // Build matching criteria
+      const criteria: MatchingCriteria = {
+        targetOrganizationId: input.targetOrganizationId,
+        requiredExpertise: input.requiredExpertise as import("@prisma/client").ExpertiseArea[],
+        preferredExpertise: input.preferredExpertise as import("@prisma/client").ExpertiseArea[] | undefined,
+        requiredLanguages: input.requiredLanguages as import("@prisma/client").Language[],
+        reviewStartDate: input.startDate,
+        reviewEndDate: input.endDate,
+        teamSize: 1,
+      };
+
+      // Calculate match score
+      const result = calculateMatchScore(reviewer as ReviewerProfileFull, criteria);
+
+      return {
+        ...result,
+        reviewer: {
+          id: reviewer.id,
+          userId: reviewer.userId,
+          fullName: `${reviewer.user.firstName} ${reviewer.user.lastName}`,
+          organization: reviewer.homeOrganization?.nameEn ?? "Unknown",
+          organizationId: reviewer.homeOrganizationId,
+          isLeadQualified: reviewer.isLeadQualified,
+          selectionStatus: reviewer.selectionStatus,
         },
       };
     }),

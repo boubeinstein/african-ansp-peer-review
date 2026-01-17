@@ -8,6 +8,7 @@ import {
   UserCheck,
   UserPlus,
   Calendar,
+  Sparkles,
 } from "lucide-react";
 import { ReviewerDirectory } from "@/components/features/reviewer/reviewer-directory";
 
@@ -51,14 +52,24 @@ export default async function ReviewersPage({ params }: ReviewersPageProps) {
           <h1 className="text-3xl font-bold">{t("title")}</h1>
           <p className="text-muted-foreground">{t("description")}</p>
         </div>
-        {isAdmin && (
-          <Button asChild>
-            <Link href={`/${locale}/reviewers/new`}>
-              <UserPlus className="h-4 w-4 mr-2" />
-              {t("actions.addReviewer")}
-            </Link>
-          </Button>
-        )}
+        <div className="flex gap-2">
+          {isAdmin && (
+            <>
+              <Button variant="outline" asChild>
+                <Link href={`/${locale}/reviewers/matching`}>
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  {t("actions.buildTeam") || "Build Review Team"}
+                </Link>
+              </Button>
+              <Button asChild>
+                <Link href={`/${locale}/reviewers/new`}>
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  {t("actions.addReviewer")}
+                </Link>
+              </Button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Stats Cards */}

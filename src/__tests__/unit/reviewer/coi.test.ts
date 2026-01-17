@@ -120,9 +120,12 @@ function createMockReviewerWithCOI(
         startDate: new Date("2024-03-01"),
         endDate: new Date("2024-12-31"),
         availabilityType: "AVAILABLE" as AvailabilityType,
+        title: null,
         notes: null,
+        reviewId: null,
         isRecurring: false,
         recurrencePattern: null,
+        createdById: null,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -132,10 +135,15 @@ function createMockReviewerWithCOI(
       reviewerProfileId: id,
       organizationId: coi.organizationId,
       coiType: coi.type,
-      reason: null,
+      severity: coi.type === "HOME_ORGANIZATION" || coi.type === "FAMILY_RELATIONSHIP" ? "HARD_BLOCK" : "SOFT_WARNING",
+      reasonEn: "Test conflict reason",
+      reasonFr: null,
       startDate: new Date(),
       endDate: coi.endDate ?? null,
       isActive: coi.isActive ?? true,
+      isAutoDetected: false,
+      autoDetectedAt: null,
+      createdById: null,
       verifiedById: null,
       verifiedAt: null,
       verificationNotes: null,
@@ -194,10 +202,10 @@ describe("COI Checking", () => {
   });
 
   describe("Manual COI declarations", () => {
-    it("should detect EMPLOYMENT as hard conflict", () => {
+    it("should detect HOME_ORGANIZATION as hard conflict", () => {
       const criteria = createDefaultCriteria();
       const reviewer = createMockReviewerWithCOI([
-        { organizationId: "org_target", type: "EMPLOYMENT" },
+        { organizationId: "org_target", type: "HOME_ORGANIZATION" },
       ]);
 
       const results = findMatchingReviewers(criteria, [reviewer]);
@@ -205,14 +213,14 @@ describe("COI Checking", () => {
 
       expect(result.coiStatus.hasConflict).toBe(true);
       expect(result.coiStatus.severity).toBe("HARD");
-      expect(result.coiStatus.type).toBe("EMPLOYMENT");
+      expect(result.coiStatus.type).toBe("HOME_ORGANIZATION");
       expect(result.isEligible).toBe(false);
     });
 
-    it("should detect FINANCIAL as hard conflict", () => {
+    it("should detect FAMILY_RELATIONSHIP as hard conflict", () => {
       const criteria = createDefaultCriteria();
       const reviewer = createMockReviewerWithCOI([
-        { organizationId: "org_target", type: "FINANCIAL" },
+        { organizationId: "org_target", type: "FAMILY_RELATIONSHIP" },
       ]);
 
       const results = findMatchingReviewers(criteria, [reviewer]);
@@ -220,14 +228,14 @@ describe("COI Checking", () => {
 
       expect(result.coiStatus.hasConflict).toBe(true);
       expect(result.coiStatus.severity).toBe("HARD");
-      expect(result.coiStatus.type).toBe("FINANCIAL");
+      expect(result.coiStatus.type).toBe("FAMILY_RELATIONSHIP");
       expect(result.isEligible).toBe(false);
     });
 
-    it("should detect CONTRACTUAL as soft conflict", () => {
+    it("should detect BUSINESS_INTEREST as soft conflict", () => {
       const criteria = createDefaultCriteria();
       const reviewer = createMockReviewerWithCOI([
-        { organizationId: "org_target", type: "CONTRACTUAL" },
+        { organizationId: "org_target", type: "BUSINESS_INTEREST" },
       ]);
 
       const results = findMatchingReviewers(criteria, [reviewer]);
@@ -235,14 +243,14 @@ describe("COI Checking", () => {
 
       expect(result.coiStatus.hasConflict).toBe(true);
       expect(result.coiStatus.severity).toBe("SOFT");
-      expect(result.coiStatus.type).toBe("CONTRACTUAL");
+      expect(result.coiStatus.type).toBe("BUSINESS_INTEREST");
       expect(result.coiStatus.isWaivable).toBe(true);
     });
 
-    it("should detect PERSONAL as soft conflict", () => {
+    it("should detect FORMER_EMPLOYEE as soft conflict", () => {
       const criteria = createDefaultCriteria();
       const reviewer = createMockReviewerWithCOI([
-        { organizationId: "org_target", type: "PERSONAL" },
+        { organizationId: "org_target", type: "FORMER_EMPLOYEE" },
       ]);
 
       const results = findMatchingReviewers(criteria, [reviewer]);
@@ -250,14 +258,14 @@ describe("COI Checking", () => {
 
       expect(result.coiStatus.hasConflict).toBe(true);
       expect(result.coiStatus.severity).toBe("SOFT");
-      expect(result.coiStatus.type).toBe("PERSONAL");
+      expect(result.coiStatus.type).toBe("FORMER_EMPLOYEE");
       expect(result.isEligible).toBe(true); // Soft COI doesn't disqualify
     });
 
-    it("should detect PREVIOUS_REVIEW as soft conflict", () => {
+    it("should detect RECENT_REVIEW as soft conflict", () => {
       const criteria = createDefaultCriteria();
       const reviewer = createMockReviewerWithCOI([
-        { organizationId: "org_target", type: "PREVIOUS_REVIEW" },
+        { organizationId: "org_target", type: "RECENT_REVIEW" },
       ]);
 
       const results = findMatchingReviewers(criteria, [reviewer]);
@@ -265,7 +273,7 @@ describe("COI Checking", () => {
 
       expect(result.coiStatus.hasConflict).toBe(true);
       expect(result.coiStatus.severity).toBe("SOFT");
-      expect(result.coiStatus.type).toBe("PREVIOUS_REVIEW");
+      expect(result.coiStatus.type).toBe("RECENT_REVIEW");
     });
 
     it("should detect OTHER as soft conflict", () => {
@@ -287,7 +295,7 @@ describe("COI Checking", () => {
     it("should not flag COI for unrelated organization", () => {
       const criteria = createDefaultCriteria();
       const reviewer = createMockReviewerWithCOI([
-        { organizationId: "org_unrelated", type: "EMPLOYMENT" },
+        { organizationId: "org_unrelated", type: "HOME_ORGANIZATION" },
       ]);
 
       const results = findMatchingReviewers(criteria, [reviewer]);
@@ -300,16 +308,16 @@ describe("COI Checking", () => {
     it("should only flag COI for target organization", () => {
       const criteria = createDefaultCriteria();
       const reviewer = createMockReviewerWithCOI([
-        { organizationId: "org_other1", type: "EMPLOYMENT" },
-        { organizationId: "org_other2", type: "FINANCIAL" },
-        { organizationId: "org_target", type: "PERSONAL" }, // Only this one matches
+        { organizationId: "org_other1", type: "HOME_ORGANIZATION" },
+        { organizationId: "org_other2", type: "FAMILY_RELATIONSHIP" },
+        { organizationId: "org_target", type: "FORMER_EMPLOYEE" }, // Only this one matches
       ]);
 
       const results = findMatchingReviewers(criteria, [reviewer]);
       const result = results[0];
 
       expect(result.coiStatus.hasConflict).toBe(true);
-      expect(result.coiStatus.type).toBe("PERSONAL"); // The one matching target
+      expect(result.coiStatus.type).toBe("FORMER_EMPLOYEE"); // The one matching target
       expect(result.coiStatus.severity).toBe("SOFT");
     });
   });
@@ -318,7 +326,7 @@ describe("COI Checking", () => {
     it("should mark hard conflicts as not waivable", () => {
       const criteria = createDefaultCriteria();
       const reviewer = createMockReviewerWithCOI([
-        { organizationId: "org_target", type: "EMPLOYMENT" },
+        { organizationId: "org_target", type: "HOME_ORGANIZATION" },
       ]);
 
       const results = findMatchingReviewers(criteria, [reviewer]);
@@ -330,7 +338,7 @@ describe("COI Checking", () => {
     it("should mark soft conflicts as waivable", () => {
       const criteria = createDefaultCriteria();
       const reviewer = createMockReviewerWithCOI([
-        { organizationId: "org_target", type: "CONTRACTUAL" },
+        { organizationId: "org_target", type: "BUSINESS_INTEREST" },
       ]);
 
       const results = findMatchingReviewers(criteria, [reviewer]);
@@ -342,7 +350,7 @@ describe("COI Checking", () => {
     it("should provide human-readable reason", () => {
       const criteria = createDefaultCriteria();
       const reviewer = createMockReviewerWithCOI([
-        { organizationId: "org_target", type: "EMPLOYMENT" },
+        { organizationId: "org_target", type: "HOME_ORGANIZATION" },
       ]);
 
       const results = findMatchingReviewers(criteria, [reviewer]);
@@ -357,7 +365,7 @@ describe("COI Checking", () => {
     it("should generate warning for hard COI", () => {
       const criteria = createDefaultCriteria();
       const reviewer = createMockReviewerWithCOI([
-        { organizationId: "org_target", type: "EMPLOYMENT" },
+        { organizationId: "org_target", type: "HOME_ORGANIZATION" },
       ]);
 
       const results = findMatchingReviewers(criteria, [reviewer]);
@@ -369,7 +377,7 @@ describe("COI Checking", () => {
     it("should generate warning for soft COI", () => {
       const criteria = createDefaultCriteria();
       const reviewer = createMockReviewerWithCOI([
-        { organizationId: "org_target", type: "PERSONAL" },
+        { organizationId: "org_target", type: "FORMER_EMPLOYEE" },
       ]);
 
       const results = findMatchingReviewers(criteria, [reviewer]);
@@ -393,8 +401,8 @@ describe("COI Checking", () => {
     it("should detect first matching COI", () => {
       const criteria = createDefaultCriteria();
       const reviewer = createMockReviewerWithCOI([
-        { organizationId: "org_target", type: "PERSONAL" },
-        { organizationId: "org_target", type: "CONTRACTUAL" },
+        { organizationId: "org_target", type: "FORMER_EMPLOYEE" },
+        { organizationId: "org_target", type: "BUSINESS_INTEREST" },
       ]);
 
       const results = findMatchingReviewers(criteria, [reviewer]);
@@ -402,7 +410,7 @@ describe("COI Checking", () => {
 
       // First matching COI should be detected
       expect(result.coiStatus.hasConflict).toBe(true);
-      expect(result.coiStatus.type).toBe("PERSONAL");
+      expect(result.coiStatus.type).toBe("FORMER_EMPLOYEE");
     });
 
     it("should handle mixed severity COI entries", () => {
@@ -410,16 +418,16 @@ describe("COI Checking", () => {
       // This test documents current behavior
       const criteria = createDefaultCriteria();
       const reviewer = createMockReviewerWithCOI([
-        { organizationId: "org_target", type: "PERSONAL" }, // Soft
-        { organizationId: "org_target", type: "EMPLOYMENT" }, // Hard
+        { organizationId: "org_target", type: "FORMER_EMPLOYEE" }, // Soft
+        { organizationId: "org_target", type: "HOME_ORGANIZATION" }, // Hard
       ]);
 
       const results = findMatchingReviewers(criteria, [reviewer]);
       const result = results[0];
 
       expect(result.coiStatus.hasConflict).toBe(true);
-      // Returns first match (PERSONAL)
-      expect(result.coiStatus.type).toBe("PERSONAL");
+      // Returns first match (FORMER_EMPLOYEE)
+      expect(result.coiStatus.type).toBe("FORMER_EMPLOYEE");
     });
   });
 
@@ -453,7 +461,7 @@ describe("COI Checking", () => {
     it("should include COI status in match result", () => {
       const criteria = createDefaultCriteria();
       const reviewer = createMockReviewerWithCOI([
-        { organizationId: "org_target", type: "CONTRACTUAL" },
+        { organizationId: "org_target", type: "BUSINESS_INTEREST" },
       ]);
 
       const result = calculateMatchScore(reviewer, criteria);
@@ -466,7 +474,7 @@ describe("COI Checking", () => {
     it("should still calculate scores even with COI", () => {
       const criteria = createDefaultCriteria();
       const reviewer = createMockReviewerWithCOI([
-        { organizationId: "org_target", type: "EMPLOYMENT" },
+        { organizationId: "org_target", type: "HOME_ORGANIZATION" },
       ]);
 
       const result = calculateMatchScore(reviewer, criteria);
@@ -479,11 +487,11 @@ describe("COI Checking", () => {
 
   describe("COI type reasons", () => {
     const coiTypeReasons: Array<{ type: COIType; expectedReason: string }> = [
-      { type: "EMPLOYMENT", expectedReason: "Current or recent employment" },
-      { type: "FINANCIAL", expectedReason: "Financial interest" },
-      { type: "CONTRACTUAL", expectedReason: "Contractual relationship" },
-      { type: "PERSONAL", expectedReason: "Personal relationship" },
-      { type: "PREVIOUS_REVIEW", expectedReason: "Recently reviewed this organization" },
+      { type: "HOME_ORGANIZATION", expectedReason: "Current employer" },
+      { type: "FAMILY_RELATIONSHIP", expectedReason: "Family relationship" },
+      { type: "FORMER_EMPLOYEE", expectedReason: "Former employee" },
+      { type: "BUSINESS_INTEREST", expectedReason: "Business interest" },
+      { type: "RECENT_REVIEW", expectedReason: "Recently reviewed this organization" },
       { type: "OTHER", expectedReason: "Other declared conflict" },
     ];
 

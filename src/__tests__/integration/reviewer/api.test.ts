@@ -157,7 +157,7 @@ function createMockCOI(
     id: `coi_${Math.random().toString(36).slice(2)}`,
     reviewerProfileId: profileId,
     organizationId,
-    coiType: "CONTRACTUAL",
+    coiType: "BUSINESS_INTEREST",
     isActive: true,
     ...overrides,
   };
@@ -553,13 +553,13 @@ describe("Reviewer API", () => {
     it("should add COI declaration", () => {
       const profile = createMockProfile();
       const coi = createMockCOI(profile.id, "org_conflict", {
-        coiType: "EMPLOYMENT",
+        coiType: "HOME_ORGANIZATION",
         isActive: true,
       });
 
       expect(coi.reviewerProfileId).toBe(profile.id);
       expect(coi.organizationId).toBe("org_conflict");
-      expect(coi.coiType).toBe("EMPLOYMENT");
+      expect(coi.coiType).toBe("HOME_ORGANIZATION");
       expect(coi.isActive).toBe(true);
     });
 
@@ -568,12 +568,12 @@ describe("Reviewer API", () => {
 
       // Home org should always be a conflict
       const homeOrgCOI = createMockCOI(profile.id, profile.homeOrganizationId, {
-        coiType: "EMPLOYMENT",
+        coiType: "HOME_ORGANIZATION",
         isActive: true,
       });
 
       expect(homeOrgCOI.organizationId).toBe(profile.homeOrganizationId);
-      expect(homeOrgCOI.coiType).toBe("EMPLOYMENT");
+      expect(homeOrgCOI.coiType).toBe("HOME_ORGANIZATION");
     });
 
     it("should deactivate COI when expired", () => {
@@ -593,11 +593,11 @@ describe("Reviewer API", () => {
 
     it("should validate COI types", () => {
       const validTypes: COIType[] = [
-        "EMPLOYMENT",
-        "FINANCIAL",
-        "CONTRACTUAL",
-        "PERSONAL",
-        "PREVIOUS_REVIEW",
+        "HOME_ORGANIZATION",
+        "FAMILY_RELATIONSHIP",
+        "FORMER_EMPLOYEE",
+        "BUSINESS_INTEREST",
+        "RECENT_REVIEW",
         "OTHER",
       ];
 

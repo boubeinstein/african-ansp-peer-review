@@ -311,6 +311,20 @@ export function scoreAvailability(
 ): AvailabilityScoreResult {
   const maxScore = 25; // Adjusted from MATCHING_WEIGHTS.AVAILABILITY (20) to match spec
 
+  // Guard against undefined/null/non-array
+  // If no availability data, assume reviewer is available (implicit availability)
+  if (!availabilitySlots || !Array.isArray(availabilitySlots) || availabilitySlots.length === 0) {
+    const totalDays = getDaysBetween(startDate, endDate);
+    return {
+      score: maxScore, // Full score - assume available
+      maxScore,
+      availableDays: totalDays,
+      totalDays,
+      coverage: 1.0, // 100% coverage - implicitly available
+      conflicts: [],
+    };
+  }
+
   const totalDays = getDaysBetween(startDate, endDate);
   if (totalDays <= 0) {
     return {

@@ -377,7 +377,7 @@ export async function checkCOIConflict(
       hasConflict: true,
       severity: severityMap[manualConflict.coiType] || "WARNING",
       reason: manualConflict.coiType,
-      description: manualConflict.reason || undefined,
+      description: manualConflict.reasonEn || undefined,
       coiId: manualConflict.id,
     };
   }

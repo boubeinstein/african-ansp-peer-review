@@ -178,12 +178,12 @@ export function AssessmentWorkspaceProvider({
     { enabled: !!assessmentId }
   );
 
-  // Fetch responses
+  // Fetch responses - load all questions at once (max 500)
   const {
     data: responsesData,
     isLoading: isLoadingResponses,
   } = trpc.assessment.getResponses.useQuery(
-    { assessmentId, limit: 100 },
+    { assessmentId, limit: 500 },
     { enabled: !!assessmentId }
   );
 

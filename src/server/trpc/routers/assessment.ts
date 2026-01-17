@@ -36,6 +36,10 @@ import {
 import type {
   AssessmentResponseWithQuestion,
 } from "@/lib/assessment";
+import {
+  canDeleteAssessment,
+  canArchiveAssessment,
+} from "@/lib/auth/permissions";
 
 // =============================================================================
 // CONSTANTS & HELPERS
@@ -314,7 +318,7 @@ const GetResponsesInput = z.object({
   studyArea: z.string().optional(),
   onlyUnanswered: z.boolean().optional(),
   page: z.number().int().positive().default(1),
-  limit: z.number().int().min(1).max(100).default(50),
+  limit: z.number().int().min(1).max(500).default(500),
 });
 
 const AddEvidenceInput = z.object({
@@ -775,7 +779,7 @@ export const assessmentRouter = router({
     }),
 
   /**
-   * Delete assessment (archive it)
+   * Delete assessment (permanently removes DRAFT/IN_PROGRESS assessments)
    */
   delete: protectedProcedure
     .input(z.object({ id: z.string().cuid() }))
@@ -795,20 +799,115 @@ export const assessmentRouter = router({
         });
       }
 
-      // Only DRAFT assessments can be deleted (archived)
+      // Only DRAFT assessments can be deleted
       if (assessment.status !== "DRAFT") {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Only draft assessments can be deleted. Submit the assessment for review instead.",
+          message: "Only draft assessments can be deleted. Use archive for submitted assessments.",
         });
       }
 
-      const deleted = await prisma.assessment.update({
+      // Check if user is the creator by looking at the first event
+      const firstEvent = await prisma.assessmentEvent.findFirst({
+        where: { assessmentId: input.id, type: "CREATED" },
+        select: { userId: true },
+      });
+      const isOwner = firstEvent?.userId === ctx.user.id;
+
+      // Check RBAC permissions based on role
+      const canDelete = canDeleteAssessment(
+        ctx.user.role,
+        assessment.status,
+        isOwner,
+        assessment.organizationId === ctx.user.organizationId
+      );
+
+      if (!canDelete) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have permission to delete this assessment",
+        });
+      }
+
+      // Delete in transaction: first responses, then events, then assessment
+      await prisma.$transaction(async (tx) => {
+        // Delete all responses
+        await tx.assessmentResponse.deleteMany({
+          where: { assessmentId: input.id },
+        });
+
+        // Delete all events
+        await tx.assessmentEvent.deleteMany({
+          where: { assessmentId: input.id },
+        });
+
+        // Delete the assessment
+        await tx.assessment.delete({
+          where: { id: input.id },
+        });
+      });
+
+      await logAuditEntry(ctx.user.id, "DELETE", "Assessment", input.id, {
+        previousStatus: assessment.status,
+        title: assessment.title,
+      });
+
+      console.log(
+        `[Assessment] User ${ctx.user.id} permanently deleted assessment ${input.id}`
+      );
+
+      return { success: true, message: "Assessment deleted successfully" };
+    }),
+
+  /**
+   * Archive assessment (soft delete for SUBMITTED/COMPLETED assessments)
+   */
+  archive: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const { assessment, hasAccess, reason } = await checkAssessmentAccess(
+        input.id,
+        ctx.user.id,
+        ctx.user.role,
+        ctx.user.organizationId ?? null,
+        true
+      );
+
+      if (!hasAccess || !assessment) {
+        throw new TRPCError({
+          code: assessment ? "FORBIDDEN" : "NOT_FOUND",
+          message: reason || "Assessment not found",
+        });
+      }
+
+      // Only SUBMITTED, UNDER_REVIEW, and COMPLETED assessments can be archived
+      if (!["SUBMITTED", "UNDER_REVIEW", "COMPLETED"].includes(assessment.status)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Only submitted, under review, or completed assessments can be archived. Use delete for draft assessments.",
+        });
+      }
+
+      // Check RBAC permissions
+      const canArchive = canArchiveAssessment(
+        ctx.user.role,
+        assessment.status,
+        assessment.organizationId === ctx.user.organizationId
+      );
+
+      if (!canArchive) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have permission to archive this assessment",
+        });
+      }
+
+      const archived = await prisma.assessment.update({
         where: { id: input.id },
         data: { status: "ARCHIVED" },
       });
 
-      await logAuditEntry(ctx.user.id, "DELETE", "Assessment", input.id, {
+      await logAuditEntry(ctx.user.id, "ARCHIVE", "Assessment", input.id, {
         previousStatus: assessment.status,
       });
 
@@ -816,7 +915,7 @@ export const assessmentRouter = router({
         `[Assessment] User ${ctx.user.id} archived assessment ${input.id}`
       );
 
-      return deleted;
+      return archived;
     }),
 
   // ============================================

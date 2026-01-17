@@ -107,3 +107,67 @@ export function hasAllPermissions(role: UserRole, permissions: Permission[]): bo
 export function getPermissions(role: UserRole): Permission[] {
   return rolePermissions[role] ?? [];
 }
+
+// =============================================================================
+// ASSESSMENT RBAC HELPERS
+// =============================================================================
+
+/**
+ * Check if user can delete an assessment
+ * Only DRAFT assessments can be permanently deleted
+ */
+export function canDeleteAssessment(
+  userRole: UserRole,
+  assessmentStatus: string,
+  isOwner: boolean,
+  isSameOrganization: boolean
+): boolean {
+  // Only DRAFT can be deleted
+  if (assessmentStatus !== "DRAFT") {
+    return false;
+  }
+
+  // SUPER_ADMIN and SYSTEM_ADMIN can delete any draft
+  if (["SUPER_ADMIN", "SYSTEM_ADMIN"].includes(userRole)) {
+    return true;
+  }
+
+  // ANSP_ADMIN can delete from their organization
+  if (userRole === "ANSP_ADMIN" && isSameOrganization) {
+    return true;
+  }
+
+  // SAFETY_MANAGER, QUALITY_MANAGER can delete their own drafts
+  if (["SAFETY_MANAGER", "QUALITY_MANAGER"].includes(userRole)) {
+    return isOwner;
+  }
+
+  return false;
+}
+
+/**
+ * Check if user can archive an assessment
+ * SUBMITTED, UNDER_REVIEW, and COMPLETED assessments can be archived
+ */
+export function canArchiveAssessment(
+  userRole: UserRole,
+  assessmentStatus: string,
+  isSameOrganization: boolean
+): boolean {
+  // Only certain statuses can be archived
+  if (!["SUBMITTED", "UNDER_REVIEW", "COMPLETED"].includes(assessmentStatus)) {
+    return false;
+  }
+
+  // SUPER_ADMIN and SYSTEM_ADMIN can archive any
+  if (["SUPER_ADMIN", "SYSTEM_ADMIN"].includes(userRole)) {
+    return true;
+  }
+
+  // ANSP_ADMIN can archive from their organization
+  if (userRole === "ANSP_ADMIN" && isSameOrganization) {
+    return true;
+  }
+
+  return false;
+}

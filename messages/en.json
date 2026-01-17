@@ -41,7 +41,12 @@
       "minLength": "Minimum {min} characters required",
       "maxLength": "Maximum {max} characters allowed"
     },
-    "comingSoon": "Coming Soon"
+    "comingSoon": "Coming Soon",
+    "theme": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -179,11 +184,170 @@
       "progress": "Progress",
       "view": "View",
       "continue": "Continue",
+      "actions": "Actions",
       "empty": {
         "title": "No assessments yet",
         "description": "Start your first self-assessment to evaluate compliance with ICAO standards or SMS maturity.",
         "create": "Create Assessment"
       }
+    },
+    "delete": {
+      "title": "Delete Assessment",
+      "description": "Are you sure you want to delete this assessment? This action cannot be undone.",
+      "confirmLabel": "Type the assessment name to confirm:",
+      "confirmPlaceholder": "Enter assessment name",
+      "warning": "This will permanently delete all responses and evidence links.",
+      "button": "Delete Assessment",
+      "deleting": "Deleting...",
+      "cancel": "Cancel",
+      "success": "Assessment deleted successfully",
+      "error": "Failed to delete assessment"
+    },
+    "archive": {
+      "title": "Archive Assessment",
+      "description": "This assessment will be moved to archives. You can restore it later if needed.",
+      "button": "Archive Assessment",
+      "archiving": "Archiving...",
+      "cancel": "Cancel",
+      "success": "Assessment archived successfully",
+      "error": "Failed to archive assessment"
+    },
+    "help": {
+      "title": "Help & Shortcuts",
+      "description": "Learn keyboard shortcuts and tips for faster assessment completion.",
+      "tabs": {
+        "shortcuts": "Shortcuts",
+        "guide": "Response Guide",
+        "navigation": "Navigation",
+        "faq": "FAQ"
+      },
+      "shortcuts": {
+        "navigation": "Navigation",
+        "navigateQuestions": "Navigate between questions",
+        "navigateBetween": "Navigate between sections",
+        "openQuestion": "Open selected question",
+        "responses": "Response Selection",
+        "markSatisfactory": "Mark as Satisfactory",
+        "markNotSatisfactory": "Mark as Not Satisfactory",
+        "markNotApplicable": "Mark as Not Applicable",
+        "markNotReviewed": "Mark as Not Reviewed",
+        "selectMaturity": "Select maturity level",
+        "toggleFlag": "Toggle flag for follow-up",
+        "actions": "Actions",
+        "save": "Save current response",
+        "saveAndNext": "Save and go to next question",
+        "closeDialog": "Close dialog or panel",
+        "showHelp": "Show this help dialog"
+      },
+      "guide": {
+        "ansTitle": "ANS USOAP CMA Response Guide",
+        "satisfactory": "Satisfactory",
+        "satisfactoryDesc": "Evidence confirms compliance with the protocol question requirements. Documentation is complete and current.",
+        "notSatisfactory": "Not Satisfactory",
+        "notSatisfactoryDesc": "Evidence indicates non-compliance or insufficient implementation. A finding should be documented.",
+        "notApplicable": "Not Applicable",
+        "notApplicableDesc": "The protocol question does not apply to this organization due to scope or regulatory exemptions.",
+        "notReviewed": "Not Reviewed",
+        "notReviewedDesc": "Question has not yet been assessed. Mark this temporarily while gathering evidence.",
+        "smsTitle": "SMS CANSO SOE Maturity Levels",
+        "levelA": "Level A - Initial",
+        "levelADesc": "Ad-hoc safety management with no systematic approach. Safety activities are reactive and unstructured.",
+        "levelB": "Level B - Defined",
+        "levelBDesc": "Safety processes are documented and defined. Basic procedures exist but may not be consistently applied.",
+        "levelC": "Level C - Managed",
+        "levelCDesc": "Safety processes are systematically applied and monitored. Performance metrics are tracked.",
+        "levelD": "Level D - Optimizing",
+        "levelDDesc": "Safety performance is measured against targets. Continuous improvement processes are in place.",
+        "levelE": "Level E - Excelling",
+        "levelEDesc": "Industry-leading safety management with predictive capabilities and proactive risk management.",
+        "scoringNote": "Scoring Information",
+        "ansScoring": "EI Score is calculated as the percentage of questions marked Satisfactory divided by applicable questions.",
+        "smsScoring": "Maturity level is determined by the lowest score across all components. Target is typically Level C or higher."
+      },
+      "navigation": {
+        "sidebarTitle": "Question Sidebar",
+        "sidebarTip1": "Click any question number to navigate directly to that question.",
+        "sidebarTip2": "Questions are color-coded: gray (unanswered), green (satisfactory), red (not satisfactory).",
+        "sidebarTip3": "Use the collapse/expand buttons to show or hide sections.",
+        "searchTitle": "Search & Filter",
+        "searchTip1": "Use the search box to find questions by text content or question number.",
+        "searchTip2": "Filter by response status to quickly find unanswered or flagged questions.",
+        "filtersTitle": "Quick Filters",
+        "filtersTip1": "Show All: View all questions regardless of status.",
+        "filtersTip2": "Unanswered: Focus on questions that still need responses.",
+        "filtersTip3": "Flagged: View questions marked for follow-up or review.",
+        "progressTitle": "Progress Tracking",
+        "progressTip": "The progress bar shows completion percentage. Submit your assessment when you reach 100% or when all required questions are answered."
+      },
+      "faq": {
+        "saveQuestion": "How is my progress saved?",
+        "saveAnswer": "Your responses are automatically saved as you work. The status indicator in the header shows when saves are in progress.",
+        "editQuestion": "Can I edit responses after submitting?",
+        "editAnswer": "No, once submitted, responses are locked for review integrity. Make sure all responses are complete before submitting.",
+        "scoreQuestion": "How is my score calculated?",
+        "scoreAnswer": "For ANS assessments, the EI score is the percentage of Satisfactory responses. For SMS assessments, maturity is the lowest component level.",
+        "accessQuestion": "Who can see my assessment?",
+        "accessAnswer": "Only users in your organization and assigned reviewers can access your assessment. Admins have full visibility.",
+        "evidenceQuestion": "What evidence should I attach?",
+        "evidenceAnswer": "Attach documents, procedures, or records that demonstrate compliance. Evidence should be current and clearly support your response.",
+        "submitQuestion": "When should I submit my assessment?",
+        "submitAnswer": "Submit when all questions are answered and you've reviewed your responses. You cannot make changes after submission."
+      },
+      "footer": {
+        "pressEscape": "Press Esc to close",
+        "version": "Assessment Workspace v1.0"
+      }
+    },
+    "settings": {
+      "title": "Assessment Settings",
+      "description": "Customize your assessment workspace experience.",
+      "sections": {
+        "display": "Display",
+        "autoSave": "Auto-save",
+        "notifications": "Notifications",
+        "accessibility": "Accessibility"
+      },
+      "display": {
+        "textSize": "Question text size",
+        "textSizeSmall": "Small",
+        "textSizeMedium": "Medium",
+        "textSizeLarge": "Large",
+        "showQuestionNumbers": "Show question numbers",
+        "showIcaoReferences": "Show ICAO references",
+        "showGuidanceByDefault": "Expand guidance by default",
+        "sidebarPosition": "Sidebar position",
+        "sidebarLeft": "Left",
+        "sidebarRight": "Right",
+        "compactMode": "Compact mode",
+        "theme": "Theme"
+      },
+      "autoSave": {
+        "enabled": "Enable auto-save",
+        "interval": "Auto-save interval",
+        "intervalSeconds": "{seconds} seconds",
+        "indicatorDuration": "Save indicator duration",
+        "alwaysVisible": "Always visible",
+        "confirmLeaving": "Confirm before leaving"
+      },
+      "notifications": {
+        "showSaveToast": "Show save confirmation",
+        "showShortcutHints": "Show keyboard shortcut hints",
+        "showProgressMilestones": "Notify on progress milestones",
+        "progressMilestonesDesc": "Show notifications at 25%, 50%, 75%, 100%"
+      },
+      "accessibility": {
+        "reduceMotion": "Reduce motion",
+        "highContrast": "High contrast mode",
+        "screenReader": "Screen reader announcements",
+        "focusIndicators": "Enhanced focus indicators"
+      },
+      "resetDefaults": "Reset to Defaults",
+      "resetConfirmTitle": "Reset Settings?",
+      "resetConfirmDescription": "This will reset all assessment settings to their default values. This action cannot be undone."
+    },
+    "permissions": {
+      "cannotDelete": "You don't have permission to delete this assessment",
+      "cannotDeleteSubmitted": "Submitted assessments cannot be deleted. You can archive them instead."
     },
     "stats": {
       "total": "Total Assessments",

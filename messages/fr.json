@@ -41,7 +41,12 @@
       "minLength": "Minimum {min} caractères requis",
       "maxLength": "Maximum {max} caractères autorisés"
     },
-    "comingSoon": "Bientôt disponible"
+    "comingSoon": "Bientôt disponible",
+    "theme": {
+      "light": "Clair",
+      "dark": "Sombre",
+      "system": "Système"
+    }
   },
   "navigation": {
     "dashboard": "Tableau de bord",
@@ -179,11 +184,170 @@
       "progress": "Progression",
       "view": "Voir",
       "continue": "Continuer",
+      "actions": "Actions",
       "empty": {
         "title": "Aucune évaluation",
         "description": "Commencez votre première auto-évaluation pour évaluer la conformité aux normes de l'OACI ou la maturité SMS.",
         "create": "Créer une évaluation"
       }
+    },
+    "delete": {
+      "title": "Supprimer l'évaluation",
+      "description": "Êtes-vous sûr de vouloir supprimer cette évaluation ? Cette action est irréversible.",
+      "confirmLabel": "Tapez le nom de l'évaluation pour confirmer :",
+      "confirmPlaceholder": "Entrez le nom de l'évaluation",
+      "warning": "Cela supprimera définitivement toutes les réponses et liens vers les preuves.",
+      "button": "Supprimer l'évaluation",
+      "deleting": "Suppression...",
+      "cancel": "Annuler",
+      "success": "Évaluation supprimée avec succès",
+      "error": "Échec de la suppression de l'évaluation"
+    },
+    "archive": {
+      "title": "Archiver l'évaluation",
+      "description": "Cette évaluation sera déplacée vers les archives. Vous pourrez la restaurer ultérieurement si nécessaire.",
+      "button": "Archiver l'évaluation",
+      "archiving": "Archivage...",
+      "cancel": "Annuler",
+      "success": "Évaluation archivée avec succès",
+      "error": "Échec de l'archivage de l'évaluation"
+    },
+    "help": {
+      "title": "Aide et Raccourcis",
+      "description": "Apprenez les raccourcis clavier et astuces pour compléter plus rapidement votre évaluation.",
+      "tabs": {
+        "shortcuts": "Raccourcis",
+        "guide": "Guide des réponses",
+        "navigation": "Navigation",
+        "faq": "FAQ"
+      },
+      "shortcuts": {
+        "navigation": "Navigation",
+        "navigateQuestions": "Naviguer entre les questions",
+        "navigateBetween": "Naviguer entre les sections",
+        "openQuestion": "Ouvrir la question sélectionnée",
+        "responses": "Sélection des réponses",
+        "markSatisfactory": "Marquer comme Satisfaisant",
+        "markNotSatisfactory": "Marquer comme Non satisfaisant",
+        "markNotApplicable": "Marquer comme Non applicable",
+        "markNotReviewed": "Marquer comme Non examiné",
+        "selectMaturity": "Sélectionner le niveau de maturité",
+        "toggleFlag": "Marquer pour suivi",
+        "actions": "Actions",
+        "save": "Enregistrer la réponse actuelle",
+        "saveAndNext": "Enregistrer et passer à la question suivante",
+        "closeDialog": "Fermer la boîte de dialogue",
+        "showHelp": "Afficher cette aide"
+      },
+      "guide": {
+        "ansTitle": "Guide des réponses ANS USOAP CMA",
+        "satisfactory": "Satisfaisant",
+        "satisfactoryDesc": "Les preuves confirment la conformité aux exigences du protocole. La documentation est complète et à jour.",
+        "notSatisfactory": "Non satisfaisant",
+        "notSatisfactoryDesc": "Les preuves indiquent une non-conformité ou une mise en œuvre insuffisante. Un constat doit être documenté.",
+        "notApplicable": "Non applicable",
+        "notApplicableDesc": "Le protocole ne s'applique pas à cette organisation en raison du périmètre ou d'exemptions réglementaires.",
+        "notReviewed": "Non examiné",
+        "notReviewedDesc": "La question n'a pas encore été évaluée. Utilisez ce statut temporairement pendant la collecte de preuves.",
+        "smsTitle": "Niveaux de maturité SMS CANSO SOE",
+        "levelA": "Niveau A - Initial",
+        "levelADesc": "Gestion de la sécurité ad-hoc sans approche systématique. Les activités de sécurité sont réactives et non structurées.",
+        "levelB": "Niveau B - Défini",
+        "levelBDesc": "Les processus de sécurité sont documentés et définis. Des procédures de base existent mais peuvent ne pas être appliquées de manière cohérente.",
+        "levelC": "Niveau C - Géré",
+        "levelCDesc": "Les processus de sécurité sont appliqués et surveillés de manière systématique. Les indicateurs de performance sont suivis.",
+        "levelD": "Niveau D - Optimisé",
+        "levelDDesc": "La performance en matière de sécurité est mesurée par rapport aux objectifs. Des processus d'amélioration continue sont en place.",
+        "levelE": "Niveau E - Excellence",
+        "levelEDesc": "Gestion de la sécurité de pointe avec des capacités prédictives et une gestion proactive des risques.",
+        "scoringNote": "Information sur le score",
+        "ansScoring": "Le score EI est calculé comme le pourcentage de questions marquées Satisfaisant divisé par les questions applicables.",
+        "smsScoring": "Le niveau de maturité est déterminé par le score le plus bas de tous les composants. L'objectif est généralement le niveau C ou supérieur."
+      },
+      "navigation": {
+        "sidebarTitle": "Barre latérale des questions",
+        "sidebarTip1": "Cliquez sur n'importe quel numéro de question pour y accéder directement.",
+        "sidebarTip2": "Les questions sont codées par couleur : gris (non répondu), vert (satisfaisant), rouge (non satisfaisant).",
+        "sidebarTip3": "Utilisez les boutons réduire/développer pour afficher ou masquer les sections.",
+        "searchTitle": "Recherche et filtres",
+        "searchTip1": "Utilisez la zone de recherche pour trouver des questions par contenu ou numéro.",
+        "searchTip2": "Filtrez par statut de réponse pour trouver rapidement les questions non répondues ou marquées.",
+        "filtersTitle": "Filtres rapides",
+        "filtersTip1": "Tout afficher : Voir toutes les questions quel que soit leur statut.",
+        "filtersTip2": "Non répondu : Se concentrer sur les questions qui nécessitent encore des réponses.",
+        "filtersTip3": "Marquées : Voir les questions signalées pour suivi ou révision.",
+        "progressTitle": "Suivi de la progression",
+        "progressTip": "La barre de progression indique le pourcentage d'achèvement. Soumettez votre évaluation lorsque vous atteignez 100% ou lorsque toutes les questions requises sont répondues."
+      },
+      "faq": {
+        "saveQuestion": "Comment ma progression est-elle enregistrée ?",
+        "saveAnswer": "Vos réponses sont automatiquement enregistrées au fur et à mesure. L'indicateur de statut dans l'en-tête montre quand les sauvegardes sont en cours.",
+        "editQuestion": "Puis-je modifier mes réponses après soumission ?",
+        "editAnswer": "Non, une fois soumises, les réponses sont verrouillées pour l'intégrité de la révision. Assurez-vous que toutes les réponses sont complètes avant de soumettre.",
+        "scoreQuestion": "Comment mon score est-il calculé ?",
+        "scoreAnswer": "Pour les évaluations ANS, le score EI est le pourcentage de réponses Satisfaisant. Pour les évaluations SMS, la maturité est le niveau le plus bas des composants.",
+        "accessQuestion": "Qui peut voir mon évaluation ?",
+        "accessAnswer": "Seuls les utilisateurs de votre organisation et les réviseurs assignés peuvent accéder à votre évaluation. Les administrateurs ont une visibilité complète.",
+        "evidenceQuestion": "Quelles preuves dois-je joindre ?",
+        "evidenceAnswer": "Joignez des documents, procédures ou enregistrements qui démontrent la conformité. Les preuves doivent être actuelles et soutenir clairement votre réponse.",
+        "submitQuestion": "Quand dois-je soumettre mon évaluation ?",
+        "submitAnswer": "Soumettez lorsque toutes les questions sont répondues et que vous avez vérifié vos réponses. Vous ne pouvez pas apporter de modifications après la soumission."
+      },
+      "footer": {
+        "pressEscape": "Appuyez sur Échap pour fermer",
+        "version": "Espace de travail d'évaluation v1.0"
+      }
+    },
+    "settings": {
+      "title": "Paramètres d'évaluation",
+      "description": "Personnalisez votre espace de travail d'évaluation.",
+      "sections": {
+        "display": "Affichage",
+        "autoSave": "Sauvegarde automatique",
+        "notifications": "Notifications",
+        "accessibility": "Accessibilité"
+      },
+      "display": {
+        "textSize": "Taille du texte des questions",
+        "textSizeSmall": "Petit",
+        "textSizeMedium": "Moyen",
+        "textSizeLarge": "Grand",
+        "showQuestionNumbers": "Afficher les numéros de questions",
+        "showIcaoReferences": "Afficher les références OACI",
+        "showGuidanceByDefault": "Développer les conseils par défaut",
+        "sidebarPosition": "Position de la barre latérale",
+        "sidebarLeft": "Gauche",
+        "sidebarRight": "Droite",
+        "compactMode": "Mode compact",
+        "theme": "Thème"
+      },
+      "autoSave": {
+        "enabled": "Activer la sauvegarde automatique",
+        "interval": "Intervalle de sauvegarde",
+        "intervalSeconds": "{seconds} secondes",
+        "indicatorDuration": "Durée de l'indicateur de sauvegarde",
+        "alwaysVisible": "Toujours visible",
+        "confirmLeaving": "Confirmer avant de quitter"
+      },
+      "notifications": {
+        "showSaveToast": "Afficher la confirmation de sauvegarde",
+        "showShortcutHints": "Afficher les raccourcis clavier",
+        "showProgressMilestones": "Notifier les jalons de progression",
+        "progressMilestonesDesc": "Afficher les notifications à 25%, 50%, 75%, 100%"
+      },
+      "accessibility": {
+        "reduceMotion": "Réduire les animations",
+        "highContrast": "Mode contraste élevé",
+        "screenReader": "Annonces lecteur d'écran",
+        "focusIndicators": "Indicateurs de focus améliorés"
+      },
+      "resetDefaults": "Réinitialiser",
+      "resetConfirmTitle": "Réinitialiser les paramètres ?",
+      "resetConfirmDescription": "Cela réinitialisera tous les paramètres d'évaluation à leurs valeurs par défaut. Cette action est irréversible."
+    },
+    "permissions": {
+      "cannotDelete": "Vous n'avez pas la permission de supprimer cette évaluation",
+      "cannotDeleteSubmitted": "Les évaluations soumises ne peuvent pas être supprimées. Vous pouvez les archiver à la place."
     },
     "stats": {
       "total": "Total des évaluations",

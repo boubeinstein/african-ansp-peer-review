@@ -1,16 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/lib/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
-import { Plus, ClipboardList, Clock, CheckCircle2, FileText, Loader2, PlayCircle, Award } from "lucide-react";
+import { Plus, ClipboardList, Clock, CheckCircle2, FileText, Loader2, PlayCircle, Award, Trash2, Archive, MoreVertical } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import { MaturityLevelBadge } from "@/components/features/assessment/maturity-level-badge";
+import { DeleteAssessmentDialog } from "@/components/features/assessment/delete-assessment-dialog";
+import { ArchiveAssessmentDialog } from "@/components/features/assessment/archive-assessment-dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import type { AssessmentStatus } from "@prisma/client";
 
@@ -19,9 +23,40 @@ export default function AssessmentsPage() {
   const locale = useLocale();
   const dateLocale = locale === "fr" ? fr : enUS;
 
+  // Dialog state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
+  const [selectedAssessment, setSelectedAssessment] = useState<{
+    id: string;
+    title: string;
+    type: string;
+  } | null>(null);
+
   const { data, isLoading, error } = trpc.assessment.list.useQuery({});
-  
+
   const assessments = data?.assessments ?? [];
+
+  // Handler to open delete dialog
+  const handleDeleteClick = (assessment: { id: string; title: string; type: string }) => {
+    setSelectedAssessment(assessment);
+    setDeleteDialogOpen(true);
+  };
+
+  // Handler to open archive dialog
+  const handleArchiveClick = (assessment: { id: string; title: string }) => {
+    setSelectedAssessment({ ...assessment, type: "" });
+    setArchiveDialogOpen(true);
+  };
+
+  // Check if assessment can be deleted (DRAFT only)
+  const canDelete = (status: AssessmentStatus) => {
+    return status === "DRAFT";
+  };
+
+  // Check if assessment can be archived (SUBMITTED, UNDER_REVIEW, COMPLETED)
+  const canArchive = (status: AssessmentStatus) => {
+    return status === "SUBMITTED" || status === "UNDER_REVIEW" || status === "COMPLETED";
+  };
 
   // Calculate stats
   const stats = {
@@ -210,6 +245,50 @@ export default function AssessmentsPage() {
                           </Link>
                         </Button>
                       )}
+                      {/* Actions Menu */}
+                      {(canDelete(assessment.status) || canArchive(assessment.status)) && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                              <MoreVertical className="h-4 w-4" />
+                              <span className="sr-only">{t("list.actions")}</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            {canDelete(assessment.status) && (
+                              <DropdownMenuItem
+                                className="text-red-600 focus:text-red-600"
+                                onClick={() =>
+                                  handleDeleteClick({
+                                    id: assessment.id,
+                                    title: assessment.title,
+                                    type: locale === "fr"
+                                      ? assessment.questionnaire.titleFr
+                                      : assessment.questionnaire.titleEn,
+                                  })
+                                }
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                {t("delete.button")}
+                              </DropdownMenuItem>
+                            )}
+                            {canArchive(assessment.status) && (
+                              <DropdownMenuItem
+                                className="text-amber-600 focus:text-amber-600"
+                                onClick={() =>
+                                  handleArchiveClick({
+                                    id: assessment.id,
+                                    title: assessment.title,
+                                  })
+                                }
+                              >
+                                <Archive className="mr-2 h-4 w-4" />
+                                {t("archive.button")}
+                              </DropdownMenuItem>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -238,6 +317,27 @@ export default function AssessmentsPage() {
             </Button>
           </CardContent>
         </Card>
+      )}
+
+      {/* Delete Dialog */}
+      {selectedAssessment && (
+        <DeleteAssessmentDialog
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          assessmentId={selectedAssessment.id}
+          assessmentTitle={selectedAssessment.title}
+          assessmentType={selectedAssessment.type}
+        />
+      )}
+
+      {/* Archive Dialog */}
+      {selectedAssessment && (
+        <ArchiveAssessmentDialog
+          open={archiveDialogOpen}
+          onOpenChange={setArchiveDialogOpen}
+          assessmentId={selectedAssessment.id}
+          assessmentTitle={selectedAssessment.title}
+        />
       )}
     </div>
   );

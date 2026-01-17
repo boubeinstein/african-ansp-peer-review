@@ -46,6 +46,8 @@ import {
 } from "@/components/features/assessment/assessment-workspace-context";
 import { QuestionNavigationSidebar } from "@/components/features/assessment/question-navigation-sidebar";
 import { QuestionResponsePanel } from "@/components/features/assessment/question-response-panel";
+import { AssessmentHelpDialog } from "@/components/features/assessment/assessment-help-dialog";
+import { AssessmentSettingsDialog } from "@/components/features/assessment/assessment-settings-dialog";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
 
@@ -60,6 +62,8 @@ function WorkspaceHeader() {
   const locale = useLocale();
   const router = useRouter();
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const {
     assessment,
     progressPercent,
@@ -292,12 +296,16 @@ function WorkspaceHeader() {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsHelpOpen(true)}
+              >
                 <HelpCircle className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{t("header.help")}</p>
+              <p>{t("header.help")} (? / F1)</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -306,7 +314,11 @@ function WorkspaceHeader() {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsSettingsOpen(true)}
+              >
                 <Settings className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
@@ -316,6 +328,19 @@ function WorkspaceHeader() {
           </Tooltip>
         </TooltipProvider>
       </div>
+
+      {/* Help Dialog */}
+      <AssessmentHelpDialog
+        open={isHelpOpen}
+        onOpenChange={setIsHelpOpen}
+        questionnaireType={assessment.questionnaireType as "ANS_USOAP_CMA" | "SMS_CANSO_SOE"}
+      />
+
+      {/* Settings Dialog */}
+      <AssessmentSettingsDialog
+        open={isSettingsOpen}
+        onOpenChange={setIsSettingsOpen}
+      />
     </header>
   );
 }

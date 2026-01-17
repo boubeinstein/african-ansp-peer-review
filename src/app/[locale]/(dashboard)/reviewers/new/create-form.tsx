@@ -9,7 +9,7 @@
 
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -207,7 +207,7 @@ export function ReviewerCreateForm({ locale }: ReviewerCreateFormProps) {
   };
 
   // Auto-select organization when user is selected
-  const selectedUserId = form.watch("userId");
+  const selectedUserId = useWatch({ control: form.control, name: "userId" });
   const selectedUser = availableUsers?.find((u) => u.id === selectedUserId);
 
   // When user changes, auto-fill organization if user has one

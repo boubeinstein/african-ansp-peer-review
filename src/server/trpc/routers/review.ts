@@ -144,6 +144,8 @@ const reviewUpdateSchema = z.object({
   status: z.nativeEnum(ReviewStatus).optional(),
   phase: z.nativeEnum(ReviewPhase).optional(),
   locationType: z.nativeEnum(ReviewLocationType).optional(),
+  requestedStartDate: z.date().or(z.string().transform((s) => new Date(s))).optional().nullable(),
+  requestedEndDate: z.date().or(z.string().transform((s) => new Date(s))).optional().nullable(),
   plannedStartDate: z.date().or(z.string().transform((s) => new Date(s))).optional().nullable(),
   plannedEndDate: z.date().or(z.string().transform((s) => new Date(s))).optional().nullable(),
   actualStartDate: z.date().or(z.string().transform((s) => new Date(s))).optional().nullable(),
@@ -152,6 +154,14 @@ const reviewUpdateSchema = z.object({
   specialRequirements: z.string().optional().nullable(),
   areasInScope: z.array(z.string()).optional(),
   questionnairesInScope: z.array(z.string()).optional(),
+  // Logistics fields
+  accommodationProvided: z.boolean().optional(),
+  transportationProvided: z.boolean().optional(),
+  languagePreference: z.nativeEnum(LanguagePreference).optional(),
+  // Contact fields
+  primaryContactName: z.string().optional(),
+  primaryContactEmail: z.string().email().optional(),
+  primaryContactPhone: z.string().optional().nullable(),
 });
 
 const teamMemberAssignmentSchema = z.object({

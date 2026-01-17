@@ -12,6 +12,10 @@ import {
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc/client";
 import type { QuestionnaireType } from "@prisma/client";
+import {
+  isANSResponseAnswered,
+  isSMSResponseAnswered,
+} from "@/lib/utils/assessment-helpers";
 
 // Types
 export type ANSResponseValue =
@@ -76,7 +80,7 @@ export interface AssessmentData {
   progress: number;
 }
 
-export type QuestionFilter = "all" | "unanswered" | "flagged" | "priority";
+export type QuestionFilter = "all" | "answered" | "unanswered" | "flagged" | "priority";
 
 interface AssessmentWorkspaceContextValue {
   // Assessment data
@@ -199,6 +203,13 @@ export function AssessmentWorkspaceProvider({
     },
   });
 
+  // Derive questionnaire type - use this consistently for all type checks
+  const questionnaireType = useMemo(() => {
+    return assessmentData?.questionnaire?.type ?? null;
+  }, [assessmentData?.questionnaire?.type]);
+
+  const isANS = questionnaireType === "ANS_USOAP_CMA";
+
   // Build questions list from responses
   const questions = useMemo<QuestionData[]>(() => {
     if (!responsesData?.responses) return [];
@@ -278,22 +289,38 @@ export function AssessmentWorkspaceProvider({
   const filteredQuestions = useMemo(() => {
     let filtered = questions;
 
-    // Apply filter
+    // Don't apply answer-based filters if questionnaire type is unknown yet
+    // (prevents showing all questions as "unanswered" during loading)
+    if (questionnaireType === null && (filter === "answered" || filter === "unanswered" || filter === "flagged")) {
+      return filtered;
+    }
+
+    // Apply filter - use centralized helpers for consistent counting
     switch (filter) {
+      case "answered":
+        filtered = filtered.filter((q) => {
+          const response = localResponses.get(q.id);
+          if (!response) return false; // No response = not answered
+          if (isANS) {
+            return isANSResponseAnswered(response.responseValue);
+          }
+          return isSMSResponseAnswered(response.maturityLevel);
+        });
+        break;
       case "unanswered":
         filtered = filtered.filter((q) => {
           const response = localResponses.get(q.id);
-          if (!response) return true;
-          if (assessmentData?.questionnaire.type === "ANS_USOAP_CMA") {
-            return !response.responseValue || response.responseValue === "NOT_REVIEWED";
+          if (!response) return true; // No response = unanswered
+          if (isANS) {
+            return !isANSResponseAnswered(response.responseValue);
           }
-          return !response.maturityLevel;
+          return !isSMSResponseAnswered(response.maturityLevel);
         });
         break;
       case "flagged":
         filtered = filtered.filter((q) => {
           const response = localResponses.get(q.id);
-          return response?.isFlagged;
+          return response?.isFlagged === true;
         });
         break;
       case "priority":
@@ -313,7 +340,7 @@ export function AssessmentWorkspaceProvider({
     }
 
     return filtered;
-  }, [questions, filter, searchQuery, localResponses, assessmentData?.questionnaire.type]);
+  }, [questions, filter, searchQuery, localResponses, questionnaireType, isANS]);
 
   // Current question and response
   const currentQuestion = filteredQuestions[currentQuestionIndex] || null;
@@ -459,22 +486,27 @@ export function AssessmentWorkspaceProvider({
     setIsEvidencePanelOpen((prev) => !prev);
   }, []);
 
-  // Progress calculations
+  // Progress calculations - use centralized helper for consistent counting
   const answeredCount = useMemo(() => {
+    // Don't count if questionnaire type is unknown
+    if (questionnaireType === null) return 0;
+
     let count = 0;
     for (const response of localResponses.values()) {
-      if (assessmentData?.questionnaire.type === "ANS_USOAP_CMA") {
-        if (response.responseValue && response.responseValue !== "NOT_REVIEWED") {
+      if (isANS) {
+        // Use centralized helper for ANS responses
+        if (isANSResponseAnswered(response.responseValue)) {
           count++;
         }
       } else {
-        if (response.maturityLevel) {
+        // Use centralized helper for SMS responses
+        if (isSMSResponseAnswered(response.maturityLevel)) {
           count++;
         }
       }
     }
     return count;
-  }, [localResponses, assessmentData?.questionnaire.type]);
+  }, [localResponses, questionnaireType, isANS]);
 
   const totalCount = questions.length;
   const progressPercent = totalCount > 0 ? Math.round((answeredCount / totalCount) * 100) : 0;
@@ -546,53 +578,53 @@ export function AssessmentWorkspaceProvider({
           break;
         // Quick response for ANS (1-4)
         case "1":
-          if (assessmentData?.questionnaire.type === "ANS_USOAP_CMA" && currentQuestion) {
+          if (isANS && currentQuestion) {
             updateResponse(currentQuestion.id, { responseValue: "SATISFACTORY" });
           }
           break;
         case "2":
-          if (assessmentData?.questionnaire.type === "ANS_USOAP_CMA" && currentQuestion) {
+          if (isANS && currentQuestion) {
             updateResponse(currentQuestion.id, { responseValue: "NOT_SATISFACTORY" });
           }
           break;
         case "3":
-          if (assessmentData?.questionnaire.type === "ANS_USOAP_CMA" && currentQuestion) {
+          if (isANS && currentQuestion) {
             updateResponse(currentQuestion.id, { responseValue: "NOT_APPLICABLE" });
           }
           break;
         case "4":
-          if (assessmentData?.questionnaire.type === "ANS_USOAP_CMA" && currentQuestion) {
+          if (isANS && currentQuestion) {
             updateResponse(currentQuestion.id, { responseValue: "NOT_REVIEWED" });
           }
           break;
         // Quick response for SMS (A-E)
         case "a":
         case "A":
-          if (assessmentData?.questionnaire.type === "SMS_CANSO_SOE" && currentQuestion && !e.ctrlKey && !e.metaKey) {
+          if (!isANS && currentQuestion && !e.ctrlKey && !e.metaKey) {
             updateResponse(currentQuestion.id, { maturityLevel: "A" });
           }
           break;
         case "b":
         case "B":
-          if (assessmentData?.questionnaire.type === "SMS_CANSO_SOE" && currentQuestion) {
+          if (!isANS && currentQuestion) {
             updateResponse(currentQuestion.id, { maturityLevel: "B" });
           }
           break;
         case "c":
         case "C":
-          if (assessmentData?.questionnaire.type === "SMS_CANSO_SOE" && currentQuestion && !e.ctrlKey && !e.metaKey) {
+          if (!isANS && currentQuestion && !e.ctrlKey && !e.metaKey) {
             updateResponse(currentQuestion.id, { maturityLevel: "C" });
           }
           break;
         case "d":
         case "D":
-          if (assessmentData?.questionnaire.type === "SMS_CANSO_SOE" && currentQuestion) {
+          if (!isANS && currentQuestion) {
             updateResponse(currentQuestion.id, { maturityLevel: "D" });
           }
           break;
         case "e":
         case "E":
-          if (assessmentData?.questionnaire.type === "SMS_CANSO_SOE" && currentQuestion) {
+          if (!isANS && currentQuestion) {
             updateResponse(currentQuestion.id, { maturityLevel: "E" });
           }
           break;
@@ -602,7 +634,7 @@ export function AssessmentWorkspaceProvider({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [
-    assessmentData?.questionnaire.type,
+    isANS,
     currentQuestion,
     goToNextQuestion,
     goToPreviousQuestion,

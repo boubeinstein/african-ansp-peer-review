@@ -35,6 +35,10 @@ import {
   type QuestionFilter,
   type QuestionData,
 } from "./assessment-workspace-context";
+import {
+  isANSResponseAnswered,
+  isSMSResponseAnswered,
+} from "@/lib/utils/assessment-helpers";
 
 interface QuestionGroup {
   code: string;
@@ -279,8 +283,8 @@ export function QuestionNavigationSidebar() {
       const response = responses.get(question.id);
       if (response) {
         const isAnswered = isANS
-          ? response.responseValue && response.responseValue !== "NOT_REVIEWED"
-          : !!response.maturityLevel;
+          ? isANSResponseAnswered(response.responseValue)
+          : isSMSResponseAnswered(response.maturityLevel);
         if (isAnswered) {
           group.answeredCount++;
         }
@@ -292,7 +296,7 @@ export function QuestionNavigationSidebar() {
     );
   }, [filteredQuestions, responses, isANS]);
 
-  // Get question status
+  // Get question status - use centralized helpers for consistent counting
   const getQuestionStatus = (question: QuestionData): QuestionStatus => {
     const response = responses.get(question.id);
     if (!response) return "unanswered";
@@ -300,8 +304,8 @@ export function QuestionNavigationSidebar() {
     if (response.isFlagged) return "flagged";
 
     const isAnswered = isANS
-      ? response.responseValue && response.responseValue !== "NOT_REVIEWED"
-      : !!response.maturityLevel;
+      ? isANSResponseAnswered(response.responseValue)
+      : isSMSResponseAnswered(response.maturityLevel);
 
     if (!isAnswered) return "unanswered";
     if (response.isComplete || response.evidenceUrls.length > 0) return "complete";
@@ -315,6 +319,7 @@ export function QuestionNavigationSidebar() {
 
   const filterOptions: { value: QuestionFilter; label: string }[] = [
     { value: "all", label: t("filters.all") },
+    { value: "answered", label: t("filters.answered") },
     { value: "unanswered", label: t("filters.unanswered") },
     { value: "flagged", label: t("filters.flagged") },
     ...(isANS
@@ -467,8 +472,25 @@ export function QuestionNavigationSidebar() {
         >
           <div className="p-2">
             {groupedQuestions.length === 0 ? (
-              <div className="p-4 text-center text-muted-foreground">
-                {t("sidebar.noQuestions")}
+              <div className="p-4 text-center text-muted-foreground space-y-2">
+                <p>
+                  {filter !== "all" || searchQuery
+                    ? t("sidebar.noMatchingQuestions")
+                    : t("sidebar.noQuestions")}
+                </p>
+                {(filter !== "all" || searchQuery) && (
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="text-primary"
+                    onClick={() => {
+                      setFilter("all");
+                      setSearchQuery("");
+                    }}
+                  >
+                    {t("sidebar.clearFilters")}
+                  </Button>
+                )}
               </div>
             ) : (
               groupedQuestions.map((group) => (

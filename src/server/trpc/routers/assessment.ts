@@ -40,6 +40,15 @@ import {
   canDeleteAssessment,
   canArchiveAssessment,
 } from "@/lib/auth/permissions";
+import {
+  generateAssessmentReferenceNumber,
+  generateAssessmentTitle,
+  getAssessmentTypeCode,
+} from "@/lib/utils/reference-number";
+import {
+  isANSResponseAnswered,
+  isSMSResponseAnswered,
+} from "@/lib/utils/assessment-helpers";
 
 // =============================================================================
 // CONSTANTS & HELPERS
@@ -435,13 +444,40 @@ export const assessmentRouter = router({
         }
       }
 
+      // Get organization for reference number generation
+      const organization = await prisma.organization.findUnique({
+        where: { id: user.organizationId! },
+        select: { icaoCode: true, nameEn: true },
+      });
+
+      if (!organization) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Organization not found",
+        });
+      }
+
+      // Determine assessment type code
+      const assessmentTypeCode = getAssessmentTypeCode(questionnaire.type);
+
+      // Generate unique reference number
+      const orgCode = organization.icaoCode || organization.nameEn.substring(0, 6);
+      const referenceNumber = await generateAssessmentReferenceNumber({
+        organizationCode: orgCode,
+        assessmentType: assessmentTypeCode,
+      });
+
+      // Generate title (use user-provided title or generate one)
+      const title = input.title || generateAssessmentTitle(assessmentTypeCode, referenceNumber);
+
       // Create assessment with empty responses for all questions
       const assessment = await prisma.$transaction(async (tx) => {
         // Create the assessment
         const newAssessment = await tx.assessment.create({
           data: {
+            referenceNumber,
             type: input.assessmentType,
-            title: input.title,
+            title,
             description: input.description,
             dueDate: input.dueDate,
             questionnaireId: questionnaire.id,
@@ -476,8 +512,9 @@ export const assessmentRouter = router({
 
       // Log audit entry
       await logAuditEntry(user.id, "CREATE", "Assessment", assessment.id, {
+        referenceNumber,
         type: input.assessmentType,
-        title: input.title,
+        title,
         questionnaireId: questionnaire.id,
         questionnaireType: questionnaire.type,
         organizationId: user.organizationId,
@@ -556,13 +593,13 @@ export const assessmentRouter = router({
         });
       }
 
-      // Calculate current progress
+      // Calculate current progress - use centralized helper for consistency with UI
       const totalQuestions = fullAssessment._count.responses;
       const answeredQuestions = fullAssessment.responses.filter((r) => {
         if (fullAssessment.questionnaire.type === "ANS_USOAP_CMA") {
-          return r.responseValue !== null;
+          return isANSResponseAnswered(r.responseValue);
         }
-        return r.maturityLevel !== null;
+        return isSMSResponseAnswered(r.maturityLevel);
       }).length;
 
       const progress =
@@ -614,14 +651,14 @@ export const assessmentRouter = router({
       const questionnaireType = assessment.questionnaire.type;
       const totalQuestions = assessment.questionnaire.questions.length;
 
-      // Count only properly answered questions
+      // Count only properly answered questions - use centralized helper for consistency with UI
       const answeredQuestionIds = new Set(
         responses
           .filter((r) => {
             if (questionnaireType === "ANS_USOAP_CMA") {
-              return r.responseValue !== null && r.responseValue !== "NOT_REVIEWED";
+              return isANSResponseAnswered(r.responseValue);
             }
-            return r.maturityLevel !== null;
+            return isSMSResponseAnswered(r.maturityLevel);
           })
           .map((r) => r.questionId)
       );
@@ -1035,14 +1072,14 @@ export const assessmentRouter = router({
       const questionnaireType = assessment.questionnaire.type;
       const totalQuestions = questionnaire.questions.length;
 
-      // Build set of answered question IDs
+      // Build set of answered question IDs - use centralized helper for consistency with UI
       const answeredQuestionIds = new Set(
         responses
           .filter((r) => {
             if (questionnaireType === "ANS_USOAP_CMA") {
-              return r.responseValue !== null && r.responseValue !== "NOT_REVIEWED";
+              return isANSResponseAnswered(r.responseValue);
             }
-            return r.maturityLevel !== null;
+            return isSMSResponseAnswered(r.maturityLevel);
           })
           .map((r) => r.questionId)
       );
@@ -1441,7 +1478,7 @@ export const assessmentRouter = router({
         },
       });
 
-      // Update assessment progress
+      // Update assessment progress - use centralized helper for consistency with UI
       const allResponses = await prisma.assessmentResponse.findMany({
         where: { assessmentId: input.assessmentId },
       });
@@ -1449,9 +1486,9 @@ export const assessmentRouter = router({
       const totalQuestions = allResponses.length;
       const answeredQuestions = allResponses.filter((r) => {
         if (assessment.questionnaire.type === "ANS_USOAP_CMA") {
-          return r.responseValue !== null;
+          return isANSResponseAnswered(r.responseValue);
         }
-        return r.maturityLevel !== null;
+        return isSMSResponseAnswered(r.maturityLevel);
       }).length;
 
       const progress =
@@ -1555,7 +1592,7 @@ export const assessmentRouter = router({
         return updatedResponses;
       });
 
-      // Update assessment progress
+      // Update assessment progress - use centralized helper for consistency with UI
       const allResponses = await prisma.assessmentResponse.findMany({
         where: { assessmentId: input.assessmentId },
       });
@@ -1563,9 +1600,9 @@ export const assessmentRouter = router({
       const totalQuestions = allResponses.length;
       const answeredQuestions = allResponses.filter((r) => {
         if (questionnaireType === "ANS_USOAP_CMA") {
-          return r.responseValue !== null;
+          return isANSResponseAnswered(r.responseValue);
         }
-        return r.maturityLevel !== null;
+        return isSMSResponseAnswered(r.maturityLevel);
       }).length;
 
       const progress =
@@ -1728,7 +1765,7 @@ export const assessmentRouter = router({
         },
       });
 
-      // Update progress
+      // Update progress - use centralized helper for consistency with UI
       const allResponses = await prisma.assessmentResponse.findMany({
         where: { assessmentId: input.assessmentId },
       });
@@ -1736,9 +1773,9 @@ export const assessmentRouter = router({
       const totalQuestions = allResponses.length;
       const answeredQuestions = allResponses.filter((r) => {
         if (assessment.questionnaire.type === "ANS_USOAP_CMA") {
-          return r.responseValue !== null;
+          return isANSResponseAnswered(r.responseValue);
         }
-        return r.maturityLevel !== null;
+        return isSMSResponseAnswered(r.maturityLevel);
       }).length;
 
       const progress =
@@ -2073,7 +2110,8 @@ export const assessmentRouter = router({
         if (hasEvidence) withEvidenceCount++;
 
         if (questionnaireType === "ANS_USOAP_CMA") {
-          if (r.responseValue) {
+          // Use centralized helper for consistency with UI and submit validation
+          if (isANSResponseAnswered(r.responseValue)) {
             answeredCount++;
             switch (r.responseValue) {
               case "SATISFACTORY":
@@ -2088,9 +2126,10 @@ export const assessmentRouter = router({
             }
           }
         } else {
-          if (r.maturityLevel) {
+          // Use centralized helper for consistency with UI and submit validation
+          if (isSMSResponseAnswered(r.maturityLevel ? MATURITY_LEVEL_REVERSE[r.maturityLevel] : null)) {
             answeredCount++;
-            const level = MATURITY_LEVEL_REVERSE[r.maturityLevel];
+            const level = MATURITY_LEVEL_REVERSE[r.maturityLevel!];
             maturityCounts[level]++;
           }
         }

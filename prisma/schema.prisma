@@ -513,6 +513,7 @@ model COIOverride {
 
 model Assessment {
   id              String               @id @default(cuid())
+  referenceNumber String?              @unique @map("reference_number")
   type            AssessmentType       @default(SELF_ASSESSMENT)
   title           String
   description     String?

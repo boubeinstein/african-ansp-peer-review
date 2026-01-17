@@ -19,6 +19,10 @@ import {
   SMS_MATURITY_LEVELS,
 } from "./constants";
 import type { USOAPAuditArea, CriticalElement, SMSComponent, CANSOStudyArea } from "@prisma/client";
+import {
+  isANSResponseAnswered,
+  isSMSResponseAnswered,
+} from "@/lib/utils/assessment-helpers";
 
 // =============================================================================
 // EI SCORE CALCULATION (USOAP CMA METHODOLOGY)
@@ -491,12 +495,12 @@ export function validateAssessmentForSubmission(
   const errors: string[] = [];
   const warnings: string[] = [];
 
-  // Count answered questions
+  // Count answered questions - use centralized helper for consistency
   const answeredCount = responses.filter((r) => {
     if (questionnaireType === "ANS_USOAP_CMA") {
-      return r.responseValue !== null && r.responseValue !== "NOT_REVIEWED";
+      return isANSResponseAnswered(r.responseValue);
     }
-    return r.maturityLevel !== null;
+    return isSMSResponseAnswered(r.maturityLevel);
   }).length;
 
   const answeredPercentage = (answeredCount / totalQuestions) * 100;

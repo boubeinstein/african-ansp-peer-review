@@ -14,7 +14,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useForm, UseFormReturn } from "react-hook-form";
+import { useForm, useWatch, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
@@ -228,19 +228,27 @@ function AssessmentStep({ form, assessments }: AssessmentStepProps) {
                 name="assessmentIds"
                 render={({ field }) => {
                   const isSelected = field.value?.includes(assessment.id);
+                  const toggleSelection = () => {
+                    const newValue = isSelected
+                      ? field.value?.filter((id) => id !== assessment.id)
+                      : [...(field.value || []), assessment.id];
+                    field.onChange(newValue);
+                  };
                   return (
                     <FormItem>
                       <FormControl>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const newValue = isSelected
-                              ? field.value?.filter((id) => id !== assessment.id)
-                              : [...(field.value || []), assessment.id];
-                            field.onChange(newValue);
+                        <div
+                          role="button"
+                          tabIndex={0}
+                          onClick={toggleSelection}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              toggleSelection();
+                            }
                           }}
                           className={cn(
-                            "w-full flex items-center gap-4 p-4 rounded-lg border-2 text-left transition-all",
+                            "w-full flex items-center gap-4 p-4 rounded-lg border-2 text-left transition-all cursor-pointer",
                             isSelected
                               ? "border-primary ring-2 ring-primary/20 bg-primary/5"
                               : "border-border hover:border-primary/50"
@@ -248,7 +256,8 @@ function AssessmentStep({ form, assessments }: AssessmentStepProps) {
                         >
                           <Checkbox
                             checked={isSelected}
-                            className="pointer-events-none"
+                            onCheckedChange={toggleSelection}
+                            onClick={(e) => e.stopPropagation()}
                           />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
@@ -269,7 +278,7 @@ function AssessmentStep({ form, assessments }: AssessmentStepProps) {
                               </p>
                             )}
                           </div>
-                        </button>
+                        </div>
                       </FormControl>
                     </FormItem>
                   );
@@ -403,19 +412,27 @@ function ScopeStep({ form }: ScopeStepProps) {
                       name="focusAreas"
                       render={({ field }) => {
                         const isSelected = field.value?.includes(area);
+                        const toggleArea = () => {
+                          const newValue = isSelected
+                            ? field.value?.filter((a) => a !== area)
+                            : [...(field.value || []), area];
+                          field.onChange(newValue);
+                        };
                         return (
                           <FormItem>
                             <FormControl>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const newValue = isSelected
-                                    ? field.value?.filter((a) => a !== area)
-                                    : [...(field.value || []), area];
-                                  field.onChange(newValue);
+                              <div
+                                role="button"
+                                tabIndex={0}
+                                onClick={toggleArea}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" || e.key === " ") {
+                                    e.preventDefault();
+                                    toggleArea();
+                                  }
                                 }}
                                 className={cn(
-                                  "w-full flex items-center gap-2 p-3 rounded-md border-2 text-left transition-all text-sm",
+                                  "w-full flex items-center gap-2 p-3 rounded-md border-2 text-left transition-all text-sm cursor-pointer",
                                   isSelected
                                     ? "border-primary bg-primary/5"
                                     : "border-border hover:border-primary/50"
@@ -423,10 +440,11 @@ function ScopeStep({ form }: ScopeStepProps) {
                               >
                                 <Checkbox
                                   checked={isSelected}
-                                  className="pointer-events-none"
+                                  onCheckedChange={toggleArea}
+                                  onClick={(e) => e.stopPropagation()}
                                 />
                                 <span>{t(`scope.focusAreas.${area}`)}</span>
-                              </button>
+                              </div>
                             </FormControl>
                           </FormItem>
                         );
@@ -449,19 +467,27 @@ function ScopeStep({ form }: ScopeStepProps) {
                       name="focusAreas"
                       render={({ field }) => {
                         const isSelected = field.value?.includes(area);
+                        const toggleArea = () => {
+                          const newValue = isSelected
+                            ? field.value?.filter((a) => a !== area)
+                            : [...(field.value || []), area];
+                          field.onChange(newValue);
+                        };
                         return (
                           <FormItem>
                             <FormControl>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const newValue = isSelected
-                                    ? field.value?.filter((a) => a !== area)
-                                    : [...(field.value || []), area];
-                                  field.onChange(newValue);
+                              <div
+                                role="button"
+                                tabIndex={0}
+                                onClick={toggleArea}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" || e.key === " ") {
+                                    e.preventDefault();
+                                    toggleArea();
+                                  }
                                 }}
                                 className={cn(
-                                  "w-full flex items-center gap-2 p-3 rounded-md border-2 text-left transition-all text-sm",
+                                  "w-full flex items-center gap-2 p-3 rounded-md border-2 text-left transition-all text-sm cursor-pointer",
                                   isSelected
                                     ? "border-primary bg-primary/5"
                                     : "border-border hover:border-primary/50"
@@ -469,10 +495,11 @@ function ScopeStep({ form }: ScopeStepProps) {
                               >
                                 <Checkbox
                                   checked={isSelected}
-                                  className="pointer-events-none"
+                                  onCheckedChange={toggleArea}
+                                  onClick={(e) => e.stopPropagation()}
                                 />
                                 <span>{t(`scope.focusAreas.${area}`)}</span>
-                              </button>
+                              </div>
                             </FormControl>
                           </FormItem>
                         );
@@ -1177,7 +1204,7 @@ export function ReviewRequestWizard(props: ReviewRequestWizardProps) {
   });
 
   // Watch selected assessments to auto-set review type
-  const selectedAssessmentIds = form.watch("assessmentIds");
+  const selectedAssessmentIds = useWatch({ control: form.control, name: "assessmentIds" });
 
   // Auto-set review type based on selected assessments
   useEffect(() => {

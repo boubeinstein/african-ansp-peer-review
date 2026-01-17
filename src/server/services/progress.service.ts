@@ -12,6 +12,10 @@ import type {
   AssessmentStatus,
   AssessmentType,
 } from "@prisma/client";
+import {
+  isANSResponseAnswered,
+  isSMSResponseAnswered,
+} from "@/lib/utils/assessment-helpers";
 
 // =============================================================================
 // TYPES
@@ -126,9 +130,15 @@ class ProgressService {
     }
 
     const totalQuestions = assessment.questionnaire.questions.length;
-    const answeredResponses = assessment.responses.filter(
-      (r) => r.responseValue !== null && r.responseValue !== ""
-    );
+    const questionnaireType = assessment.questionnaire.type;
+
+    // Use centralized helper for consistent answered counting
+    const answeredResponses = assessment.responses.filter((r) => {
+      if (questionnaireType === "ANS_USOAP_CMA") {
+        return isANSResponseAnswered(r.responseValue);
+      }
+      return isSMSResponseAnswered(r.maturityLevel);
+    });
     const answeredQuestions = answeredResponses.length;
     const unansweredQuestions = totalQuestions - answeredQuestions;
     const percentComplete =
@@ -136,18 +146,21 @@ class ProgressService {
         ? Math.round((answeredQuestions / totalQuestions) * 100)
         : 0;
 
-    // Calculate by category
+    // Calculate by category - use centralized helper
     const byCategory: CategoryProgressStats[] =
       assessment.questionnaire.categories.map((category) => {
         const categoryQuestions = assessment.questionnaire.questions.filter(
           (q) => q.categoryId === category.id
         );
-        const categoryAnswered = assessment.responses.filter(
-          (r) =>
-            categoryQuestions.some((q) => q.id === r.questionId) &&
-            r.responseValue !== null &&
-            r.responseValue !== ""
-        );
+        const categoryAnswered = assessment.responses.filter((r) => {
+          if (!categoryQuestions.some((q) => q.id === r.questionId)) {
+            return false;
+          }
+          if (questionnaireType === "ANS_USOAP_CMA") {
+            return isANSResponseAnswered(r.responseValue);
+          }
+          return isSMSResponseAnswered(r.maturityLevel);
+        });
 
         return {
           categoryId: category.id,

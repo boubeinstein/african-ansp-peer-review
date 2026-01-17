@@ -7,8 +7,8 @@
  * validation using react-hook-form and Zod.
  */
 
-import { useState, useEffect, useCallback } from "react";
-import { useForm } from "react-hook-form";
+import { useMemo, useCallback } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useLocale, useTranslations } from "next-intl";
@@ -119,8 +119,6 @@ export function OrganizationForm({
   const tCommon = useTranslations("common");
   const locale = useLocale() as "en" | "fr";
 
-  const [icaoCodeError, setIcaoCodeError] = useState<string | null>(null);
-
   const isEdit = !!organization;
   const sortedCountries = getSortedCountries(locale);
 
@@ -137,7 +135,7 @@ export function OrganizationForm({
     },
   });
 
-  const icaoCodeValue = form.watch("icaoCode");
+  const icaoCodeValue = useWatch({ control: form.control, name: "icaoCode" });
 
   // Check ICAO code availability
   const { data: icaoCheck, isFetching: icaoChecking } = trpc.organization.checkIcaoCode.useQuery(
@@ -150,15 +148,12 @@ export function OrganizationForm({
     }
   );
 
-  // Update ICAO code error state
-  useEffect(() => {
+  // Derive ICAO code error from query result
+  const icaoCodeError = useMemo(() => {
     if (icaoCheck && !icaoCheck.available) {
-      setIcaoCodeError(
-        t("form.icaoCodeTaken", { name: icaoCheck.existingOrganization?.name || "" })
-      );
-    } else {
-      setIcaoCodeError(null);
+      return t("form.icaoCodeTaken", { name: icaoCheck.existingOrganization?.name || "" });
     }
+    return null;
   }, [icaoCheck, t]);
 
   // Handle ICAO code input - auto uppercase

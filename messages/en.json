@@ -174,6 +174,11 @@
   "assessment": {
     "title": "Self-Assessment",
     "subtitle": "Evaluate your organization against ICAO and CANSO standards",
+    "referenceNumber": "Reference",
+    "typeLabel": {
+      "ans": "ANS Assessment (USOAP CMA)",
+      "sms": "SMS Assessment (CANSO SoE)"
+    },
     "list": {
       "title": "Assessments",
       "description": "Manage your self-assessments and track progress",
@@ -1295,12 +1300,15 @@
       "progress": "{answered} of {total} answered",
       "overallProgress": "Overall Progress",
       "searchPlaceholder": "Search questions...",
-      "noQuestions": "No questions match your filters",
+      "noQuestions": "No questions available",
+      "noMatchingQuestions": "No questions match the current filter",
+      "clearFilters": "Clear filters",
       "expand": "Expand questions panel",
       "collapse": "Collapse questions panel"
     },
     "filters": {
       "all": "All Questions",
+      "answered": "Answered",
       "unanswered": "Unanswered",
       "flagged": "Flagged for Review",
       "priority": "Priority Questions"
@@ -2489,6 +2497,133 @@
     }
   },
   "review": {
+    "detail": {
+      "pageTitle": "Review Details",
+      "pageDescription": "View peer review request details",
+      "backToReviews": "Back to Reviews",
+      "loading": "Loading review details...",
+      "createdOn": "Created on {date}",
+      "hostOrganization": "Host Organization",
+      "reviewType": "Review Type",
+      "schedule": "Schedule",
+      "requestedDates": "Requested Dates",
+      "plannedDates": "Planned Dates",
+      "actualDates": "Actual Dates",
+      "tbd": "TBD",
+      "ongoing": "Ongoing",
+      "logistics": "Logistics",
+      "accommodationProvided": "Accommodation",
+      "transportationProvided": "Transportation",
+      "primaryContact": "Primary Contact",
+      "linkedAssessments": "Linked Assessments",
+      "noAssessments": "No assessments linked to this review.",
+      "reviewTeam": "Review Team",
+      "reviewTeamDescription": "Team members assigned to this review",
+      "leadQualified": "Lead Qualified",
+      "specialRequirements": "Special Requirements",
+      "findings": "Findings",
+      "findingsCount": "{count, plural, one {# finding} other {# findings}}",
+      "viewAllFindings": "View all {count} more findings",
+      "edit": "Edit",
+      "error": {
+        "title": "Error",
+        "notFound": "Review not found",
+        "notFoundDescription": "The review you are looking for does not exist or you don't have permission to view it."
+      },
+      "status": {
+        "requested": "Requested",
+        "approved": "Approved",
+        "planning": "Planning",
+        "scheduled": "Scheduled",
+        "in_progress": "In Progress",
+        "report_drafting": "Report Drafting",
+        "report_review": "Report Review",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
+      "types": {
+        "full": "Full Review",
+        "focused": "Focused Review",
+        "follow_up": "Follow-up Review",
+        "surveillance": "Surveillance Review"
+      },
+      "location": {
+        "on_site": "On-Site",
+        "hybrid": "Hybrid",
+        "remote": "Remote"
+      },
+      "language": {
+        "en": "English",
+        "fr": "French",
+        "both": "Bilingual (EN/FR)"
+      },
+      "teamRole": {
+        "lead_reviewer": "Lead Reviewer",
+        "reviewer": "Reviewer",
+        "technical_expert": "Technical Expert",
+        "observer": "Observer",
+        "trainee": "Trainee"
+      }
+    },
+    "edit": {
+      "pageTitle": "Edit Review Request",
+      "pageDescription": "Edit your peer review request",
+      "title": "Edit Review Request",
+      "subtitle": "Editing request {reference}",
+      "backToDetail": "Back to Review Details",
+      "backToReviews": "Back to Reviews",
+      "schedule": {
+        "title": "Schedule",
+        "description": "Update the requested dates for your peer review.",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "selectDate": "Select a date"
+      },
+      "logistics": {
+        "title": "Logistics",
+        "description": "Update logistics preferences for the review.",
+        "locationType": "Location Type",
+        "onSite": "On-Site",
+        "hybrid": "Hybrid",
+        "remote": "Remote",
+        "language": "Preferred Language",
+        "english": "English",
+        "french": "French",
+        "both": "Bilingual (EN/FR)",
+        "accommodation": "Accommodation will be provided",
+        "transportation": "Transportation will be arranged"
+      },
+      "contact": {
+        "title": "Primary Contact",
+        "description": "Update the primary contact information for this review.",
+        "name": "Contact Name",
+        "email": "Contact Email",
+        "phone": "Contact Phone"
+      },
+      "requirements": {
+        "title": "Special Requirements",
+        "description": "Update any special requirements or notes for the review team.",
+        "placeholder": "Enter any special requirements, accessibility needs, security protocols, or other considerations...",
+        "help": "Include any information that would help the review team prepare"
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "save": "Save Changes",
+        "saving": "Saving..."
+      },
+      "success": {
+        "title": "Changes Saved",
+        "description": "Your review request has been updated successfully."
+      },
+      "error": {
+        "title": "Save Failed",
+        "loadTitle": "Load Failed",
+        "notFound": "Review not found",
+        "notFoundDescription": "The review you are trying to edit does not exist.",
+        "notEditable": "Cannot Edit",
+        "notEditableDescription": "This review can no longer be edited because it has progressed beyond the initial request stage."
+      }
+    },
     "request": {
       "pageTitle": "Request Peer Review",
       "pageDescription": "Submit a request for a peer review of your organization",

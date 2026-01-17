@@ -14,6 +14,10 @@ import type {
 import { maturityLevelToScore } from "./scoring";
 import { getMaturityLevelFromScore } from "./constants";
 import type { QuestionnaireType } from "@prisma/client";
+import {
+  isANSResponseAnswered,
+  isSMSResponseAnswered,
+} from "@/lib/utils/assessment-helpers";
 
 // =============================================================================
 // PROGRESS CALCULATION
@@ -33,9 +37,10 @@ export function calculateProgress(
   let skippedQuestions = 0;
 
   for (const response of responses) {
+    // Use centralized helper for consistent answered check
     const hasResponse = questionnaireType === "ANS_USOAP_CMA"
-      ? response.responseValue !== null && response.responseValue !== "NOT_REVIEWED"
-      : response.maturityLevel !== null;
+      ? isANSResponseAnswered(response.responseValue)
+      : isSMSResponseAnswered(response.maturityLevel);
 
     if (hasResponse) {
       answeredQuestions++;
@@ -134,9 +139,10 @@ function calculateCategoryProgress(
     let completed = 0;
 
     for (const response of catResponses) {
+      // Use centralized helper for consistent answered check
       const hasResponse = questionnaireType === "ANS_USOAP_CMA"
-        ? response.responseValue !== null && response.responseValue !== "NOT_REVIEWED"
-        : response.maturityLevel !== null;
+        ? isANSResponseAnswered(response.responseValue)
+        : isSMSResponseAnswered(response.maturityLevel);
 
       if (hasResponse) {
         answered++;
@@ -204,7 +210,8 @@ function calculateANSElementProgress(
     let notApplicableCount = 0;
 
     for (const response of elementResponses) {
-      if (response.responseValue && response.responseValue !== "NOT_REVIEWED") {
+      // Use centralized helper for consistent answered check
+      if (isANSResponseAnswered(response.responseValue)) {
         answered++;
 
         switch (response.responseValue) {
@@ -279,10 +286,11 @@ function calculateSMSElementProgress(
     const scores: number[] = [];
 
     for (const response of elementResponses) {
-      if (response.maturityLevel !== null) {
+      // Use centralized helper for consistent answered check
+      if (isSMSResponseAnswered(response.maturityLevel)) {
         answered++;
-        maturityDistribution[response.maturityLevel]++;
-        scores.push(maturityLevelToScore(response.maturityLevel));
+        maturityDistribution[response.maturityLevel!]++;
+        scores.push(maturityLevelToScore(response.maturityLevel!));
 
         if (response.isComplete ||
             (response.evidenceDescription && response.evidenceDescription.length > 0)) {

@@ -6,3 +6,5 @@
  */
 
 export * from "./review-request-wizard";
+export * from "./review-detail-view";
+export * from "./review-edit-form";

@@ -169,20 +169,27 @@ export default function AssessmentsPage() {
               <CardContent className="p-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="space-y-2 flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-lg">{assessment.title}</h3>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {/* Display reference number or fallback to title */}
+                      <h3 className="font-semibold text-lg font-mono">
+                        {assessment.referenceNumber || assessment.title}
+                      </h3>
                       {getStatusBadge(assessment.status)}
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      {locale === "fr" 
-                        ? assessment.questionnaire.titleFr 
-                        : assessment.questionnaire.titleEn}
+                      {assessment.questionnaire.type === "ANS_USOAP_CMA"
+                        ? t("typeLabel.ans")
+                        : t("typeLabel.sms")}
+                      {" • "}
+                      {locale === "fr"
+                        ? assessment.organization.nameFr
+                        : assessment.organization.nameEn}
                     </p>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span>
-                        {t("list.updated")} {formatDistanceToNow(new Date(assessment.updatedAt), { 
-                          addSuffix: true, 
-                          locale: dateLocale 
+                        {t("list.updated")} {formatDistanceToNow(new Date(assessment.updatedAt), {
+                          addSuffix: true,
+                          locale: dateLocale
                         })}
                       </span>
                       {assessment.dueDate && (

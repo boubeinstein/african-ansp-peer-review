@@ -174,6 +174,11 @@
   "assessment": {
     "title": "Auto-évaluation",
     "subtitle": "Évaluez votre organisation selon les normes OACI et CANSO",
+    "referenceNumber": "Référence",
+    "typeLabel": {
+      "ans": "Évaluation ANS (USOAP CMA)",
+      "sms": "Évaluation SMS (CANSO SoE)"
+    },
     "list": {
       "title": "Évaluations",
       "description": "Gérez vos auto-évaluations et suivez votre progression",
@@ -1295,12 +1300,15 @@
       "progress": "{answered} sur {total} répondues",
       "overallProgress": "Progression globale",
       "searchPlaceholder": "Rechercher des questions...",
-      "noQuestions": "Aucune question ne correspond à vos filtres",
+      "noQuestions": "Aucune question disponible",
+      "noMatchingQuestions": "Aucune question ne correspond au filtre actuel",
+      "clearFilters": "Effacer les filtres",
       "expand": "Afficher le panneau des questions",
       "collapse": "Masquer le panneau des questions"
     },
     "filters": {
       "all": "Toutes les questions",
+      "answered": "Répondues",
       "unanswered": "Non répondues",
       "flagged": "Marquées pour révision",
       "priority": "Questions prioritaires"
@@ -2489,6 +2497,133 @@
     }
   },
   "review": {
+    "detail": {
+      "pageTitle": "Détails de la revue",
+      "pageDescription": "Voir les détails de la demande de revue par les pairs",
+      "backToReviews": "Retour aux revues",
+      "loading": "Chargement des détails de la revue...",
+      "createdOn": "Créée le {date}",
+      "hostOrganization": "Organisation hôte",
+      "reviewType": "Type de revue",
+      "schedule": "Calendrier",
+      "requestedDates": "Dates demandées",
+      "plannedDates": "Dates planifiées",
+      "actualDates": "Dates réelles",
+      "tbd": "À déterminer",
+      "ongoing": "En cours",
+      "logistics": "Logistique",
+      "accommodationProvided": "Hébergement",
+      "transportationProvided": "Transport",
+      "primaryContact": "Contact principal",
+      "linkedAssessments": "Évaluations liées",
+      "noAssessments": "Aucune évaluation liée à cette revue.",
+      "reviewTeam": "Équipe de revue",
+      "reviewTeamDescription": "Membres de l'équipe assignés à cette revue",
+      "leadQualified": "Qualifié chef d'équipe",
+      "specialRequirements": "Exigences spéciales",
+      "findings": "Constatations",
+      "findingsCount": "{count, plural, one {# constatation} other {# constatations}}",
+      "viewAllFindings": "Voir les {count} autres constatations",
+      "edit": "Modifier",
+      "error": {
+        "title": "Erreur",
+        "notFound": "Revue non trouvée",
+        "notFoundDescription": "La revue que vous recherchez n'existe pas ou vous n'avez pas la permission de la consulter."
+      },
+      "status": {
+        "requested": "Demandée",
+        "approved": "Approuvée",
+        "planning": "Planification",
+        "scheduled": "Planifiée",
+        "in_progress": "En cours",
+        "report_drafting": "Rédaction du rapport",
+        "report_review": "Révision du rapport",
+        "completed": "Terminée",
+        "cancelled": "Annulée"
+      },
+      "types": {
+        "full": "Revue complète",
+        "focused": "Revue ciblée",
+        "follow_up": "Revue de suivi",
+        "surveillance": "Revue de surveillance"
+      },
+      "location": {
+        "on_site": "Sur site",
+        "hybrid": "Hybride",
+        "remote": "À distance"
+      },
+      "language": {
+        "en": "Anglais",
+        "fr": "Français",
+        "both": "Bilingue (EN/FR)"
+      },
+      "teamRole": {
+        "lead_reviewer": "Réviseur principal",
+        "reviewer": "Réviseur",
+        "technical_expert": "Expert technique",
+        "observer": "Observateur",
+        "trainee": "Stagiaire"
+      }
+    },
+    "edit": {
+      "pageTitle": "Modifier la demande de revue",
+      "pageDescription": "Modifier votre demande de revue par les pairs",
+      "title": "Modifier la demande de revue",
+      "subtitle": "Modification de la demande {reference}",
+      "backToDetail": "Retour aux détails de la revue",
+      "backToReviews": "Retour aux revues",
+      "schedule": {
+        "title": "Calendrier",
+        "description": "Mettre à jour les dates demandées pour votre revue par les pairs.",
+        "startDate": "Date de début",
+        "endDate": "Date de fin",
+        "selectDate": "Sélectionner une date"
+      },
+      "logistics": {
+        "title": "Logistique",
+        "description": "Mettre à jour les préférences logistiques pour la revue.",
+        "locationType": "Type de lieu",
+        "onSite": "Sur site",
+        "hybrid": "Hybride",
+        "remote": "À distance",
+        "language": "Langue préférée",
+        "english": "Anglais",
+        "french": "Français",
+        "both": "Bilingue (EN/FR)",
+        "accommodation": "Hébergement fourni",
+        "transportation": "Transport organisé"
+      },
+      "contact": {
+        "title": "Contact principal",
+        "description": "Mettre à jour les coordonnées du contact principal pour cette revue.",
+        "name": "Nom du contact",
+        "email": "Email du contact",
+        "phone": "Téléphone du contact"
+      },
+      "requirements": {
+        "title": "Exigences spéciales",
+        "description": "Mettre à jour les exigences spéciales ou notes pour l'équipe de revue.",
+        "placeholder": "Entrez les exigences spéciales, besoins d'accessibilité, protocoles de sécurité ou autres considérations...",
+        "help": "Incluez toute information utile pour aider l'équipe de revue à se préparer"
+      },
+      "actions": {
+        "cancel": "Annuler",
+        "save": "Enregistrer les modifications",
+        "saving": "Enregistrement..."
+      },
+      "success": {
+        "title": "Modifications enregistrées",
+        "description": "Votre demande de revue a été mise à jour avec succès."
+      },
+      "error": {
+        "title": "Échec de l'enregistrement",
+        "loadTitle": "Échec du chargement",
+        "notFound": "Revue non trouvée",
+        "notFoundDescription": "La revue que vous essayez de modifier n'existe pas.",
+        "notEditable": "Modification impossible",
+        "notEditableDescription": "Cette revue ne peut plus être modifiée car elle a dépassé le stade de la demande initiale."
+      }
+    },
     "request": {
       "pageTitle": "Demande de revue par les pairs",
       "pageDescription": "Soumettre une demande de revue par les pairs pour votre organisation",

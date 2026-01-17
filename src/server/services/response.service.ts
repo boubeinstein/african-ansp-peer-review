@@ -28,6 +28,10 @@ import {
   type SaveResponseResult,
   type BulkSaveResult,
 } from "@/lib/validations/response";
+import {
+  isANSResponseAnswered,
+  isSMSResponseAnswered,
+} from "@/lib/utils/assessment-helpers";
 
 // =============================================================================
 // TYPES
@@ -672,11 +676,11 @@ export async function calculateProgress(
     }
     byCategory[categoryId].total++;
 
-    // Check if answered
+    // Check if answered - use centralized helper for consistency
     const isAnswered =
       questionnaireType === "ANS_USOAP_CMA"
-        ? r.responseValue !== null
-        : r.maturityLevel !== null;
+        ? isANSResponseAnswered(r.responseValue)
+        : isSMSResponseAnswered(r.maturityLevel);
 
     if (isAnswered) {
       answeredQuestions++;

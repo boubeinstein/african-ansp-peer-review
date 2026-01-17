@@ -27,6 +27,10 @@ import {
   PRIORITY_PQ_WEIGHT,
   DEFAULT_PQ_WEIGHT,
 } from "@/lib/constants/scoring";
+import {
+  isANSResponseAnswered,
+  isSMSResponseAnswered,
+} from "@/lib/utils/assessment-helpers";
 
 // =============================================================================
 // TYPES
@@ -690,17 +694,16 @@ export class ScoringService {
     let answeredCount = 0;
 
     if (assessment.questionnaire.type === "ANS_USOAP_CMA") {
+      // Use centralized helper for consistency with UI and submit validation
       for (const response of assessment.responses) {
-        if (
-          response.responseValue &&
-          response.responseValue !== "NOT_REVIEWED"
-        ) {
+        if (isANSResponseAnswered(response.responseValue)) {
           answeredCount++;
         }
       }
     } else {
+      // Use centralized helper for consistency with UI and submit validation
       for (const response of assessment.responses) {
-        if (response.maturityLevel) {
+        if (isSMSResponseAnswered(response.maturityLevel)) {
           answeredCount++;
         }
       }

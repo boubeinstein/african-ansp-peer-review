@@ -2323,5 +2323,146 @@
       "updateSuccess": "Organization updated successfully",
       "updateError": "Failed to update organization"
     }
+  },
+  "review": {
+    "request": {
+      "pageTitle": "Request Peer Review",
+      "pageDescription": "Submit a request for a peer review of your organization",
+      "title": "Request a Peer Review",
+      "description": "Complete the following steps to request a peer review for your organization.",
+      "backToReviews": "Back to Reviews",
+      "steps": {
+        "assessment": "Assessment",
+        "scope": "Scope",
+        "schedule": "Schedule",
+        "logistics": "Logistics",
+        "review": "Review"
+      },
+      "assessment": {
+        "title": "Select Assessments",
+        "description": "Choose which self-assessments should be included in the peer review.",
+        "placeholder": "Assessment selection will be available here.",
+        "selectLabel": "Self-Assessments",
+        "selectDescription": "Select one or more completed self-assessments to include in this peer review request.",
+        "submittedOn": "Submitted on {date}",
+        "noAssessments": "No Assessments Available",
+        "noAssessmentsDescription": "You must complete and submit at least one self-assessment before you can request a peer review.",
+        "available": "{count, plural, one {# assessment} other {# assessments}} available"
+      },
+      "scope": {
+        "title": "Define Review Scope",
+        "description": "Specify the type of review and focus areas.",
+        "placeholder": "Scope configuration will be available here.",
+        "typeLabel": "Review Type",
+        "types": {
+          "ansOnly": "ANS Review Only",
+          "ansOnlyDesc": "Focus on Air Navigation Services based on the ICAO USOAP CMA 2024 framework. Covers ATS, AIM, MET, CNS, and SAR areas.",
+          "smsOnly": "SMS Review Only",
+          "smsOnlyDesc": "Focus on Safety Management System based on the CANSO Standard of Excellence. Covers policy, risk management, assurance, and promotion.",
+          "comprehensive": "Comprehensive Review",
+          "comprehensiveDesc": "Complete review covering both ANS and SMS aspects. Recommended when both assessment types have been completed."
+        },
+        "focusAreasLabel": "Focus Areas (Optional)",
+        "focusAreasDescription": "Select specific areas you would like the review team to focus on. Leave empty for a complete review.",
+        "focusAreas": {
+          "ATS": "Air Traffic Services",
+          "AIM": "Aeronautical Information Management",
+          "MET": "Meteorological Services",
+          "CNS": "Communication, Navigation, Surveillance",
+          "SAR": "Search and Rescue",
+          "SMS_POLICY": "Safety Policy & Objectives",
+          "SMS_RISK": "Safety Risk Management",
+          "SMS_ASSURANCE": "Safety Assurance",
+          "SMS_PROMOTION": "Safety Promotion"
+        }
+      },
+      "schedule": {
+        "title": "Preferred Schedule",
+        "description": "Indicate your preferred dates for the peer review.",
+        "durationNote": "Review Duration Requirements",
+        "durationDescription": "Peer reviews typically last 3-10 days. Requests must be submitted at least 30 days in advance to allow for team assembly and preparation.",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "selectDate": "Select a date",
+        "startDateHelp": "Earliest available date is 30 days from today",
+        "endDateHelp": "Must be 3-10 days after start date",
+        "duration": "Review duration: {days} days"
+      },
+      "logistics": {
+        "title": "Logistics & Contact",
+        "description": "Provide logistics information and primary contact details.",
+        "locationLabel": "Review Location Type",
+        "location": {
+          "onSite": "On-Site Review",
+          "onSiteDesc": "Review team visits your facility in person for all activities",
+          "hybrid": "Hybrid Review",
+          "hybridDesc": "Combination of on-site visits and remote sessions",
+          "remote": "Remote Review",
+          "remoteDesc": "Entire review conducted virtually via video conferencing"
+        },
+        "supportLabel": "Support Provided",
+        "accommodationProvided": "Accommodation will be provided for the review team",
+        "transportationProvided": "Transportation will be arranged for the review team",
+        "languageLabel": "Preferred Language",
+        "languageDescription": "Select the primary language for the review activities and reports",
+        "bothLanguages": "Both (Bilingual)",
+        "contactLabel": "Primary Contact Information",
+        "contactName": "Contact Name",
+        "contactEmail": "Contact Email",
+        "contactPhone": "Contact Phone",
+        "specialRequirements": "Special Requirements",
+        "specialRequirementsPlaceholder": "Enter any special requirements, accessibility needs, security protocols, or other considerations for the review team...",
+        "specialRequirementsHelp": "Include any information that would help the review team prepare for their visit"
+      },
+      "review": {
+        "title": "Review & Submit",
+        "description": "Review your request before submitting.",
+        "confirmTitle": "Ready to Submit",
+        "confirmDescription": "Please review the details below before submitting your peer review request. You can go back to previous steps to make changes.",
+        "organization": "Organization",
+        "assessments": "Assessments to Review",
+        "reviewType": "Review Type",
+        "schedule": "Requested Schedule",
+        "location": "Review Location",
+        "language": "Preferred Language",
+        "contact": "Primary Contact",
+        "specialRequirements": "Special Requirements",
+        "days": "{count} days",
+        "accommodationIncluded": "Accommodation",
+        "transportationIncluded": "Transportation",
+        "bothLanguages": "Both (Bilingual)",
+        "types": {
+          "ansOnly": "ANS Review (USOAP CMA Focus)",
+          "smsOnly": "SMS Review (CANSO SoE Focus)",
+          "comprehensive": "Comprehensive Review (ANS + SMS)"
+        },
+        "locations": {
+          "onSite": "On-Site",
+          "hybrid": "Hybrid",
+          "remote": "Remote"
+        }
+      },
+      "navigation": {
+        "previous": "Previous",
+        "next": "Next",
+        "submit": "Submit Request",
+        "submitting": "Submitting..."
+      },
+      "prerequisites": {
+        "notMetTitle": "Prerequisites Not Met",
+        "notMetDescription": "Before requesting a peer review, the following requirements must be met:",
+        "noAssessmentTitle": "Complete a Self-Assessment First",
+        "noAssessmentDescription": "You must complete and submit at least one self-assessment before requesting a peer review.",
+        "goToAssessments": "Go to Assessments"
+      },
+      "success": {
+        "title": "Request Submitted",
+        "description": "Your peer review request {referenceNumber} has been submitted successfully."
+      },
+      "error": {
+        "title": "Submission Failed",
+        "prerequisitesTitle": "Failed to Check Prerequisites"
+      }
+    }
   }
 }

@@ -23,6 +23,7 @@ import {
   CAPStatus,
   UserRole,
   ReviewLocationType,
+  LanguagePreference,
   Prisma,
 } from "@prisma/client";
 
@@ -123,15 +124,19 @@ function canAccessReview(
 
 const reviewRequestSchema = z.object({
   hostOrganizationId: z.string(),
+  assessmentIds: z.array(z.string()).min(1, "At least one assessment must be selected"),
   reviewType: z.nativeEnum(ReviewType),
-  locationType: z.nativeEnum(ReviewLocationType).optional(),
-  requestedDate: z.date().or(z.string().transform((s) => new Date(s))),
-  plannedStartDate: z.date().or(z.string().transform((s) => new Date(s))).optional(),
-  plannedEndDate: z.date().or(z.string().transform((s) => new Date(s))).optional(),
-  objectives: z.string().optional(),
-  specialRequirements: z.string().optional(),
   focusAreas: z.array(z.string()).optional(),
-  questionnairesInScope: z.array(z.string()).optional(),
+  requestedStartDate: z.date().or(z.string().transform((s) => new Date(s))).optional(),
+  requestedEndDate: z.date().or(z.string().transform((s) => new Date(s))).optional(),
+  locationType: z.nativeEnum(ReviewLocationType).default("ON_SITE"),
+  accommodationProvided: z.boolean().default(false),
+  transportationProvided: z.boolean().default(false),
+  languagePreference: z.nativeEnum(LanguagePreference).default("BOTH"),
+  primaryContactName: z.string().min(1, "Primary contact name is required"),
+  primaryContactEmail: z.string().email("Invalid email address"),
+  primaryContactPhone: z.string().optional(),
+  specialRequirements: z.string().optional(),
 });
 
 const reviewUpdateSchema = z.object({
@@ -494,9 +499,13 @@ export const reviewRouter = router({
         },
         select: {
           id: true,
-          type: true,
           submittedAt: true,
           overallScore: true,
+          questionnaire: {
+            select: {
+              type: true,
+            },
+          },
         },
         orderBy: { submittedAt: "desc" },
       });
@@ -533,9 +542,9 @@ export const reviewRouter = router({
         hasRequiredRole,
         submittedAssessments: submittedAssessments.map((a) => ({
           id: a.id,
-          type: a.type,
+          type: a.questionnaire.type,
           submittedAt: a.submittedAt,
-          score: a.overallScore,
+          overallScore: a.overallScore,
         })),
       };
     }),
@@ -595,28 +604,63 @@ export const reviewRouter = router({
         sequence = lastSequence + 1;
       }
 
-      // Create the review
+      // Verify assessments belong to the organization and are submitted
+      const assessments = await ctx.db.assessment.findMany({
+        where: {
+          id: { in: input.assessmentIds },
+          organizationId: input.hostOrganizationId,
+          status: "SUBMITTED",
+        },
+        select: { id: true },
+      });
+
+      if (assessments.length !== input.assessmentIds.length) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Some assessments are invalid, not submitted, or do not belong to the organization",
+        });
+      }
+
+      // Create the review with connected assessments
       const review = await ctx.db.review.create({
         data: {
           referenceNumber: generateReviewNumber(year, sequence),
           hostOrganizationId: input.hostOrganizationId,
           reviewType: input.reviewType,
-          locationType: input.locationType ?? "ON_SITE",
+          locationType: input.locationType,
           status: "REQUESTED",
           phase: "PLANNING",
-          requestedDate: input.requestedDate,
-          plannedStartDate: input.plannedStartDate,
-          plannedEndDate: input.plannedEndDate,
-          objectives: input.objectives,
-          specialRequirements: input.specialRequirements,
+          requestedDate: new Date(),
+          requestedStartDate: input.requestedStartDate,
+          requestedEndDate: input.requestedEndDate,
           areasInScope: input.focusAreas ?? [],
-          questionnairesInScope: input.questionnairesInScope ?? [],
+          accommodationProvided: input.accommodationProvided,
+          transportationProvided: input.transportationProvided,
+          languagePreference: input.languagePreference,
+          primaryContactName: input.primaryContactName,
+          primaryContactEmail: input.primaryContactEmail,
+          primaryContactPhone: input.primaryContactPhone,
+          specialRequirements: input.specialRequirements,
+          // Connect the selected assessments
+          assessments: {
+            connect: input.assessmentIds.map((id) => ({ id })),
+          },
         },
         include: {
           hostOrganization: {
             select: {
+              id: true,
               nameEn: true,
+              nameFr: true,
               icaoCode: true,
+            },
+          },
+          assessments: {
+            select: {
+              id: true,
+              title: true,
+              type: true,
+              status: true,
             },
           },
         },

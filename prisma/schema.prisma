@@ -592,6 +592,8 @@ model Review {
   status                ReviewStatus           @default(REQUESTED)
   phase                 ReviewPhase            @default(PLANNING)
   requestedDate         DateTime               @map("requested_date")
+  requestedStartDate    DateTime?              @map("requested_start_date")
+  requestedEndDate      DateTime?              @map("requested_end_date")
   plannedStartDate      DateTime?              @map("planned_start_date")
   plannedEndDate        DateTime?              @map("planned_end_date")
   actualStartDate       DateTime?              @map("actual_start_date")
@@ -600,8 +602,18 @@ model Review {
   specialRequirements   String?                @map("special_requirements") @db.Text
   questionnairesInScope String[]               @default([]) @map("questionnaires_in_scope")
   areasInScope          String[]               @default([]) @map("areas_in_scope")
+  // Logistics
+  accommodationProvided Boolean                @default(false) @map("accommodation_provided")
+  transportationProvided Boolean               @default(false) @map("transportation_provided")
+  languagePreference    LanguagePreference     @default(BOTH) @map("language_preference")
+  // Primary contact
+  primaryContactName    String?                @map("primary_contact_name")
+  primaryContactEmail   String?                @map("primary_contact_email")
+  primaryContactPhone   String?                @map("primary_contact_phone")
+  // Timestamps
   createdAt             DateTime               @default(now()) @map("created_at")
   updatedAt             DateTime               @updatedAt @map("updated_at")
+  // Relations
   assessments           Assessment[]
   documents             Document[]
   findings              Finding[]
@@ -1152,6 +1164,12 @@ enum ReviewLocationType {
   ON_SITE
   REMOTE
   HYBRID
+}
+
+enum LanguagePreference {
+  EN
+  FR
+  BOTH
 }
 
 enum ReviewStatus {

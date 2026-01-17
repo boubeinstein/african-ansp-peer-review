@@ -2323,5 +2323,146 @@
       "updateSuccess": "Organisation mise à jour avec succès",
       "updateError": "Échec de la mise à jour de l'organisation"
     }
+  },
+  "review": {
+    "request": {
+      "pageTitle": "Demande de revue par les pairs",
+      "pageDescription": "Soumettre une demande de revue par les pairs pour votre organisation",
+      "title": "Demander une revue par les pairs",
+      "description": "Complétez les étapes suivantes pour demander une revue par les pairs pour votre organisation.",
+      "backToReviews": "Retour aux revues",
+      "steps": {
+        "assessment": "Évaluation",
+        "scope": "Portée",
+        "schedule": "Calendrier",
+        "logistics": "Logistique",
+        "review": "Vérification"
+      },
+      "assessment": {
+        "title": "Sélectionner les évaluations",
+        "description": "Choisissez les auto-évaluations à inclure dans la revue par les pairs.",
+        "placeholder": "La sélection des évaluations sera disponible ici.",
+        "selectLabel": "Auto-évaluations",
+        "selectDescription": "Sélectionnez une ou plusieurs auto-évaluations complétées à inclure dans cette demande de revue par les pairs.",
+        "submittedOn": "Soumise le {date}",
+        "noAssessments": "Aucune évaluation disponible",
+        "noAssessmentsDescription": "Vous devez compléter et soumettre au moins une auto-évaluation avant de pouvoir demander une revue par les pairs.",
+        "available": "{count, plural, one {# évaluation disponible} other {# évaluations disponibles}}"
+      },
+      "scope": {
+        "title": "Définir la portée de la revue",
+        "description": "Spécifiez le type de revue et les domaines d'intérêt.",
+        "placeholder": "La configuration de la portée sera disponible ici.",
+        "typeLabel": "Type de revue",
+        "types": {
+          "ansOnly": "Revue ANS uniquement",
+          "ansOnlyDesc": "Concentrez-vous sur les services de navigation aérienne basés sur le cadre USOAP CMA 2024 de l'OACI. Couvre les domaines ATS, AIM, MET, CNS et SAR.",
+          "smsOnly": "Revue SGS uniquement",
+          "smsOnlyDesc": "Concentrez-vous sur le système de gestion de la sécurité basé sur le Standard d'Excellence CANSO. Couvre la politique, la gestion des risques, l'assurance et la promotion.",
+          "comprehensive": "Revue complète",
+          "comprehensiveDesc": "Revue complète couvrant à la fois les aspects ANS et SGS. Recommandé lorsque les deux types d'évaluation ont été complétés."
+        },
+        "focusAreasLabel": "Domaines d'intérêt (Optionnel)",
+        "focusAreasDescription": "Sélectionnez les domaines spécifiques sur lesquels vous souhaitez que l'équipe de revue se concentre. Laissez vide pour une revue complète.",
+        "focusAreas": {
+          "ATS": "Services de la circulation aérienne",
+          "AIM": "Gestion de l'information aéronautique",
+          "MET": "Services météorologiques",
+          "CNS": "Communication, navigation, surveillance",
+          "SAR": "Recherche et sauvetage",
+          "SMS_POLICY": "Politique et objectifs de sécurité",
+          "SMS_RISK": "Gestion des risques de sécurité",
+          "SMS_ASSURANCE": "Assurance de la sécurité",
+          "SMS_PROMOTION": "Promotion de la sécurité"
+        }
+      },
+      "schedule": {
+        "title": "Calendrier souhaité",
+        "description": "Indiquez vos dates préférées pour la revue par les pairs.",
+        "durationNote": "Exigences de durée de la revue",
+        "durationDescription": "Les revues par les pairs durent généralement 3 à 10 jours. Les demandes doivent être soumises au moins 30 jours à l'avance pour permettre la constitution de l'équipe et la préparation.",
+        "startDate": "Date de début",
+        "endDate": "Date de fin",
+        "selectDate": "Sélectionner une date",
+        "startDateHelp": "La date la plus proche disponible est dans 30 jours",
+        "endDateHelp": "Doit être 3 à 10 jours après la date de début",
+        "duration": "Durée de la revue : {days} jours"
+      },
+      "logistics": {
+        "title": "Logistique et contact",
+        "description": "Fournissez les informations logistiques et les coordonnées du contact principal.",
+        "locationLabel": "Type de lieu de la revue",
+        "location": {
+          "onSite": "Revue sur site",
+          "onSiteDesc": "L'équipe de revue se rend dans vos locaux pour toutes les activités",
+          "hybrid": "Revue hybride",
+          "hybridDesc": "Combinaison de visites sur site et de sessions à distance",
+          "remote": "Revue à distance",
+          "remoteDesc": "Revue entièrement conduite virtuellement par visioconférence"
+        },
+        "supportLabel": "Soutien fourni",
+        "accommodationProvided": "L'hébergement sera fourni à l'équipe de revue",
+        "transportationProvided": "Le transport sera organisé pour l'équipe de revue",
+        "languageLabel": "Langue préférée",
+        "languageDescription": "Sélectionnez la langue principale pour les activités de revue et les rapports",
+        "bothLanguages": "Les deux (Bilingue)",
+        "contactLabel": "Coordonnées du contact principal",
+        "contactName": "Nom du contact",
+        "contactEmail": "Email du contact",
+        "contactPhone": "Téléphone du contact",
+        "specialRequirements": "Exigences particulières",
+        "specialRequirementsPlaceholder": "Indiquez toute exigence particulière, besoins d'accessibilité, protocoles de sécurité ou autres considérations pour l'équipe de revue...",
+        "specialRequirementsHelp": "Incluez toute information qui aiderait l'équipe de revue à préparer sa visite"
+      },
+      "review": {
+        "title": "Vérifier et soumettre",
+        "description": "Vérifiez votre demande avant de la soumettre.",
+        "confirmTitle": "Prêt à soumettre",
+        "confirmDescription": "Veuillez vérifier les détails ci-dessous avant de soumettre votre demande de revue par les pairs. Vous pouvez revenir aux étapes précédentes pour apporter des modifications.",
+        "organization": "Organisation",
+        "assessments": "Évaluations à examiner",
+        "reviewType": "Type de revue",
+        "schedule": "Calendrier demandé",
+        "location": "Lieu de la revue",
+        "language": "Langue préférée",
+        "contact": "Contact principal",
+        "specialRequirements": "Exigences particulières",
+        "days": "{count} jours",
+        "accommodationIncluded": "Hébergement",
+        "transportationIncluded": "Transport",
+        "bothLanguages": "Les deux (Bilingue)",
+        "types": {
+          "ansOnly": "Revue ANS (Focus USOAP CMA)",
+          "smsOnly": "Revue SMS (Focus CANSO SoE)",
+          "comprehensive": "Revue complète (ANS + SMS)"
+        },
+        "locations": {
+          "onSite": "Sur site",
+          "hybrid": "Hybride",
+          "remote": "À distance"
+        }
+      },
+      "navigation": {
+        "previous": "Précédent",
+        "next": "Suivant",
+        "submit": "Soumettre la demande",
+        "submitting": "Soumission en cours..."
+      },
+      "prerequisites": {
+        "notMetTitle": "Prérequis non satisfaits",
+        "notMetDescription": "Avant de demander une revue par les pairs, les exigences suivantes doivent être satisfaites :",
+        "noAssessmentTitle": "Complétez d'abord une auto-évaluation",
+        "noAssessmentDescription": "Vous devez compléter et soumettre au moins une auto-évaluation avant de demander une revue par les pairs.",
+        "goToAssessments": "Aller aux évaluations"
+      },
+      "success": {
+        "title": "Demande soumise",
+        "description": "Votre demande de revue par les pairs {referenceNumber} a été soumise avec succès."
+      },
+      "error": {
+        "title": "Échec de la soumission",
+        "prerequisitesTitle": "Échec de la vérification des prérequis"
+      }
+    }
   }
 }

@@ -17,6 +17,7 @@ export default async function ReviewsPage() {
   return (
     <ReviewsPageClient
       userOrganizationId={session?.user?.organizationId ?? undefined}
+      userRole={session?.user?.role}
     />
   );
 }

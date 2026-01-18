@@ -2285,9 +2285,11 @@
       "title": "Aucune revue par les pairs",
       "description": "Les revues par les pairs apparaîtront ici une fois le cycle de revue commencé. Demandez une revue par les pairs pour commencer."
     },
+    "needsTeam": "Équipe requise",
     "actions": {
       "requestReview": "Demander une revue",
-      "viewAll": "Voir tout"
+      "viewAll": "Voir tout",
+      "assignTeam": "Assigner l'équipe"
     },
     "status": {
       "REQUESTED": "Demandée",
@@ -2566,7 +2568,8 @@
       },
       "assignTeam": "Assigner l'équipe",
       "noTeamMembers": "Aucun membre n'a encore été assigné à cette revue.",
-      "assignTeamNow": "Assigner une équipe maintenant"
+      "assignTeamNow": "Assigner une équipe maintenant",
+      "coiCannotAssign": "Conflit d'intérêts : Vous ne pouvez pas assigner des réviseurs à la revue de votre propre organisation. Un autre coordinateur de programme doit gérer cette affectation."
     },
     "teamWizard": {
       "pageTitle": "Assigner l'équipe de revue",
@@ -2709,6 +2712,74 @@
       "teamValid": "L'équipe répond aux exigences",
       "leadQualifiedCount": "Qualifiés comme chef",
       "avgScore": "Score moyen"
+    },
+    "teamWizardDialog": {
+      "title": "Assigner l'équipe de revue",
+      "steps": {
+        "review": "Détails de la revue",
+        "select": "Sélectionner l'équipe",
+        "confirm": "Confirmer"
+      },
+      "reviewInfo": "Informations sur la revue",
+      "hostOrganization": "Organisation hôte",
+      "location": "Lieu",
+      "scheduledDates": "Dates prévues",
+      "reviewScope": "Portée de la revue",
+      "areasInScope": "Domaines concernés",
+      "tbd": "À déterminer",
+      "existingTeamWarning": {
+        "title": "Équipe existante",
+        "description": "Cette revue a déjà {count} membre(s) d'équipe assigné(s). Continuer remplacera l'équipe actuelle."
+      },
+      "reviewNotFound": "Revue non trouvée",
+      "teamSummary": "Résumé de l'équipe",
+      "matchScore": "Score de correspondance",
+      "roles": {
+        "LEAD_REVIEWER": "Réviseur principal",
+        "REVIEWER": "Réviseur",
+        "TECHNICAL_EXPERT": "Expert technique",
+        "OBSERVER": "Observateur",
+        "TRAINEE": "Stagiaire"
+      },
+      "validation": {
+        "noLead": "Aucun réviseur principal assigné",
+        "noLeadDescription": "Veuillez revenir en arrière et assigner un réviseur principal à l'équipe.",
+        "minMembers": "Au moins 2 membres d'équipe requis",
+        "ready": "Équipe prête",
+        "readyDescription": "L'équipe de {count} membres est prête à être assignée."
+      },
+      "cancel": "Annuler",
+      "back": "Retour",
+      "next": "Suivant",
+      "assignTeam": "Assigner l'équipe",
+      "assigning": "Assignation...",
+      "success": "Équipe de revue assignée avec succès",
+      "error": "Échec de l'assignation de l'équipe",
+      "teamValid": "Équipe prête",
+      "needsLead": "Sélectionnez un réviseur principal",
+      "needsMoreMembers": "Minimum {min} membres requis",
+      "types": {
+        "FULL": "Revue complète",
+        "FOCUSED": "Revue ciblée",
+        "FOLLOW_UP": "Revue de suivi",
+        "SURVEILLANCE": "Surveillance"
+      },
+      "status": {
+        "REQUESTED": "Demandée",
+        "APPROVED": "Approuvée",
+        "PLANNING": "Planification",
+        "SCHEDULED": "Programmée",
+        "IN_PROGRESS": "En cours",
+        "REPORT_DRAFTING": "Rédaction du rapport",
+        "REPORT_REVIEW": "Revue du rapport",
+        "COMPLETED": "Terminée",
+        "CANCELLED": "Annulée"
+      },
+      "language": {
+        "EN": "Anglais",
+        "FR": "Français",
+        "BOTH": "Bilingue (AN/FR)"
+      }
     },
     "edit": {
       "pageTitle": "Modifier la demande de revue",

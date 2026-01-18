@@ -12,11 +12,15 @@
  * - Review team members
  */
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { format } from "date-fns";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
+
+// Feature Components
+import { ReviewTeamWizard } from "./review-team-wizard";
 
 // UI Components
 import { Button } from "@/components/ui/button";
@@ -34,6 +38,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 // Icons
 import {
   AlertCircle,
+  AlertTriangle,
   ArrowLeft,
   Building2,
   Calendar,
@@ -57,7 +62,17 @@ import {
 export interface ReviewDetailViewProps {
   reviewId: string;
   locale: string;
+  userRole?: string;
+  userOrganizationId?: string;
 }
+
+// Programme Management roles that can assign review teams
+const MANAGEMENT_ROLES = [
+  "SUPER_ADMIN",
+  "SYSTEM_ADMIN",
+  "STEERING_COMMITTEE",
+  "PROGRAMME_COORDINATOR",
+];
 
 // =============================================================================
 // CONSTANTS
@@ -106,8 +121,17 @@ const STATUS_CONFIG: Record<
 export function ReviewDetailView({
   reviewId,
   locale,
+  userRole,
+  userOrganizationId,
 }: ReviewDetailViewProps) {
   const t = useTranslations("review.detail");
+  const utils = trpc.useUtils();
+
+  // Team assignment wizard state
+  const [teamWizardOpen, setTeamWizardOpen] = useState(false);
+
+  // Permission checks
+  const canManageTeams = userRole ? MANAGEMENT_ROLES.includes(userRole) : false;
 
   // Fetch review data
   const {
@@ -165,8 +189,14 @@ export function ReviewDetailView({
   // Check if review can be edited (only in REQUESTED status)
   const canEdit = review.status === "REQUESTED";
 
-  // Check if team can be assigned (APPROVED, PLANNING, or SCHEDULED status)
-  const canAssignTeam = ["APPROVED", "PLANNING", "SCHEDULED"].includes(review.status);
+  // Check if team assignment is possible based on review status
+  const isAssignableStatus = ["REQUESTED", "APPROVED", "PLANNING", "SCHEDULED"].includes(review.status);
+
+  // Check for COI - user cannot assign team to their own org's review (except SUPER_ADMIN)
+  const hasTeamCOI = userRole !== "SUPER_ADMIN" && userOrganizationId === review.hostOrganization.id;
+
+  // Final check: user must have management permission, review in right status, and no COI
+  const canAssignTeam = canManageTeams && isAssignableStatus && !hasTeamCOI;
 
   // Get organization name based on locale
   const orgName =
@@ -426,14 +456,26 @@ export function ReviewDetailView({
               <CardDescription>{t("reviewTeamDescription")}</CardDescription>
             </div>
             {canAssignTeam && (
-              <Button variant="outline" size="sm" asChild>
-                <Link href={`/${locale}/reviews/${reviewId}/assign-team`}>
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  {t("assignTeam")}
-                </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setTeamWizardOpen(true)}
+              >
+                <UserPlus className="h-4 w-4 mr-2" />
+                {t("assignTeam")}
               </Button>
             )}
           </div>
+
+          {/* COI Warning for management users */}
+          {canManageTeams && hasTeamCOI && isAssignableStatus && (
+            <Alert className="mt-4 border-amber-200 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-800">
+              <AlertTriangle className="h-4 w-4 text-amber-600" />
+              <AlertDescription className="text-amber-700 dark:text-amber-400">
+                {t("coiCannotAssign")}
+              </AlertDescription>
+            </Alert>
+          )}
         </CardHeader>
         <CardContent>
           {review.teamMembers && review.teamMembers.length > 0 ? (
@@ -469,10 +511,12 @@ export function ReviewDetailView({
               <Users className="h-12 w-12 mx-auto mb-3 opacity-40" />
               <p>{t("noTeamMembers")}</p>
               {canAssignTeam && (
-                <Button variant="link" asChild className="mt-2">
-                  <Link href={`/${locale}/reviews/${reviewId}/assign-team`}>
-                    {t("assignTeamNow")}
-                  </Link>
+                <Button
+                  variant="link"
+                  className="mt-2"
+                  onClick={() => setTeamWizardOpen(true)}
+                >
+                  {t("assignTeamNow")}
                 </Button>
               )}
             </div>
@@ -548,6 +592,16 @@ export function ReviewDetailView({
           </CardContent>
         </Card>
       )}
+
+      {/* Review Team Assignment Wizard */}
+      <ReviewTeamWizard
+        open={teamWizardOpen}
+        onOpenChange={setTeamWizardOpen}
+        reviewId={reviewId}
+        onSuccess={() => {
+          utils.review.getById.invalidate({ id: reviewId });
+        }}
+      />
     </div>
   );
 }

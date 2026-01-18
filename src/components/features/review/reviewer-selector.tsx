@@ -14,7 +14,7 @@
  * - Inline role assignment
  */
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
@@ -50,7 +50,6 @@ import {
   Plus,
   X,
   Loader2,
-  Award,
   Briefcase,
 } from "lucide-react";
 
@@ -152,10 +151,6 @@ export function ReviewerSelector({
   // Check if a reviewer is selected
   const isSelected = (reviewerId: string) =>
     selectedTeam.some((m) => m.reviewerProfileId === reviewerId);
-
-  // Get the selected member
-  const getSelectedMember = (reviewerId: string) =>
-    selectedTeam.find((m) => m.reviewerProfileId === reviewerId);
 
   // Check if team has a lead reviewer
   const hasLeadReviewer = selectedTeam.some((m) => m.role === "LEAD_REVIEWER");
@@ -307,7 +302,7 @@ export function ReviewerSelector({
                 <p>{t("noReviewers")}</p>
               </div>
             ) : (
-              <ScrollArea className="h-[400px] pr-4">
+              <ScrollArea className="h-[350px] pr-4">
                 <div className="space-y-3">
                   {reviewers.map((reviewer) => {
                     const selected = isSelected(reviewer.id);
@@ -315,11 +310,20 @@ export function ReviewerSelector({
                     return (
                       <div
                         key={reviewer.id}
+                        onClick={() => !selected && addToTeam(reviewer)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if ((e.key === 'Enter' || e.key === ' ') && !selected) {
+                            e.preventDefault();
+                            addToTeam(reviewer);
+                          }
+                        }}
                         className={cn(
                           "p-3 rounded-lg border transition-colors",
                           selected
-                            ? "bg-primary/5 border-primary"
-                            : "hover:bg-muted/50"
+                            ? "bg-primary/5 border-primary cursor-default"
+                            : "hover:bg-muted/50 cursor-pointer hover:border-primary"
                         )}
                       >
                         <div className="flex items-start justify-between gap-4">
@@ -409,7 +413,10 @@ export function ReviewerSelector({
                               <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() => addToTeam(reviewer)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  addToTeam(reviewer);
+                                }}
                                 disabled={selectedTeam.length >= maxTeamSize}
                               >
                                 <Plus className="h-4 w-4 mr-1" />

@@ -47,11 +47,15 @@ import {
   ArrowRight,
   LayoutGrid,
   List,
+  UserPlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { trpc } from "@/lib/trpc/client";
 import type { ReviewStatus, ReviewType } from "@prisma/client";
+
+// Feature Components
+import { ReviewTeamWizard } from "@/components/features/review/review-team-wizard";
 
 // =============================================================================
 // HELPERS
@@ -78,7 +82,16 @@ function getStatusColor(status: ReviewStatus): string {
 
 interface ReviewsPageClientProps {
   userOrganizationId?: string;
+  userRole?: string;
 }
+
+// Programme Management roles that can assign review teams
+const MANAGEMENT_ROLES = [
+  "SUPER_ADMIN",
+  "SYSTEM_ADMIN",
+  "STEERING_COMMITTEE",
+  "PROGRAMME_COORDINATOR",
+];
 
 // =============================================================================
 // MAIN COMPONENT
@@ -86,16 +99,29 @@ interface ReviewsPageClientProps {
 
 export function ReviewsPageClient({
   userOrganizationId,
+  userRole,
 }: ReviewsPageClientProps) {
+  // Permission checks
+  const canManageTeams = userRole ? MANAGEMENT_ROLES.includes(userRole) : false;
   const t = useTranslations("reviews");
   const tCommon = useTranslations("common");
   const router = useRouter();
+  const utils = trpc.useUtils();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Team assignment wizard state
+  const [teamWizardOpen, setTeamWizardOpen] = useState(false);
+  const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
+
+  const handleAssignTeam = (reviewId: string) => {
+    setSelectedReviewId(reviewId);
+    setTeamWizardOpen(true);
+  };
 
   // Fetch reviews
   const { data: reviewsData, isLoading: loadingReviews } =
@@ -299,6 +325,10 @@ export function ReviewsPageClient({
               review={review}
               viewMode={viewMode}
               onClick={() => router.push(`/reviews/${review.id}`)}
+              onAssignTeam={handleAssignTeam}
+              canManageTeams={canManageTeams}
+              userRole={userRole}
+              userOrganizationId={userOrganizationId}
             />
           ))}
         </div>
@@ -330,6 +360,21 @@ export function ReviewsPageClient({
             {tCommon("next")}
           </Button>
         </div>
+      )}
+
+      {/* Review Team Assignment Wizard */}
+      {selectedReviewId && (
+        <ReviewTeamWizard
+          open={teamWizardOpen}
+          onOpenChange={(open) => {
+            setTeamWizardOpen(open);
+            if (!open) setSelectedReviewId(null);
+          }}
+          reviewId={selectedReviewId}
+          onSuccess={() => {
+            utils.review.list.invalidate();
+          }}
+        />
       )}
     </div>
   );
@@ -406,13 +451,44 @@ interface ReviewCardProps {
   };
   viewMode: "grid" | "list";
   onClick: () => void;
+  onAssignTeam: (reviewId: string) => void;
+  canManageTeams: boolean;
+  userRole?: string;
+  userOrganizationId?: string;
 }
 
-function ReviewCard({ review, viewMode, onClick }: ReviewCardProps) {
+// Statuses that allow team assignment
+const ASSIGNABLE_STATUSES: ReviewStatus[] = [
+  "REQUESTED",
+  "APPROVED",
+  "PLANNING",
+  "SCHEDULED",
+];
+
+function ReviewCard({
+  review,
+  viewMode,
+  onClick,
+  onAssignTeam,
+  canManageTeams,
+  userRole,
+  userOrganizationId,
+}: ReviewCardProps) {
   const t = useTranslations("reviews");
 
   const startDate = review.actualStartDate || review.plannedStartDate;
   const endDate = review.actualEndDate || review.plannedEndDate;
+
+  // Check if assignment is possible based on review status
+  const isAssignableStatus = ASSIGNABLE_STATUSES.includes(review.status);
+
+  // Check for COI - user cannot assign team to their own org's review (except SUPER_ADMIN)
+  const hasTeamCOI = userRole !== "SUPER_ADMIN" && userOrganizationId === review.hostOrganization.id;
+
+  // Final check: user must have management permission, review in right status, and no COI
+  const canAssignTeam = canManageTeams && isAssignableStatus && !hasTeamCOI;
+
+  const needsTeam = review.teamMemberCount === 0 && isAssignableStatus;
 
   if (viewMode === "list") {
     return (
@@ -431,6 +507,11 @@ function ReviewCard({ review, viewMode, onClick }: ReviewCardProps) {
                   {t(`status.${review.status}`)}
                 </Badge>
                 <Badge variant="outline">{t(`type.${review.reviewType}`)}</Badge>
+                {needsTeam && (
+                  <Badge variant="outline" className="border-orange-300 text-orange-700 bg-orange-50">
+                    {t("needsTeam")}
+                  </Badge>
+                )}
               </div>
               <h3 className="font-semibold truncate mt-1">
                 {review.hostOrganization.nameEn}
@@ -459,6 +540,22 @@ function ReviewCard({ review, viewMode, onClick }: ReviewCardProps) {
                 </span>
               </div>
             </div>
+
+            {/* Assign Team Button */}
+            {canAssignTeam && (
+              <Button
+                variant={needsTeam ? "default" : "outline"}
+                size="sm"
+                className={cn(needsTeam && "animate-pulse")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onAssignTeam(review.id);
+                }}
+              >
+                <UserPlus className="h-4 w-4 mr-1" />
+                {t("actions.assignTeam")}
+              </Button>
+            )}
 
             <ArrowRight className="h-5 w-5 text-muted-foreground shrink-0" />
           </div>
@@ -492,8 +589,13 @@ function ReviewCard({ review, viewMode, onClick }: ReviewCardProps) {
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Badge variant="outline">{t(`type.${review.reviewType}`)}</Badge>
+          {needsTeam && (
+            <Badge variant="outline" className="border-orange-300 text-orange-700 bg-orange-50">
+              {t("needsTeam")}
+            </Badge>
+          )}
         </div>
 
         {startDate && endDate && (
@@ -514,6 +616,22 @@ function ReviewCard({ review, viewMode, onClick }: ReviewCardProps) {
             {t("findings", { count: review.findingCount })}
           </span>
         </div>
+
+        {/* Assign Team Button */}
+        {canAssignTeam && (
+          <Button
+            variant={needsTeam ? "default" : "outline"}
+            size="sm"
+            className={cn("w-full", needsTeam && "animate-pulse")}
+            onClick={(e) => {
+              e.stopPropagation();
+              onAssignTeam(review.id);
+            }}
+          >
+            <UserPlus className="h-4 w-4 mr-2" />
+            {t("actions.assignTeam")}
+          </Button>
+        )}
       </CardContent>
     </Card>
   );

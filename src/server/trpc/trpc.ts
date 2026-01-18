@@ -78,11 +78,12 @@ export const protectedProcedure = t.procedure
   .use(isAuthed);
 
 /**
- * Admin roles that have elevated access
+ * Admin roles that have elevated access (Programme Management Team)
  */
 const ADMIN_ROLES: UserRole[] = [
   "SUPER_ADMIN",
   "SYSTEM_ADMIN",
+  "STEERING_COMMITTEE",
   "PROGRAMME_COORDINATOR",
 ];
 

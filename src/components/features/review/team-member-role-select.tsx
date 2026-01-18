@@ -150,7 +150,6 @@ export function TeamMemberRoleSelect({
       </SelectTrigger>
       <SelectContent>
         {TEAM_ROLES.map((role) => {
-          const roleConfig = ROLE_CONFIG[role];
           const isDisabled = role === "LEAD_REVIEWER" && !isLeadQualified;
 
           return (

@@ -20,7 +20,6 @@ import {
   DropdownMenuItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -294,11 +293,6 @@ export function ReviewerDirectory({
     toast.info(t("selection.statusChangeUnavailable"));
   }
 
-  function handleCreateTeam() {
-    // For now, just show a toast - team creation will be implemented later
-    toast.info(t("selection.teamCreationUnavailable"));
-  }
-
   return (
     <div className={cn("space-y-4", className)}>
       {/* Controls Bar */}
@@ -438,14 +432,6 @@ export function ReviewerDirectory({
                 <DropdownMenuItem onClick={handleBulkStatusChange}>
                   <UserCheck className="h-4 w-4 mr-2" />
                   {t("actions.changeStatus")}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={handleCreateTeam}
-                  disabled={selectedIds.size < 2}
-                >
-                  <Users className="h-4 w-4 mr-2" />
-                  {t("actions.createTeam")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

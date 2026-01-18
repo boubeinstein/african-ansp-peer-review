@@ -2285,9 +2285,11 @@
       "title": "No peer reviews yet",
       "description": "Peer reviews will appear here once the review cycle begins. Request a peer review to get started."
     },
+    "needsTeam": "Needs Team",
     "actions": {
       "requestReview": "Request Review",
-      "viewAll": "View All"
+      "viewAll": "View All",
+      "assignTeam": "Assign Team"
     },
     "status": {
       "REQUESTED": "Requested",
@@ -2566,7 +2568,8 @@
       },
       "assignTeam": "Assign Team",
       "noTeamMembers": "No team members have been assigned to this review yet.",
-      "assignTeamNow": "Assign a team now"
+      "assignTeamNow": "Assign a team now",
+      "coiCannotAssign": "Conflict of interest: You cannot assign reviewers to your own organization's peer review. Another programme coordinator must handle this assignment."
     },
     "teamWizard": {
       "pageTitle": "Assign Review Team",
@@ -2709,6 +2712,74 @@
       "teamValid": "Team meets requirements",
       "leadQualifiedCount": "Lead qualified",
       "avgScore": "Avg match score"
+    },
+    "teamWizardDialog": {
+      "title": "Assign Review Team",
+      "steps": {
+        "review": "Review Details",
+        "select": "Select Team",
+        "confirm": "Confirm"
+      },
+      "reviewInfo": "Review Information",
+      "hostOrganization": "Host Organization",
+      "location": "Location",
+      "scheduledDates": "Scheduled Dates",
+      "reviewScope": "Review Scope",
+      "areasInScope": "Areas in Scope",
+      "tbd": "TBD",
+      "existingTeamWarning": {
+        "title": "Existing Team",
+        "description": "This review already has {count} team member(s) assigned. Proceeding will replace the current team."
+      },
+      "reviewNotFound": "Review not found",
+      "teamSummary": "Team Summary",
+      "matchScore": "Match Score",
+      "roles": {
+        "LEAD_REVIEWER": "Lead Reviewer",
+        "REVIEWER": "Reviewer",
+        "TECHNICAL_EXPERT": "Technical Expert",
+        "OBSERVER": "Observer",
+        "TRAINEE": "Trainee"
+      },
+      "validation": {
+        "noLead": "No Lead Reviewer assigned",
+        "noLeadDescription": "Please go back and assign a Lead Reviewer to the team.",
+        "minMembers": "At least 2 team members required",
+        "ready": "Team Ready",
+        "readyDescription": "The team with {count} members is ready to be assigned."
+      },
+      "cancel": "Cancel",
+      "back": "Back",
+      "next": "Next",
+      "assignTeam": "Assign Team",
+      "assigning": "Assigning...",
+      "success": "Review team assigned successfully",
+      "error": "Failed to assign team",
+      "teamValid": "Team ready",
+      "needsLead": "Select a Lead Reviewer",
+      "needsMoreMembers": "Need at least {min} members",
+      "types": {
+        "FULL": "Full Review",
+        "FOCUSED": "Focused Review",
+        "FOLLOW_UP": "Follow-up Review",
+        "SURVEILLANCE": "Surveillance"
+      },
+      "status": {
+        "REQUESTED": "Requested",
+        "APPROVED": "Approved",
+        "PLANNING": "Planning",
+        "SCHEDULED": "Scheduled",
+        "IN_PROGRESS": "In Progress",
+        "REPORT_DRAFTING": "Report Drafting",
+        "REPORT_REVIEW": "Report Review",
+        "COMPLETED": "Completed",
+        "CANCELLED": "Cancelled"
+      },
+      "language": {
+        "EN": "English",
+        "FR": "French",
+        "BOTH": "Bilingual (EN/FR)"
+      }
     },
     "edit": {
       "pageTitle": "Edit Review Request",

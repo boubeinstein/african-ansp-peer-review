@@ -1207,8 +1207,17 @@ export const reviewRouter = router({
     }),
 
   /**
-   * Assign team members to a review (alternative to assignTeamBulk).
-   * Validates lead reviewer requirement and COI.
+   * Assign team members to a review.
+   *
+   * Authorization: Only Programme Management (SUPER_ADMIN, SYSTEM_ADMIN,
+   * STEERING_COMMITTEE, PROGRAMME_COORDINATOR) can assign teams.
+   *
+   * Validates:
+   * - COI: Assigning user cannot be from the host organization (except SUPER_ADMIN)
+   * - Review must be in assignable status (REQUESTED, APPROVED, PLANNING, SCHEDULED)
+   * - Team must have exactly one Lead Reviewer
+   * - Team must have at least 2 members
+   * - No assigned reviewer can be from the host organization
    */
   assignTeam: adminProcedure
     .input(
@@ -1225,6 +1234,8 @@ export const reviewRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+
       // Get the review
       const review = await ctx.db.review.findUnique({
         where: { id: input.reviewId },
@@ -1238,16 +1249,45 @@ export const reviewRouter = router({
         });
       }
 
+      // COI check: User cannot assign teams to their own organization's reviews
+      // (except SUPER_ADMIN who may need to override in exceptional cases)
+      if (
+        user.role !== "SUPER_ADMIN" &&
+        user.organizationId === review.hostOrganizationId
+      ) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Conflict of interest: You cannot assign reviewers to your own organization's peer review.",
+        });
+      }
+
+      // Validate review status - can only assign to reviews not yet in progress
+      const assignableStatuses = ["REQUESTED", "APPROVED", "PLANNING", "SCHEDULED"];
+      if (!assignableStatuses.includes(review.status)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot modify team for reviews that are already in progress or completed.",
+        });
+      }
+
+      // Validate: Must have at least 2 members
+      if (input.members.length < 2) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Review team must have at least 2 members.",
+        });
+      }
+
       // Validate: Must have exactly one lead reviewer
       const leadCount = input.members.filter((m) => m.role === "LEAD_REVIEWER").length;
       if (leadCount !== 1) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Review team must have exactly one Lead Reviewer",
+          message: "Review team must have exactly one Lead Reviewer.",
         });
       }
 
-      // Validate: Check COI for all members
+      // Validate: Check COI for all assigned members
       const userIds = input.members.map((m) => m.userId);
       const users = await ctx.db.user.findMany({
         where: { id: { in: userIds } },
@@ -1262,41 +1302,47 @@ export const reviewRouter = router({
         const names = coiViolations.map((u) => `${u.firstName} ${u.lastName}`).join(", ");
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: `COI violation: ${names} cannot review their own organization`,
+          message: `Conflict of interest: ${names} cannot review their own organization.`,
         });
       }
 
-      // Clear existing team members
-      await ctx.db.reviewTeamMember.deleteMany({
-        where: { reviewId: input.reviewId },
-      });
-
-      // Create new team members
-      const teamMembers = await ctx.db.reviewTeamMember.createMany({
-        data: input.members.map((member) => ({
-          reviewId: input.reviewId,
-          userId: member.userId,
-          reviewerProfileId: member.reviewerProfileId,
-          role: member.role,
-          assignedAreas: member.assignedAreas,
-        })),
-      });
-
-      // Update review status if needed
-      if (review.status === "REQUESTED" || review.status === "APPROVED") {
-        await ctx.db.review.update({
-          where: { id: input.reviewId },
-          data: { status: "PLANNING" },
+      // Perform assignment in a transaction
+      const result = await ctx.db.$transaction(async (tx) => {
+        // Clear existing team members
+        await tx.reviewTeamMember.deleteMany({
+          where: { reviewId: input.reviewId },
         });
-      }
+
+        // Create new team members
+        const teamMembers = await tx.reviewTeamMember.createMany({
+          data: input.members.map((member) => ({
+            reviewId: input.reviewId,
+            userId: member.userId,
+            reviewerProfileId: member.reviewerProfileId,
+            role: member.role,
+            assignedAreas: member.assignedAreas,
+          })),
+        });
+
+        // Update review status if it was REQUESTED or APPROVED
+        if (review.status === "REQUESTED" || review.status === "APPROVED") {
+          await tx.review.update({
+            where: { id: input.reviewId },
+            data: { status: "PLANNING" },
+          });
+        }
+
+        return teamMembers;
+      });
 
       console.log("[Review Team] Assigned:", {
         reviewId: input.reviewId,
+        assignedBy: user.id,
         memberCount: input.members.length,
         lead: input.members.find((m) => m.role === "LEAD_REVIEWER")?.userId,
       });
 
-      return { success: true, memberCount: teamMembers.count };
+      return { success: true, memberCount: result.count };
     }),
 
   /**

@@ -53,6 +53,7 @@
     "questionnaires": "Questionnaires",
     "assessments": "Assessments",
     "reviews": "Peer Reviews",
+    "findings": "Findings",
     "organizations": "Organizations",
     "reviewers": "Reviewers",
     "training": "Training",
@@ -2307,6 +2308,122 @@
       "FOCUSED": "Focused Review",
       "FOLLOW_UP": "Follow-up Review",
       "SURVEILLANCE": "Surveillance"
+    }
+  },
+  "findings": {
+    "title": "Findings",
+    "description": "Manage and track peer review findings",
+    "searchPlaceholder": "Search findings by reference, title...",
+    "filterByStatus": "Filter by status",
+    "filterByType": "Filter by type",
+    "filterBySeverity": "Filter by severity",
+    "allStatuses": "All Statuses",
+    "allTypes": "All Types",
+    "allSeverities": "All Severities",
+    "referenceNumber": "Reference",
+    "noFindings": "No findings",
+    "noFindingsDescription": "No findings have been recorded yet. Findings are created during peer reviews.",
+    "noFindingsWithFilters": "No findings match your current filters. Try adjusting your search criteria.",
+    "clearFilters": "Clear Filters",
+    "showingResults": "Showing {start} to {end} of {total} findings",
+    "previous": "Previous",
+    "next": "Next",
+    "stats": {
+      "total": "Total Findings",
+      "open": "Open",
+      "closed": "Closed",
+      "overdue": "Overdue",
+      "byStatus": "By Status",
+      "byType": "By Type",
+      "bySeverity": "By Severity"
+    },
+    "status": {
+      "OPEN": "Open",
+      "CAP_REQUIRED": "CAP Required",
+      "CAP_SUBMITTED": "CAP Submitted",
+      "CAP_ACCEPTED": "CAP Accepted",
+      "IN_PROGRESS": "In Progress",
+      "VERIFICATION": "Under Verification",
+      "CLOSED": "Closed",
+      "DEFERRED": "Deferred"
+    },
+    "type": {
+      "NON_CONFORMITY": "Non-Conformity",
+      "OBSERVATION": "Observation",
+      "RECOMMENDATION": "Recommendation",
+      "GOOD_PRACTICE": "Good Practice",
+      "CONCERN": "Concern"
+    },
+    "severity": {
+      "CRITICAL": "Critical",
+      "MAJOR": "Major",
+      "MINOR": "Minor",
+      "OBSERVATION": "Observation"
+    },
+    "actions": {
+      "create": "Add Finding",
+      "edit": "Edit Finding",
+      "view": "View Finding",
+      "updateStatus": "Update Status",
+      "assign": "Assign Finding",
+      "delete": "Delete Finding"
+    },
+    "form": {
+      "createTitle": "Add Finding",
+      "createDescription": "Record a new finding from the peer review",
+      "editTitle": "Edit Finding",
+      "editDescription": "Update finding details",
+      "sections": {
+        "classification": "Classification",
+        "details": "Finding Details",
+        "evidence": "Evidence & References",
+        "assignment": "Assignment"
+      },
+      "titleEn": "Title (English)",
+      "titleEnPlaceholder": "Enter finding title in English",
+      "titleFr": "Title (French)",
+      "titleFrPlaceholder": "Enter finding title in French",
+      "descriptionEn": "Description (English)",
+      "descriptionEnPlaceholder": "Describe the finding in detail",
+      "descriptionFr": "Description (French)",
+      "descriptionFrPlaceholder": "Describe the finding in French",
+      "evidenceEn": "Evidence (English)",
+      "evidenceEnPlaceholder": "Supporting evidence for this finding",
+      "evidenceFr": "Evidence (French)",
+      "evidenceFrPlaceholder": "Supporting evidence in French",
+      "icaoReference": "ICAO Reference",
+      "icaoReferencePlaceholder": "e.g., Annex 11, Chapter 3",
+      "criticalElement": "Critical Element",
+      "selectCriticalElement": "Select critical element",
+      "targetCloseDate": "Target Close Date",
+      "capRequired": "CAP Required",
+      "capRequiredDescription": "A Corrective Action Plan is required for this finding",
+      "assignedTo": "Assigned To",
+      "selectAssignee": "Select assignee"
+    },
+    "detail": {
+      "backToList": "Back to Findings",
+      "review": "Peer Review",
+      "organization": "Organization",
+      "question": "Related Question",
+      "identifiedAt": "Identified",
+      "targetCloseDate": "Target Close",
+      "closedAt": "Closed",
+      "cap": "Corrective Action Plan",
+      "documents": "Supporting Documents"
+    },
+    "errors": {
+      "notFound": "Finding not found",
+      "invalidTransition": "Invalid status transition",
+      "cannotDelete": "Cannot delete finding with associated corrective action plan",
+      "permissionDenied": "You do not have permission to perform this action"
+    },
+    "success": {
+      "created": "Finding created successfully",
+      "updated": "Finding updated successfully",
+      "statusUpdated": "Finding status updated successfully",
+      "assigned": "Finding assigned successfully",
+      "deleted": "Finding deleted successfully"
     }
   },
   "organizations": {

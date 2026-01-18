@@ -15,6 +15,7 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
+  FileWarning,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -38,6 +39,7 @@ const navItems: NavItem[] = [
   { titleKey: "questionnaires", href: "/questionnaires", icon: ClipboardList },
   { titleKey: "assessments", href: "/assessments", icon: FileCheck },
   { titleKey: "reviews", href: "/reviews", icon: Users },
+  { titleKey: "findings", href: "/findings", icon: FileWarning },
   { titleKey: "reviewers", href: "/reviewers", icon: UserCheck },
   { titleKey: "organizations", href: "/organizations", icon: Building2 },
   { titleKey: "training", href: "/training", icon: BookOpen },

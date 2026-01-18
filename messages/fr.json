@@ -53,6 +53,7 @@
     "questionnaires": "Questionnaires",
     "assessments": "Évaluations",
     "reviews": "Revues par les Pairs",
+    "findings": "Constatations",
     "organizations": "Organisations",
     "reviewers": "Évaluateurs",
     "training": "Formation",
@@ -2307,6 +2308,122 @@
       "FOCUSED": "Revue ciblée",
       "FOLLOW_UP": "Revue de suivi",
       "SURVEILLANCE": "Surveillance"
+    }
+  },
+  "findings": {
+    "title": "Constatations",
+    "description": "Gérer et suivre les constatations des revues par les pairs",
+    "searchPlaceholder": "Rechercher par référence, titre...",
+    "filterByStatus": "Filtrer par statut",
+    "filterByType": "Filtrer par type",
+    "filterBySeverity": "Filtrer par gravité",
+    "allStatuses": "Tous les statuts",
+    "allTypes": "Tous les types",
+    "allSeverities": "Toutes les gravités",
+    "referenceNumber": "Référence",
+    "noFindings": "Aucune constatation",
+    "noFindingsDescription": "Aucune constatation n'a encore été enregistrée. Les constatations sont créées lors des revues par les pairs.",
+    "noFindingsWithFilters": "Aucune constatation ne correspond à vos filtres actuels. Essayez d'ajuster vos critères de recherche.",
+    "clearFilters": "Effacer les filtres",
+    "showingResults": "Affichage de {start} à {end} sur {total} constatations",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "stats": {
+      "total": "Total des constatations",
+      "open": "Ouvertes",
+      "closed": "Clôturées",
+      "overdue": "En retard",
+      "byStatus": "Par statut",
+      "byType": "Par type",
+      "bySeverity": "Par gravité"
+    },
+    "status": {
+      "OPEN": "Ouverte",
+      "CAP_REQUIRED": "PAC requis",
+      "CAP_SUBMITTED": "PAC soumis",
+      "CAP_ACCEPTED": "PAC accepté",
+      "IN_PROGRESS": "En cours",
+      "VERIFICATION": "En vérification",
+      "CLOSED": "Clôturée",
+      "DEFERRED": "Différée"
+    },
+    "type": {
+      "NON_CONFORMITY": "Non-conformité",
+      "OBSERVATION": "Observation",
+      "RECOMMENDATION": "Recommandation",
+      "GOOD_PRACTICE": "Bonne pratique",
+      "CONCERN": "Préoccupation"
+    },
+    "severity": {
+      "CRITICAL": "Critique",
+      "MAJOR": "Majeure",
+      "MINOR": "Mineure",
+      "OBSERVATION": "Observation"
+    },
+    "actions": {
+      "create": "Ajouter une constatation",
+      "edit": "Modifier la constatation",
+      "view": "Voir la constatation",
+      "updateStatus": "Mettre à jour le statut",
+      "assign": "Assigner la constatation",
+      "delete": "Supprimer la constatation"
+    },
+    "form": {
+      "createTitle": "Ajouter une constatation",
+      "createDescription": "Enregistrer une nouvelle constatation de la revue par les pairs",
+      "editTitle": "Modifier la constatation",
+      "editDescription": "Mettre à jour les détails de la constatation",
+      "sections": {
+        "classification": "Classification",
+        "details": "Détails de la constatation",
+        "evidence": "Preuves et références",
+        "assignment": "Attribution"
+      },
+      "titleEn": "Titre (Anglais)",
+      "titleEnPlaceholder": "Entrez le titre de la constatation en anglais",
+      "titleFr": "Titre (Français)",
+      "titleFrPlaceholder": "Entrez le titre de la constatation en français",
+      "descriptionEn": "Description (Anglais)",
+      "descriptionEnPlaceholder": "Décrivez la constatation en détail",
+      "descriptionFr": "Description (Français)",
+      "descriptionFrPlaceholder": "Décrivez la constatation en français",
+      "evidenceEn": "Preuves (Anglais)",
+      "evidenceEnPlaceholder": "Preuves à l'appui de cette constatation",
+      "evidenceFr": "Preuves (Français)",
+      "evidenceFrPlaceholder": "Preuves à l'appui en français",
+      "icaoReference": "Référence OACI",
+      "icaoReferencePlaceholder": "ex: Annexe 11, Chapitre 3",
+      "criticalElement": "Élément critique",
+      "selectCriticalElement": "Sélectionner l'élément critique",
+      "targetCloseDate": "Date de clôture cible",
+      "capRequired": "PAC requis",
+      "capRequiredDescription": "Un Plan d'Action Corrective est requis pour cette constatation",
+      "assignedTo": "Assigné à",
+      "selectAssignee": "Sélectionner le responsable"
+    },
+    "detail": {
+      "backToList": "Retour aux constatations",
+      "review": "Revue par les pairs",
+      "organization": "Organisation",
+      "question": "Question associée",
+      "identifiedAt": "Identifiée le",
+      "targetCloseDate": "Clôture cible",
+      "closedAt": "Clôturée le",
+      "cap": "Plan d'Action Corrective",
+      "documents": "Documents justificatifs"
+    },
+    "errors": {
+      "notFound": "Constatation introuvable",
+      "invalidTransition": "Transition de statut invalide",
+      "cannotDelete": "Impossible de supprimer une constatation avec un plan d'action corrective associé",
+      "permissionDenied": "Vous n'avez pas la permission d'effectuer cette action"
+    },
+    "success": {
+      "created": "Constatation créée avec succès",
+      "updated": "Constatation mise à jour avec succès",
+      "statusUpdated": "Statut de la constatation mis à jour avec succès",
+      "assigned": "Constatation assignée avec succès",
+      "deleted": "Constatation supprimée avec succès"
     }
   },
   "organizations": {

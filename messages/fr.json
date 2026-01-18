@@ -2563,6 +2563,128 @@
         "technical_expert": "Expert technique",
         "observer": "Observateur",
         "trainee": "Stagiaire"
+      },
+      "assignTeam": "Assigner l'équipe",
+      "noTeamMembers": "Aucun membre n'a encore été assigné à cette revue.",
+      "assignTeamNow": "Assigner une équipe maintenant"
+    },
+    "teamWizard": {
+      "pageTitle": "Assigner l'équipe de revue",
+      "pageDescription": "Sélectionner et assigner des réviseurs à l'équipe de revue par les pairs",
+      "title": "Assigner l'équipe de revue",
+      "subtitle": "Revue {reference} - {organization}",
+      "backToReview": "Retour à la revue",
+      "steps": {
+        "criteria": "Critères",
+        "selection": "Sélection",
+        "confirmation": "Confirmer"
+      },
+      "navigation": {
+        "back": "Retour",
+        "searchReviewers": "Rechercher des réviseurs",
+        "searching": "Recherche...",
+        "reviewTeam": "Réviser l'équipe",
+        "assignTeam": "Assigner l'équipe",
+        "assigning": "Assignation..."
+      },
+      "criteria": {
+        "reviewContext": "Contexte de la revue",
+        "reviewContextDescription": "Résumé des exigences de la revue par les pairs",
+        "hostOrganization": "Organisation hôte",
+        "reviewPeriod": "Période de revue",
+        "areasInScope": "Domaines concernés",
+        "notSet": "Non défini",
+        "teamSize": "Taille de l'équipe",
+        "teamSizeDescription": "Sélectionner le nombre de réviseurs nécessaires",
+        "numberOfReviewers": "Nombre de réviseurs",
+        "minimum": "Min",
+        "recommended": "Rec",
+        "maximum": "Max",
+        "teamSizeNote": "La taille idéale de l'équipe est de 3 réviseurs. Les petites équipes conviennent aux revues ciblées, tandis que les grandes équipes peuvent couvrir plus de domaines simultanément.",
+        "requiredExpertise": "Expertise requise",
+        "requiredExpertiseDescription": "Sélectionner les domaines d'expertise nécessaires pour cette revue",
+        "inScope": "Dans le périmètre",
+        "noExpertiseWarning": "Veuillez sélectionner au moins un domaine d'expertise pour rechercher des réviseurs correspondants.",
+        "requiredLanguages": "Langues requises",
+        "requiredLanguagesDescription": "Sélectionner les langues nécessaires pour mener la revue",
+        "noLanguageWarning": "Veuillez sélectionner au moins une exigence linguistique.",
+        "languageNote": "Au moins un membre de l'équipe doit maîtriser chaque langue sélectionnée pour mener les entretiens et examiner la documentation.",
+        "teamSizeSummary": "{count} membres d'équipe",
+        "expertiseSummary": "{count} domaines d'expertise",
+        "languageSummary": "{count} langues",
+        "readyToSearch": "Prêt à rechercher"
+      },
+      "selection": {
+        "availableReviewers": "Réviseurs disponibles",
+        "foundReviewers": "{eligible} éligibles sur {total} au total",
+        "buildingTeam": "Construction de l'équipe...",
+        "useRecommended": "Utiliser la recommandation",
+        "noResultsTitle": "Aucun réviseur trouvé",
+        "noResultsDescription": "Aucun réviseur ne correspond à vos critères de recherche. Essayez d'ajuster les domaines d'expertise ou les langues.",
+        "showIneligible": "Afficher {count} réviseurs non éligibles",
+        "selectedTeam": "Équipe sélectionnée",
+        "selectedCount": "{selected} sur {target} sélectionnés",
+        "noSelections": "Sélectionnez des réviseurs dans la liste pour construire votre équipe",
+        "minTeamWarning": "Au moins 2 membres d'équipe requis",
+        "noLeadWarning": "Un réviseur principal doit être assigné",
+        "teamValid": "L'équipe répond aux exigences",
+        "roles": {
+          "LEAD_REVIEWER": "Chef",
+          "REVIEWER": "Réviseur",
+          "TECHNICAL_EXPERT": "Expert",
+          "OBSERVER": "Observateur",
+          "TRAINEE": "Stagiaire"
+        }
+      },
+      "confirmation": {
+        "reviewSummary": "Résumé de la revue",
+        "reference": "Référence",
+        "hostOrganization": "Organisation hôte",
+        "period": "Période de revue",
+        "notSet": "Non défini",
+        "teamMembers": "Membres de l'équipe",
+        "teamMembersDescription": "{count} réviseurs assignés à cette équipe",
+        "table": {
+          "name": "Nom",
+          "organization": "Organisation",
+          "matchScore": "Score",
+          "role": "Rôle"
+        },
+        "expertiseCoverage": "Couverture d'expertise",
+        "languageCoverage": "Couverture linguistique",
+        "coverage": "Couverture",
+        "covered": "Couvert",
+        "missing": "Manquant",
+        "warningsTitle": "Avertissements",
+        "errorsTitle": "Erreurs de validation",
+        "warnings": {
+          "noLead": "L'équipe doit avoir exactement un réviseur principal",
+          "minMembers": "L'équipe doit avoir au moins 2 membres",
+          "missingExpertise": "Couverture d'expertise manquante : {areas}",
+          "missingLanguages": "Couverture linguistique manquante : {languages}"
+        },
+        "readyTitle": "Équipe prête",
+        "readyDescription": "L'équipe répond à toutes les exigences et est prête à être assignée à la revue."
+      },
+      "roles": {
+        "LEAD_REVIEWER": "Réviseur principal",
+        "REVIEWER": "Réviseur",
+        "TECHNICAL_EXPERT": "Expert technique",
+        "OBSERVER": "Observateur",
+        "TRAINEE": "Stagiaire",
+        "short": {
+          "LEAD_REVIEWER": "Chef",
+          "REVIEWER": "Réviseur",
+          "TECHNICAL_EXPERT": "Expert",
+          "OBSERVER": "Observateur",
+          "TRAINEE": "Stagiaire"
+        },
+        "notLeadQualified": "Ce réviseur n'est pas qualifié pour être réviseur principal"
+      },
+      "error": {
+        "title": "Erreur",
+        "reviewNotFound": "La revue n'a pas pu être trouvée.",
+        "submitTitle": "Échec de l'assignation"
       }
     },
     "edit": {

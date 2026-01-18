@@ -2563,6 +2563,128 @@
         "technical_expert": "Technical Expert",
         "observer": "Observer",
         "trainee": "Trainee"
+      },
+      "assignTeam": "Assign Team",
+      "noTeamMembers": "No team members have been assigned to this review yet.",
+      "assignTeamNow": "Assign a team now"
+    },
+    "teamWizard": {
+      "pageTitle": "Assign Review Team",
+      "pageDescription": "Select and assign reviewers to the peer review team",
+      "title": "Assign Review Team",
+      "subtitle": "Review {reference} - {organization}",
+      "backToReview": "Back to Review",
+      "steps": {
+        "criteria": "Criteria",
+        "selection": "Selection",
+        "confirmation": "Confirm"
+      },
+      "navigation": {
+        "back": "Back",
+        "searchReviewers": "Search Reviewers",
+        "searching": "Searching...",
+        "reviewTeam": "Review Team",
+        "assignTeam": "Assign Team",
+        "assigning": "Assigning..."
+      },
+      "criteria": {
+        "reviewContext": "Review Context",
+        "reviewContextDescription": "Summary of the peer review requirements",
+        "hostOrganization": "Host Organization",
+        "reviewPeriod": "Review Period",
+        "areasInScope": "Areas in Scope",
+        "notSet": "Not set",
+        "teamSize": "Team Size",
+        "teamSizeDescription": "Select the number of reviewers needed",
+        "numberOfReviewers": "Number of Reviewers",
+        "minimum": "Min",
+        "recommended": "Rec",
+        "maximum": "Max",
+        "teamSizeNote": "The ideal team size is 3 reviewers. Smaller teams work well for focused reviews, while larger teams can cover more areas simultaneously.",
+        "requiredExpertise": "Required Expertise",
+        "requiredExpertiseDescription": "Select the expertise areas needed for this review",
+        "inScope": "In Scope",
+        "noExpertiseWarning": "Please select at least one expertise area to search for matching reviewers.",
+        "requiredLanguages": "Required Languages",
+        "requiredLanguagesDescription": "Select the languages needed for conducting the review",
+        "noLanguageWarning": "Please select at least one language requirement.",
+        "languageNote": "At least one team member must be proficient in each selected language to conduct interviews and review documentation.",
+        "teamSizeSummary": "{count} team members",
+        "expertiseSummary": "{count} expertise areas",
+        "languageSummary": "{count} languages",
+        "readyToSearch": "Ready to search"
+      },
+      "selection": {
+        "availableReviewers": "Available Reviewers",
+        "foundReviewers": "{eligible} eligible of {total} total",
+        "buildingTeam": "Building Team...",
+        "useRecommended": "Use Recommended",
+        "noResultsTitle": "No Reviewers Found",
+        "noResultsDescription": "No reviewers match your search criteria. Try adjusting the expertise areas or languages.",
+        "showIneligible": "Show {count} ineligible reviewers",
+        "selectedTeam": "Selected Team",
+        "selectedCount": "{selected} of {target} selected",
+        "noSelections": "Select reviewers from the list to build your team",
+        "minTeamWarning": "At least 2 team members required",
+        "noLeadWarning": "A Lead Reviewer must be assigned",
+        "teamValid": "Team meets requirements",
+        "roles": {
+          "LEAD_REVIEWER": "Lead",
+          "REVIEWER": "Reviewer",
+          "TECHNICAL_EXPERT": "Expert",
+          "OBSERVER": "Observer",
+          "TRAINEE": "Trainee"
+        }
+      },
+      "confirmation": {
+        "reviewSummary": "Review Summary",
+        "reference": "Reference",
+        "hostOrganization": "Host Organization",
+        "period": "Review Period",
+        "notSet": "Not set",
+        "teamMembers": "Team Members",
+        "teamMembersDescription": "{count} reviewers assigned to this team",
+        "table": {
+          "name": "Name",
+          "organization": "Organization",
+          "matchScore": "Match",
+          "role": "Role"
+        },
+        "expertiseCoverage": "Expertise Coverage",
+        "languageCoverage": "Language Coverage",
+        "coverage": "Coverage",
+        "covered": "Covered",
+        "missing": "Missing",
+        "warningsTitle": "Warnings",
+        "errorsTitle": "Validation Errors",
+        "warnings": {
+          "noLead": "Team must have exactly one Lead Reviewer",
+          "minMembers": "Team must have at least 2 members",
+          "missingExpertise": "Missing expertise coverage: {areas}",
+          "missingLanguages": "Missing language coverage: {languages}"
+        },
+        "readyTitle": "Team Ready",
+        "readyDescription": "The team meets all requirements and is ready to be assigned to the review."
+      },
+      "roles": {
+        "LEAD_REVIEWER": "Lead Reviewer",
+        "REVIEWER": "Reviewer",
+        "TECHNICAL_EXPERT": "Technical Expert",
+        "OBSERVER": "Observer",
+        "TRAINEE": "Trainee",
+        "short": {
+          "LEAD_REVIEWER": "Lead",
+          "REVIEWER": "Reviewer",
+          "TECHNICAL_EXPERT": "Expert",
+          "OBSERVER": "Observer",
+          "TRAINEE": "Trainee"
+        },
+        "notLeadQualified": "This reviewer is not qualified to be Lead Reviewer"
+      },
+      "error": {
+        "title": "Error",
+        "reviewNotFound": "The review could not be found.",
+        "submitTitle": "Assignment Failed"
       }
     },
     "edit": {

@@ -46,6 +46,7 @@ import {
   MapPin,
   Phone,
   User,
+  UserPlus,
   Users,
 } from "lucide-react";
 
@@ -163,6 +164,9 @@ export function ReviewDetailView({
 
   // Check if review can be edited (only in REQUESTED status)
   const canEdit = review.status === "REQUESTED";
+
+  // Check if team can be assigned (APPROVED, PLANNING, or SCHEDULED status)
+  const canAssignTeam = ["APPROVED", "PLANNING", "SCHEDULED"].includes(review.status);
 
   // Get organization name based on locale
   const orgName =
@@ -411,16 +415,28 @@ export function ReviewDetailView({
       </div>
 
       {/* Review Team */}
-      {review.teamMembers && review.teamMembers.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              {t("reviewTeam")}
-            </CardTitle>
-            <CardDescription>{t("reviewTeamDescription")}</CardDescription>
-          </CardHeader>
-          <CardContent>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                {t("reviewTeam")}
+              </CardTitle>
+              <CardDescription>{t("reviewTeamDescription")}</CardDescription>
+            </div>
+            {canAssignTeam && (
+              <Button variant="outline" size="sm" asChild>
+                <Link href={`/${locale}/reviews/${reviewId}/assign-team`}>
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  {t("assignTeam")}
+                </Link>
+              </Button>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          {review.teamMembers && review.teamMembers.length > 0 ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {review.teamMembers.map((member) => (
                 <div
@@ -448,9 +464,21 @@ export function ReviewDetailView({
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
-      )}
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <Users className="h-12 w-12 mx-auto mb-3 opacity-40" />
+              <p>{t("noTeamMembers")}</p>
+              {canAssignTeam && (
+                <Button variant="link" asChild className="mt-2">
+                  <Link href={`/${locale}/reviews/${reviewId}/assign-team`}>
+                    {t("assignTeamNow")}
+                  </Link>
+                </Button>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Special Requirements */}
       {review.specialRequirements && (

@@ -991,6 +991,221 @@ export const reviewRouter = router({
       });
     }),
 
+  /**
+   * Assign multiple team members to a review in a single transaction.
+   * Used by the Team Assignment Wizard for bulk team creation.
+   */
+  assignTeamBulk: adminProcedure
+    .input(
+      z.object({
+        reviewId: z.string().cuid(),
+        assignments: z.array(
+          z.object({
+            userId: z.string().cuid(),
+            reviewerProfileId: z.string().cuid(),
+            role: z.nativeEnum(TeamRole),
+            assignedAreas: z.array(z.string()).optional(),
+          })
+        ).min(1, "At least one team member is required"),
+        replaceExisting: z.boolean().default(false),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { reviewId, assignments, replaceExisting } = input;
+
+      // 1. Validate review exists and is in appropriate status
+      const review = await ctx.db.review.findUnique({
+        where: { id: reviewId },
+        select: {
+          id: true,
+          status: true,
+          hostOrganizationId: true,
+          teamMembers: {
+            select: { id: true, userId: true },
+          },
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
+      // Only allow team assignment in certain statuses
+      const allowedStatuses: ReviewStatus[] = ["APPROVED", "PLANNING", "SCHEDULED"];
+      if (!allowedStatuses.includes(review.status)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Cannot assign team when review is in ${review.status} status`,
+        });
+      }
+
+      // 2. Validate no duplicate users in assignments
+      const userIds = assignments.map((a) => a.userId);
+      const uniqueUserIds = new Set(userIds);
+      if (uniqueUserIds.size !== userIds.length) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Duplicate users in team assignments",
+        });
+      }
+
+      // 3. Validate exactly one LEAD_REVIEWER
+      const leadCount = assignments.filter((a) => a.role === "LEAD_REVIEWER").length;
+      if (leadCount === 0) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Team must have exactly one Lead Reviewer",
+        });
+      }
+      if (leadCount > 1) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Team can only have one Lead Reviewer",
+        });
+      }
+
+      // 4. Get reviewer profiles to validate COI and lead qualification
+      const reviewerProfiles = await ctx.db.reviewerProfile.findMany({
+        where: {
+          id: { in: assignments.map((a) => a.reviewerProfileId) },
+        },
+        select: {
+          id: true,
+          userId: true,
+          homeOrganizationId: true,
+          isLeadQualified: true,
+          conflictsOfInterest: {
+            where: {
+              organizationId: review.hostOrganizationId,
+              endDate: null, // Active COIs only
+            },
+            select: {
+              id: true,
+              coiType: true,
+            },
+          },
+        },
+      });
+
+      // Create lookup for validation
+      const profileMap = new Map(reviewerProfiles.map((p) => [p.id, p]));
+
+      // 5. Validate each assignment
+      for (const assignment of assignments) {
+        const profile = profileMap.get(assignment.reviewerProfileId);
+
+        if (!profile) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: `Reviewer profile not found: ${assignment.reviewerProfileId}`,
+          });
+        }
+
+        // Check user matches profile
+        if (profile.userId !== assignment.userId) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "User ID does not match reviewer profile",
+          });
+        }
+
+        // Check COI - home organization
+        if (profile.homeOrganizationId === review.hostOrganizationId) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: `Reviewer cannot review their own organization`,
+          });
+        }
+
+        // Check COI - declared conflicts (hard conflicts only)
+        const hardConflict = profile.conflictsOfInterest.find(
+          (coi) => coi.coiType === "HOME_ORGANIZATION" || coi.coiType === "FAMILY_RELATIONSHIP"
+        );
+        if (hardConflict) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: `Reviewer has a conflict of interest with the host organization`,
+          });
+        }
+
+        // Check lead qualification if assigning as LEAD_REVIEWER
+        if (assignment.role === "LEAD_REVIEWER" && !profile.isLeadQualified) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Selected Lead Reviewer is not lead-qualified",
+          });
+        }
+      }
+
+      // 6. Execute transaction: optionally remove existing, then add new
+      const result = await ctx.db.$transaction(async (tx) => {
+        // Remove existing team members if requested
+        if (replaceExisting && review.teamMembers.length > 0) {
+          await tx.reviewTeamMember.deleteMany({
+            where: { reviewId },
+          });
+        }
+
+        // Create all new team members
+        const createdMembers = await Promise.all(
+          assignments.map((assignment) =>
+            tx.reviewTeamMember.create({
+              data: {
+                reviewId,
+                userId: assignment.userId,
+                reviewerProfileId: assignment.reviewerProfileId,
+                role: assignment.role,
+                assignedAreas: assignment.assignedAreas ?? [],
+              },
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                  },
+                },
+                reviewerProfile: {
+                  select: {
+                    id: true,
+                    isLeadQualified: true,
+                    expertiseAreas: true,
+                    homeOrganization: {
+                      select: {
+                        id: true,
+                        nameEn: true,
+                        icaoCode: true,
+                      },
+                    },
+                  },
+                },
+              },
+            })
+          )
+        );
+
+        // Update review status to PLANNING if it was APPROVED
+        if (review.status === "APPROVED") {
+          await tx.review.update({
+            where: { id: reviewId },
+            data: { status: "PLANNING" },
+          });
+        }
+
+        return createdMembers;
+      });
+
+      return {
+        success: true,
+        teamMembers: result,
+        count: result.length,
+      };
+    }),
+
   // ==========================================================================
   // MUTATIONS - FINDINGS
   // ==========================================================================

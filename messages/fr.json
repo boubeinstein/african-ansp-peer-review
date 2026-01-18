@@ -2687,6 +2687,29 @@
         "submitTitle": "Échec de l'assignation"
       }
     },
+    "reviewerSelector": {
+      "coiNotice": "Les réviseurs de {organization} sont exclus en raison d'un conflit d'intérêts",
+      "searchTitle": "Rechercher des réviseurs",
+      "searchPlaceholder": "Rechercher par nom ou email...",
+      "availableOnly": "Disponibles uniquement",
+      "availableReviewers": "Réviseurs disponibles",
+      "availableDescription": "Cliquez pour ajouter des réviseurs à votre équipe",
+      "found": "trouvé(s)",
+      "loadError": "Échec du chargement des réviseurs",
+      "noReviewers": "Aucun réviseur ne correspond à vos critères",
+      "score": "score",
+      "leadQualified": "Qualifié pour diriger des revues",
+      "selected": "Sélectionné",
+      "add": "Ajouter",
+      "selectedTeam": "Équipe sélectionnée",
+      "selectedCount": "{selected}/{max} membres (min: {min})",
+      "noSelections": "Sélectionnez des réviseurs dans la liste disponible",
+      "minTeamWarning": "Minimum {min} membres d'équipe requis",
+      "noLeadWarning": "Un réviseur principal doit être désigné",
+      "teamValid": "L'équipe répond aux exigences",
+      "leadQualifiedCount": "Qualifiés comme chef",
+      "avgScore": "Score moyen"
+    },
     "edit": {
       "pageTitle": "Modifier la demande de revue",
       "pageDescription": "Modifier votre demande de revue par les pairs",

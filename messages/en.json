@@ -2687,6 +2687,29 @@
         "submitTitle": "Assignment Failed"
       }
     },
+    "reviewerSelector": {
+      "coiNotice": "Reviewers from {organization} are excluded due to conflict of interest",
+      "searchTitle": "Search Reviewers",
+      "searchPlaceholder": "Search by name or email...",
+      "availableOnly": "Available only",
+      "availableReviewers": "Available Reviewers",
+      "availableDescription": "Click to add reviewers to your team",
+      "found": "found",
+      "loadError": "Failed to load reviewers",
+      "noReviewers": "No reviewers match your criteria",
+      "score": "score",
+      "leadQualified": "Qualified to lead reviews",
+      "selected": "Selected",
+      "add": "Add",
+      "selectedTeam": "Selected Team",
+      "selectedCount": "{selected}/{max} members (min: {min})",
+      "noSelections": "Select reviewers from the available list",
+      "minTeamWarning": "Minimum {min} team members required",
+      "noLeadWarning": "A Lead Reviewer must be assigned",
+      "teamValid": "Team meets requirements",
+      "leadQualifiedCount": "Lead qualified",
+      "avgScore": "Avg match score"
+    },
     "edit": {
       "pageTitle": "Edit Review Request",
       "pageDescription": "Edit your peer review request",

@@ -1206,6 +1206,325 @@ export const reviewRouter = router({
       };
     }),
 
+  /**
+   * Assign team members to a review (alternative to assignTeamBulk).
+   * Validates lead reviewer requirement and COI.
+   */
+  assignTeam: adminProcedure
+    .input(
+      z.object({
+        reviewId: z.string(),
+        members: z.array(
+          z.object({
+            userId: z.string(),
+            reviewerProfileId: z.string().optional(),
+            role: z.nativeEnum(TeamRole),
+            assignedAreas: z.array(z.string()).default([]),
+          })
+        ),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Get the review
+      const review = await ctx.db.review.findUnique({
+        where: { id: input.reviewId },
+        include: { hostOrganization: true },
+      });
+
+      if (!review) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
+      // Validate: Must have exactly one lead reviewer
+      const leadCount = input.members.filter((m) => m.role === "LEAD_REVIEWER").length;
+      if (leadCount !== 1) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Review team must have exactly one Lead Reviewer",
+        });
+      }
+
+      // Validate: Check COI for all members
+      const userIds = input.members.map((m) => m.userId);
+      const users = await ctx.db.user.findMany({
+        where: { id: { in: userIds } },
+        select: { id: true, organizationId: true, firstName: true, lastName: true },
+      });
+
+      const coiViolations = users.filter(
+        (u) => u.organizationId === review.hostOrganizationId
+      );
+
+      if (coiViolations.length > 0) {
+        const names = coiViolations.map((u) => `${u.firstName} ${u.lastName}`).join(", ");
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `COI violation: ${names} cannot review their own organization`,
+        });
+      }
+
+      // Clear existing team members
+      await ctx.db.reviewTeamMember.deleteMany({
+        where: { reviewId: input.reviewId },
+      });
+
+      // Create new team members
+      const teamMembers = await ctx.db.reviewTeamMember.createMany({
+        data: input.members.map((member) => ({
+          reviewId: input.reviewId,
+          userId: member.userId,
+          reviewerProfileId: member.reviewerProfileId,
+          role: member.role,
+          assignedAreas: member.assignedAreas,
+        })),
+      });
+
+      // Update review status if needed
+      if (review.status === "REQUESTED" || review.status === "APPROVED") {
+        await ctx.db.review.update({
+          where: { id: input.reviewId },
+          data: { status: "PLANNING" },
+        });
+      }
+
+      console.log("[Review Team] Assigned:", {
+        reviewId: input.reviewId,
+        memberCount: input.members.length,
+        lead: input.members.find((m) => m.role === "LEAD_REVIEWER")?.userId,
+      });
+
+      return { success: true, memberCount: teamMembers.count };
+    }),
+
+  /**
+   * Get current team for a review with full details.
+   */
+  getTeam: protectedProcedure
+    .input(
+      z.object({
+        reviewId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const teamMembers = await ctx.db.reviewTeamMember.findMany({
+        where: { reviewId: input.reviewId },
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+              organizationId: true,
+            },
+          },
+          reviewerProfile: {
+            include: {
+              homeOrganization: {
+                select: {
+                  id: true,
+                  nameEn: true,
+                  nameFr: true,
+                  icaoCode: true,
+                },
+              },
+              languages: true,
+              certifications: {
+                where: {
+                  OR: [{ expiryDate: null }, { expiryDate: { gte: new Date() } }],
+                },
+              },
+            },
+          },
+        },
+        orderBy: [
+          { role: "asc" }, // LEAD_REVIEWER first
+          { createdAt: "asc" },
+        ],
+      });
+
+      return teamMembers;
+    }),
+
+  /**
+   * Add single member to team with COI check.
+   */
+  addTeamMember: adminProcedure
+    .input(
+      z.object({
+        reviewId: z.string(),
+        userId: z.string(),
+        reviewerProfileId: z.string().optional(),
+        role: z.nativeEnum(TeamRole).default("REVIEWER"),
+        assignedAreas: z.array(z.string()).default([]),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Get review for COI check
+      const review = await ctx.db.review.findUnique({
+        where: { id: input.reviewId },
+      });
+
+      if (!review) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
+      // Check COI
+      const user = await ctx.db.user.findUnique({
+        where: { id: input.userId },
+        select: { organizationId: true, firstName: true, lastName: true },
+      });
+
+      if (user?.organizationId === review.hostOrganizationId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `${user.firstName} ${user.lastName} cannot review their own organization`,
+        });
+      }
+
+      // Check if already a member
+      const existing = await ctx.db.reviewTeamMember.findFirst({
+        where: {
+          reviewId: input.reviewId,
+          userId: input.userId,
+        },
+      });
+
+      if (existing) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User is already a team member",
+        });
+      }
+
+      // If adding as lead, check no other lead exists
+      if (input.role === "LEAD_REVIEWER") {
+        const existingLead = await ctx.db.reviewTeamMember.findFirst({
+          where: {
+            reviewId: input.reviewId,
+            role: "LEAD_REVIEWER",
+          },
+        });
+
+        if (existingLead) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Review already has a Lead Reviewer",
+          });
+        }
+      }
+
+      const member = await ctx.db.reviewTeamMember.create({
+        data: {
+          reviewId: input.reviewId,
+          userId: input.userId,
+          reviewerProfileId: input.reviewerProfileId,
+          role: input.role,
+          assignedAreas: input.assignedAreas,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+          reviewerProfile: {
+            select: {
+              id: true,
+              isLeadQualified: true,
+              expertiseAreas: true,
+            },
+          },
+        },
+      });
+
+      return member;
+    }),
+
+  /**
+   * Update member role with auto-demotion of existing lead.
+   */
+  updateTeamMemberRole: adminProcedure
+    .input(
+      z.object({
+        reviewId: z.string(),
+        userId: z.string(),
+        role: z.nativeEnum(TeamRole),
+        assignedAreas: z.array(z.string()).optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Find the team member
+      const teamMember = await ctx.db.reviewTeamMember.findFirst({
+        where: {
+          reviewId: input.reviewId,
+          userId: input.userId,
+        },
+      });
+
+      if (!teamMember) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Team member not found",
+        });
+      }
+
+      // If changing to lead, ensure no other lead (auto-demote existing)
+      if (input.role === "LEAD_REVIEWER") {
+        const existingLead = await ctx.db.reviewTeamMember.findFirst({
+          where: {
+            reviewId: input.reviewId,
+            role: "LEAD_REVIEWER",
+            userId: { not: input.userId },
+          },
+        });
+
+        if (existingLead) {
+          // Demote existing lead to reviewer
+          await ctx.db.reviewTeamMember.update({
+            where: { id: existingLead.id },
+            data: { role: "REVIEWER" },
+          });
+        }
+      }
+
+      const member = await ctx.db.reviewTeamMember.update({
+        where: { id: teamMember.id },
+        data: {
+          role: input.role,
+          ...(input.assignedAreas && { assignedAreas: input.assignedAreas }),
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+          reviewerProfile: {
+            select: {
+              id: true,
+              isLeadQualified: true,
+              expertiseAreas: true,
+            },
+          },
+        },
+      });
+
+      return member;
+    }),
+
   // ==========================================================================
   // MUTATIONS - FINDINGS
   // ==========================================================================

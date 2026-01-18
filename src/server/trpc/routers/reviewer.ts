@@ -14,6 +14,8 @@ import {
   ReviewerStatus,
   ReviewerSelectionStatus,
   ReviewerType,
+  ExpertiseArea,
+  Language,
   Prisma,
 } from "@prisma/client";
 import {
@@ -2968,6 +2970,223 @@ export const reviewerRouter = router({
           isLeadQualified: reviewer.isLeadQualified,
           selectionStatus: reviewer.selectionStatus,
         },
+      };
+    }),
+
+  // ============================================
+  // ELIGIBLE REVIEWERS FOR PEER REVIEW
+  // ============================================
+
+  /**
+   * Get reviewers eligible for a specific peer review (COI-filtered).
+   * Returns reviewers sorted by match score with reasons.
+   */
+  getEligibleForReview: protectedProcedure
+    .input(
+      z.object({
+        reviewId: z.string(),
+        search: z.string().optional(),
+        expertiseAreas: z.array(z.nativeEnum(ExpertiseArea)).optional(),
+        languages: z.array(z.nativeEnum(Language)).optional(),
+        availableOnly: z.boolean().default(true),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      // Get the review to know the host organization (for COI)
+      const review = await ctx.db.review.findUnique({
+        where: { id: input.reviewId },
+        include: {
+          hostOrganization: true,
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
+      // Get existing team members to exclude
+      const existingMembers = await ctx.db.reviewTeamMember.findMany({
+        where: { reviewId: input.reviewId },
+        select: { userId: true },
+      });
+      const existingUserIds = existingMembers.map((m) => m.userId);
+
+      // Build where clause for reviewers
+      const whereClause: Prisma.ReviewerProfileWhereInput = {
+        // COI: Exclude reviewers from host organization
+        homeOrganizationId: { not: review.hostOrganizationId },
+        // Exclude already assigned reviewers
+        ...(existingUserIds.length > 0 && {
+          userId: { notIn: existingUserIds },
+        }),
+        // Only selected reviewers (active in the pool)
+        selectionStatus: "SELECTED",
+      };
+
+      // Filter by availability if requested
+      if (input.availableOnly) {
+        whereClause.isAvailable = true;
+      }
+
+      // Filter by expertise if specified
+      if (input.expertiseAreas && input.expertiseAreas.length > 0) {
+        whereClause.expertiseAreas = { hasSome: input.expertiseAreas };
+      }
+
+      // Search filter
+      if (input.search) {
+        whereClause.user = {
+          OR: [
+            { firstName: { contains: input.search, mode: "insensitive" } },
+            { lastName: { contains: input.search, mode: "insensitive" } },
+            { email: { contains: input.search, mode: "insensitive" } },
+          ],
+        };
+      }
+
+      const reviewers = await ctx.db.reviewerProfile.findMany({
+        where: whereClause,
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+          homeOrganization: {
+            select: {
+              id: true,
+              nameEn: true,
+              nameFr: true,
+              icaoCode: true,
+              country: true,
+            },
+          },
+          languages: true,
+          certifications: {
+            where: {
+              OR: [{ expiryDate: null }, { expiryDate: { gte: new Date() } }],
+            },
+          },
+        },
+        orderBy: [{ isLeadQualified: "desc" }, { reviewsCompleted: "desc" }],
+      });
+
+      // Filter by languages if specified (needs post-query filter due to relation)
+      let filteredReviewers = reviewers;
+      if (input.languages && input.languages.length > 0) {
+        filteredReviewers = reviewers.filter((reviewer) => {
+          const reviewerLangs = reviewer.languages.map((l) => l.language);
+          return input.languages!.some((lang) => reviewerLangs.includes(lang));
+        });
+      }
+
+      // Calculate match scores for each reviewer
+      const reviewersWithScores = filteredReviewers.map((reviewer) => {
+        let matchScore = 0;
+        const matchReasons: string[] = [];
+
+        // Check language match (important for peer reviews)
+        const reviewerLanguages = reviewer.languages.map((l) => l.language);
+        const hasEnglish = reviewerLanguages.includes("EN");
+        const hasFrench = reviewerLanguages.includes("FR");
+
+        if (hasEnglish && hasFrench) {
+          matchScore += 20;
+          matchReasons.push("Bilingual (EN/FR)");
+        } else if (hasEnglish || hasFrench) {
+          matchScore += 10;
+          matchReasons.push(hasEnglish ? "English" : "French");
+        }
+
+        // Check lead qualification
+        if (reviewer.isLeadQualified) {
+          matchScore += 15;
+          matchReasons.push("Lead Qualified");
+        }
+
+        // Check experience
+        if (reviewer.reviewsCompleted >= 5) {
+          matchScore += 15;
+          matchReasons.push(`${reviewer.reviewsCompleted} reviews completed`);
+        } else if (reviewer.reviewsCompleted >= 3) {
+          matchScore += 10;
+          matchReasons.push(`${reviewer.reviewsCompleted} reviews completed`);
+        } else if (reviewer.reviewsCompleted >= 1) {
+          matchScore += 5;
+          matchReasons.push(`${reviewer.reviewsCompleted} review(s) completed`);
+        }
+
+        // Check certifications
+        const hasPeerReviewerCert = reviewer.certifications.some(
+          (c) => c.certificationType === "PEER_REVIEWER"
+        );
+        const hasLeadCert = reviewer.certifications.some(
+          (c) => c.certificationType === "LEAD_REVIEWER"
+        );
+
+        if (hasLeadCert) {
+          matchScore += 15;
+          matchReasons.push("Lead Reviewer Certified");
+        } else if (hasPeerReviewerCert) {
+          matchScore += 10;
+          matchReasons.push("Peer Reviewer Certified");
+        }
+
+        // Check expertise match (if areas were specified)
+        if (input.expertiseAreas && input.expertiseAreas.length > 0) {
+          const matchedAreas = reviewer.expertiseAreas.filter((area) =>
+            input.expertiseAreas!.includes(area)
+          );
+          if (matchedAreas.length > 0) {
+            const expertiseScore = Math.round(
+              (matchedAreas.length / input.expertiseAreas.length) * 25
+            );
+            matchScore += expertiseScore;
+            matchReasons.push(
+              `${matchedAreas.length}/${input.expertiseAreas.length} expertise match`
+            );
+          }
+        }
+
+        return {
+          id: reviewer.id,
+          userId: reviewer.userId,
+          fullName: `${reviewer.user.firstName} ${reviewer.user.lastName}`,
+          email: reviewer.user.email,
+          organization: reviewer.homeOrganization,
+          expertiseAreas: reviewer.expertiseAreas,
+          languages: reviewer.languages,
+          isLeadQualified: reviewer.isLeadQualified,
+          reviewsCompleted: reviewer.reviewsCompleted,
+          reviewsAsLead: reviewer.reviewsAsLead,
+          isAvailable: reviewer.isAvailable,
+          certifications: reviewer.certifications,
+          matchScore,
+          matchReasons,
+          canBeLead: reviewer.isLeadQualified || hasLeadCert,
+        };
+      });
+
+      // Sort by match score
+      reviewersWithScores.sort((a, b) => b.matchScore - a.matchScore);
+
+      return {
+        reviewers: reviewersWithScores,
+        review: {
+          id: review.id,
+          referenceNumber: review.referenceNumber,
+          hostOrganization: review.hostOrganization,
+          plannedStartDate: review.plannedStartDate,
+          plannedEndDate: review.plannedEndDate,
+        },
+        excludedOrganizationId: review.hostOrganizationId,
+        totalCount: reviewersWithScores.length,
       };
     }),
 });

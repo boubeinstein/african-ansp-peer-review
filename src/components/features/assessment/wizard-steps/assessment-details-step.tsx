@@ -17,10 +17,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { QuestionnaireType, AssessmentType } from "@prisma/client";
+import type { QuestionnaireType, AssessmentType, USOAPAuditArea } from "@prisma/client";
 
-// Audit areas for ANS USOAP CMA
-const ANS_AUDIT_AREAS = [
+// Audit areas for ANS USOAP CMA - properly typed
+const ANS_AUDIT_AREAS: USOAPAuditArea[] = [
   "LEG",
   "ORG",
   "PEL",
@@ -30,7 +30,7 @@ const ANS_AUDIT_AREAS = [
   "ANS",
   "AGA",
   "SSP",
-] as const;
+];
 
 // SMS Components for CANSO SoE
 const SMS_COMPONENTS = [
@@ -46,11 +46,11 @@ interface AssessmentDetailsStepProps {
   title: string;
   description: string;
   dueDate: Date | null;
-  selectedAreas: string[];
+  selectedAreas: USOAPAuditArea[];
   onTitleChange: (title: string) => void;
   onDescriptionChange: (description: string) => void;
   onDueDateChange: (date: Date | null) => void;
-  onSelectedAreasChange: (areas: string[]) => void;
+  onSelectedAreasChange: (areas: USOAPAuditArea[]) => void;
 }
 
 function generateDefaultTitle(
@@ -84,7 +84,8 @@ export function AssessmentDetailsStep({
   const tSms = useTranslations("smsComponents");
 
   const isANS = questionnaireType === "ANS_USOAP_CMA";
-  const areas = isANS ? ANS_AUDIT_AREAS : SMS_COMPONENTS;
+  // For ANS assessments, use typed audit areas; for SMS, we don't use selectedAuditAreas
+  const areas = isANS ? ANS_AUDIT_AREAS : [];
 
   // Auto-generate title on mount if empty
   useEffect(() => {
@@ -93,17 +94,19 @@ export function AssessmentDetailsStep({
     }
   }, [title, questionnaireType, assessmentType, onTitleChange, t]);
 
-  // Handle select all / deselect all
+  // Handle select all / deselect all (only for ANS assessments)
   const handleSelectAll = () => {
-    if (selectedAreas.length === areas.length) {
+    if (!isANS) return;
+    if (selectedAreas.length === ANS_AUDIT_AREAS.length) {
       onSelectedAreasChange([]);
     } else {
-      onSelectedAreasChange([...areas]);
+      onSelectedAreasChange([...ANS_AUDIT_AREAS]);
     }
   };
 
-  // Handle individual area toggle
-  const handleAreaToggle = (area: string) => {
+  // Handle individual area toggle (only for ANS assessments)
+  const handleAreaToggle = (area: USOAPAuditArea) => {
+    if (!isANS) return;
     if (selectedAreas.includes(area)) {
       onSelectedAreasChange(selectedAreas.filter((a) => a !== area));
     } else {

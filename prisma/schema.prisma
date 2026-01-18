@@ -519,6 +519,11 @@ model Assessment {
   description     String?
   questionnaireId String               @map("questionnaire_id")
   organizationId  String               @map("organization_id")
+
+  // Selected audit areas for this assessment
+  // When empty, ALL audit areas are included; when populated, only these areas count
+  selectedAuditAreas USOAPAuditArea[]  @default([]) @map("selected_audit_areas")
+
   status          AssessmentStatus     @default(DRAFT)
   progress        Float                @default(0)
   dueDate         DateTime?            @map("due_date")

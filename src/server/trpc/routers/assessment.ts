@@ -97,6 +97,28 @@ const MATURITY_LEVEL_REVERSE: Record<MaturityLevel, string> = {
 };
 
 /**
+ * Build a Prisma where clause for questions filtered by selected audit areas
+ */
+function getQuestionsWhereClause(
+  questionnaireId: string,
+  selectedAuditAreas: USOAPAuditArea[] | null
+): Prisma.QuestionWhereInput {
+  const whereClause: Prisma.QuestionWhereInput = {
+    questionnaireId,
+    isActive: true,
+  };
+
+  // Only filter by audit area if specific areas were selected
+  if (selectedAuditAreas && selectedAuditAreas.length > 0) {
+    whereClause.auditArea = {
+      in: selectedAuditAreas,
+    };
+  }
+
+  return whereClause;
+}
+
+/**
  * Assessment with relations type
  */
 type AssessmentWithRelations = Prisma.AssessmentGetPayload<{
@@ -276,7 +298,8 @@ const CreateAssessmentInput = z.object({
   title: z.string().min(3).max(200),
   description: z.string().max(2000).optional(),
   dueDate: z.date().optional(),
-  scope: z.array(z.string()).optional(), // Audit areas or SMS components to include
+  // Selected audit areas for ANS assessments (when empty, all areas are included)
+  selectedAuditAreas: z.array(z.nativeEnum(USOAPAuditArea)).default([]),
 }).refine(
   (data) => data.questionnaireId || data.questionnaireType,
   { message: "Either questionnaireId or questionnaireType must be provided" }
@@ -432,16 +455,15 @@ export const assessmentRouter = router({
         });
       }
 
-      // Build question filter based on scope
+      // Build question filter based on selectedAuditAreas
       const questionFilter: Prisma.QuestionWhereInput = {
         questionnaireId: questionnaire.id,
       };
-      if (input.scope && input.scope.length > 0) {
+      if (input.selectedAuditAreas && input.selectedAuditAreas.length > 0) {
         if (questionnaire.type === "ANS_USOAP_CMA") {
-          questionFilter.auditArea = { in: input.scope as USOAPAuditArea[] };
-        } else {
-          questionFilter.smsComponent = { in: input.scope as SMSComponent[] };
+          questionFilter.auditArea = { in: input.selectedAuditAreas };
         }
+        // Note: For SMS assessments, selectedAuditAreas is not applicable
       }
 
       // Get organization for reference number generation
@@ -472,7 +494,11 @@ export const assessmentRouter = router({
 
       // Create assessment with empty responses for all questions
       const assessment = await prisma.$transaction(async (tx) => {
-        // Create the assessment
+        // Store selectedAuditAreas from input (only applicable for ANS assessments)
+        const selectedAuditAreas = questionnaire.type === "ANS_USOAP_CMA"
+          ? input.selectedAuditAreas
+          : [];
+
         const newAssessment = await tx.assessment.create({
           data: {
             referenceNumber,
@@ -484,11 +510,18 @@ export const assessmentRouter = router({
             organizationId: user.organizationId!,
             status: "DRAFT",
             progress: 0,
+            selectedAuditAreas,
           },
           include: {
             questionnaire: true,
             organization: true,
           },
+        });
+
+        console.log("[Assessment Create]", {
+          id: newAssessment.id,
+          title: newAssessment.title,
+          selectedAuditAreas: newAssessment.selectedAuditAreas,
         });
 
         // Get questions for this questionnaire (filtered by scope if provided)
@@ -518,7 +551,7 @@ export const assessmentRouter = router({
         questionnaireId: questionnaire.id,
         questionnaireType: questionnaire.type,
         organizationId: user.organizationId,
-        scope: input.scope,
+        selectedAuditAreas: input.selectedAuditAreas,
       });
 
       console.log(
@@ -593,19 +626,38 @@ export const assessmentRouter = router({
         });
       }
 
-      // Calculate current progress - use centralized helper for consistency with UI
-      const totalQuestions = fullAssessment._count.responses;
+      // Get filtered question counts based on selected audit areas
+      const questionsWhere = getQuestionsWhereClause(
+        fullAssessment.questionnaireId,
+        fullAssessment.selectedAuditAreas
+      );
+
+      const totalQuestions = await prisma.question.count({
+        where: questionsWhere,
+      });
+
+      // Get IDs of questions in selected audit areas
+      const requiredQuestions = await prisma.question.findMany({
+        where: questionsWhere,
+        select: { id: true },
+      });
+      const requiredQuestionIdSet = new Set(requiredQuestions.map((q) => q.id));
+
+      // Count answered questions in selected audit areas only
       const answeredQuestions = fullAssessment.responses.filter((r) => {
+        // Only count responses for questions in the selected scope
+        if (!requiredQuestionIdSet.has(r.questionId)) return false;
+
         if (fullAssessment.questionnaire.type === "ANS_USOAP_CMA") {
           return isANSResponseAnswered(r.responseValue);
         }
         return isSMSResponseAnswered(r.maturityLevel);
       }).length;
 
-      const progress =
-        totalQuestions > 0
-          ? Math.round((answeredQuestions / totalQuestions) * 100)
-          : 0;
+      // Calculate correct progress
+      const progress = totalQuestions > 0
+        ? Math.round((answeredQuestions / totalQuestions) * 100)
+        : 0;
 
       return {
         ...fullAssessment,
@@ -623,24 +675,29 @@ export const assessmentRouter = router({
     .query(async ({ input }) => {
       const { assessmentId } = input;
 
-      // Get assessment with questionnaire
+      // Get assessment with selectedAuditAreas
       const assessment = await prisma.assessment.findUnique({
         where: { id: assessmentId },
         include: {
-          questionnaire: {
-            include: {
-              questions: {
-                where: { isActive: true },
-                select: { id: true },
-              },
-            },
-          },
+          questionnaire: true,
         },
       });
 
       if (!assessment) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Assessment not found" });
       }
+
+      // Build question filter using helper function
+      const questionsWhere = getQuestionsWhereClause(
+        assessment.questionnaireId,
+        assessment.selectedAuditAreas
+      );
+
+      // Get questions filtered by selectedAuditAreas
+      const questions = await prisma.question.findMany({
+        where: questionsWhere,
+        select: { id: true },
+      });
 
       // Get all responses for this assessment
       const responses = await prisma.assessmentResponse.findMany({
@@ -649,12 +706,18 @@ export const assessmentRouter = router({
       });
 
       const questionnaireType = assessment.questionnaire.type;
-      const totalQuestions = assessment.questionnaire.questions.length;
+      const totalQuestions = questions.length;
 
-      // Count only properly answered questions - use centralized helper for consistency with UI
+      // Build set of valid question IDs (only those in selectedAuditAreas scope)
+      const validQuestionIds = new Set(questions.map((q) => q.id));
+
+      // Count only properly answered questions that are in scope
       const answeredQuestionIds = new Set(
         responses
           .filter((r) => {
+            // Only count responses for questions in the selected scope
+            if (!validQuestionIds.has(r.questionId)) return false;
+
             if (questionnaireType === "ANS_USOAP_CMA") {
               return isANSResponseAnswered(r.responseValue);
             }
@@ -1042,23 +1105,29 @@ export const assessmentRouter = router({
         });
       }
 
-      // Get the questionnaire with ALL active questions
-      const questionnaire = await prisma.questionnaire.findUnique({
-        where: { id: assessment.questionnaireId },
-        include: {
-          questions: {
-            where: { isActive: true },
-            select: { id: true, pqNumber: true },
-          },
-        },
+      // Get the assessment with selectedAuditAreas
+      const fullAssessment = await prisma.assessment.findUnique({
+        where: { id: input.id },
+        select: { selectedAuditAreas: true },
       });
 
-      if (!questionnaire) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Questionnaire not found",
-        });
-      }
+      // Build where clause filtered by selected audit areas using helper function
+      const questionsWhere = getQuestionsWhereClause(
+        assessment.questionnaireId,
+        fullAssessment?.selectedAuditAreas ?? null
+      );
+
+      // Count total questions for selected audit areas only
+      const totalQuestions = await prisma.question.count({
+        where: questionsWhere,
+      });
+
+      // Get IDs of questions that should be answered
+      const requiredQuestions = await prisma.question.findMany({
+        where: questionsWhere,
+        select: { id: true, pqNumber: true },
+      });
+      const requiredQuestionIdSet = new Set(requiredQuestions.map((q) => q.id));
 
       // Get all responses with questions
       const responses = await prisma.assessmentResponse.findMany({
@@ -1068,11 +1137,20 @@ export const assessmentRouter = router({
         },
       });
 
-      // Calculate actual totals using questionnaire questions
       const questionnaireType = assessment.questionnaire.type;
-      const totalQuestions = questionnaire.questions.length;
 
-      // Build set of answered question IDs - use centralized helper for consistency with UI
+      // Count answered questions (only those in selected audit areas)
+      const answeredQuestions = responses.filter((r) => {
+        // Only count responses for questions in the selected scope
+        if (!requiredQuestionIdSet.has(r.questionId)) return false;
+
+        if (questionnaireType === "ANS_USOAP_CMA") {
+          return isANSResponseAnswered(r.responseValue);
+        }
+        return isSMSResponseAnswered(r.maturityLevel);
+      }).length;
+
+      // Find unanswered questions for error message
       const answeredQuestionIds = new Set(
         responses
           .filter((r) => {
@@ -1084,30 +1162,33 @@ export const assessmentRouter = router({
           .map((r) => r.questionId)
       );
 
-      // Find unanswered questions
-      const unansweredQuestions = questionnaire.questions.filter(
+      const unansweredQuestions = requiredQuestions.filter(
         (q) => !answeredQuestionIds.has(q.id)
       );
 
+      const unansweredCount = totalQuestions - answeredQuestions;
+
       // Log for debugging
       console.log(`[Assessment Submit] Assessment ${input.id}:`, {
+        selectedAuditAreas: fullAssessment?.selectedAuditAreas || [],
         totalQuestions,
-        answeredCount: answeredQuestionIds.size,
-        unansweredCount: unansweredQuestions.length,
-        unansweredPQs: unansweredQuestions.slice(0, 10).map((q: { id: string; pqNumber: string | null }) => q.pqNumber || q.id.slice(0, 8)),
+        answeredCount: answeredQuestions,
+        unansweredCount,
+        unansweredPQs: unansweredQuestions.slice(0, 10).map((q) => q.pqNumber || q.id.slice(0, 8)),
       });
 
-      // Validate all questions are answered
-      if (unansweredQuestions.length > 0) {
-        const percentage = Math.round((answeredQuestionIds.size / totalQuestions) * 100);
-        const unansweredList = unansweredQuestions
-          .slice(0, 5)
-          .map((q: { id: string; pqNumber: string | null }) => q.pqNumber || q.id.slice(0, 8))
-          .join(", ");
+      // Validate all required questions are answered
+      if (answeredQuestions < totalQuestions) {
+        const percentage = Math.round((answeredQuestions / totalQuestions) * 100);
+        const unansweredPQs = unansweredQuestions
+          .map((q) => q.pqNumber)
+          .filter(Boolean)
+          .slice(0, 5);
+        const moreCount = unansweredCount - unansweredPQs.length;
 
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: `Assessment cannot be submitted:\nOnly ${answeredQuestionIds.size} of ${totalQuestions} questions answered (${percentage}%).\nUnanswered questions: ${unansweredList}${unansweredQuestions.length > 5 ? ` and ${unansweredQuestions.length - 5} more...` : ""}`,
+          message: `Assessment cannot be submitted:\nOnly ${answeredQuestions} of ${totalQuestions} questions answered (${percentage}%).\nUnanswered questions: ${unansweredPQs.join(", ")}${moreCount > 0 ? ` and ${moreCount} more...` : ""}`,
         });
       }
 
@@ -1449,6 +1530,14 @@ export const assessmentRouter = router({
         updateData.evidenceUrls = input.evidenceUrls;
       }
 
+      // Debug: Log save attempt
+      console.log("[SAVE_RESPONSE] Saving:", {
+        assessmentId: input.assessmentId,
+        questionId: input.questionId,
+        responseValue: input.responseValue,
+        maturityLevel: input.maturityLevel,
+      });
+
       // Upsert response
       const response = await prisma.assessmentResponse.upsert({
         where: {
@@ -1478,27 +1567,66 @@ export const assessmentRouter = router({
         },
       });
 
-      // Update assessment progress - use centralized helper for consistency with UI
+      // Debug: Log save success
+      console.log("[SAVE_RESPONSE] Saved successfully:", {
+        responseId: response.id,
+        savedValue: response.responseValue,
+      });
+
+      // Get assessment's selectedAuditAreas for progress calculation
+      const assessmentWithAreas = await prisma.assessment.findUnique({
+        where: { id: input.assessmentId },
+        select: { selectedAuditAreas: true },
+      });
+
+      // Calculate progress based on selected audit areas
+      const questionsWhere = getQuestionsWhereClause(
+        assessment.questionnaireId,
+        assessmentWithAreas?.selectedAuditAreas ?? null
+      );
+
+      const totalQuestions = await prisma.question.count({
+        where: questionsWhere,
+      });
+
+      // Get IDs of questions in selected audit areas
+      const requiredQuestions = await prisma.question.findMany({
+        where: questionsWhere,
+        select: { id: true },
+      });
+      const requiredQuestionIdSet = new Set(requiredQuestions.map((q) => q.id));
+
+      // Get all responses for this assessment
       const allResponses = await prisma.assessmentResponse.findMany({
         where: { assessmentId: input.assessmentId },
       });
 
-      const totalQuestions = allResponses.length;
+      // Count answered questions (only those in selected audit areas)
       const answeredQuestions = allResponses.filter((r) => {
+        // Only count responses for questions in the selected scope
+        if (!requiredQuestionIdSet.has(r.questionId)) return false;
+
         if (assessment.questionnaire.type === "ANS_USOAP_CMA") {
           return isANSResponseAnswered(r.responseValue);
         }
         return isSMSResponseAnswered(r.maturityLevel);
       }).length;
 
-      const progress =
-        totalQuestions > 0
-          ? Math.round((answeredQuestions / totalQuestions) * 100)
-          : 0;
+      const progress = totalQuestions > 0
+        ? Math.round((answeredQuestions / totalQuestions) * 100)
+        : 0;
 
       await prisma.assessment.update({
         where: { id: input.assessmentId },
         data: { progress },
+      });
+
+      // Debug: Log progress update
+      console.log("[SAVE_RESPONSE] Progress:", {
+        totalQuestions,
+        answeredQuestions,
+        progress,
+        selectedAreas: assessmentWithAreas?.selectedAuditAreas || [],
       });
 
       return {
@@ -1592,23 +1720,48 @@ export const assessmentRouter = router({
         return updatedResponses;
       });
 
-      // Update assessment progress - use centralized helper for consistency with UI
+      // Get assessment's selectedAuditAreas for progress calculation
+      const assessmentWithAreas = await prisma.assessment.findUnique({
+        where: { id: input.assessmentId },
+        select: { selectedAuditAreas: true },
+      });
+
+      // Calculate progress based on selected audit areas
+      const questionsWhere = getQuestionsWhereClause(
+        assessment.questionnaireId,
+        assessmentWithAreas?.selectedAuditAreas ?? null
+      );
+
+      const totalQuestions = await prisma.question.count({
+        where: questionsWhere,
+      });
+
+      // Get IDs of questions in selected audit areas
+      const requiredQuestions = await prisma.question.findMany({
+        where: questionsWhere,
+        select: { id: true },
+      });
+      const requiredQuestionIdSet = new Set(requiredQuestions.map((q) => q.id));
+
+      // Get all responses for this assessment
       const allResponses = await prisma.assessmentResponse.findMany({
         where: { assessmentId: input.assessmentId },
       });
 
-      const totalQuestions = allResponses.length;
+      // Count answered questions (only those in selected audit areas)
       const answeredQuestions = allResponses.filter((r) => {
+        // Only count responses for questions in the selected scope
+        if (!requiredQuestionIdSet.has(r.questionId)) return false;
+
         if (questionnaireType === "ANS_USOAP_CMA") {
           return isANSResponseAnswered(r.responseValue);
         }
         return isSMSResponseAnswered(r.maturityLevel);
       }).length;
 
-      const progress =
-        totalQuestions > 0
-          ? Math.round((answeredQuestions / totalQuestions) * 100)
-          : 0;
+      const progress = totalQuestions > 0
+        ? Math.round((answeredQuestions / totalQuestions) * 100)
+        : 0;
 
       await prisma.assessment.update({
         where: { id: input.assessmentId },
@@ -1648,20 +1801,53 @@ export const assessmentRouter = router({
         });
       }
 
+      // Get assessment's selectedAuditAreas
+      const assessmentWithAreas = await prisma.assessment.findUnique({
+        where: { id: input.assessmentId },
+        select: { selectedAuditAreas: true },
+      });
+
       // Build filter
       const where: Prisma.AssessmentResponseWhereInput = {
         assessmentId: input.assessmentId,
       };
 
       // Add question filters
-      const questionWhere: Prisma.QuestionWhereInput = {};
+      const questionWhere: Prisma.QuestionWhereInput = {
+        isActive: true,
+      };
 
       if (input.categoryId) {
         questionWhere.categoryId = input.categoryId;
       }
-      if (input.auditArea) {
+
+      // Apply selected audit areas filter
+      const selectedAreas = assessmentWithAreas?.selectedAuditAreas;
+      if (selectedAreas && selectedAreas.length > 0) {
+        if (input.auditArea) {
+          // Specific area requested - check if it's in selected areas
+          const requestedArea = input.auditArea as USOAPAuditArea;
+          if (selectedAreas.includes(requestedArea)) {
+            questionWhere.auditArea = requestedArea;
+          } else {
+            // Requested area not in selected areas - return empty
+            return {
+              responses: [],
+              total: 0,
+              page: input.page,
+              limit: input.limit,
+              totalPages: 0,
+            };
+          }
+        } else {
+          // No specific area - use all selected areas
+          questionWhere.auditArea = { in: selectedAreas };
+        }
+      } else if (input.auditArea) {
+        // No areas selected (means all), specific area requested
         questionWhere.auditArea = input.auditArea as USOAPAuditArea;
       }
+
       if (input.criticalElement) {
         questionWhere.criticalElement = input.criticalElement as CriticalElement;
       }
@@ -1672,9 +1858,8 @@ export const assessmentRouter = router({
         questionWhere.studyArea = input.studyArea as CANSOStudyArea;
       }
 
-      if (Object.keys(questionWhere).length > 0) {
-        where.question = questionWhere;
-      }
+      // Always apply question filter (at least for isActive)
+      where.question = questionWhere;
 
       // Filter for unanswered only
       if (input.onlyUnanswered) {

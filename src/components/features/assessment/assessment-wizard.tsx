@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc/client";
-import type { QuestionnaireType, AssessmentType } from "@prisma/client";
+import type { QuestionnaireType, AssessmentType, USOAPAuditArea } from "@prisma/client";
 
 // Step components
 import { WizardStepper, type WizardStep } from "./wizard-steps/wizard-stepper";
@@ -18,8 +18,8 @@ import { AssessmentTypeStep } from "./wizard-steps/assessment-type-step";
 import { AssessmentDetailsStep } from "./wizard-steps/assessment-details-step";
 import { ReviewConfirmStep } from "./wizard-steps/review-confirm-step";
 
-// Default selected areas
-const DEFAULT_ANS_AREAS = ["LEG", "ORG", "PEL", "OPS", "AIR", "AIG", "ANS", "AGA", "SSP"];
+// Default selected areas - typed as USOAPAuditArea for ANS assessments
+const DEFAULT_ANS_AREAS: USOAPAuditArea[] = ["LEG", "ORG", "PEL", "OPS", "AIR", "AIG", "ANS", "AGA", "SSP"];
 const DEFAULT_SMS_COMPONENTS = [
   "SAFETY_POLICY_OBJECTIVES",
   "SAFETY_RISK_MANAGEMENT",
@@ -33,7 +33,7 @@ interface WizardData {
   title: string;
   description: string;
   dueDate: Date | null;
-  selectedAreas: string[];
+  selectedAreas: USOAPAuditArea[];
   confirmed: boolean;
 }
 
@@ -119,10 +119,11 @@ export function AssessmentWizard() {
   // Handle questionnaire type change
   const handleQuestionnaireTypeChange = useCallback(
     (questionnaireType: QuestionnaireType) => {
-      const selectedAreas =
+      // selectedAuditAreas is only applicable to ANS USOAP assessments
+      const selectedAreas: USOAPAuditArea[] =
         questionnaireType === "ANS_USOAP_CMA"
           ? DEFAULT_ANS_AREAS
-          : DEFAULT_SMS_COMPONENTS;
+          : []; // SMS assessments don't use selectedAuditAreas
       updateData({ questionnaireType, selectedAreas, title: "" });
     },
     [updateData]
@@ -148,6 +149,8 @@ export function AssessmentWizard() {
   const handleCreate = useCallback(() => {
     if (!data.questionnaireType || !data.assessmentType || !data.title.trim()) return;
 
+    console.log("[Assessment Wizard] Creating assessment with selectedAuditAreas:", data.selectedAreas);
+
     setState("creating");
     createMutation.mutate({
       questionnaireType: data.questionnaireType,
@@ -155,7 +158,7 @@ export function AssessmentWizard() {
       title: data.title,
       description: data.description || undefined,
       dueDate: data.dueDate || undefined,
-      scope: data.selectedAreas,
+      selectedAuditAreas: data.selectedAreas,
     });
   }, [data, createMutation]);
 

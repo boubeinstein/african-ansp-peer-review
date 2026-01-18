@@ -49,11 +49,19 @@ export type ValidSMSMaturityLevelDB = (typeof VALID_SMS_MATURITY_LEVELS_DB)[numb
 export function isANSResponseAnswered(
   responseValue: string | null | undefined
 ): boolean {
-  if (!responseValue) return false;
-  if (responseValue === "NOT_REVIEWED") return false;
-  return VALID_ANS_RESPONSE_VALUES.includes(
+  // Defensive: Check for falsy values (null, undefined, empty string)
+  if (!responseValue) {
+    return false;
+  }
+  // NOT_REVIEWED is explicitly unanswered
+  if (responseValue === "NOT_REVIEWED") {
+    return false;
+  }
+  // Only return true for valid answered values
+  const isValid = VALID_ANS_RESPONSE_VALUES.includes(
     responseValue as ValidANSResponseValue
   );
+  return isValid;
 }
 
 /**

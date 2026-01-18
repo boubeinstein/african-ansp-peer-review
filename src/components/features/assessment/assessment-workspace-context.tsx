@@ -183,12 +183,17 @@ export function AssessmentWorkspaceProvider({
   );
 
   // Fetch responses - load all questions at once (max 500)
+  // Use refetchOnMount to ensure fresh data when loading the assessment
   const {
     data: responsesData,
     isLoading: isLoadingResponses,
   } = trpc.assessment.getResponses.useQuery(
     { assessmentId, limit: 500 },
-    { enabled: !!assessmentId }
+    {
+      enabled: !!assessmentId,
+      refetchOnMount: "always", // Always fetch fresh data when mounting
+      staleTime: 0, // Consider data stale immediately to ensure fresh counts
+    }
   );
 
   // Save mutation
@@ -235,9 +240,16 @@ export function AssessmentWorkspaceProvider({
     const responseMap = new Map<string, ResponseData>();
     if (!responsesData?.responses) return responseMap;
 
+    // Debug: Track value breakdown from API
+    const apiValueBreakdown: Record<string, number> = {};
+
     for (const r of responsesData.responses) {
       const hasContent = (r.notes && r.notes.length > 0) ||
         (r.evidenceUrls && r.evidenceUrls.length > 0);
+
+      // Track API values for debugging
+      const val = r.responseValue ?? "NULL";
+      apiValueBreakdown[val] = (apiValueBreakdown[val] || 0) + 1;
 
       responseMap.set(r.questionId, {
         id: r.id,
@@ -253,6 +265,13 @@ export function AssessmentWorkspaceProvider({
         isComplete: hasContent,
       });
     }
+
+    // Debug: Log what came from API
+    console.log("[SERVER_RESPONSES DEBUG] API data breakdown:", {
+      totalFromAPI: responsesData.responses.length,
+      valueBreakdown: apiValueBreakdown,
+    });
+
     return responseMap;
   }, [responsesData]);
 
@@ -492,7 +511,13 @@ export function AssessmentWorkspaceProvider({
     if (questionnaireType === null) return 0;
 
     let count = 0;
+    const valueBreakdown: Record<string, number> = {};
+
     for (const response of localResponses.values()) {
+      // Track all response values for debugging
+      const val = response.responseValue ?? "NULL";
+      valueBreakdown[val] = (valueBreakdown[val] || 0) + 1;
+
       if (isANS) {
         // Use centralized helper for ANS responses
         if (isANSResponseAnswered(response.responseValue)) {
@@ -505,6 +530,16 @@ export function AssessmentWorkspaceProvider({
         }
       }
     }
+
+    // Debug: Log the actual breakdown
+    console.log("[ANSWERED_COUNT DEBUG]", {
+      questionnaireType,
+      isANS,
+      totalResponses: localResponses.size,
+      answeredCount: count,
+      valueBreakdown,
+    });
+
     return count;
   }, [localResponses, questionnaireType, isANS]);
 
@@ -521,18 +556,53 @@ export function AssessmentWorkspaceProvider({
     return isEditable && allAnswered && notSaving;
   }, [assessmentData?.status, answeredCount, totalCount, saveStatus, pendingChanges.size]);
 
-  // Auto-save effect (debounced)
+  // Auto-save effect (debounced) - saves ALL pending changes
   useEffect(() => {
     if (pendingChanges.size === 0) return;
 
-    const timer = setTimeout(() => {
-      if (currentQuestion && pendingChanges.has(currentQuestion.id)) {
-        saveCurrentResponse();
+    const timer = setTimeout(async () => {
+      // Save all pending responses, not just current question
+      if (pendingChanges.size > 0) {
+        console.log("[AUTO_SAVE] Saving", pendingChanges.size, "pending changes");
+
+        const pendingQuestionIds = Array.from(pendingChanges);
+        setSaveStatus("saving");
+
+        try {
+          // Save all pending responses
+          for (const questionId of pendingQuestionIds) {
+            const response = localResponses.get(questionId);
+            if (!response) continue;
+
+            await saveMutation.mutateAsync({
+              assessmentId,
+              questionId,
+              responseValue: response.responseValue,
+              maturityLevel: response.maturityLevel,
+              notes: response.notes || undefined,
+              evidenceUrls: response.evidenceUrls,
+            });
+
+            // Remove from pending after successful save
+            setPendingChanges((prev) => {
+              const newSet = new Set(prev);
+              newSet.delete(questionId);
+              return newSet;
+            });
+          }
+
+          setSaveStatus("saved");
+          setLastSavedAt(new Date());
+          console.log("[AUTO_SAVE] All pending changes saved successfully");
+        } catch (error) {
+          console.error("[AUTO_SAVE] Error saving:", error);
+          setSaveStatus("error");
+        }
       }
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [pendingChanges, currentQuestion, saveCurrentResponse]);
+  }, [pendingChanges, localResponses, assessmentId, saveMutation]);
 
   // Keyboard shortcuts
   useEffect(() => {

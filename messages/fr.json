@@ -2452,6 +2452,7 @@
       "implementationStarted": "Mise en œuvre commencée",
       "completed": "Plan d'Action Corrective marqué comme terminé",
       "verified": "Plan d'Action Corrective vérifié",
+      "verificationFailed": "Échec de la vérification - PAC renvoyé pour révision",
       "closed": "Plan d'Action Corrective clôturé",
       "deleted": "Plan d'Action Corrective supprimé"
     },
@@ -2484,7 +2485,8 @@
       "verificationMethod": "Méthode de Vérification",
       "verificationMethodPlaceholder": "Décrivez comment l'achèvement sera vérifié...",
       "verificationNotes": "Notes de Vérification",
-      "verificationNotesPlaceholder": "Notes de l'examen de vérification..."
+      "verificationNotesPlaceholder": "Notes de l'examen de vérification...",
+      "noAssignee": "Non assigné"
     },
     "status": {
       "DRAFT": "Brouillon",
@@ -2498,20 +2500,122 @@
       "CLOSED": "Clôturé"
     },
     "actions": {
+      "edit": "Modifier le PAC",
       "submit": "Soumettre pour examen",
+      "submitConfirm": "Êtes-vous sûr de vouloir soumettre ce PAC pour examen ? Vous ne pourrez plus le modifier tant qu'il n'aura pas été examiné.",
       "startReview": "Commencer l'examen",
       "accept": "Accepter le PAC",
+      "acceptConfirm": "L'acceptation de ce PAC confirme que les actions correctives proposées sont appropriées.",
       "reject": "Rejeter le PAC",
+      "rejectReason": "Motif du rejet",
+      "rejectReasonPlaceholder": "Veuillez expliquer pourquoi ce PAC est rejeté et quels changements sont nécessaires...",
+      "rejectConfirm": "Rejeter et renvoyer à l'ANSP pour révision",
       "startImplementation": "Démarrer la mise en œuvre",
+      "markInProgress": "Démarrer la mise en œuvre",
       "markCompleted": "Marquer comme terminé",
-      "verify": "Vérifier l'achèvement",
+      "verify": "Vérifier la mise en œuvre",
       "close": "Clôturer le PAC",
+      "closeConfirm": "La clôture de ce PAC marque la constatation comme résolue. Cette action est irréversible.",
       "save": "Enregistrer le brouillon",
+      "cancel": "Annuler",
+      "revisionRequired": "Révision requise",
+      "resubmit": "Resoumettre le PAC"
+    },
+    "reject": {
+      "description": "Veuillez fournir une raison pour le rejet de ce PAC. L'organisation devra réviser et resoumettre.",
+      "reason": "Motif du rejet",
+      "reasonPlaceholder": "Expliquez pourquoi ce PAC est rejeté et ce qui doit être corrigé...",
+      "reasonHint": "Minimum 10 caractères requis"
+    },
+    "complete": {
+      "description": "Marquer ce PAC comme terminé. Vous pouvez optionnellement ajouter des notes de mise en œuvre.",
+      "notes": "Notes de mise en œuvre",
+      "notesPlaceholder": "Décrivez ce qui a été fait pour mettre en œuvre ce PAC..."
+    },
+    "verify": {
+      "description": "Vérifier que ce PAC a été mis en œuvre avec succès.",
+      "methodHint": "Comment la mise en œuvre a-t-elle été vérifiée ?"
+    },
+    "verification": {
+      "title": "Vérifier la mise en œuvre du PAC",
+      "description": "Examinez la mise en œuvre du plan d'action corrective et fournissez votre décision de vérification.",
+      "method": "Méthode de vérification",
+      "methodRequired": "Veuillez sélectionner une méthode de vérification",
+      "methodPlaceholder": "Sélectionner la méthode de vérification",
+      "methodHint": "Sélectionnez la méthode utilisée pour vérifier la mise en œuvre du PAC",
+      "methods": {
+        "DOCUMENT_REVIEW": "Examen documentaire",
+        "ON_SITE_INSPECTION": "Inspection sur site",
+        "INTERVIEW": "Entretien / Discussion",
+        "EVIDENCE_REVIEW": "Examen des preuves",
+        "TEST_DEMONSTRATION": "Test / Démonstration",
+        "documentReview": "Examen documentaire",
+        "onSiteInspection": "Inspection sur site",
+        "remoteAssessment": "Évaluation à distance",
+        "interview": "Entretien",
+        "evidenceAnalysis": "Analyse des preuves",
+        "other": "Autre"
+      },
+      "notes": "Notes de vérification",
+      "notesPlaceholder": "Décrivez le processus de vérification et les observations...",
+      "notesPlaceholderEn": "Documentez vos constatations de vérification en anglais...",
+      "notesPlaceholderFr": "Documentez vos constatations de vérification en français...",
+      "result": "Résultat de la vérification",
+      "resultVerified": "Vérifié - Mise en œuvre confirmée",
+      "resultNotVerified": "Non vérifié - Action supplémentaire requise",
+      "verified": "Vérifié",
+      "verifiedDescription": "La mise en œuvre du PAC répond aux exigences",
+      "notVerified": "Non vérifié",
+      "notVerifiedDescription": "Nécessite une révision - renvoyer à l'ANSP",
+      "notVerifiedReason": "Motif de la non-vérification",
+      "failureReason": "Motif de l'échec",
+      "failureReasonPlaceholder": "Expliquez ce qui manque ou pourquoi la mise en œuvre ne répond pas aux exigences...",
+      "failureReasonHint": "Ceci sera partagé avec l'organisation. Soyez précis sur ce qui doit être corrigé.",
+      "confirmVerified": "Confirmer la vérification",
+      "confirmNotVerified": "Renvoyer pour révision",
+      "submit": "Soumettre la vérification",
       "cancel": "Annuler"
     },
+    "timeline": {
+      "title": "Historique des statuts",
+      "event": "événement",
+      "events": "événements",
+      "latest": "Dernier",
+      "at": "à",
+      "by": "par {user}",
+      "byLabel": "Par",
+      "method": "Méthode",
+      "reason": "Raison : {reason}",
+      "noEvents": "Aucun historique de statut disponible",
+      "showDetails": "Afficher les détails",
+      "hideDetails": "Masquer les détails",
+      "moreEvents": "autres événements",
+      "summaryText": "{count} changements de statut, dernier : {status}",
+      "created": "PAC créé",
+      "submitted": "Soumis pour examen",
+      "accepted": "Accepté par l'examinateur",
+      "rejected": "Rejeté - Révision requise",
+      "inProgress": "Mise en œuvre commencée",
+      "completed": "Mise en œuvre terminée",
+      "verified": "Mise en œuvre vérifiée",
+      "closed": "PAC clôturé",
+      "actions": {
+        "created": "PAC créé",
+        "submitted": "Soumis pour examen",
+        "underReview": "En cours d'examen",
+        "accepted": "PAC accepté",
+        "rejected": "PAC rejeté - révision requise",
+        "inProgress": "Mise en œuvre commencée",
+        "completed": "Mise en œuvre terminée",
+        "verified": "Mise en œuvre vérifiée",
+        "closed": "PAC clôturé"
+      }
+    },
     "detail": {
+      "title": "Plan d'Action Corrective",
       "backToFinding": "Retour à la constatation",
       "finding": "Constatation associée",
+      "viewFinding": "Voir la constatation",
       "submittedAt": "Soumis le",
       "acceptedAt": "Accepté le",
       "completedAt": "Terminé le",
@@ -2520,7 +2624,66 @@
       "dueDate": "Date d'échéance",
       "overdue": "En retard",
       "daysRemaining": "{days} jours restants",
-      "daysOverdue": "{days} jours de retard"
+      "daysOverdue": "{days} jours de retard",
+      "current": "Actuel",
+      "keyDates": "Dates clés",
+      "created": "Créé",
+      "rootCause": "Analyse des causes profondes",
+      "correctiveAction": "Action corrective",
+      "preventiveAction": "Action préventive",
+      "evidence": "Preuves justificatives",
+      "uploadEvidence": "Télécharger des preuves",
+      "noEvidence": "Aucun document de preuve joint",
+      "assignedTo": "Assigné à",
+      "unassigned": "Non assigné",
+      "verificationInfo": "Informations de vérification",
+      "verificationMethod": "Méthode",
+      "verificationNotes": "Notes"
+    },
+    "documents": {
+      "title": "Preuves et Documents",
+      "description": "Documents justificatifs et preuves pour ce PAC",
+      "upload": "Télécharger",
+      "empty": "Aucun document téléchargé",
+      "uploadSuccess": "Document téléchargé avec succès",
+      "uploadError": "Échec du téléchargement du document"
+    },
+    "workflow": {
+      "title": "Flux de statut du PAC",
+      "progress": "Progression",
+      "completed": "Terminé",
+      "current": "Actuel",
+      "pending": "En attente",
+      "completedOn": "Terminé le {date}",
+      "pendingAction": "En attente",
+      "stages": {
+        "draft": "Brouillon",
+        "submitted": "Soumis",
+        "underReview": "En cours d'examen",
+        "accepted": "Accepté",
+        "rejected": "Rejeté",
+        "inProgress": "En cours",
+        "completed": "Terminé",
+        "verified": "Vérifié",
+        "closed": "Clôturé"
+      }
+    },
+    "overdue": {
+      "warning": "Ce PAC est en retard",
+      "daysOverdue": "{days} jours de retard",
+      "dueToday": "Échéance aujourd'hui",
+      "dueTomorrow": "Échéance demain",
+      "dueInDays": "Échéance dans {days} jours"
+    },
+    "toast": {
+      "submitSuccess": "PAC soumis pour examen",
+      "acceptSuccess": "PAC accepté",
+      "rejectSuccess": "PAC rejeté et renvoyé pour révision",
+      "inProgressSuccess": "Mise en œuvre du PAC commencée",
+      "completedSuccess": "PAC marqué comme terminé",
+      "verifySuccess": "Mise en œuvre du PAC vérifiée",
+      "closeSuccess": "PAC clôturé avec succès",
+      "error": "Une erreur s'est produite. Veuillez réessayer."
     },
     "stats": {
       "total": "Total des PAC",
@@ -2538,7 +2701,8 @@
       "findingNotFound": "Constatation introuvable",
       "cannotDelete": "Impossible de supprimer le PAC dans le statut actuel",
       "capNotRequired": "PAC non requis",
-      "capNotRequiredDescription": "Cette constatation ne nécessite pas de plan d'action corrective."
+      "capNotRequiredDescription": "Cette constatation ne nécessite pas de plan d'action corrective.",
+      "notFoundDescription": "Le plan d'action corrective que vous recherchez n'existe pas ou vous n'avez pas la permission de le consulter."
     },
     "empty": {
       "title": "Aucun Plan d'Action Corrective",
@@ -2548,6 +2712,7 @@
       "submit": "Êtes-vous sûr de vouloir soumettre ce PAC pour examen ?",
       "accept": "Êtes-vous sûr de vouloir accepter ce PAC ?",
       "reject": "Êtes-vous sûr de vouloir rejeter ce PAC ?",
+      "startImplementation": "Êtes-vous prêt à commencer la mise en œuvre de ce plan d'action corrective ?",
       "verify": "Êtes-vous sûr de vouloir vérifier ce PAC comme terminé ?",
       "close": "Êtes-vous sûr de vouloir clôturer ce PAC ?"
     }

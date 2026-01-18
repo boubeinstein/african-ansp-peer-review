@@ -20,12 +20,6 @@ import { ReviewConfirmStep } from "./wizard-steps/review-confirm-step";
 
 // Default selected areas - typed as USOAPAuditArea for ANS assessments
 const DEFAULT_ANS_AREAS: USOAPAuditArea[] = ["LEG", "ORG", "PEL", "OPS", "AIR", "AIG", "ANS", "AGA", "SSP"];
-const DEFAULT_SMS_COMPONENTS = [
-  "SAFETY_POLICY_OBJECTIVES",
-  "SAFETY_RISK_MANAGEMENT",
-  "SAFETY_ASSURANCE",
-  "SAFETY_PROMOTION",
-];
 
 interface WizardData {
   questionnaireType: QuestionnaireType | null;

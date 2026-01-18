@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 import { ArrowLeft, AlertCircle, ClipboardList } from "lucide-react";
 import Link from "next/link";
 
@@ -35,7 +34,6 @@ export function NewFindingClient({ reviewId: initialReviewId }: NewFindingClient
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("findings");
-  const tCommon = useTranslations("common");
 
   const [selectedReviewId, setSelectedReviewId] = useState(initialReviewId || "");
 

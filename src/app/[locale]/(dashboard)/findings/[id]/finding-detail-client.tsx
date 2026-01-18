@@ -91,7 +91,6 @@ export function FindingDetailClient({ findingId }: FindingDetailClientProps) {
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("findings");
-  const tCommon = useTranslations("common");
 
   // Fetch finding details
   const findingQuery = trpc.finding.getById.useQuery({ id: findingId });

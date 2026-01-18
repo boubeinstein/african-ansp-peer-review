@@ -41,18 +41,6 @@ const FINDING_VIEW_ALL_ROLES: UserRole[] = [
   "PROGRAMME_COORDINATOR",
 ];
 
-/**
- * Roles that can view findings for their organization only
- */
-const FINDING_VIEW_ORG_ROLES: UserRole[] = [
-  "ANSP_ADMIN",
-  "SAFETY_MANAGER",
-  "QUALITY_MANAGER",
-  "STAFF",
-  "LEAD_REVIEWER",
-  "PEER_REVIEWER",
-];
-
 // ============================================================================
 // Zod Schemas
 // ============================================================================

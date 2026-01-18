@@ -144,6 +144,13 @@ const verifySchema = z.object({
   verificationNotes: z.string().optional(),
 });
 
+const failVerificationSchema = z.object({
+  id: z.string().cuid(),
+  verificationMethod: z.string().min(5, "Verification method is required"),
+  failureReason: z.string().min(10, "Failure reason must be at least 10 characters"),
+  verificationNotes: z.string().optional(),
+});
+
 // =============================================================================
 // STATUS TRANSITION RULES
 // =============================================================================
@@ -158,7 +165,7 @@ const VALID_STATUS_TRANSITIONS: Record<CAPStatus, CAPStatus[]> = {
   ACCEPTED: ["IN_PROGRESS"],
   REJECTED: ["DRAFT"],
   IN_PROGRESS: ["COMPLETED"],
-  COMPLETED: ["VERIFIED"],
+  COMPLETED: ["VERIFIED", "IN_PROGRESS"], // IN_PROGRESS for failed verification
   VERIFIED: ["CLOSED"],
   CLOSED: [],
 };
@@ -937,6 +944,65 @@ export const capRouter = router({
             status: "VERIFIED",
             verificationMethod: input.verificationMethod,
             verificationNotes: input.verificationNotes,
+          },
+        },
+      });
+
+      return updated;
+    }),
+
+  /**
+   * Fail verification - send CAP back for rework (COMPLETED → IN_PROGRESS)
+   */
+  failVerification: roleProcedure(...CAP_VERIFY_ROLES)
+    .input(failVerificationSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+
+      const cap = await ctx.db.correctiveActionPlan.findUnique({
+        where: { id: input.id },
+        include: {
+          finding: {
+            select: { id: true },
+          },
+        },
+      });
+
+      if (!cap) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "CAP not found",
+        });
+      }
+
+      if (!isValidTransition(cap.status, "IN_PROGRESS")) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Cannot fail verification for a CAP with status ${cap.status}`,
+        });
+      }
+
+      const updated = await ctx.db.correctiveActionPlan.update({
+        where: { id: input.id },
+        data: {
+          status: "IN_PROGRESS",
+          verificationMethod: input.verificationMethod,
+          verificationNotes: `VERIFICATION FAILED: ${input.failureReason}${input.verificationNotes ? `\n\nNotes: ${input.verificationNotes}` : ""}`,
+        },
+      });
+
+      // Log the failed verification
+      await ctx.db.auditLog.create({
+        data: {
+          userId: user.id,
+          action: "STATUS_CHANGE",
+          entityType: "CorrectiveActionPlan",
+          entityId: input.id,
+          previousData: { status: cap.status },
+          newData: {
+            status: "IN_PROGRESS",
+            verificationMethod: input.verificationMethod,
+            failureReason: input.failureReason,
           },
         },
       });

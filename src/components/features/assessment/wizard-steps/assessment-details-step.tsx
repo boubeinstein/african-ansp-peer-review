@@ -32,14 +32,6 @@ const ANS_AUDIT_AREAS: USOAPAuditArea[] = [
   "SSP",
 ];
 
-// SMS Components for CANSO SoE
-const SMS_COMPONENTS = [
-  "SAFETY_POLICY_OBJECTIVES",
-  "SAFETY_RISK_MANAGEMENT",
-  "SAFETY_ASSURANCE",
-  "SAFETY_PROMOTION",
-] as const;
-
 interface AssessmentDetailsStepProps {
   questionnaireType: QuestionnaireType | null;
   assessmentType: AssessmentType | null;

@@ -2452,6 +2452,7 @@
       "implementationStarted": "Implementation started",
       "completed": "Corrective Action Plan marked as completed",
       "verified": "Corrective Action Plan verified",
+      "verificationFailed": "Verification failed - CAP sent back for rework",
       "closed": "Corrective Action Plan closed",
       "deleted": "Corrective Action Plan deleted"
     },
@@ -2484,7 +2485,8 @@
       "verificationMethod": "Verification Method",
       "verificationMethodPlaceholder": "Describe how completion will be verified...",
       "verificationNotes": "Verification Notes",
-      "verificationNotesPlaceholder": "Notes from verification review..."
+      "verificationNotesPlaceholder": "Notes from verification review...",
+      "noAssignee": "Not assigned"
     },
     "status": {
       "DRAFT": "Draft",
@@ -2498,20 +2500,122 @@
       "CLOSED": "Closed"
     },
     "actions": {
+      "edit": "Edit CAP",
       "submit": "Submit for Review",
+      "submitConfirm": "Are you sure you want to submit this CAP for review? You won't be able to edit it until it's reviewed.",
       "startReview": "Start Review",
       "accept": "Accept CAP",
+      "acceptConfirm": "Accepting this CAP confirms the proposed corrective actions are appropriate.",
       "reject": "Reject CAP",
+      "rejectReason": "Rejection Reason",
+      "rejectReasonPlaceholder": "Please explain why this CAP is being rejected and what changes are needed...",
+      "rejectConfirm": "Reject and return to ANSP for revision",
       "startImplementation": "Start Implementation",
+      "markInProgress": "Start Implementation",
       "markCompleted": "Mark as Completed",
-      "verify": "Verify Completion",
+      "verify": "Verify Implementation",
       "close": "Close CAP",
+      "closeConfirm": "Closing this CAP marks the finding as resolved. This action cannot be undone.",
       "save": "Save Draft",
+      "cancel": "Cancel",
+      "revisionRequired": "Revision Required",
+      "resubmit": "Resubmit CAP"
+    },
+    "reject": {
+      "description": "Please provide a reason for rejecting this CAP. The organization will need to revise and resubmit.",
+      "reason": "Rejection Reason",
+      "reasonPlaceholder": "Explain why this CAP is being rejected and what needs to be corrected...",
+      "reasonHint": "Minimum 10 characters required"
+    },
+    "complete": {
+      "description": "Mark this CAP as completed. You can optionally add implementation notes.",
+      "notes": "Implementation Notes",
+      "notesPlaceholder": "Describe what was done to implement this CAP..."
+    },
+    "verify": {
+      "description": "Verify that this CAP has been successfully implemented.",
+      "methodHint": "How was the implementation verified?"
+    },
+    "verification": {
+      "title": "Verify CAP Implementation",
+      "description": "Review the corrective action plan implementation and provide your verification decision.",
+      "method": "Verification Method",
+      "methodRequired": "Please select a verification method",
+      "methodPlaceholder": "Select verification method",
+      "methodHint": "Select the method used to verify the CAP implementation",
+      "methods": {
+        "DOCUMENT_REVIEW": "Document Review",
+        "ON_SITE_INSPECTION": "On-site Inspection",
+        "INTERVIEW": "Interview / Discussion",
+        "EVIDENCE_REVIEW": "Evidence Review",
+        "TEST_DEMONSTRATION": "Test / Demonstration",
+        "documentReview": "Document Review",
+        "onSiteInspection": "On-site Inspection",
+        "remoteAssessment": "Remote Assessment",
+        "interview": "Interview",
+        "evidenceAnalysis": "Evidence Analysis",
+        "other": "Other"
+      },
+      "notes": "Verification Notes",
+      "notesPlaceholder": "Describe the verification process and observations...",
+      "notesPlaceholderEn": "Document your verification findings in English...",
+      "notesPlaceholderFr": "Document your verification findings in French...",
+      "result": "Verification Result",
+      "resultVerified": "Verified - Implementation confirmed",
+      "resultNotVerified": "Not Verified - Requires further action",
+      "verified": "Verified",
+      "verifiedDescription": "CAP implementation meets requirements",
+      "notVerified": "Not Verified",
+      "notVerifiedDescription": "Requires rework - send back to ANSP",
+      "notVerifiedReason": "Reason for Not Verified",
+      "failureReason": "Reason for Failure",
+      "failureReasonPlaceholder": "Explain what is missing or why the implementation does not meet requirements...",
+      "failureReasonHint": "This will be shared with the organization. Be specific about what needs to be corrected.",
+      "confirmVerified": "Confirm Verification",
+      "confirmNotVerified": "Send Back for Rework",
+      "submit": "Submit Verification",
       "cancel": "Cancel"
     },
+    "timeline": {
+      "title": "Status History",
+      "event": "event",
+      "events": "events",
+      "latest": "Latest",
+      "at": "at",
+      "by": "by {user}",
+      "byLabel": "By",
+      "method": "Method",
+      "reason": "Reason: {reason}",
+      "noEvents": "No status history available",
+      "showDetails": "Show Details",
+      "hideDetails": "Hide Details",
+      "moreEvents": "more events",
+      "summaryText": "{count} status changes, latest: {status}",
+      "created": "CAP Created",
+      "submitted": "Submitted for Review",
+      "accepted": "Accepted by Reviewer",
+      "rejected": "Rejected - Revision Required",
+      "inProgress": "Implementation Started",
+      "completed": "Implementation Completed",
+      "verified": "Implementation Verified",
+      "closed": "CAP Closed",
+      "actions": {
+        "created": "CAP created",
+        "submitted": "Submitted for review",
+        "underReview": "Under review",
+        "accepted": "CAP accepted",
+        "rejected": "CAP rejected - revision required",
+        "inProgress": "Implementation started",
+        "completed": "Implementation completed",
+        "verified": "Implementation verified",
+        "closed": "CAP closed"
+      }
+    },
     "detail": {
+      "title": "Corrective Action Plan",
       "backToFinding": "Back to Finding",
       "finding": "Related Finding",
+      "viewFinding": "View Finding",
       "submittedAt": "Submitted",
       "acceptedAt": "Accepted",
       "completedAt": "Completed",
@@ -2520,7 +2624,66 @@
       "dueDate": "Due Date",
       "overdue": "Overdue",
       "daysRemaining": "{days} days remaining",
-      "daysOverdue": "{days} days overdue"
+      "daysOverdue": "{days} days overdue",
+      "current": "Current",
+      "keyDates": "Key Dates",
+      "created": "Created",
+      "rootCause": "Root Cause Analysis",
+      "correctiveAction": "Corrective Action",
+      "preventiveAction": "Preventive Action",
+      "evidence": "Supporting Evidence",
+      "uploadEvidence": "Upload Evidence",
+      "noEvidence": "No evidence documents attached",
+      "assignedTo": "Assigned To",
+      "unassigned": "Unassigned",
+      "verificationInfo": "Verification Information",
+      "verificationMethod": "Method",
+      "verificationNotes": "Notes"
+    },
+    "documents": {
+      "title": "Evidence & Documents",
+      "description": "Supporting documents and evidence for this CAP",
+      "upload": "Upload",
+      "empty": "No documents uploaded yet",
+      "uploadSuccess": "Document uploaded successfully",
+      "uploadError": "Failed to upload document"
+    },
+    "workflow": {
+      "title": "CAP Status Workflow",
+      "progress": "Progress",
+      "completed": "Completed",
+      "current": "Current",
+      "pending": "Pending",
+      "completedOn": "Completed on {date}",
+      "pendingAction": "Pending",
+      "stages": {
+        "draft": "Draft",
+        "submitted": "Submitted",
+        "underReview": "Under Review",
+        "accepted": "Accepted",
+        "rejected": "Rejected",
+        "inProgress": "In Progress",
+        "completed": "Completed",
+        "verified": "Verified",
+        "closed": "Closed"
+      }
+    },
+    "overdue": {
+      "warning": "This CAP is overdue",
+      "daysOverdue": "{days} days overdue",
+      "dueToday": "Due today",
+      "dueTomorrow": "Due tomorrow",
+      "dueInDays": "Due in {days} days"
+    },
+    "toast": {
+      "submitSuccess": "CAP submitted for review",
+      "acceptSuccess": "CAP accepted",
+      "rejectSuccess": "CAP rejected and returned for revision",
+      "inProgressSuccess": "CAP implementation started",
+      "completedSuccess": "CAP marked as completed",
+      "verifySuccess": "CAP implementation verified",
+      "closeSuccess": "CAP closed successfully",
+      "error": "An error occurred. Please try again."
     },
     "stats": {
       "total": "Total CAPs",
@@ -2538,7 +2701,8 @@
       "findingNotFound": "Finding not found",
       "cannotDelete": "Cannot delete CAP in current status",
       "capNotRequired": "CAP Not Required",
-      "capNotRequiredDescription": "This finding does not require a corrective action plan."
+      "capNotRequiredDescription": "This finding does not require a corrective action plan.",
+      "notFoundDescription": "The corrective action plan you're looking for doesn't exist or you don't have permission to view it."
     },
     "empty": {
       "title": "No Corrective Action Plan",
@@ -2548,6 +2712,7 @@
       "submit": "Are you sure you want to submit this CAP for review?",
       "accept": "Are you sure you want to accept this CAP?",
       "reject": "Are you sure you want to reject this CAP?",
+      "startImplementation": "Are you ready to begin implementing this corrective action plan?",
       "verify": "Are you sure you want to verify this CAP as completed?",
       "close": "Are you sure you want to close this CAP?"
     }

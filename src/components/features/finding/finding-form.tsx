@@ -190,8 +190,6 @@ const SUGGESTED_SEVERITY: Record<FindingType, FindingSeverity> = {
 // =============================================================================
 
 export function FindingForm({
-  reviewId,
-  organizationId,
   questionnaireId,
   initialData,
   onSubmit,
@@ -232,6 +230,7 @@ export function FindingForm({
   });
 
   // Watch finding type to auto-suggest severity
+  // eslint-disable-next-line react-hooks/incompatible-library
   const watchFindingType = form.watch("findingType");
 
   // Query for questions (PQ search)

@@ -12,6 +12,7 @@ import { coiRouter } from "./coi";
 import { reviewRouter } from "./review";
 import { findingRouter } from "./finding";
 import { capRouter } from "./cap";
+import { reportRouter } from "./report";
 
 /**
  * Main app router combining all sub-routers
@@ -30,6 +31,7 @@ export const appRouter = router({
   review: reviewRouter,
   finding: findingRouter,
   cap: capRouter,
+  report: reportRouter,
 });
 
 /**

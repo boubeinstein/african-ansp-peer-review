@@ -1,0 +1,457 @@
+/**
+ * Report Print Styles
+ *
+ * Print-optimized CSS for generating PDF reports via browser print.
+ * These styles are applied when printing or using "Save as PDF".
+ */
+
+@media print {
+  /* ==========================================================================
+     PAGE SETUP
+     ========================================================================== */
+
+  @page {
+    size: A4;
+    margin: 15mm 15mm 20mm 15mm;
+  }
+
+  @page :first {
+    margin-top: 0;
+  }
+
+  /* ==========================================================================
+     GLOBAL PRINT STYLES
+     ========================================================================== */
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  html, body {
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
+    color: #000 !important;
+    background: #fff !important;
+  }
+
+  /* Hide non-print elements */
+  .no-print,
+  .print\\:hidden,
+  nav:not(.print-nav),
+  header:not(.print-header),
+  footer:not(.print-footer),
+  aside,
+  .sidebar,
+  button:not(.print-button),
+  [role="navigation"],
+  [role="complementary"] {
+    display: none !important;
+  }
+
+  /* Show print-only elements */
+  .print-only,
+  .print\\:block {
+    display: block !important;
+  }
+
+  /* ==========================================================================
+     TYPOGRAPHY
+     ========================================================================== */
+
+  h1 {
+    font-size: 20pt !important;
+    font-weight: 700 !important;
+    margin-bottom: 8pt !important;
+    page-break-after: avoid;
+  }
+
+  h2 {
+    font-size: 16pt !important;
+    font-weight: 600 !important;
+    margin-top: 16pt !important;
+    margin-bottom: 8pt !important;
+    page-break-after: avoid;
+  }
+
+  h3 {
+    font-size: 13pt !important;
+    font-weight: 600 !important;
+    margin-top: 12pt !important;
+    margin-bottom: 6pt !important;
+    page-break-after: avoid;
+  }
+
+  h4 {
+    font-size: 11pt !important;
+    font-weight: 600 !important;
+    margin-top: 10pt !important;
+    margin-bottom: 4pt !important;
+    page-break-after: avoid;
+  }
+
+  p {
+    margin-bottom: 6pt !important;
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* ==========================================================================
+     COVER PAGE
+     ========================================================================== */
+
+  .report-cover {
+    page-break-after: always;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40pt;
+  }
+
+  .report-cover .logo {
+    width: 80pt;
+    height: 80pt;
+    margin-bottom: 30pt;
+  }
+
+  .report-cover .title {
+    font-size: 28pt !important;
+    font-weight: 700 !important;
+    margin-bottom: 16pt !important;
+    color: #1e3a5f !important;
+  }
+
+  .report-cover .subtitle {
+    font-size: 16pt !important;
+    color: #4a5568 !important;
+    margin-bottom: 30pt !important;
+  }
+
+  .report-cover .organization {
+    font-size: 18pt !important;
+    font-weight: 600 !important;
+    margin-bottom: 8pt !important;
+  }
+
+  .report-cover .details {
+    font-size: 12pt !important;
+    color: #4a5568 !important;
+    margin-bottom: 40pt !important;
+  }
+
+  .report-cover .date {
+    font-size: 12pt !important;
+    color: #718096 !important;
+  }
+
+  .report-cover .confidential {
+    position: absolute;
+    bottom: 30pt;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10pt !important;
+    font-weight: 600 !important;
+    color: #c53030 !important;
+    text-transform: uppercase;
+    letter-spacing: 1pt;
+    border: 1pt solid #c53030;
+    padding: 4pt 12pt;
+  }
+
+  /* ==========================================================================
+     SECTIONS
+     ========================================================================== */
+
+  .report-section {
+    page-break-inside: avoid;
+    margin-bottom: 20pt !important;
+  }
+
+  .report-section-title {
+    font-size: 14pt !important;
+    font-weight: 600 !important;
+    color: #1e3a5f !important;
+    border-bottom: 1pt solid #e2e8f0;
+    padding-bottom: 6pt !important;
+    margin-bottom: 12pt !important;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
+
+  .avoid-break {
+    page-break-inside: avoid;
+  }
+
+  /* ==========================================================================
+     TABLES
+     ========================================================================== */
+
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 9pt !important;
+    margin-bottom: 12pt !important;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+
+  th, td {
+    border: 0.5pt solid #cbd5e0 !important;
+    padding: 6pt 8pt !important;
+    text-align: left !important;
+    vertical-align: top !important;
+  }
+
+  th {
+    background-color: #f7fafc !important;
+    font-weight: 600 !important;
+    color: #2d3748 !important;
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: #f7fafc !important;
+  }
+
+  /* ==========================================================================
+     CARDS & BOXES
+     ========================================================================== */
+
+  .print-card {
+    border: 0.5pt solid #e2e8f0 !important;
+    border-radius: 4pt !important;
+    padding: 12pt !important;
+    margin-bottom: 12pt !important;
+    page-break-inside: avoid;
+  }
+
+  .print-stat-card {
+    display: inline-block;
+    width: 30%;
+    margin-right: 3%;
+    margin-bottom: 12pt;
+    text-align: center;
+    padding: 12pt;
+    border: 0.5pt solid #e2e8f0;
+    border-radius: 4pt;
+    page-break-inside: avoid;
+  }
+
+  .print-stat-card:nth-child(3n) {
+    margin-right: 0;
+  }
+
+  .print-stat-value {
+    font-size: 18pt !important;
+    font-weight: 700 !important;
+    color: #1e3a5f !important;
+  }
+
+  .print-stat-label {
+    font-size: 9pt !important;
+    color: #718096 !important;
+    margin-top: 4pt !important;
+  }
+
+  /* ==========================================================================
+     SCORE DISPLAYS
+     ========================================================================== */
+
+  .score-badge {
+    display: inline-block;
+    padding: 2pt 8pt;
+    border-radius: 3pt;
+    font-size: 9pt;
+    font-weight: 600;
+  }
+
+  .score-badge.high {
+    background-color: #c6f6d5 !important;
+    color: #276749 !important;
+  }
+
+  .score-badge.medium {
+    background-color: #fefcbf !important;
+    color: #975a16 !important;
+  }
+
+  .score-badge.low {
+    background-color: #fed7d7 !important;
+    color: #c53030 !important;
+  }
+
+  /* Maturity level badges */
+  .maturity-a { background-color: #fed7d7 !important; color: #c53030 !important; }
+  .maturity-b { background-color: #feebc8 !important; color: #c05621 !important; }
+  .maturity-c { background-color: #fefcbf !important; color: #975a16 !important; }
+  .maturity-d { background-color: #bee3f8 !important; color: #2b6cb0 !important; }
+  .maturity-e { background-color: #c6f6d5 !important; color: #276749 !important; }
+
+  /* ==========================================================================
+     STATUS BADGES
+     ========================================================================== */
+
+  .status-badge {
+    display: inline-block;
+    padding: 2pt 6pt;
+    border-radius: 2pt;
+    font-size: 8pt;
+    font-weight: 500;
+  }
+
+  .status-draft { background-color: #e2e8f0 !important; color: #4a5568 !important; }
+  .status-open { background-color: #bee3f8 !important; color: #2b6cb0 !important; }
+  .status-in-progress { background-color: #fefcbf !important; color: #975a16 !important; }
+  .status-resolved { background-color: #c6f6d5 !important; color: #276749 !important; }
+  .status-verified { background-color: #c6f6d5 !important; color: #276749 !important; }
+  .status-closed { background-color: #e2e8f0 !important; color: #4a5568 !important; }
+
+  /* Severity badges */
+  .severity-critical { background-color: #fed7d7 !important; color: #c53030 !important; }
+  .severity-major { background-color: #feebc8 !important; color: #c05621 !important; }
+  .severity-minor { background-color: #fefcbf !important; color: #975a16 !important; }
+  .severity-observation { background-color: #e2e8f0 !important; color: #4a5568 !important; }
+
+  /* ==========================================================================
+     CHARTS (Placeholder for chart images)
+     ========================================================================== */
+
+  .chart-container {
+    width: 100%;
+    height: auto;
+    margin: 12pt 0;
+    page-break-inside: avoid;
+  }
+
+  .chart-placeholder {
+    border: 1pt dashed #cbd5e0;
+    padding: 20pt;
+    text-align: center;
+    color: #718096;
+    font-style: italic;
+  }
+
+  /* ==========================================================================
+     HEADER & FOOTER
+     ========================================================================== */
+
+  .print-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40pt;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15mm;
+    border-bottom: 0.5pt solid #e2e8f0;
+    font-size: 9pt;
+    color: #718096;
+    background: #fff;
+  }
+
+  .print-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30pt;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15mm;
+    border-top: 0.5pt solid #e2e8f0;
+    font-size: 8pt;
+    color: #718096;
+    background: #fff;
+  }
+
+  .print-footer .page-number::after {
+    content: counter(page);
+  }
+
+  /* ==========================================================================
+     SUMMARY GRID
+     ========================================================================== */
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12pt;
+    margin-bottom: 20pt;
+  }
+
+  .summary-item {
+    border: 0.5pt solid #e2e8f0;
+    border-radius: 4pt;
+    padding: 10pt;
+    text-align: center;
+  }
+
+  .summary-item .value {
+    font-size: 16pt;
+    font-weight: 700;
+    color: #1e3a5f;
+  }
+
+  .summary-item .label {
+    font-size: 9pt;
+    color: #718096;
+    margin-top: 4pt;
+  }
+
+  /* ==========================================================================
+     TWO COLUMN LAYOUT
+     ========================================================================== */
+
+  .two-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20pt;
+  }
+
+  .two-column > * {
+    page-break-inside: avoid;
+  }
+
+  /* ==========================================================================
+     LINKS
+     ========================================================================== */
+
+  a {
+    color: #2b6cb0 !important;
+    text-decoration: none !important;
+  }
+
+  a[href]::after {
+    content: none !important;
+  }
+
+  /* ==========================================================================
+     UTILITIES
+     ========================================================================== */
+
+  .text-center { text-align: center !important; }
+  .text-right { text-align: right !important; }
+  .text-left { text-align: left !important; }
+  .font-bold { font-weight: 700 !important; }
+  .font-semibold { font-weight: 600 !important; }
+  .text-sm { font-size: 9pt !important; }
+  .text-xs { font-size: 8pt !important; }
+  .text-muted { color: #718096 !important; }
+  .mb-2 { margin-bottom: 8pt !important; }
+  .mb-4 { margin-bottom: 16pt !important; }
+  .mt-4 { margin-top: 16pt !important; }
+}

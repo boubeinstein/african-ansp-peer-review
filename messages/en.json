@@ -2426,6 +2426,109 @@
       "deleted": "Finding deleted successfully"
     }
   },
+  "cap": {
+    "title": "Corrective Action Plans",
+    "pageDescription": "Manage corrective action plans for findings",
+    "create": "Create CAP",
+    "edit": "Edit CAP",
+    "view": "View CAP",
+    "success": {
+      "created": "Corrective Action Plan created successfully",
+      "updated": "Corrective Action Plan updated successfully",
+      "submitted": "Corrective Action Plan submitted for review",
+      "accepted": "Corrective Action Plan accepted",
+      "rejected": "Corrective Action Plan rejected",
+      "implementationStarted": "Implementation started",
+      "completed": "Corrective Action Plan marked as completed",
+      "verified": "Corrective Action Plan verified",
+      "closed": "Corrective Action Plan closed",
+      "deleted": "Corrective Action Plan deleted"
+    },
+    "form": {
+      "rootCause": "Root Cause Analysis",
+      "rootCauseEn": "Root Cause (English)",
+      "rootCauseFr": "Root Cause (French)",
+      "rootCausePlaceholder": "Describe the root cause of the finding...",
+      "correctiveAction": "Corrective Action",
+      "correctiveActionEn": "Corrective Action (English)",
+      "correctiveActionFr": "Corrective Action (French)",
+      "correctiveActionPlaceholder": "Describe the corrective action to be taken...",
+      "preventiveAction": "Preventive Action",
+      "preventiveActionEn": "Preventive Action (English)",
+      "preventiveActionFr": "Preventive Action (French)",
+      "preventiveActionPlaceholder": "Describe preventive measures to avoid recurrence...",
+      "assignedTo": "Assigned To",
+      "selectAssignee": "Select person responsible",
+      "dueDate": "Due Date",
+      "selectDueDate": "Select due date",
+      "verificationMethod": "Verification Method",
+      "verificationMethodPlaceholder": "Describe how completion will be verified...",
+      "verificationNotes": "Verification Notes",
+      "verificationNotesPlaceholder": "Notes from verification review..."
+    },
+    "status": {
+      "DRAFT": "Draft",
+      "SUBMITTED": "Submitted",
+      "UNDER_REVIEW": "Under Review",
+      "ACCEPTED": "Accepted",
+      "REJECTED": "Rejected",
+      "IN_PROGRESS": "In Progress",
+      "COMPLETED": "Completed",
+      "VERIFIED": "Verified",
+      "CLOSED": "Closed"
+    },
+    "actions": {
+      "submit": "Submit for Review",
+      "startReview": "Start Review",
+      "accept": "Accept CAP",
+      "reject": "Reject CAP",
+      "startImplementation": "Start Implementation",
+      "markCompleted": "Mark as Completed",
+      "verify": "Verify Completion",
+      "close": "Close CAP",
+      "save": "Save Draft",
+      "cancel": "Cancel"
+    },
+    "detail": {
+      "backToFinding": "Back to Finding",
+      "finding": "Related Finding",
+      "submittedAt": "Submitted",
+      "acceptedAt": "Accepted",
+      "completedAt": "Completed",
+      "verifiedAt": "Verified",
+      "verifiedBy": "Verified By",
+      "dueDate": "Due Date",
+      "overdue": "Overdue",
+      "daysRemaining": "{days} days remaining",
+      "daysOverdue": "{days} days overdue"
+    },
+    "stats": {
+      "total": "Total CAPs",
+      "draft": "Draft",
+      "inProgress": "In Progress",
+      "overdue": "Overdue",
+      "completed": "Completed"
+    },
+    "errors": {
+      "notFound": "Corrective Action Plan not found",
+      "alreadyExists": "A Corrective Action Plan already exists for this finding",
+      "invalidTransition": "Invalid status transition",
+      "permissionDenied": "You do not have permission to perform this action",
+      "findingNotFound": "Finding not found",
+      "cannotDelete": "Cannot delete CAP in current status"
+    },
+    "empty": {
+      "title": "No Corrective Action Plan",
+      "description": "No corrective action plan has been created for this finding yet."
+    },
+    "confirm": {
+      "submit": "Are you sure you want to submit this CAP for review?",
+      "accept": "Are you sure you want to accept this CAP?",
+      "reject": "Are you sure you want to reject this CAP?",
+      "verify": "Are you sure you want to verify this CAP as completed?",
+      "close": "Are you sure you want to close this CAP?"
+    }
+  },
   "organizations": {
     "title": "Organizations",
     "description": "Manage AFI member organizations",

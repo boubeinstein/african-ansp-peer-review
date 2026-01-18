@@ -2426,6 +2426,109 @@
       "deleted": "Constatation supprimée avec succès"
     }
   },
+  "cap": {
+    "title": "Plans d'Action Corrective",
+    "pageDescription": "Gérer les plans d'action corrective pour les constatations",
+    "create": "Créer un PAC",
+    "edit": "Modifier le PAC",
+    "view": "Voir le PAC",
+    "success": {
+      "created": "Plan d'Action Corrective créé avec succès",
+      "updated": "Plan d'Action Corrective mis à jour avec succès",
+      "submitted": "Plan d'Action Corrective soumis pour examen",
+      "accepted": "Plan d'Action Corrective accepté",
+      "rejected": "Plan d'Action Corrective rejeté",
+      "implementationStarted": "Mise en œuvre commencée",
+      "completed": "Plan d'Action Corrective marqué comme terminé",
+      "verified": "Plan d'Action Corrective vérifié",
+      "closed": "Plan d'Action Corrective clôturé",
+      "deleted": "Plan d'Action Corrective supprimé"
+    },
+    "form": {
+      "rootCause": "Analyse des Causes Profondes",
+      "rootCauseEn": "Cause Profonde (Anglais)",
+      "rootCauseFr": "Cause Profonde (Français)",
+      "rootCausePlaceholder": "Décrivez la cause profonde de la constatation...",
+      "correctiveAction": "Action Corrective",
+      "correctiveActionEn": "Action Corrective (Anglais)",
+      "correctiveActionFr": "Action Corrective (Français)",
+      "correctiveActionPlaceholder": "Décrivez l'action corrective à entreprendre...",
+      "preventiveAction": "Action Préventive",
+      "preventiveActionEn": "Action Préventive (Anglais)",
+      "preventiveActionFr": "Action Préventive (Français)",
+      "preventiveActionPlaceholder": "Décrivez les mesures préventives pour éviter la récurrence...",
+      "assignedTo": "Assigné à",
+      "selectAssignee": "Sélectionner le responsable",
+      "dueDate": "Date d'échéance",
+      "selectDueDate": "Sélectionner la date d'échéance",
+      "verificationMethod": "Méthode de Vérification",
+      "verificationMethodPlaceholder": "Décrivez comment l'achèvement sera vérifié...",
+      "verificationNotes": "Notes de Vérification",
+      "verificationNotesPlaceholder": "Notes de l'examen de vérification..."
+    },
+    "status": {
+      "DRAFT": "Brouillon",
+      "SUBMITTED": "Soumis",
+      "UNDER_REVIEW": "En cours d'examen",
+      "ACCEPTED": "Accepté",
+      "REJECTED": "Rejeté",
+      "IN_PROGRESS": "En cours",
+      "COMPLETED": "Terminé",
+      "VERIFIED": "Vérifié",
+      "CLOSED": "Clôturé"
+    },
+    "actions": {
+      "submit": "Soumettre pour examen",
+      "startReview": "Commencer l'examen",
+      "accept": "Accepter le PAC",
+      "reject": "Rejeter le PAC",
+      "startImplementation": "Démarrer la mise en œuvre",
+      "markCompleted": "Marquer comme terminé",
+      "verify": "Vérifier l'achèvement",
+      "close": "Clôturer le PAC",
+      "save": "Enregistrer le brouillon",
+      "cancel": "Annuler"
+    },
+    "detail": {
+      "backToFinding": "Retour à la constatation",
+      "finding": "Constatation associée",
+      "submittedAt": "Soumis le",
+      "acceptedAt": "Accepté le",
+      "completedAt": "Terminé le",
+      "verifiedAt": "Vérifié le",
+      "verifiedBy": "Vérifié par",
+      "dueDate": "Date d'échéance",
+      "overdue": "En retard",
+      "daysRemaining": "{days} jours restants",
+      "daysOverdue": "{days} jours de retard"
+    },
+    "stats": {
+      "total": "Total des PAC",
+      "draft": "Brouillons",
+      "inProgress": "En cours",
+      "overdue": "En retard",
+      "completed": "Terminés"
+    },
+    "errors": {
+      "notFound": "Plan d'Action Corrective introuvable",
+      "alreadyExists": "Un Plan d'Action Corrective existe déjà pour cette constatation",
+      "invalidTransition": "Transition de statut invalide",
+      "permissionDenied": "Vous n'avez pas la permission d'effectuer cette action",
+      "findingNotFound": "Constatation introuvable",
+      "cannotDelete": "Impossible de supprimer le PAC dans le statut actuel"
+    },
+    "empty": {
+      "title": "Aucun Plan d'Action Corrective",
+      "description": "Aucun plan d'action corrective n'a encore été créé pour cette constatation."
+    },
+    "confirm": {
+      "submit": "Êtes-vous sûr de vouloir soumettre ce PAC pour examen ?",
+      "accept": "Êtes-vous sûr de vouloir accepter ce PAC ?",
+      "reject": "Êtes-vous sûr de vouloir rejeter ce PAC ?",
+      "verify": "Êtes-vous sûr de vouloir vérifier ce PAC comme terminé ?",
+      "close": "Êtes-vous sûr de vouloir clôturer ce PAC ?"
+    }
+  },
   "organizations": {
     "title": "Organisations",
     "description": "Gérer les organisations membres de l'AFI",

@@ -180,7 +180,7 @@ function GenerateReportPrompt({
 // MAIN COMPONENT
 // =============================================================================
 
-export function ReportClient({ reviewId, userRole, userId: _userId }: ReportClientProps) {
+export function ReportClient({ reviewId, userRole }: ReportClientProps) {
   const t = useTranslations("report");
 
   // Fetch report data

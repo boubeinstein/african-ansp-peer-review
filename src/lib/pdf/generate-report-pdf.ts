@@ -200,8 +200,7 @@ export function isPrintSupported(): boolean {
  */
 export function formatPDFFilename(
   baseName: string,
-  referenceNumber?: string,
-  _locale: string = "en"
+  referenceNumber?: string
 ): string {
   const date = new Date();
   const dateStr = date.toISOString().split("T")[0]; // YYYY-MM-DD
@@ -224,9 +223,7 @@ export function formatPDFFilename(
  *
  * @param element - DOM element to capture
  */
-export async function elementToDataURL(
-  _element: HTMLElement
-): Promise<string | null> {
+export async function elementToDataURL(): Promise<string | null> {
   // This would require html2canvas library
   // For now, return null - charts will be rendered as tables in print view
   console.warn("Chart image capture not implemented. Using table fallback.");

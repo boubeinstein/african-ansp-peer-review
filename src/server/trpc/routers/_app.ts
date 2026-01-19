@@ -14,6 +14,7 @@ import { findingRouter } from "./finding";
 import { capRouter } from "./cap";
 import { reportRouter } from "./report";
 import { trainingRouter } from "./training";
+import { settingsRouter } from "./settings";
 
 /**
  * Main app router combining all sub-routers
@@ -34,6 +35,7 @@ export const appRouter = router({
   cap: capRouter,
   report: reportRouter,
   training: trainingRouter,
+  settings: settingsRouter,
 });
 
 /**

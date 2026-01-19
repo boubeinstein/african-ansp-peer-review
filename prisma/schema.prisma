@@ -72,6 +72,9 @@ model User {
   // === Availability Relations ===
   createdAvailabilitySlots ReviewerAvailability[] @relation("AvailabilityCreator")
 
+  // === User Preferences ===
+  preferences              UserPreferences?
+
   @@map("users")
 }
 
@@ -1277,4 +1280,44 @@ enum EventType {
   COMPLETED
   REOPENED
   COMMENT_ADDED
+}
+
+enum DigestFrequency {
+  IMMEDIATE
+  DAILY
+  WEEKLY
+}
+
+// ============================================
+// USER PREFERENCES
+// ============================================
+
+model UserPreferences {
+  id                        String          @id @default(cuid())
+
+  userId                    String          @unique @map("user_id")
+  user                      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Display Preferences
+  locale                    Locale          @default(EN)
+  theme                     Theme           @default(SYSTEM)
+  dateFormat                String          @default("DD/MM/YYYY") @map("date_format")
+
+  // Feature Toggles
+  showTrainingModule        Boolean         @default(true) @map("show_training_module")
+  compactView               Boolean         @default(false) @map("compact_view")
+
+  // Notification Preferences
+  emailNotifications        Boolean         @default(true) @map("email_notifications")
+  notifyOnReviewAssignment  Boolean         @default(true) @map("notify_review_assignment")
+  notifyOnFindingCreated    Boolean         @default(true) @map("notify_finding_created")
+  notifyOnCAPStatusChange   Boolean         @default(true) @map("notify_cap_status")
+  notifyOnReportReady       Boolean         @default(true) @map("notify_report_ready")
+  digestFrequency           DigestFrequency @default(IMMEDIATE) @map("digest_frequency")
+
+  // Metadata
+  createdAt                 DateTime        @default(now()) @map("created_at")
+  updatedAt                 DateTime        @updatedAt @map("updated_at")
+
+  @@map("user_preferences")
 }

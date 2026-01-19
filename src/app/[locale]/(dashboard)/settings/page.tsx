@@ -1,48 +1,32 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Settings, Clock } from "lucide-react";
+import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { SettingsClient } from "./settings-client";
 
-interface SettingsPageProps {
-  params: Promise<{ locale: string }>;
-}
-
-export async function generateMetadata({ params }: SettingsPageProps) {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "navigation" });
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("settings");
   return {
-    title: t("settings"),
+    title: t("title"),
+    description: t("description"),
   };
 }
 
-export default async function SettingsPage({ params }: SettingsPageProps) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: "common" });
+export default async function SettingsPage() {
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect("/login");
+  }
 
   return (
-    <div className="container mx-auto py-8">
-      <Card className="max-w-2xl mx-auto">
-        <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <div className="p-3 bg-primary/10 rounded-full">
-              <Settings className="h-8 w-8 text-primary" />
-            </div>
-          </div>
-          <CardTitle className="text-2xl">Settings</CardTitle>
-          <CardDescription>
-            Manage your account preferences and application settings
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="text-center">
-          <div className="flex items-center justify-center gap-2 text-muted-foreground">
-            <Clock className="h-4 w-4" />
-            <span>{t("comingSoon")}</span>
-          </div>
-          <p className="mt-4 text-sm text-muted-foreground">
-            This feature is currently under development and will be available soon.
-          </p>
-        </CardContent>
-      </Card>
-    </div>
+    <SettingsClient
+      userId={session.user.id}
+      userRole={session.user.role}
+      userEmail={session.user.email ?? ""}
+      firstName={session.user.firstName ?? ""}
+      lastName={session.user.lastName ?? ""}
+      organizationId={session.user.organizationId}
+    />
   );
 }

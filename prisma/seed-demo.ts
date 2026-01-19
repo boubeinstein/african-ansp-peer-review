@@ -696,9 +696,7 @@ interface CreatedFinding {
   template: FindingTemplate;
 }
 
-async function seedFindings(
-  _reviewMap: Map<string, string>
-): Promise<{ findingMap: Map<string, string>; createdFindings: CreatedFinding[] }> {
+async function seedFindings(): Promise<{ findingMap: Map<string, string>; createdFindings: CreatedFinding[] }> {
   console.log("\n🔍 Creating demo findings...");
   const findingMap = new Map<string, string>();
   const createdFindings: CreatedFinding[] = [];
@@ -804,7 +802,7 @@ async function seedCAPs(createdFindings: CreatedFinding[]): Promise<void> {
   }
 }
 
-async function seedAssessments(_reviewMap: Map<string, string>): Promise<void> {
+async function seedAssessments(): Promise<void> {
   console.log("\n📊 Creating demo assessments with responses...");
 
   // Get all created reviews with their status

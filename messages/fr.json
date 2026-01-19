@@ -3662,5 +3662,63 @@
       "page": "Page {current} sur {total}",
       "confidential": "CONFIDENTIEL - Pour Usage Officiel Uniquement"
     }
+  },
+  "training": {
+    "title": "Référence de Formation",
+    "description": "Accédez aux supports de formation du Programme de Revue par les Pairs des ANSP Africains",
+    "subtitle": "Ressources de formation complètes pour les réviseurs pairs AFI",
+    "modules": "modules",
+    "topics": "sujets",
+    "resources": "ressources",
+    "objectives": "Objectifs",
+    "learningObjectives": "Objectifs d'apprentissage",
+    "more": "de plus",
+    "viewModule": "Voir le Module",
+    "viewDetails": "Voir les Détails",
+    "noModules": "Aucun Module de Formation Disponible",
+    "noModulesDescription": "Les modules de formation n'ont pas encore été configurés. Veuillez contacter l'administrateur du programme.",
+    "errorTitle": "Erreur de Chargement de la Formation",
+    "moduleNotFound": "Module Non Trouvé",
+    "moduleNotFoundDescription": "Le module de formation que vous recherchez n'existe pas ou a été supprimé.",
+    "backToTraining": "Retour à la Formation",
+    "topicsTitle": "Sujets",
+    "resourcesTitle": "Ressources",
+    "noTopics": "Aucun sujet disponible pour ce module.",
+    "noResources": "Aucune ressource disponible pour ce module.",
+    "relatedQuestions": "Questions de Protocole Associées",
+    "previousModule": "Précédent",
+    "nextModule": "Suivant",
+    "downloadResource": "Télécharger",
+    "openResource": "Ouvrir",
+    "allModules": "Tous les Modules",
+    "moduleOverview": "Aperçu du Module",
+    "completionStatus": "État d'Achèvement",
+    "duration": "Durée",
+    "difficulty": "Difficulté",
+    "prerequisites": "Prérequis",
+    "targetAudience": "Public Cible",
+    "keyTakeaways": "Points Clés à Retenir",
+    "relatedModules": "Modules Connexes",
+    "resourceTypes": {
+      "DOCUMENT": "Document",
+      "VIDEO": "Vidéo",
+      "PRESENTATION": "Présentation",
+      "CHECKLIST": "Liste de Contrôle",
+      "TEMPLATE": "Modèle",
+      "EXTERNAL_LINK": "Lien Externe"
+    },
+    "feb2026": {
+      "banner": "Formation de Recyclage des Réviseurs Pairs AFI",
+      "dates": "2-5 Février 2026 • Dar es Salaam, Tanzanie",
+      "description": "Rejoignez-nous pour la prochaine formation de recyclage pour tous les réviseurs pairs AFI",
+      "register": "S'inscrire Maintenant",
+      "learnMore": "En Savoir Plus"
+    },
+    "stats": {
+      "totalModules": "Total des Modules",
+      "totalTopics": "Total des Sujets",
+      "totalResources": "Total des Ressources",
+      "completedModules": "Modules Complétés"
+    }
   }
 }

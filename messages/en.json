@@ -3662,5 +3662,63 @@
       "page": "Page {current} of {total}",
       "confidential": "CONFIDENTIAL - For Official Use Only"
     }
+  },
+  "training": {
+    "title": "Training Reference",
+    "description": "Access training materials for the African ANSP Peer Review Programme",
+    "subtitle": "Comprehensive training resources for AFI peer reviewers",
+    "modules": "modules",
+    "topics": "topics",
+    "resources": "resources",
+    "objectives": "Objectives",
+    "learningObjectives": "Learning Objectives",
+    "more": "more",
+    "viewModule": "View Module",
+    "viewDetails": "View Details",
+    "noModules": "No Training Modules Available",
+    "noModulesDescription": "Training modules have not been configured yet. Please contact the programme administrator.",
+    "errorTitle": "Error Loading Training",
+    "moduleNotFound": "Module Not Found",
+    "moduleNotFoundDescription": "The training module you are looking for does not exist or has been removed.",
+    "backToTraining": "Back to Training",
+    "topicsTitle": "Topics",
+    "resourcesTitle": "Resources",
+    "noTopics": "No topics available for this module.",
+    "noResources": "No resources available for this module.",
+    "relatedQuestions": "Related Protocol Questions",
+    "previousModule": "Previous",
+    "nextModule": "Next",
+    "downloadResource": "Download",
+    "openResource": "Open",
+    "allModules": "All Modules",
+    "moduleOverview": "Module Overview",
+    "completionStatus": "Completion Status",
+    "duration": "Duration",
+    "difficulty": "Difficulty",
+    "prerequisites": "Prerequisites",
+    "targetAudience": "Target Audience",
+    "keyTakeaways": "Key Takeaways",
+    "relatedModules": "Related Modules",
+    "resourceTypes": {
+      "DOCUMENT": "Document",
+      "VIDEO": "Video",
+      "PRESENTATION": "Presentation",
+      "CHECKLIST": "Checklist",
+      "TEMPLATE": "Template",
+      "EXTERNAL_LINK": "External Link"
+    },
+    "feb2026": {
+      "banner": "AFI Peer Reviewers' Refresher Training",
+      "dates": "February 2-5, 2026 • Dar es Salaam, Tanzania",
+      "description": "Join us for the upcoming refresher training for all AFI peer reviewers",
+      "register": "Register Now",
+      "learnMore": "Learn More"
+    },
+    "stats": {
+      "totalModules": "Total Modules",
+      "totalTopics": "Total Topics",
+      "totalResources": "Total Resources",
+      "completedModules": "Completed Modules"
+    }
   }
 }

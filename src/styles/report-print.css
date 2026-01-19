@@ -38,7 +38,7 @@
 
   /* Hide non-print elements */
   .no-print,
-  .print\\:hidden,
+  [class*="print:hidden"],
   nav:not(.print-nav),
   header:not(.print-header),
   footer:not(.print-footer),
@@ -52,7 +52,7 @@
 
   /* Show print-only elements */
   .print-only,
-  .print\\:block {
+  [class*="print:block"] {
     display: block !important;
   }
 

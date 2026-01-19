@@ -232,7 +232,9 @@ export function exportToCSV(
   const worksheet = XLSX.utils.json_to_sheet(rows);
   const csv = XLSX.utils.sheet_to_csv(worksheet);
 
-  downloadFile(csv, `${filename}_${formatDate(new Date())}.csv`, "text/csv;charset=utf-8;");
+  // Add UTF-8 BOM for Excel compatibility with French characters
+  const BOM = "\uFEFF";
+  downloadFile(BOM + csv, `${filename}_${formatDate(new Date())}.csv`, "text/csv;charset=utf-8;");
 }
 
 // =============================================================================

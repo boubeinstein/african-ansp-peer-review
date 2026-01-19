@@ -2,6 +2,7 @@
   "common": {
     "appName": "African ANSP Peer Review",
     "appTagline": "Collaborative Excellence in Aviation Safety",
+    "edit": "Edit",
     "actions": {
       "save": "Save",
       "cancel": "Cancel",
@@ -2311,6 +2312,31 @@
       "SURVEILLANCE": "Surveillance"
     }
   },
+  "finding": {
+    "type": {
+      "NON_CONFORMITY": "Non-Conformity",
+      "OBSERVATION": "Observation",
+      "CONCERN": "Concern",
+      "RECOMMENDATION": "Recommendation",
+      "GOOD_PRACTICE": "Good Practice"
+    },
+    "severity": {
+      "CRITICAL": "Critical",
+      "MAJOR": "Major",
+      "MINOR": "Minor",
+      "OBSERVATION": "Observation"
+    },
+    "status": {
+      "OPEN": "Open",
+      "CAP_REQUIRED": "CAP Required",
+      "CAP_SUBMITTED": "CAP Submitted",
+      "CAP_ACCEPTED": "CAP Accepted",
+      "IN_PROGRESS": "In Progress",
+      "VERIFICATION": "Under Verification",
+      "CLOSED": "Closed",
+      "DEFERRED": "Deferred"
+    }
+  },
   "findings": {
     "title": "Findings",
     "description": "Manage and track peer review findings",
@@ -3440,6 +3466,7 @@
     "actions": {
       "edit": "Edit Report",
       "save": "Save Changes",
+      "cancel": "Cancel",
       "submitForReview": "Submit for Review",
       "finalize": "Finalize Report",
       "print": "Print Report",
@@ -3452,6 +3479,38 @@
       "findings": "Findings",
       "caps": "CAPs",
       "team": "Team"
+    },
+    "summary": {
+      "eiScore": "EI Score",
+      "effectiveImplementation": "Effective Implementation",
+      "noAssessment": "No assessment",
+      "smsMaturity": "SMS Maturity",
+      "score": "Score",
+      "totalFindings": "Total Findings",
+      "clickForBreakdown": "Click for breakdown",
+      "findingsByType": "Findings by Type",
+      "findingsBySeverity": "Findings by Severity",
+      "criticalMajor": "Critical/Major",
+      "critical": "Critical",
+      "major": "Major",
+      "capCompletion": "CAP Completion",
+      "totalCAPs": "total CAPs",
+      "overdueCAPs": "Overdue CAPs",
+      "requiresAttention": "Requires attention",
+      "allOnTrack": "All on track",
+      "findingType": {
+        "NON_CONFORMITY": "Non-Conformity",
+        "OBSERVATION": "Observation",
+        "CONCERN": "Concern",
+        "RECOMMENDATION": "Recommendation",
+        "GOOD_PRACTICE": "Good Practice"
+      },
+      "severity": {
+        "CRITICAL": "Critical",
+        "MAJOR": "Major",
+        "MINOR": "Minor",
+        "OBSERVATION": "Observation"
+      }
     },
     "executiveSummary": "Executive Summary",
     "executiveSummaryPlaceholderEn": "Enter the executive summary in English...",
@@ -3487,6 +3546,7 @@
       "major": "Major",
       "minor": "Minor",
       "noFindings": "No findings recorded",
+      "noMatchingFindings": "No findings match your filters",
       "reference": "Reference",
       "finding": "Finding",
       "type": "Type",
@@ -3495,14 +3555,19 @@
       "dueDate": "Due Date",
       "actions": "Actions",
       "viewDetails": "View Details",
+      "filters": "Filters",
       "filterByType": "Filter by Type",
       "filterBySeverity": "Filter by Severity",
       "filterByStatus": "Filter by Status",
       "allTypes": "All Types",
       "allSeverities": "All Severities",
       "allStatuses": "All Statuses",
+      "clearFilters": "Clear Filters",
       "exportCSV": "Export CSV",
       "noFindingsFound": "No findings found matching the current filters.",
+      "titleColumn": "Finding",
+      "cap": "CAP",
+      "required": "Required",
       "types": {
         "NON_CONFORMITY": "Non-Conformity",
         "OBSERVATION": "Observation",
@@ -3527,7 +3592,9 @@
     "caps": {
       "title": "Corrective Action Plans",
       "total": "Total CAPs",
+      "totalCAPs": "total CAPs",
       "completionRate": "Completion Rate",
+      "completionProgress": "Completion Progress",
       "overdue": "Overdue",
       "overdueCAPs": "Overdue CAPs",
       "byStatus": "By Status",
@@ -3540,6 +3607,12 @@
       "action": "Action",
       "viewCAP": "View CAP",
       "noOverdueCAPs": "No overdue CAPs",
+      "overdueItems": "Overdue Items",
+      "allOnTrack": "All CAPs are on track",
+      "pending": "Pending",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "closed": "closed",
       "statuses": {
         "DRAFT": "Draft",
         "SUBMITTED": "Submitted",

@@ -19,7 +19,10 @@
     "prisma:reset": "prisma migrate reset",
     "db:seed": "npx tsx prisma/seed.ts",
     "db:seed:users": "npx tsx prisma/seed-dev-users.ts",
-    "db:seed:demo": "npx tsx prisma/seed-demo.ts",
+    "db:seed:demo": "npx tsx prisma/seed-demo.ts seed",
+    "db:seed:demo:cleanup": "npx tsx prisma/seed-demo.ts cleanup",
+    "db:seed:demo:reseed": "npx tsx prisma/seed-demo.ts reseed",
+    "db:seed:demo:status": "npx tsx prisma/seed-demo.ts status",
     "db:seed:all": "npx tsx prisma/seed.ts && npx tsx prisma/seed-dev-users.ts"
   },
   "dependencies": {

@@ -19,6 +19,7 @@ import {
   Users,
   Save,
   Loader2,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -459,6 +460,14 @@ export function ReportDetailView({
     setActiveTab("summary");
   }, []);
 
+  const handleCancel = useCallback(() => {
+    setExecutiveSummaryEn(data.report.executiveSummaryEn || "");
+    setExecutiveSummaryFr(data.report.executiveSummaryFr || "");
+    setRecommendationsEn("");
+    setRecommendationsFr("");
+    setHasChanges(false);
+  }, [data.report.executiveSummaryEn, data.report.executiveSummaryFr]);
+
   const handleExportPDF = useCallback(async () => {
     setIsExporting(true);
     setIsPrintMode(true);
@@ -538,9 +547,18 @@ export function ReportDetailView({
         className="print:hidden"
       />
 
-      {/* Save Button (floating) */}
+      {/* Save/Cancel Buttons (floating) */}
       {isEditable && hasChanges && (
-        <div className="fixed bottom-6 right-6 z-50 print:hidden">
+        <div className="fixed bottom-6 right-6 z-50 print:hidden flex gap-2">
+          <Button
+            variant="outline"
+            onClick={handleCancel}
+            disabled={isSaving}
+            className="shadow-lg"
+          >
+            <X className="h-4 w-4 mr-2" />
+            {t("actions.cancel")}
+          </Button>
           <Button
             onClick={handleSave}
             disabled={isSaving}

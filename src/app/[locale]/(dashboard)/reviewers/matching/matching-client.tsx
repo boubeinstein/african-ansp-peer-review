@@ -117,8 +117,11 @@ export function MatchingPageClient({ locale }: MatchingPageClientProps) {
 
     const csv = [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
 
+    // Add UTF-8 BOM for Excel compatibility with French characters
+    const BOM = "\uFEFF";
+
     // Download
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = new Blob([BOM + csv], { type: "text/csv;charset=utf-8" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;

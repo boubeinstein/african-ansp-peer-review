@@ -2,6 +2,7 @@
   "common": {
     "appName": "Revue par les Pairs ANSP Africains",
     "appTagline": "Excellence Collaborative en Sécurité Aéronautique",
+    "edit": "Modifier",
     "actions": {
       "save": "Enregistrer",
       "cancel": "Annuler",
@@ -2311,6 +2312,31 @@
       "SURVEILLANCE": "Surveillance"
     }
   },
+  "finding": {
+    "type": {
+      "NON_CONFORMITY": "Non-Conformité",
+      "OBSERVATION": "Observation",
+      "CONCERN": "Préoccupation",
+      "RECOMMENDATION": "Recommandation",
+      "GOOD_PRACTICE": "Bonne Pratique"
+    },
+    "severity": {
+      "CRITICAL": "Critique",
+      "MAJOR": "Majeur",
+      "MINOR": "Mineur",
+      "OBSERVATION": "Observation"
+    },
+    "status": {
+      "OPEN": "Ouvert",
+      "CAP_REQUIRED": "PAC Requis",
+      "CAP_SUBMITTED": "PAC Soumis",
+      "CAP_ACCEPTED": "PAC Accepté",
+      "IN_PROGRESS": "En Cours",
+      "VERIFICATION": "En Vérification",
+      "CLOSED": "Clôturé",
+      "DEFERRED": "Différé"
+    }
+  },
   "findings": {
     "title": "Constatations",
     "description": "Gérer et suivre les constatations des revues par les pairs",
@@ -3440,6 +3466,7 @@
     "actions": {
       "edit": "Modifier le Rapport",
       "save": "Enregistrer les Modifications",
+      "cancel": "Annuler",
       "submitForReview": "Soumettre pour Révision",
       "finalize": "Finaliser le Rapport",
       "print": "Imprimer le Rapport",
@@ -3452,6 +3479,38 @@
       "findings": "Constats",
       "caps": "PAC",
       "team": "Équipe"
+    },
+    "summary": {
+      "eiScore": "Score EI",
+      "effectiveImplementation": "Mise en Œuvre Effective",
+      "noAssessment": "Aucune évaluation",
+      "smsMaturity": "Maturité SMS",
+      "score": "Score",
+      "totalFindings": "Total des Constats",
+      "clickForBreakdown": "Cliquez pour les détails",
+      "findingsByType": "Constats par Type",
+      "findingsBySeverity": "Constats par Gravité",
+      "criticalMajor": "Critique/Majeur",
+      "critical": "Critique",
+      "major": "Majeur",
+      "capCompletion": "Complétion des PAC",
+      "totalCAPs": "PAC totaux",
+      "overdueCAPs": "PAC en Retard",
+      "requiresAttention": "Nécessite une attention",
+      "allOnTrack": "Tout est en ordre",
+      "findingType": {
+        "NON_CONFORMITY": "Non-Conformité",
+        "OBSERVATION": "Observation",
+        "CONCERN": "Préoccupation",
+        "RECOMMENDATION": "Recommandation",
+        "GOOD_PRACTICE": "Bonne Pratique"
+      },
+      "severity": {
+        "CRITICAL": "Critique",
+        "MAJOR": "Majeur",
+        "MINOR": "Mineur",
+        "OBSERVATION": "Observation"
+      }
     },
     "executiveSummary": "Résumé Exécutif",
     "executiveSummaryPlaceholderEn": "Saisissez le résumé exécutif en anglais...",
@@ -3487,6 +3546,7 @@
       "major": "Majeur",
       "minor": "Mineur",
       "noFindings": "Aucun constat enregistré",
+      "noMatchingFindings": "Aucun constat ne correspond à vos filtres",
       "reference": "Référence",
       "finding": "Constat",
       "type": "Type",
@@ -3495,14 +3555,19 @@
       "dueDate": "Date d'Échéance",
       "actions": "Actions",
       "viewDetails": "Voir les Détails",
+      "filters": "Filtres",
       "filterByType": "Filtrer par Type",
       "filterBySeverity": "Filtrer par Gravité",
       "filterByStatus": "Filtrer par Statut",
       "allTypes": "Tous les Types",
       "allSeverities": "Toutes les Gravités",
       "allStatuses": "Tous les Statuts",
+      "clearFilters": "Effacer les Filtres",
       "exportCSV": "Exporter en CSV",
       "noFindingsFound": "Aucun constat trouvé correspondant aux filtres actuels.",
+      "titleColumn": "Constat",
+      "cap": "PAC",
+      "required": "Requis",
       "types": {
         "NON_CONFORMITY": "Non-Conformité",
         "OBSERVATION": "Observation",
@@ -3527,7 +3592,9 @@
     "caps": {
       "title": "Plans d'Actions Correctives",
       "total": "Total des PAC",
+      "totalCAPs": "PAC au total",
       "completionRate": "Taux de Complétion",
+      "completionProgress": "Progression de l'Achèvement",
       "overdue": "En Retard",
       "overdueCAPs": "PAC en Retard",
       "byStatus": "Par Statut",
@@ -3540,6 +3607,12 @@
       "action": "Action",
       "viewCAP": "Voir le PAC",
       "noOverdueCAPs": "Aucun PAC en retard",
+      "overdueItems": "Éléments en Retard",
+      "allOnTrack": "Tous les PAC sont à jour",
+      "pending": "En Attente",
+      "inProgress": "En Cours",
+      "completed": "Terminé",
+      "closed": "clôturé(s)",
       "statuses": {
         "DRAFT": "Brouillon",
         "SUBMITTED": "Soumis",

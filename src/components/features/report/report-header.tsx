@@ -280,8 +280,8 @@ export function ReportHeader({
 
           {/* Right: Actions */}
           <div className="flex flex-col gap-2 shrink-0">
-            {/* Edit Button */}
-            {canEdit && report.status !== "FINALIZED" && (
+            {/* Edit Button - Only show for DRAFT status */}
+            {canEdit && report.status === "DRAFT" && (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>

@@ -90,11 +90,7 @@ function ProfileSettingsSkeleton() {
   );
 }
 
-export function ProfileSettings({
-  firstName: _initialFirstName,
-  lastName: _initialLastName,
-  email: _initialEmail,
-}: ProfileSettingsProps) {
+export function ProfileSettings({}: ProfileSettingsProps) {
   const t = useTranslations("settings.profile");
   const tCommon = useTranslations("common");
   const locale = useLocale();

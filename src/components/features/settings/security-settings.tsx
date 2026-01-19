@@ -109,8 +109,7 @@ function SecuritySkeleton() {
   );
 }
 
-export function SecuritySettings({ email: _email }: SecuritySettingsProps) {
-  // Note: Email prop available for future use (e.g., account deactivation confirmation)
+export function SecuritySettings({}: SecuritySettingsProps) {
   const t = useTranslations("settings.security");
   const tCommon = useTranslations("common");
   const [isSubmitting, setIsSubmitting] = useState(false);

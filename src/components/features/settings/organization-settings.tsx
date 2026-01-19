@@ -53,8 +53,7 @@ function OrganizationSkeleton() {
   );
 }
 
-export function OrganizationSettings({ organizationId: _organizationId }: OrganizationSettingsProps) {
-  // Note: organizationId prop available for direct queries if needed
+export function OrganizationSettings({}: OrganizationSettingsProps) {
   const t = useTranslations("settings.organization");
   const locale = useLocale();
 

@@ -996,14 +996,14 @@ async function seedDemoData() {
     }
 
     // 2. Seed findings (dynamically based on created reviews)
-    const { findingMap, createdFindings } = await seedFindings(reviewMap);
+    const { findingMap, createdFindings } = await seedFindings();
     console.log(`\n   Total findings: ${findingMap.size}`);
 
     // 3. Seed CAPs (using the created findings)
     await seedCAPs(createdFindings);
 
     // 4. Seed assessments with responses
-    await seedAssessments(reviewMap);
+    await seedAssessments();
 
     printSummary(reviewMap.size, findingMap.size);
   } catch (error) {

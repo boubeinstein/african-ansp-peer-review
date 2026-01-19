@@ -478,8 +478,7 @@ export function ReportDetailView({
     try {
       const filename = formatPDFFilename(
         "Review_Report",
-        data.review.referenceNumber,
-        locale
+        data.review.referenceNumber
       );
 
       await generatePDF({ title: filename });

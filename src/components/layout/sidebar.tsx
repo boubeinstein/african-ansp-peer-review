@@ -1,9 +1,11 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { trpc } from "@/lib/trpc/client";
 import {
   LayoutDashboard,
   ClipboardList,
@@ -26,16 +28,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useState } from "react";
 
 interface NavItem {
   titleKey: string;
   href: string;
   icon: React.ElementType;
   disabled?: boolean;
+  requiresPreference?: string;
 }
 
-const navItems: NavItem[] = [
+const baseNavItems: NavItem[] = [
   { titleKey: "dashboard", href: "/dashboard", icon: LayoutDashboard },
   { titleKey: "questionnaires", href: "/questionnaires", icon: ClipboardList },
   { titleKey: "assessments", href: "/assessments", icon: FileCheck },
@@ -44,7 +46,7 @@ const navItems: NavItem[] = [
   { titleKey: "caps", href: "/caps", icon: ClipboardCheck },
   { titleKey: "reviewers", href: "/reviewers", icon: UserCheck },
   { titleKey: "organizations", href: "/organizations", icon: Building2 },
-  { titleKey: "training", href: "/training", icon: BookOpen },
+  { titleKey: "training", href: "/training", icon: BookOpen, requiresPreference: "showTrainingModule" },
   { titleKey: "settings", href: "/settings", icon: Settings },
 ];
 
@@ -56,6 +58,22 @@ export function Sidebar({ locale }: SidebarProps) {
   const pathname = usePathname();
   const t = useTranslations("navigation");
   const [collapsed, setCollapsed] = useState(false);
+
+  // Fetch user preferences for conditional nav items
+  const { data: preferences } = trpc.settings.getPreferences.useQuery(undefined, {
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+
+  // Filter nav items based on user preferences
+  const navItems = useMemo(() => {
+    return baseNavItems.filter((item) => {
+      if (item.requiresPreference === "showTrainingModule") {
+        // Default to true if preferences haven't loaded yet
+        return preferences?.showTrainingModule ?? true;
+      }
+      return true;
+    });
+  }, [preferences?.showTrainingModule]);
 
   return (
     <div

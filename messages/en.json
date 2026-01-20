@@ -99,7 +99,7 @@
       "email": "Email Address",
       "emailPlaceholder": "name@organization.aero",
       "organization": "Organization",
-      "organizationPlaceholder": "Select your ANSP",
+      "organizationPlaceholder": "Select your ANSP/CAA",
       "jobTitle": "Job Title",
       "jobTitlePlaceholder": "e.g., Safety Manager",
       "password": "Password",

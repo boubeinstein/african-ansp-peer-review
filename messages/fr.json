@@ -99,7 +99,7 @@
       "email": "Adresse Email",
       "emailPlaceholder": "nom@organisation.aero",
       "organization": "Organisation",
-      "organizationPlaceholder": "Sélectionnez votre ANSP",
+      "organizationPlaceholder": "Sélectionnez votre ANSP/CAA",
       "jobTitle": "Fonction",
       "jobTitlePlaceholder": "ex: Responsable Sécurité",
       "password": "Mot de Passe",

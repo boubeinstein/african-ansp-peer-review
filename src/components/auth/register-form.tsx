@@ -51,19 +51,33 @@ const registerSchema = z.object({
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
-// Temporary static list of organizations until public API is available
+// 20 Programme Participants (5 teams × 4 each) - sorted alphabetically
 const ORGANIZATIONS = [
-  { id: "asecna", name: "ASECNA", icaoCode: "ASECNA" },
-  { id: "aca", name: "Algerian Civil Aviation Authority", icaoCode: "ACA" },
-  { id: "enna", name: "Egyptian Air Navigation Services", icaoCode: "ENNA" },
-  { id: "kaa", name: "Kenya Airports Authority", icaoCode: "KAA" },
-  { id: "atns", name: "Air Traffic and Navigation Services", icaoCode: "ATNS" },
-  { id: "nama", name: "Nigerian Airspace Management Agency", icaoCode: "NAMA" },
-  { id: "gcaa", name: "Ghana Civil Aviation Authority", icaoCode: "GCAA" },
+  // Northern Africa Team
+  { id: "enna", name: "Établissement National de la Navigation Aérienne (Algeria)", icaoCode: "ENNA" },
+  { id: "nansc", name: "National Air Navigation Services Company (Egypt)", icaoCode: "NANSC" },
   { id: "onda", name: "Office National des Aéroports (Morocco)", icaoCode: "ONDA" },
-  { id: "tcaa", name: "Tanzania Civil Aviation Authority", icaoCode: "TCAA" },
+  { id: "oaca", name: "Office de l'Aviation Civile et des Aéroports (Tunisia)", icaoCode: "OACA" },
+  // ESAF Team 1
+  { id: "ecaa", name: "Ethiopian Civil Aviation Authority", icaoCode: "ECAA" },
+  { id: "kcaa", name: "Kenya Civil Aviation Authority", icaoCode: "KCAA" },
+  { id: "rcaa", name: "Rwanda Civil Aviation Authority", icaoCode: "RCAA" },
   { id: "ucaa", name: "Uganda Civil Aviation Authority", icaoCode: "UCAA" },
-];
+  // ESAF Team 2
+  { id: "caam", name: "Civil Aviation Authority of Mozambique", icaoCode: "CAAM" },
+  { id: "tcaa", name: "Tanzania Civil Aviation Authority", icaoCode: "TCAA" },
+  { id: "zcaa", name: "Zambia Civil Aviation Authority", icaoCode: "ZCAA" },
+  // WACAF Team 1
+  { id: "gcaa", name: "Ghana Civil Aviation Authority", icaoCode: "GCAA" },
+  { id: "lcaa", name: "Liberia Civil Aviation Authority", icaoCode: "LCAA" },
+  { id: "nama", name: "Nigerian Airspace Management Agency", icaoCode: "NAMA" },
+  { id: "slcaa", name: "Sierra Leone Civil Aviation Authority", icaoCode: "SLCAA" },
+  // WACAF Team 2
+  { id: "asecna", name: "ASECNA", icaoCode: "ASECNA" },
+  { id: "acm", name: "Aviation Civile de Madagascar", icaoCode: "ACM" },
+  { id: "mcaa", name: "Mauritius Civil Aviation Authority", icaoCode: "MCAA" },
+  { id: "rfir", name: "Roberts FIR (Liberia)", icaoCode: "RFIR" },
+].sort((a, b) => a.name.localeCompare(b.name));
 
 export function RegisterForm() {
   const t = useTranslations("auth.register");
@@ -127,7 +141,7 @@ export function RegisterForm() {
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <Input
                   id="firstName"
-                  placeholder="John"
+                  placeholder="Daniel"
                   className={cn(
                     "pl-10 h-10 bg-slate-50 border-slate-200 focus:bg-white transition-colors",
                     errors.firstName && "border-red-500"
@@ -152,7 +166,7 @@ export function RegisterForm() {
               </Label>
               <Input
                 id="lastName"
-                placeholder="Doe"
+                placeholder="Johnson"
                 className={cn(
                   "h-10 bg-slate-50 border-slate-200 focus:bg-white transition-colors",
                   errors.lastName && "border-red-500"
@@ -211,13 +225,13 @@ export function RegisterForm() {
               >
                 <SelectTrigger
                   className={cn(
-                    "pl-10 h-10 bg-slate-50 border-slate-200 focus:bg-white",
+                    "w-full pl-10 h-10 bg-slate-50 border-slate-200 focus:bg-white text-left",
                     errors.organizationId && "border-red-500"
                   )}
                 >
                   <SelectValue placeholder={t("organizationPlaceholder")} />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-60 overflow-y-auto">
                   {ORGANIZATIONS.map((org) => (
                     <SelectItem key={org.id} value={org.id}>
                       {org.name} ({org.icaoCode})

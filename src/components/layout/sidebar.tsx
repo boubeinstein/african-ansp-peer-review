@@ -12,6 +12,7 @@ import {
   FileCheck,
   Users,
   UserCheck,
+  UserPlus,
   Building2,
   BookOpen,
   Settings,
@@ -46,6 +47,7 @@ const baseNavItems: NavItem[] = [
   { titleKey: "caps", href: "/caps", icon: ClipboardCheck },
   { titleKey: "reviewers", href: "/reviewers", icon: UserCheck },
   { titleKey: "organizations", href: "/organizations", icon: Building2 },
+  { titleKey: "joinRequests", href: "/join-requests", icon: UserPlus },
   { titleKey: "training", href: "/training", icon: BookOpen, requiresPreference: "showTrainingModule" },
   { titleKey: "settings", href: "/settings", icon: Settings },
 ];

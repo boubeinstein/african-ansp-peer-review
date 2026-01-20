@@ -62,7 +62,8 @@
     "reviewers": "Évaluateurs",
     "training": "Formation",
     "settings": "Paramètres",
-    "admin": "Administration"
+    "admin": "Administration",
+    "joinRequests": "Demandes d'Adhésion"
   },
   "auth": {
     "hero": {

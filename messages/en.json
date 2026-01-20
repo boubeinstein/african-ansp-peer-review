@@ -62,7 +62,8 @@
     "reviewers": "Reviewers",
     "training": "Training",
     "settings": "Settings",
-    "admin": "Administration"
+    "admin": "Administration",
+    "joinRequests": "Join Requests"
   },
   "auth": {
     "hero": {

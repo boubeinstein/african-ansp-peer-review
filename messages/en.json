@@ -3968,7 +3968,14 @@
       "scReview": "Under Steering Committee Review",
       "approved": "Approved",
       "rejected": "Not Approved",
-      "withdrawn": "Withdrawn"
+      "withdrawn": "Withdrawn",
+      "MORE_INFO": "Additional Info Requested",
+      "COORDINATOR_REVIEW": "Under Coordinator Review",
+      "SC_REVIEW": "Under SC Review",
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "WITHDRAWN": "Withdrawn"
     },
     "validation": {
       "organizationRequired": "Please select your organization",
@@ -4007,13 +4014,11 @@
       "loading": "Loading requests..."
     },
     "detail": {
-      "applicationInfo": "Application Information",
-      "submittedBy": "Submitted By",
-      "submittedAt": "Submitted At",
-      "motivation": "Motivation",
-      "expectedBenefits": "Expected Benefits",
-      "availableResources": "Available Resources",
-      "preferredTeam": "Preferred Team"
+      "organizationInfo": "Organization Information",
+      "contactInfo": "Contact Information",
+      "applicationInfo": "Application Details",
+      "coordinatorReview": "Coordinator Review",
+      "scDecision": "Steering Committee Decision"
     },
     "coordinatorReview": {
       "title": "Coordinator Review",
@@ -4069,6 +4074,31 @@
       "scReview": "SC Review",
       "approved": "Approved",
       "rejected": "Rejected"
+    },
+    "stats": {
+      "total": "Total Applications",
+      "pending": "Pending Review",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "tabs": {
+      "pending": "Pending",
+      "inReview": "In Review",
+      "decided": "Decided",
+      "all": "All"
+    },
+    "table": {
+      "organization": "Organization",
+      "contact": "Contact",
+      "submittedOn": "Submitted",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "empty": {
+      "pending": "No pending applications",
+      "inReview": "No applications in review",
+      "decided": "No decided applications",
+      "all": "No applications found"
     }
   }
 }

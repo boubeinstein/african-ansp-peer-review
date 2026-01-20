@@ -3968,7 +3968,14 @@
       "scReview": "En Cours d'Examen par le Comité de Pilotage",
       "approved": "Approuvée",
       "rejected": "Non Approuvée",
-      "withdrawn": "Retirée"
+      "withdrawn": "Retirée",
+      "MORE_INFO": "Informations Supplémentaires Demandées",
+      "COORDINATOR_REVIEW": "En Cours d'Examen par le Coordinateur",
+      "SC_REVIEW": "En Cours d'Examen par le CP",
+      "PENDING": "En Attente",
+      "APPROVED": "Approuvée",
+      "REJECTED": "Rejetée",
+      "WITHDRAWN": "Retirée"
     },
     "validation": {
       "organizationRequired": "Veuillez sélectionner votre organisation",
@@ -4007,13 +4014,11 @@
       "loading": "Chargement des demandes..."
     },
     "detail": {
-      "applicationInfo": "Informations sur la Candidature",
-      "submittedBy": "Soumise par",
-      "submittedAt": "Soumise le",
-      "motivation": "Motivation",
-      "expectedBenefits": "Bénéfices Attendus",
-      "availableResources": "Ressources Disponibles",
-      "preferredTeam": "Équipe Préférée"
+      "organizationInfo": "Informations sur l'Organisation",
+      "contactInfo": "Coordonnées du Contact",
+      "applicationInfo": "Détails de la Candidature",
+      "coordinatorReview": "Examen du Coordinateur",
+      "scDecision": "Décision du Comité de Pilotage"
     },
     "coordinatorReview": {
       "title": "Examen du Coordinateur",
@@ -4069,6 +4074,31 @@
       "scReview": "Examen CP",
       "approved": "Approuvées",
       "rejected": "Rejetées"
+    },
+    "stats": {
+      "total": "Total des Candidatures",
+      "pending": "En Attente",
+      "approved": "Approuvées",
+      "rejected": "Rejetées"
+    },
+    "tabs": {
+      "pending": "En Attente",
+      "inReview": "En Cours",
+      "decided": "Décidées",
+      "all": "Toutes"
+    },
+    "table": {
+      "organization": "Organisation",
+      "contact": "Contact",
+      "submittedOn": "Soumise le",
+      "status": "Statut",
+      "actions": "Actions"
+    },
+    "empty": {
+      "pending": "Aucune candidature en attente",
+      "inReview": "Aucune candidature en cours d'examen",
+      "decided": "Aucune candidature décidée",
+      "all": "Aucune candidature trouvée"
     }
   }
 }

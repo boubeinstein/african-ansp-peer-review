@@ -53,18 +53,22 @@ const programmeParticipants = [
 async function seedProgrammeParticipants() {
   console.log("🔄 Resetting all programme participants...\n");
 
-  // Reset all organizations
+  // Reset all organizations to REGISTERED status
   await prisma.organization.updateMany({
     data: {
       peerReviewTeam: null,
+      participationStatus: "REGISTERED",
+      joinedProgrammeAt: null,
     },
   });
 
-  console.log("✅ All organizations reset\n");
-  console.log("🎯 Setting correct 20 programme participants:\n");
+  console.log("✅ All organizations reset to REGISTERED\n");
+  console.log("🎯 Setting correct 20 programme participants to ACTIVE:\n");
 
   let successCount = 0;
   const notFound: string[] = [];
+
+  const joinedDate = new Date("2024-01-15"); // Programme launch date
 
   for (const participant of programmeParticipants) {
     const updated = await prisma.organization.updateMany({
@@ -73,6 +77,8 @@ async function seedProgrammeParticipants() {
       },
       data: {
         peerReviewTeam: participant.team,
+        participationStatus: "ACTIVE",
+        joinedProgrammeAt: joinedDate,
       },
     });
 

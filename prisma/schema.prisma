@@ -7,28 +7,38 @@ datasource db {
 }
 
 model Organization {
-  id               String            @id @default(cuid())
-  nameEn           String            @map("name_en")
-  nameFr           String            @map("name_fr")
-  icaoCode         String?           @unique @map("icao_code")
-  country          String
-  region           AfricanRegion
-  city             String?
-  peerReviewTeam   Int?              @map("peer_review_team")
-  membershipStatus MembershipStatus  @default(PENDING)
-  joinedAt         DateTime?         @map("joined_at")
-  createdAt        DateTime          @default(now()) @map("created_at")
-  updatedAt        DateTime          @updatedAt @map("updated_at")
+  id                    String              @id @default(cuid())
+  nameEn                String              @map("name_en")
+  nameFr                String              @map("name_fr")
+  icaoCode              String?             @unique @map("icao_code")
+  country               String
+  region                AfricanRegion
+  city                  String?
+
+  // Programme participation
+  participationStatus   ParticipationStatus @default(REGISTERED) @map("participation_status")
+  peerReviewTeam        Int?                @map("peer_review_team")  // Team 1-5 (null if not active participant)
+  joinedProgrammeAt     DateTime?           @map("joined_programme_at")
+
+  // Legacy field (kept for backwards compatibility)
+  membershipStatus      MembershipStatus    @default(PENDING)
+  joinedAt              DateTime?           @map("joined_at")
+
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedAt             DateTime            @updatedAt @map("updated_at")
+
   // Relations
-  assessments      Assessment[]
-  documents        Document[]
-  findings         Finding[]
-  reviewsAsHost    Review[]          @relation("HostANSP")
-  users            User[]
+  assessments           Assessment[]
+  documents             Document[]
+  findings              Finding[]
+  reviewsAsHost         Review[]            @relation("HostANSP")
+  users                 User[]
+  joinRequests          JoinRequest[]
+
   // Reviewer-related relations
-  homeReviewers    ReviewerProfile[] @relation("HomeReviewers")
-  conflictCOIs     ReviewerCOI[]     @relation("ConflictReviewers")
-  coiOverrides     COIOverride[]     @relation("COIOverrides")
+  homeReviewers         ReviewerProfile[]   @relation("HomeReviewers")
+  conflictCOIs          ReviewerCOI[]       @relation("ConflictReviewers")
+  coiOverrides          COIOverride[]       @relation("COIOverrides")
 
   @@map("organizations")
 }
@@ -921,6 +931,28 @@ enum MembershipStatus {
   INACTIVE
 }
 
+// Programme participation status for ICAO-aligned workflow
+enum ParticipationStatus {
+  REGISTERED      // In database, not participating
+  APPLIED         // Submitted join request
+  UNDER_REVIEW    // Being evaluated by Steering Committee
+  APPROVED        // Accepted, pending onboarding
+  ACTIVE          // Full programme participant
+  SUSPENDED       // Temporarily inactive
+  REJECTED        // Application denied
+}
+
+// Join request workflow status
+enum JoinRequestStatus {
+  PENDING           // Just submitted
+  COORDINATOR_REVIEW // Coordinator is reviewing
+  SC_REVIEW         // Submitted to Steering Committee
+  APPROVED          // SC approved
+  REJECTED          // SC rejected
+  MORE_INFO         // SC requested additional information
+  WITHDRAWN         // Applicant withdrew
+}
+
 enum QuestionnaireType {
   ANS_USOAP_CMA
   SMS_CANSO_SOE
@@ -1320,4 +1352,50 @@ model UserPreferences {
   updatedAt                 DateTime        @updatedAt @map("updated_at")
 
   @@map("user_preferences")
+}
+
+// ============================================
+// JOIN REQUEST WORKFLOW
+// ============================================
+
+model JoinRequest {
+  id                    String            @id @default(cuid())
+
+  // Applicant
+  organizationId        String            @map("organization_id")
+  organization          Organization      @relation(fields: [organizationId], references: [id])
+
+  // Contact person (ANSP Focal Point)
+  contactName           String            @map("contact_name")
+  contactEmail          String            @map("contact_email")
+  contactPhone          String?           @map("contact_phone")
+  contactJobTitle       String            @map("contact_job_title")
+
+  // Application details
+  currentSmsMaturity    String?           @map("current_sms_maturity")  // Self-assessed: A, B, C, D, E
+  commitmentLetterUrl   String?           @map("commitment_letter_url")  // Uploaded CEO/DG letter
+  motivationStatement   String            @map("motivation_statement") @db.Text
+  proposedReviewers     Int               @default(2) @map("proposed_reviewers")  // How many reviewers they can nominate
+  preferredTeam         Int?              @map("preferred_team")  // Optional preference (1-5)
+  preferredLanguage     String            @default("en") @map("preferred_language")  // en, fr, both
+
+  // Review process
+  status                JoinRequestStatus @default(PENDING)
+  coordinatorNotes      String?           @map("coordinator_notes") @db.Text
+  coordinatorReviewedAt DateTime?         @map("coordinator_reviewed_at")
+  coordinatorReviewedBy String?           @map("coordinator_reviewed_by")
+  scDecision            String?           @map("sc_decision")  // APPROVED, REJECTED, MORE_INFO
+  scDecisionNotes       String?           @map("sc_decision_notes") @db.Text
+  scDecisionAt          DateTime?         @map("sc_decision_at")
+  scDecisionBy          String?           @map("sc_decision_by")
+  assignedTeam          Int?              @map("assigned_team")  // Final team assignment
+  rejectionReason       String?           @map("rejection_reason") @db.Text
+
+  // Timestamps
+  createdAt             DateTime          @default(now()) @map("created_at")
+  updatedAt             DateTime          @updatedAt @map("updated_at")
+
+  @@index([organizationId])
+  @@index([status])
+  @@map("join_requests")
 }

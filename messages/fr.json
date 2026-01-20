@@ -1590,8 +1590,9 @@
       "cancel": "Annuler"
     },
     "messages": {
-      "created": "Évaluateur créé avec succès",
-      "createError": "Échec de la création de l'évaluateur"
+      "createSuccess": "Profil d'évaluateur créé avec succès",
+      "updateSuccess": "Profil d'évaluateur mis à jour avec succès",
+      "coiWarning": "Cet évaluateur a un conflit d'intérêts"
     },
     "profile": {
       "title": "Informations du profil",
@@ -1741,7 +1742,9 @@
       "endDate": "Date de fin",
       "notes": "Notes",
       "notesPlaceholder": "Ajoutez des notes sur cette période...",
-      "legend": "Légende",
+      "legend": {
+        "requestedPeriod": "Période de revue demandée"
+      },
       "save": "Enregistrer",
       "cancel": "Annuler",
       "delete": "Supprimer",
@@ -1810,9 +1813,6 @@
         "today": "Aujourd'hui",
         "previous": "Précédent",
         "next": "Suivant"
-      },
-      "legend": {
-        "requestedPeriod": "Période de revue demandée"
       },
       "bulk": {
         "title": "Disponibilité en masse",
@@ -1982,11 +1982,6 @@
       "notFound": "Évaluateur non trouvé",
       "notFoundDescription": "Le profil d'évaluateur que vous recherchez n'existe pas ou a été supprimé."
     },
-    "messages": {
-      "createSuccess": "Profil d'évaluateur créé avec succès",
-      "updateSuccess": "Profil d'évaluateur mis à jour avec succès",
-      "coiWarning": "Cet évaluateur a un conflit d'intérêts"
-    },
     "matching": {
       "title": "Trouver des évaluateurs correspondants",
       "criteria": "Critères de recherche",
@@ -2020,9 +2015,17 @@
       "confirmTeam": "Confirmer la sélection",
       "results": "Résultats",
       "eligible": "éligibles",
-      "ineligible": "non éligibles",
+      "ineligible": "Non éligible",
       "selected": "sélectionnés",
-      "score": "Score de correspondance",
+      "score": {
+        "levels": {
+          "excellent": "Excellente correspondance",
+          "good": "Bonne correspondance",
+          "fair": "Correspondance acceptable",
+          "poor": "Faible correspondance"
+        },
+        "tooltipScore": "{score}/{max} points"
+      },
       "leadQualified": "Chef d'équipe qualifié",
       "notEligible": "Non éligible",
       "reviewsCompleted": "revues effectuées",
@@ -2047,16 +2050,6 @@
         "availabilityShort": "Disp",
         "experienceShort": "Xp"
       },
-      "score": {
-        "levels": {
-          "excellent": "Excellente correspondance",
-          "good": "Bonne correspondance",
-          "fair": "Correspondance acceptable",
-          "poor": "Faible correspondance"
-        },
-        "tooltipScore": "{score}/{max} points"
-      },
-      "ineligible": "Non éligible",
       "team": {
         "title": "Composition d'équipe",
         "selected": "Membres sélectionnés",
@@ -3905,6 +3898,147 @@
       "maxUploadSizeDescription": "Taille maximale des fichiers pour le téléchargement de documents",
       "readOnlyNote": "Ces paramètres sont en lecture seule. Pour modifier la configuration du système, veuillez contacter l'administrateur système.",
       "loadError": "Échec du chargement des paramètres admin"
+    }
+  },
+  "joinRequest": {
+    "title": "Rejoindre le Programme de Revue par les Pairs",
+    "subtitle": "Soumettez la candidature de votre organisation pour participer",
+    "form": {
+      "organizationInfo": "Informations sur l'Organisation",
+      "organization": "Organisation",
+      "organizationPlaceholder": "Sélectionnez votre organisation",
+      "contactInfo": "Coordonnées du Contact",
+      "contactName": "Nom du Contact",
+      "contactNamePlaceholder": "Nom complet du contact principal",
+      "contactEmail": "E-mail du Contact",
+      "contactEmailPlaceholder": "officiel@organisation.gov",
+      "contactPhone": "Téléphone du Contact",
+      "contactPhonePlaceholder": "+XXX XXX XXX XXX",
+      "applicationDetails": "Détails de la Candidature",
+      "motivation": "Motivation pour Rejoindre",
+      "motivationPlaceholder": "Décrivez pourquoi votre organisation souhaite participer au programme de revue par les pairs...",
+      "expectedBenefits": "Bénéfices Attendus",
+      "expectedBenefitsPlaceholder": "Quels bénéfices votre organisation espère-t-elle obtenir...",
+      "availableResources": "Ressources Disponibles",
+      "availableResourcesPlaceholder": "Décrivez les ressources que votre organisation peut apporter (évaluateurs, expertise, installations)...",
+      "preferredTeam": "Équipe Préférée",
+      "preferredTeamDescription": "Optionnel : Indiquez si vous avez une équipe de revue par les pairs préférée",
+      "noPreference": "Pas de préférence",
+      "submit": "Soumettre la Candidature",
+      "submitting": "Soumission en cours..."
+    },
+    "success": {
+      "title": "Candidature Soumise",
+      "message": "Votre candidature a été soumise avec succès. Le coordinateur du programme l'examinera prochainement.",
+      "referenceNumber": "Numéro de Référence",
+      "whatNext": "Quelle est la suite ?",
+      "steps": {
+        "step1": "Le Coordinateur du Programme examinera votre candidature",
+        "step2": "Si recommandée, elle sera soumise au Comité de Pilotage",
+        "step3": "Le Comité de Pilotage prendra la décision finale",
+        "step4": "Vous serez notifié du résultat par e-mail"
+      }
+    },
+    "status": {
+      "pending": "En Attente d'Examen",
+      "coordinatorReview": "En Cours d'Examen par le Coordinateur",
+      "scReview": "En Cours d'Examen par le Comité de Pilotage",
+      "approved": "Approuvée",
+      "rejected": "Non Approuvée",
+      "withdrawn": "Retirée"
+    },
+    "validation": {
+      "organizationRequired": "Veuillez sélectionner votre organisation",
+      "contactNameRequired": "Le nom du contact est requis",
+      "contactEmailRequired": "L'e-mail du contact est requis",
+      "contactEmailInvalid": "Veuillez entrer une adresse e-mail valide",
+      "motivationRequired": "Veuillez fournir votre motivation pour rejoindre",
+      "motivationMinLength": "La motivation doit contenir au moins 100 caractères",
+      "alreadyActive": "Votre organisation est déjà un participant actif",
+      "alreadyPending": "Votre organisation a déjà une candidature en attente"
+    },
+    "errors": {
+      "submitFailed": "Échec de la soumission de la candidature. Veuillez réessayer.",
+      "loadFailed": "Échec du chargement du formulaire de candidature"
+    }
+  },
+  "joinRequestAdmin": {
+    "title": "Gestion des Demandes d'Adhésion",
+    "subtitle": "Examiner et traiter les candidatures de participation au programme",
+    "list": {
+      "columns": {
+        "organization": "Organisation",
+        "submittedAt": "Soumise le",
+        "status": "Statut",
+        "assignedTo": "Assignée à",
+        "actions": "Actions"
+      },
+      "empty": "Aucune demande d'adhésion en attente",
+      "loading": "Chargement des demandes..."
+    },
+    "detail": {
+      "applicationInfo": "Informations sur la Candidature",
+      "submittedBy": "Soumise par",
+      "submittedAt": "Soumise le",
+      "motivation": "Motivation",
+      "expectedBenefits": "Bénéfices Attendus",
+      "availableResources": "Ressources Disponibles",
+      "preferredTeam": "Équipe Préférée"
+    },
+    "coordinatorReview": {
+      "title": "Examen du Coordinateur",
+      "instructions": "Examinez la candidature et fournissez votre recommandation au Comité de Pilotage",
+      "recommendation": "Recommandation",
+      "recommend": "Recommander l'Approbation",
+      "notRecommend": "Ne Pas Recommander",
+      "needsInfo": "Demander des Informations Supplémentaires",
+      "recommendedTeam": "Équipe Recommandée",
+      "comments": "Commentaires de l'Examen",
+      "commentsPlaceholder": "Fournissez votre évaluation et toute observation pertinente...",
+      "additionalInfoRequest": "Informations Demandées",
+      "additionalInfoRequestPlaceholder": "Précisez quelles informations supplémentaires sont nécessaires...",
+      "submit": "Soumettre l'Examen",
+      "submitting": "Soumission en cours..."
+    },
+    "scReview": {
+      "title": "Décision du Comité de Pilotage",
+      "instructions": "Examinez la recommandation du coordinateur et prenez la décision finale",
+      "coordinatorRecommendation": "Recommandation du Coordinateur",
+      "coordinatorComments": "Commentaires du Coordinateur",
+      "decision": "Décision",
+      "approve": "Approuver la Candidature",
+      "reject": "Rejeter la Candidature",
+      "defer": "Reporter la Décision",
+      "assignedTeam": "Équipe de Revue par les Pairs Assignée",
+      "comments": "Commentaires de Décision",
+      "commentsPlaceholder": "Fournissez la justification de la décision...",
+      "submit": "Soumettre la Décision",
+      "submitting": "Soumission en cours..."
+    },
+    "actions": {
+      "view": "Voir les Détails",
+      "review": "Examiner",
+      "assignCoordinator": "Assigner au Coordinateur",
+      "withdraw": "Retirer"
+    },
+    "success": {
+      "reviewSubmitted": "Examen soumis avec succès",
+      "decisionSubmitted": "Décision enregistrée avec succès",
+      "applicationApproved": "Candidature approuvée - l'organisation est maintenant ACTIVE",
+      "applicationRejected": "La candidature a été rejetée"
+    },
+    "errors": {
+      "loadFailed": "Échec du chargement de la demande d'adhésion",
+      "reviewFailed": "Échec de la soumission de l'examen",
+      "decisionFailed": "Échec de l'enregistrement de la décision"
+    },
+    "filters": {
+      "all": "Toutes les Demandes",
+      "pending": "En Attente",
+      "coordinatorReview": "Examen Coordinateur",
+      "scReview": "Examen CP",
+      "approved": "Approuvées",
+      "rejected": "Rejetées"
     }
   }
 }

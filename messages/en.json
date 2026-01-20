@@ -1590,8 +1590,9 @@
       "cancel": "Cancel"
     },
     "messages": {
-      "created": "Reviewer created successfully",
-      "createError": "Failed to create reviewer"
+      "createSuccess": "Reviewer profile created successfully",
+      "updateSuccess": "Reviewer profile updated successfully",
+      "coiWarning": "This reviewer has a conflict of interest"
     },
     "profile": {
       "title": "Profile Information",
@@ -1741,7 +1742,9 @@
       "endDate": "End Date",
       "notes": "Notes",
       "notesPlaceholder": "Add any notes about this period...",
-      "legend": "Legend",
+      "legend": {
+        "requestedPeriod": "Requested Review Period"
+      },
       "save": "Save",
       "cancel": "Cancel",
       "delete": "Delete",
@@ -1810,9 +1813,6 @@
         "today": "Today",
         "previous": "Previous",
         "next": "Next"
-      },
-      "legend": {
-        "requestedPeriod": "Requested Review Period"
       },
       "bulk": {
         "title": "Bulk Availability",
@@ -1982,11 +1982,6 @@
       "notFound": "Reviewer Not Found",
       "notFoundDescription": "The reviewer profile you're looking for doesn't exist or has been removed."
     },
-    "messages": {
-      "createSuccess": "Reviewer profile created successfully",
-      "updateSuccess": "Reviewer profile updated successfully",
-      "coiWarning": "This reviewer has a conflict of interest"
-    },
     "matching": {
       "title": "Find Matching Reviewers",
       "criteria": "Search Criteria",
@@ -2020,9 +2015,17 @@
       "confirmTeam": "Confirm Team Selection",
       "results": "Results",
       "eligible": "eligible",
-      "ineligible": "ineligible",
+      "ineligible": "Ineligible",
       "selected": "selected",
-      "score": "Match Score",
+      "score": {
+        "levels": {
+          "excellent": "Excellent Match",
+          "good": "Good Match",
+          "fair": "Fair Match",
+          "poor": "Poor Match"
+        },
+        "tooltipScore": "{score}/{max} points"
+      },
       "leadQualified": "Lead Qualified",
       "notEligible": "Not Eligible",
       "reviewsCompleted": "reviews completed",
@@ -2047,16 +2050,6 @@
         "availabilityShort": "Avail",
         "experienceShort": "Xp"
       },
-      "score": {
-        "levels": {
-          "excellent": "Excellent Match",
-          "good": "Good Match",
-          "fair": "Fair Match",
-          "poor": "Poor Match"
-        },
-        "tooltipScore": "{score}/{max} points"
-      },
-      "ineligible": "Ineligible",
       "team": {
         "title": "Team Builder",
         "selected": "Selected Team Members",
@@ -3905,6 +3898,147 @@
       "maxUploadSizeDescription": "Maximum file size for document uploads",
       "readOnlyNote": "These settings are read-only. To modify system configuration, please contact the system administrator.",
       "loadError": "Failed to load admin settings"
+    }
+  },
+  "joinRequest": {
+    "title": "Join the Peer Review Programme",
+    "subtitle": "Submit your organization's application to participate",
+    "form": {
+      "organizationInfo": "Organization Information",
+      "organization": "Organization",
+      "organizationPlaceholder": "Select your organization",
+      "contactInfo": "Contact Information",
+      "contactName": "Contact Name",
+      "contactNamePlaceholder": "Full name of primary contact",
+      "contactEmail": "Contact Email",
+      "contactEmailPlaceholder": "official@organization.gov",
+      "contactPhone": "Contact Phone",
+      "contactPhonePlaceholder": "+XXX XXX XXX XXX",
+      "applicationDetails": "Application Details",
+      "motivation": "Motivation for Joining",
+      "motivationPlaceholder": "Describe why your organization wants to participate in the peer review programme...",
+      "expectedBenefits": "Expected Benefits",
+      "expectedBenefitsPlaceholder": "What benefits does your organization expect to gain...",
+      "availableResources": "Available Resources",
+      "availableResourcesPlaceholder": "Describe the resources your organization can contribute (reviewers, expertise, facilities)...",
+      "preferredTeam": "Preferred Team",
+      "preferredTeamDescription": "Optional: Indicate if you have a preferred peer review team",
+      "noPreference": "No preference",
+      "submit": "Submit Application",
+      "submitting": "Submitting..."
+    },
+    "success": {
+      "title": "Application Submitted",
+      "message": "Your application has been submitted successfully. The programme coordinator will review it shortly.",
+      "referenceNumber": "Reference Number",
+      "whatNext": "What happens next?",
+      "steps": {
+        "step1": "The Programme Coordinator will review your application",
+        "step2": "If recommended, it will be submitted to the Steering Committee",
+        "step3": "The Steering Committee will make the final decision",
+        "step4": "You will be notified of the outcome by email"
+      }
+    },
+    "status": {
+      "pending": "Pending Review",
+      "coordinatorReview": "Under Coordinator Review",
+      "scReview": "Under Steering Committee Review",
+      "approved": "Approved",
+      "rejected": "Not Approved",
+      "withdrawn": "Withdrawn"
+    },
+    "validation": {
+      "organizationRequired": "Please select your organization",
+      "contactNameRequired": "Contact name is required",
+      "contactEmailRequired": "Contact email is required",
+      "contactEmailInvalid": "Please enter a valid email address",
+      "motivationRequired": "Please provide your motivation for joining",
+      "motivationMinLength": "Motivation must be at least 100 characters",
+      "alreadyActive": "Your organization is already an active participant",
+      "alreadyPending": "Your organization already has a pending application"
+    },
+    "errors": {
+      "submitFailed": "Failed to submit application. Please try again.",
+      "loadFailed": "Failed to load application form"
+    }
+  },
+  "joinRequestAdmin": {
+    "title": "Join Request Management",
+    "subtitle": "Review and process programme participation applications",
+    "list": {
+      "columns": {
+        "organization": "Organization",
+        "submittedAt": "Submitted",
+        "status": "Status",
+        "assignedTo": "Assigned To",
+        "actions": "Actions"
+      },
+      "empty": "No pending join requests",
+      "loading": "Loading requests..."
+    },
+    "detail": {
+      "applicationInfo": "Application Information",
+      "submittedBy": "Submitted By",
+      "submittedAt": "Submitted At",
+      "motivation": "Motivation",
+      "expectedBenefits": "Expected Benefits",
+      "availableResources": "Available Resources",
+      "preferredTeam": "Preferred Team"
+    },
+    "coordinatorReview": {
+      "title": "Coordinator Review",
+      "instructions": "Review the application and provide your recommendation to the Steering Committee",
+      "recommendation": "Recommendation",
+      "recommend": "Recommend Approval",
+      "notRecommend": "Do Not Recommend",
+      "needsInfo": "Request Additional Information",
+      "recommendedTeam": "Recommended Team Placement",
+      "comments": "Review Comments",
+      "commentsPlaceholder": "Provide your assessment and any relevant observations...",
+      "additionalInfoRequest": "Information Requested",
+      "additionalInfoRequestPlaceholder": "Specify what additional information is needed...",
+      "submit": "Submit Review",
+      "submitting": "Submitting..."
+    },
+    "scReview": {
+      "title": "Steering Committee Decision",
+      "instructions": "Review the coordinator's recommendation and make the final decision",
+      "coordinatorRecommendation": "Coordinator Recommendation",
+      "coordinatorComments": "Coordinator Comments",
+      "decision": "Decision",
+      "approve": "Approve Application",
+      "reject": "Reject Application",
+      "defer": "Defer Decision",
+      "assignedTeam": "Assigned Peer Review Team",
+      "comments": "Decision Comments",
+      "commentsPlaceholder": "Provide rationale for the decision...",
+      "submit": "Submit Decision",
+      "submitting": "Submitting..."
+    },
+    "actions": {
+      "view": "View Details",
+      "review": "Review",
+      "assignCoordinator": "Assign to Coordinator",
+      "withdraw": "Withdraw"
+    },
+    "success": {
+      "reviewSubmitted": "Review submitted successfully",
+      "decisionSubmitted": "Decision recorded successfully",
+      "applicationApproved": "Application approved - organization is now ACTIVE",
+      "applicationRejected": "Application has been rejected"
+    },
+    "errors": {
+      "loadFailed": "Failed to load join request",
+      "reviewFailed": "Failed to submit review",
+      "decisionFailed": "Failed to record decision"
+    },
+    "filters": {
+      "all": "All Requests",
+      "pending": "Pending",
+      "coordinatorReview": "Coordinator Review",
+      "scReview": "SC Review",
+      "approved": "Approved",
+      "rejected": "Rejected"
     }
   }
 }

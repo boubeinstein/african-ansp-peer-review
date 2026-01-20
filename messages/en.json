@@ -68,10 +68,10 @@
     "hero": {
       "badge": "ICAO-Endorsed Programme",
       "title": "African ANSP Peer Review Programme",
-      "subtitle": "Collaborative aviation safety enhancement through systematic peer reviews among African Air Navigation Service Providers.",
+      "subtitle": "Collaborative aviation safety enhancement through systematic peer reviews among African Air Navigation Service Providers and Civil Aviation Authorities.",
       "tagline": "Enhancing Aviation Safety Across Africa Through Collaborative Excellence",
       "stats": {
-        "ansps": "African ANSPs",
+        "ansps": "ANSPs/CAAs",
         "experts": "Expert Reviewers",
         "teams": "Regional Teams"
       },

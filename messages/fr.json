@@ -68,10 +68,10 @@
     "hero": {
       "badge": "Programme Approuvé par l'OACI",
       "title": "Programme Africain de Revue par les Pairs des ANSP",
-      "subtitle": "Amélioration collaborative de la sécurité aérienne par des revues systématiques entre les Fournisseurs de Services de Navigation Aérienne africains.",
+      "subtitle": "Amélioration collaborative de la sécurité aérienne par des revues systématiques entre les Fournisseurs de Services de Navigation Aérienne et les Autorités de l'Aviation Civile africains.",
       "tagline": "Renforcer la Sécurité Aérienne en Afrique par l'Excellence Collaborative",
       "stats": {
-        "ansps": "ANSP Africains",
+        "ansps": "ANSP/CAA",
         "experts": "Experts Évaluateurs",
         "teams": "Équipes Régionales"
       },

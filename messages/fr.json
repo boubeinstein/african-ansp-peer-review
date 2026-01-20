@@ -323,7 +323,7 @@
         "filtersTitle": "Filtres rapides",
         "filtersTip1": "Tout afficher : Voir toutes les questions quel que soit leur statut.",
         "filtersTip2": "Non répondu : Se concentrer sur les questions qui nécessitent encore des réponses.",
-        "filtersTip3": "Marquées : Voir les questions signalées pour suivi ou révision.",
+        "filtersTip3": "Marquées : Voir les questions signalées pour suivi ou examen.",
         "progressTitle": "Suivi de la progression",
         "progressTip": "La barre de progression indique le pourcentage d'achèvement. Soumettez votre évaluation lorsque vous atteignez 100% ou lorsque toutes les questions requises sont répondues."
       },
@@ -331,11 +331,11 @@
         "saveQuestion": "Comment ma progression est-elle enregistrée ?",
         "saveAnswer": "Vos réponses sont automatiquement enregistrées au fur et à mesure. L'indicateur de statut dans l'en-tête montre quand les sauvegardes sont en cours.",
         "editQuestion": "Puis-je modifier mes réponses après soumission ?",
-        "editAnswer": "Non, une fois soumises, les réponses sont verrouillées pour l'intégrité de la révision. Assurez-vous que toutes les réponses sont complètes avant de soumettre.",
+        "editAnswer": "Non, une fois soumises, les réponses sont verrouillées pour l'intégrité de l'évaluation. Assurez-vous que toutes les réponses sont complètes avant de soumettre.",
         "scoreQuestion": "Comment mon score est-il calculé ?",
         "scoreAnswer": "Pour les évaluations ANS, le score EI est le pourcentage de réponses Satisfaisant. Pour les évaluations SMS, la maturité est le niveau le plus bas des composants.",
         "accessQuestion": "Qui peut voir mon évaluation ?",
-        "accessAnswer": "Seuls les utilisateurs de votre organisation et les réviseurs assignés peuvent accéder à votre évaluation. Les administrateurs ont une visibilité complète.",
+        "accessAnswer": "Seuls les utilisateurs de votre organisation et les évaluateurs assignés peuvent accéder à votre évaluation. Les administrateurs ont une visibilité complète.",
         "evidenceQuestion": "Quelles preuves dois-je joindre ?",
         "evidenceAnswer": "Joignez des documents, procédures ou enregistrements qui démontrent la conformité. Les preuves doivent être actuelles et soutenir clairement votre réponse.",
         "submitQuestion": "Quand dois-je soumettre mon évaluation ?",
@@ -407,21 +407,21 @@
       "draft": "Brouillon",
       "inProgress": "En cours",
       "submitted": "Soumis",
-      "underReview": "En révision",
+      "underReview": "En évaluation",
       "completed": "Terminé",
       "archived": "Archivé",
       "DRAFT": "Brouillon",
       "IN_PROGRESS": "En cours",
       "SUBMITTED": "Soumis",
-      "UNDER_REVIEW": "En révision",
+      "UNDER_REVIEW": "En évaluation",
       "COMPLETED": "Terminé",
       "ARCHIVED": "Archivé"
     },
     "statusDescription": {
       "DRAFT": "L'évaluation a été créée mais pas encore commencée",
       "IN_PROGRESS": "L'évaluation est en cours de réalisation",
-      "SUBMITTED": "L'évaluation a été soumise pour révision",
-      "UNDER_REVIEW": "L'évaluation est en cours de révision",
+      "SUBMITTED": "L'évaluation a été soumise pour évaluation",
+      "UNDER_REVIEW": "L'évaluation est en cours d'évaluation",
       "COMPLETED": "L'évaluation a été finalisée",
       "ARCHIVED": "L'évaluation a été archivée"
     },
@@ -519,7 +519,7 @@
       "start": "Commencer l'évaluation",
       "continue": "Continuer l'évaluation",
       "submit": "Soumettre l'évaluation",
-      "review": "Réviser l'évaluation",
+      "review": "Examiner l'évaluation",
       "complete": "Terminer l'évaluation",
       "archive": "Archiver l'évaluation",
       "export": "Exporter l'évaluation",
@@ -534,7 +534,7 @@
     "notReadyToSubmit": "Veuillez répondre à toutes les questions avant de soumettre.",
     "pendingSaves": "Enregistrement de {count} réponse(s)...",
     "alreadySubmitted": "Déjà soumise",
-    "submittedReadOnly": "Cette évaluation a été soumise et est en cours de révision. Elle est actuellement en lecture seule.",
+    "submittedReadOnly": "Cette évaluation a été soumise et est en cours d'évaluation. Elle est actuellement en lecture seule.",
     "completedReadOnly": "Cette évaluation a été terminée et est maintenant en lecture seule.",
     "confirmSubmit": {
       "title": "Soumettre l'évaluation",
@@ -579,7 +579,7 @@
     },
     "submittedState": {
       "title": "Évaluation soumise",
-      "description": "Cette évaluation a été soumise et est en attente de révision."
+      "description": "Cette évaluation a été soumise et est en attente d'évaluation."
     },
     "completedState": {
       "title": "Évaluation terminée",
@@ -1200,7 +1200,7 @@
       "assessmentTypeDesc": "Choisir l'objectif",
       "details": "Détails",
       "detailsDesc": "Configurer le périmètre",
-      "review": "Révision",
+      "review": "Examen",
       "reviewDesc": "Confirmer et créer",
       "stepOf": "Étape {current} sur {total}"
     },
@@ -1282,7 +1282,7 @@
       }
     },
     "review": {
-      "title": "Révision et confirmation",
+      "title": "Vérification et confirmation",
       "description": "Vérifiez vos sélections avant de créer l'évaluation",
       "summaryTitle": "Résumé de l'évaluation",
       "assessmentTitle": "Titre",
@@ -1353,7 +1353,7 @@
       "all": "Toutes les questions",
       "answered": "Répondues",
       "unanswered": "Non répondues",
-      "flagged": "Marquées pour révision",
+      "flagged": "Marquées pour évaluation",
       "priority": "Questions prioritaires"
     },
     "shortcuts": {
@@ -1369,7 +1369,7 @@
       "saved": "Enregistré",
       "saveError": "Échec de l'enregistrement",
       "save": "Enregistrer",
-      "flag": "Marquer pour révision",
+      "flag": "Marquer pour évaluation",
       "unflag": "Retirer le marquage",
       "guidance": "Orientations",
       "yourResponse": "Votre réponse",
@@ -1416,16 +1416,16 @@
     },
     "comments": {
       "assessorNotes": "Notes de l'évaluateur",
-      "assessorNotesDescription": "Notes visibles par les réviseurs",
-      "assessorNotesTooltip": "Ces notes seront partagées avec les réviseurs pendant le processus de révision. Incluez tout contexte qui les aiderait à comprendre votre réponse.",
-      "assessorNotesPlaceholder": "Ajoutez des notes pour les réviseurs concernant cette réponse...",
+      "assessorNotesDescription": "Notes visibles par les évaluateurs",
+      "assessorNotesTooltip": "Ces notes seront partagées avec les évaluateurs pendant le processus d'évaluation. Incluez tout contexte qui les aiderait à comprendre votre réponse.",
+      "assessorNotesPlaceholder": "Ajoutez des notes pour les évaluateurs concernant cette réponse...",
       "internalNotes": "Notes internes",
       "internalNotesDescription": "Notes privées pour votre équipe",
-      "internalNotesTooltip": "Ces notes ne sont visibles que par l'équipe de votre organisation et ne seront pas partagées avec les réviseurs.",
+      "internalNotesTooltip": "Ces notes ne sont visibles que par l'équipe de votre organisation et ne seront pas partagées avec les évaluateurs.",
       "internalNotesPlaceholder": "Ajoutez des notes privées pour votre équipe...",
       "hasContent": "Contenu présent",
       "characters": "caractères",
-      "visibleToReviewers": "Visible par les réviseurs",
+      "visibleToReviewers": "Visible par les évaluateurs",
       "privateNote": "Privé pour votre équipe",
       "tips": {
         "title": "Conseils pour de bonnes notes",
@@ -2513,7 +2513,7 @@
       "implementationStarted": "Mise en œuvre commencée",
       "completed": "Plan d'Action Corrective marqué comme terminé",
       "verified": "Plan d'Action Corrective vérifié",
-      "verificationFailed": "Échec de la vérification - PAC renvoyé pour révision",
+      "verificationFailed": "Échec de la vérification - PAC renvoyé pour évaluation",
       "closed": "Plan d'Action Corrective clôturé",
       "deleted": "Plan d'Action Corrective supprimé"
     },
@@ -2570,7 +2570,7 @@
       "reject": "Rejeter le PAC",
       "rejectReason": "Motif du rejet",
       "rejectReasonPlaceholder": "Veuillez expliquer pourquoi ce PAC est rejeté et quels changements sont nécessaires...",
-      "rejectConfirm": "Rejeter et renvoyer à l'ANSP pour révision",
+      "rejectConfirm": "Rejeter et renvoyer à l'ANSP pour évaluation",
       "startImplementation": "Démarrer la mise en œuvre",
       "markInProgress": "Démarrer la mise en œuvre",
       "markCompleted": "Marquer comme terminé",
@@ -2633,7 +2633,7 @@
       "failureReasonPlaceholder": "Expliquez ce qui manque ou pourquoi la mise en œuvre ne répond pas aux exigences...",
       "failureReasonHint": "Ceci sera partagé avec l'organisation. Soyez précis sur ce qui doit être corrigé.",
       "confirmVerified": "Confirmer la vérification",
-      "confirmNotVerified": "Renvoyer pour révision",
+      "confirmNotVerified": "Renvoyer pour évaluation",
       "submit": "Soumettre la vérification",
       "cancel": "Annuler"
     },
@@ -2739,7 +2739,7 @@
     "toast": {
       "submitSuccess": "PAC soumis pour examen",
       "acceptSuccess": "PAC accepté",
-      "rejectSuccess": "PAC rejeté et renvoyé pour révision",
+      "rejectSuccess": "PAC rejeté et renvoyé pour évaluation",
       "inProgressSuccess": "Mise en œuvre du PAC commencée",
       "completedSuccess": "PAC marqué comme terminé",
       "verifySuccess": "Mise en œuvre du PAC vérifiée",
@@ -3008,7 +3008,7 @@
         "scheduled": "Planifiée",
         "in_progress": "En cours",
         "report_drafting": "Rédaction du rapport",
-        "report_review": "Révision du rapport",
+        "report_review": "Examen du rapport",
         "completed": "Terminée",
         "cancelled": "Annulée"
       },
@@ -3029,8 +3029,8 @@
         "both": "Bilingue (EN/FR)"
       },
       "teamRole": {
-        "lead_reviewer": "Réviseur principal",
-        "reviewer": "Réviseur",
+        "lead_reviewer": "Évaluateur principal",
+        "reviewer": "Évaluateur",
         "technical_expert": "Expert technique",
         "observer": "Observateur",
         "trainee": "Stagiaire"
@@ -3038,11 +3038,11 @@
       "assignTeam": "Assigner l'équipe",
       "noTeamMembers": "Aucun membre n'a encore été assigné à cette revue.",
       "assignTeamNow": "Assigner une équipe maintenant",
-      "coiCannotAssign": "Conflit d'intérêts : Vous ne pouvez pas assigner des réviseurs à la revue de votre propre organisation. Un autre coordinateur de programme doit gérer cette affectation."
+      "coiCannotAssign": "Conflit d'intérêts : Vous ne pouvez pas assigner des évaluateurs à la revue de votre propre organisation. Un autre coordinateur de programme doit gérer cette affectation."
     },
     "teamWizard": {
       "pageTitle": "Assigner l'équipe de revue",
-      "pageDescription": "Sélectionner et assigner des réviseurs à l'équipe de revue par les pairs",
+      "pageDescription": "Sélectionner et assigner des évaluateurs à l'équipe de revue par les pairs",
       "title": "Assigner l'équipe de revue",
       "subtitle": "Revue {reference} - {organization}",
       "backToReview": "Retour à la revue",
@@ -3053,9 +3053,9 @@
       },
       "navigation": {
         "back": "Retour",
-        "searchReviewers": "Rechercher des réviseurs",
+        "searchReviewers": "Rechercher des évaluateurs",
         "searching": "Recherche...",
-        "reviewTeam": "Réviser l'équipe",
+        "reviewTeam": "Examiner l'équipe",
         "assignTeam": "Assigner l'équipe",
         "assigning": "Assignation..."
       },
@@ -3067,16 +3067,16 @@
         "areasInScope": "Domaines concernés",
         "notSet": "Non défini",
         "teamSize": "Taille de l'équipe",
-        "teamSizeDescription": "Sélectionner le nombre de réviseurs nécessaires",
-        "numberOfReviewers": "Nombre de réviseurs",
+        "teamSizeDescription": "Sélectionner le nombre de évaluateurs nécessaires",
+        "numberOfReviewers": "Nombre de évaluateurs",
         "minimum": "Min",
         "recommended": "Rec",
         "maximum": "Max",
-        "teamSizeNote": "La taille idéale de l'équipe est de 3 réviseurs. Les petites équipes conviennent aux revues ciblées, tandis que les grandes équipes peuvent couvrir plus de domaines simultanément.",
+        "teamSizeNote": "La taille idéale de l'équipe est de 3 évaluateurs. Les petites équipes conviennent aux revues ciblées, tandis que les grandes équipes peuvent couvrir plus de domaines simultanément.",
         "requiredExpertise": "Expertise requise",
         "requiredExpertiseDescription": "Sélectionner les domaines d'expertise nécessaires pour cette revue",
         "inScope": "Dans le périmètre",
-        "noExpertiseWarning": "Veuillez sélectionner au moins un domaine d'expertise pour rechercher des réviseurs correspondants.",
+        "noExpertiseWarning": "Veuillez sélectionner au moins un domaine d'expertise pour rechercher des évaluateurs correspondants.",
         "requiredLanguages": "Langues requises",
         "requiredLanguagesDescription": "Sélectionner les langues nécessaires pour mener la revue",
         "noLanguageWarning": "Veuillez sélectionner au moins une exigence linguistique.",
@@ -3087,22 +3087,22 @@
         "readyToSearch": "Prêt à rechercher"
       },
       "selection": {
-        "availableReviewers": "Réviseurs disponibles",
+        "availableReviewers": "Évaluateurs disponibles",
         "foundReviewers": "{eligible} éligibles sur {total} au total",
         "buildingTeam": "Construction de l'équipe...",
         "useRecommended": "Utiliser la recommandation",
-        "noResultsTitle": "Aucun réviseur trouvé",
-        "noResultsDescription": "Aucun réviseur ne correspond à vos critères de recherche. Essayez d'ajuster les domaines d'expertise ou les langues.",
-        "showIneligible": "Afficher {count} réviseurs non éligibles",
+        "noResultsTitle": "Aucun évaluateur trouvé",
+        "noResultsDescription": "Aucun évaluateur ne correspond à vos critères de recherche. Essayez d'ajuster les domaines d'expertise ou les langues.",
+        "showIneligible": "Afficher {count} évaluateurs non éligibles",
         "selectedTeam": "Équipe sélectionnée",
         "selectedCount": "{selected} sur {target} sélectionnés",
-        "noSelections": "Sélectionnez des réviseurs dans la liste pour construire votre équipe",
+        "noSelections": "Sélectionnez des évaluateurs dans la liste pour construire votre équipe",
         "minTeamWarning": "Au moins 2 membres d'équipe requis",
-        "noLeadWarning": "Un réviseur principal doit être assigné",
+        "noLeadWarning": "Un évaluateur principal doit être assigné",
         "teamValid": "L'équipe répond aux exigences",
         "roles": {
           "LEAD_REVIEWER": "Chef",
-          "REVIEWER": "Réviseur",
+          "REVIEWER": "Évaluateur",
           "TECHNICAL_EXPERT": "Expert",
           "OBSERVER": "Observateur",
           "TRAINEE": "Stagiaire"
@@ -3115,7 +3115,7 @@
         "period": "Période de revue",
         "notSet": "Non défini",
         "teamMembers": "Membres de l'équipe",
-        "teamMembersDescription": "{count} réviseurs assignés à cette équipe",
+        "teamMembersDescription": "{count} évaluateurs assignés à cette équipe",
         "table": {
           "name": "Nom",
           "organization": "Organisation",
@@ -3130,7 +3130,7 @@
         "warningsTitle": "Avertissements",
         "errorsTitle": "Erreurs de validation",
         "warnings": {
-          "noLead": "L'équipe doit avoir exactement un réviseur principal",
+          "noLead": "L'équipe doit avoir exactement un évaluateur principal",
           "minMembers": "L'équipe doit avoir au moins 2 membres",
           "missingExpertise": "Couverture d'expertise manquante : {areas}",
           "missingLanguages": "Couverture linguistique manquante : {languages}"
@@ -3139,19 +3139,19 @@
         "readyDescription": "L'équipe répond à toutes les exigences et est prête à être assignée à la revue."
       },
       "roles": {
-        "LEAD_REVIEWER": "Réviseur principal",
-        "REVIEWER": "Réviseur",
+        "LEAD_REVIEWER": "Évaluateur principal",
+        "REVIEWER": "Évaluateur",
         "TECHNICAL_EXPERT": "Expert technique",
         "OBSERVER": "Observateur",
         "TRAINEE": "Stagiaire",
         "short": {
           "LEAD_REVIEWER": "Chef",
-          "REVIEWER": "Réviseur",
+          "REVIEWER": "Évaluateur",
           "TECHNICAL_EXPERT": "Expert",
           "OBSERVER": "Observateur",
           "TRAINEE": "Stagiaire"
         },
-        "notLeadQualified": "Ce réviseur n'est pas qualifié pour être réviseur principal"
+        "notLeadQualified": "Ce évaluateur n'est pas qualifié pour être évaluateur principal"
       },
       "error": {
         "title": "Erreur",
@@ -3160,24 +3160,24 @@
       }
     },
     "reviewerSelector": {
-      "coiNotice": "Les réviseurs de {organization} sont exclus en raison d'un conflit d'intérêts",
-      "searchTitle": "Rechercher des réviseurs",
+      "coiNotice": "Les évaluateurs de {organization} sont exclus en raison d'un conflit d'intérêts",
+      "searchTitle": "Rechercher des évaluateurs",
       "searchPlaceholder": "Rechercher par nom ou email...",
       "availableOnly": "Disponibles uniquement",
-      "availableReviewers": "Réviseurs disponibles",
-      "availableDescription": "Cliquez pour ajouter des réviseurs à votre équipe",
+      "availableReviewers": "Évaluateurs disponibles",
+      "availableDescription": "Cliquez pour ajouter des évaluateurs à votre équipe",
       "found": "trouvé(s)",
-      "loadError": "Échec du chargement des réviseurs",
-      "noReviewers": "Aucun réviseur ne correspond à vos critères",
+      "loadError": "Échec du chargement des évaluateurs",
+      "noReviewers": "Aucun évaluateur ne correspond à vos critères",
       "score": "score",
       "leadQualified": "Qualifié pour diriger des revues",
       "selected": "Sélectionné",
       "add": "Ajouter",
       "selectedTeam": "Équipe sélectionnée",
       "selectedCount": "{selected}/{max} membres (min: {min})",
-      "noSelections": "Sélectionnez des réviseurs dans la liste disponible",
+      "noSelections": "Sélectionnez des évaluateurs dans la liste disponible",
       "minTeamWarning": "Minimum {min} membres d'équipe requis",
-      "noLeadWarning": "Un réviseur principal doit être désigné",
+      "noLeadWarning": "Un évaluateur principal doit être désigné",
       "teamValid": "L'équipe répond aux exigences",
       "leadQualifiedCount": "Qualifiés comme chef",
       "avgScore": "Score moyen"
@@ -3204,15 +3204,15 @@
       "teamSummary": "Résumé de l'équipe",
       "matchScore": "Score de correspondance",
       "roles": {
-        "LEAD_REVIEWER": "Réviseur principal",
-        "REVIEWER": "Réviseur",
+        "LEAD_REVIEWER": "Évaluateur principal",
+        "REVIEWER": "Évaluateur",
         "TECHNICAL_EXPERT": "Expert technique",
         "OBSERVER": "Observateur",
         "TRAINEE": "Stagiaire"
       },
       "validation": {
-        "noLead": "Aucun réviseur principal assigné",
-        "noLeadDescription": "Veuillez revenir en arrière et assigner un réviseur principal à l'équipe.",
+        "noLead": "Aucun évaluateur principal assigné",
+        "noLeadDescription": "Veuillez revenir en arrière et assigner un évaluateur principal à l'équipe.",
         "minMembers": "Au moins 2 membres d'équipe requis",
         "ready": "Équipe prête",
         "readyDescription": "L'équipe de {count} membres est prête à être assignée."
@@ -3225,7 +3225,7 @@
       "success": "Équipe de revue assignée avec succès",
       "error": "Échec de l'assignation de l'équipe",
       "teamValid": "Équipe prête",
-      "needsLead": "Sélectionnez un réviseur principal",
+      "needsLead": "Sélectionnez un évaluateur principal",
       "needsMoreMembers": "Minimum {min} membres requis",
       "types": {
         "FULL": "Revue complète",
@@ -3480,11 +3480,11 @@
     "plannedDates": "Dates Prévues",
     "actualDates": "Dates Réelles",
     "draftedAt": "Rédigé",
-    "reviewedAt": "Révisé",
+    "reviewedAt": "Évalué",
     "finalizedAt": "Finalisé",
     "editTooltip": "Modifier le contenu du rapport",
-    "submitForReview": "Soumettre pour Révision",
-    "submitTooltip": "Soumettre le rapport pour révision",
+    "submitForReview": "Soumettre pour Évaluation",
+    "submitTooltip": "Soumettre le rapport pour évaluation",
     "finalize": "Finaliser",
     "finalizeTooltip": "Finaliser et verrouiller le rapport",
     "exportPDF": "Exporter en PDF",
@@ -3495,14 +3495,14 @@
     },
     "status": {
       "DRAFT": "Brouillon",
-      "UNDER_REVIEW": "En Cours de Révision",
+      "UNDER_REVIEW": "En Cours d'Évaluation",
       "FINALIZED": "Finalisé"
     },
     "actions": {
       "edit": "Modifier le Rapport",
       "save": "Enregistrer les Modifications",
       "cancel": "Annuler",
-      "submitForReview": "Soumettre pour Révision",
+      "submitForReview": "Soumettre pour Évaluation",
       "finalize": "Finaliser le Rapport",
       "print": "Imprimer le Rapport",
       "exportPdf": "Exporter en PDF",
@@ -3661,8 +3661,8 @@
     },
     "team": {
       "title": "Équipe de Revue",
-      "leadReviewer": "Réviseur Principal",
-      "reviewers": "Réviseurs",
+      "leadReviewer": "Évaluateur Principal",
+      "reviewers": "Évaluateurs",
       "observers": "Observateurs",
       "role": "Rôle",
       "name": "Nom",
@@ -3701,7 +3701,7 @@
   "training": {
     "title": "Référence de Formation",
     "description": "Accédez aux supports de formation du Programme de Revue par les Pairs des ANSP Africains",
-    "subtitle": "Ressources de formation complètes pour les réviseurs pairs AFI",
+    "subtitle": "Ressources de formation complètes pour les évaluateurs pairs AFI",
     "modules": "modules",
     "topics": "sujets",
     "resources": "ressources",
@@ -3743,9 +3743,9 @@
       "EXTERNAL_LINK": "Lien Externe"
     },
     "feb2026": {
-      "banner": "Formation de Recyclage des Réviseurs Pairs AFI",
+      "banner": "Formation de Recyclage des Évaluateurs Pairs AFI",
       "dates": "2-5 Février 2026 • Dar es Salaam, Tanzanie",
-      "description": "Rejoignez-nous pour la prochaine formation de recyclage pour tous les réviseurs pairs AFI",
+      "description": "Rejoignez-nous pour la prochaine formation de recyclage pour tous les évaluateurs pairs AFI",
       "register": "S'inscrire Maintenant",
       "learnMore": "En Savoir Plus"
     },

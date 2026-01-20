@@ -1,12 +1,56 @@
 # CLAUDE.md - African ANSP Peer Review Programme
 
-> Quick context for Claude Code. Read guiding docs in `/docs` for full details.
+> Quick context for Claude Code. Read guiding docs for full details.
+
+**Last Updated**: January 20, 2026  
+**Sprint Status**: Training Demo Final Polish  
+**Days to Training**: 13 days (Feb 2-5, 2026 - Dar es Salaam)
+
+---
 
 ## Project Overview
 
 **Purpose**: Enterprise PWA for ICAO-endorsed peer review mechanism among 54 African ANSPs.  
-**Target**: Feb 2-5, 2026 AFI Training (Dar es Salaam) → Q2 2026 Pilot Launch  
-**Current State**: ~85% Phase 1 complete, implementing Findings & CAP workflow
+**Current State**: 95% Phase 1 complete, entering final polish phase  
+**Target**: Feb 2-5, 2026 AFI Training → Q2 2026 Pilot Launch
+
+---
+
+## Implementation Status (January 20, 2026)
+
+### ✅ COMPLETED MODULES (95%)
+
+| Module | Components | Status |
+|--------|------------|--------|
+| **Authentication & RBAC** | Login, 11 roles, permissions | ✅ 100% |
+| **Organization Management** | 54 ANSPs, CRUD, membership | ✅ 100% |
+| **Dual Questionnaire System** | ANS (USOAP CMA) + SMS (CANSO SoE) | ✅ 100% |
+| **Self-Assessment Module** | Response entry, scoring, submission | ✅ 100% |
+| **Reviewer Profile Module** | 99 reviewers, COI, matching algorithm | ✅ 100% |
+| **Team Assignment Wizard** | 3-step flow, role assignment | ✅ 100% |
+| **Findings Management** | CRUD, severity, status workflow | ✅ 100% |
+| **CAP Workflow** | 6-stage status, verification, overdue tracking | ✅ 100% |
+| **Review Reports** | Data aggregation, PDF export, summaries | ✅ 100% |
+| **Training Module** | 6 modules, detail views, toggle preference | ✅ 100% |
+| **Settings Page** | Profile, preferences, notifications, security | ✅ 100% |
+| **Demo Data** | Reviews, findings, CAPs for 5 teams | ✅ 100% |
+
+### 🔵 REMAINING TASKS (5%)
+
+| Task | Priority | Effort | Status |
+|------|----------|--------|--------|
+| Bug fix: French "Français" Unicode | P0 | Low | 🔵 Fix Ready |
+| End-to-end workflow testing | P0 | Medium | 🔵 Planned |
+| Documentation/walkthrough | P1 | Low | 🔵 Planned |
+| Production verification | P0 | Low | 🔵 Planned |
+
+### Known Bugs
+
+1. **French Language Display**: Language dropdown shows "Franlu00E7ais" instead of "Français"
+   - Location: `src/components/features/settings/preferences-settings.tsx`
+   - Fix: Replace escaped Unicode with actual "ç" character
+
+---
 
 ## Tech Stack
 
@@ -15,6 +59,8 @@ Next.js 14+ (App Router) | TypeScript 5.x (strict) | Prisma + PostgreSQL
 tRPC | Zustand | TanStack Query | shadcn/ui + Radix UI + Tailwind CSS
 NextAuth.js v5 | next-intl (EN/FR bilingual)
 ```
+
+---
 
 ## Critical Conventions
 
@@ -27,7 +73,7 @@ NextAuth.js v5 | next-intl (EN/FR bilingual)
 <Button>{t('common.actions.submit')}</Button>
 ```
 - Update BOTH `messages/en.json` AND `messages/fr.json`
-- Aviation terms: verify correct French terminology
+- Use actual characters (Français) not escaped Unicode (\u00E7)
 
 ### 2. TypeScript Strict Mode
 ```typescript
@@ -41,9 +87,19 @@ interface AssessmentResponse {
 }
 ```
 
-### 3. tRPC Procedures Pattern
+### 3. Auth Pattern (NO useSession in client components)
 ```typescript
-// src/server/trpc/routers/{feature}.ts
+// ❌ Don't use useSession in client components
+const { data: session } = useSession();
+
+// ✅ Pass from server component as props
+// Server component (page.tsx):
+const session = await auth();
+return <ClientComponent userId={session.user.id} userRole={session.user.role} />;
+```
+
+### 4. tRPC Procedures Pattern
+```typescript
 export const featureRouter = createTRPCRouter({
   list: protectedProcedure
     .input(listSchema)
@@ -54,15 +110,7 @@ export const featureRouter = createTRPCRouter({
 });
 ```
 
-### 4. Component Organization
-```
-src/components/features/{feature}/
-├── {feature}-list.tsx       # List with filters
-├── {feature}-card.tsx       # Card view
-├── {feature}-form.tsx       # Create/edit form
-├── {feature}-detail.tsx     # Detail view
-└── {feature}-badge.tsx      # Status/type badges
-```
+---
 
 ## Key Domain Models
 
@@ -72,15 +120,6 @@ src/components/features/{feature}/
 | `ANS_USOAP_CMA` | ICAO 2024 USOAP CMA | 851 PQs, 9 audit areas |
 | `SMS_CANSO_SOE` | CANSO SoE 2024 | 13 study areas, 5 maturity levels |
 
-### Assessment Scoring
-```typescript
-// ICAO Effective Implementation (ANS)
-EI = (Satisfactory PQs / Applicable PQs) × 100%
-
-// CANSO SMS Maturity (SMS)
-Levels: A (Initial) → B (Defined) → C (Managed) → D (Resilient) → E (Excellence)
-```
-
 ### 11 User Roles (RBAC)
 `SUPER_ADMIN` > `SYSTEM_ADMIN` > `STEERING_COMMITTEE` > `PROGRAMME_COORDINATOR` >
 `LEAD_REVIEWER` > `PEER_REVIEWER` > `OBSERVER` > `ANSP_ADMIN` > `SAFETY_MANAGER` > 
@@ -88,42 +127,29 @@ Levels: A (Initial) → B (Defined) → C (Managed) → D (Resilient) → E (Exc
 
 ### Finding & CAP Workflow
 ```
-Finding: OPEN → CAP_REQUIRED → CAP_SUBMITTED → CAP_ACCEPTED → IN_PROGRESS → VERIFICATION → CLOSED
-CAP:     DRAFT → SUBMITTED → ACCEPTED → IN_PROGRESS → COMPLETED → VERIFIED → CLOSED
+Finding: OPEN → IN_PROGRESS → CLOSED → VERIFIED
+CAP:     DRAFT → SUBMITTED → ACCEPTED → IMPLEMENTED → VERIFIED → CLOSED
                          ↘ REJECTED (back to DRAFT)
 ```
 
-## Current Sprint (Jan 18 - Feb 1, 2026)
+---
 
-### P0 - Must Complete for Training
-1. ✅ Findings tRPC Router (Prompt 1) - DONE
-2. ✅ Findings List Page (Prompt 2) - DONE  
-3. ✅ Finding Creation Form (Prompt 3) - DONE
-4. ✅ CAP tRPC Router (Prompt 4A) - DONE
-5. ✅ CAP Form & List Components (Prompt 4B) - DONE
-6. 🔵 **CAP Workflow UI & Status Management (Prompt 4C)** - CURRENT
-7. 🔵 Review Report Generation (Prompt 5-6)
-8. 🔵 Demo Data & Walkthrough
+## Sidebar Navigation Structure
 
-## File Structure
+| Page | Route | Status |
+|------|-------|--------|
+| Dashboard | `/dashboard` | ✅ |
+| Questionnaires | `/questionnaires` | ✅ |
+| Assessments | `/assessments` | ✅ |
+| Peer Reviews | `/reviews` | ✅ |
+| Findings | `/findings` | ✅ |
+| CAPs | `/caps` | ✅ |
+| Reviewers | `/reviewers` | ✅ |
+| Organizations | `/organizations` | ✅ |
+| Training | `/training` | ✅ (toggleable) |
+| Settings | `/settings` | ✅ |
 
-```
-src/
-├── app/[locale]/(dashboard)/      # Pages (protected routes)
-│   ├── findings/                  # Finding pages
-│   ├── caps/                      # CAP pages  
-│   ├── reviews/                   # Review pages
-│   └── assessments/               # Assessment pages
-├── components/features/           # Feature components
-│   ├── finding/                   # Finding components
-│   ├── cap/                       # CAP components
-│   └── review/                    # Review components
-├── server/trpc/routers/           # API routes
-│   ├── finding.ts
-│   ├── cap.ts
-│   └── review.ts
-└── messages/{en,fr}.json          # Translations
-```
+---
 
 ## Quality Gates (Run Before Every Commit)
 
@@ -132,6 +158,8 @@ npm run typecheck   # Must pass (0 errors)
 npm run lint        # Must pass (0 errors)
 npm run build       # Must succeed
 ```
+
+---
 
 ## Key Commands
 
@@ -142,50 +170,28 @@ npm run dev                    # Start dev server
 # Database
 npx prisma studio             # Open Prisma Studio
 npx prisma migrate dev        # Run migrations
-npm run db:seed               # Seed data (99 reviewers, 161 questions)
+npm run db:seed               # Seed base data
+npm run db:seed:demo          # Seed demo data
+npm run db:seed:training      # Seed training modules
 
 # Git
 git checkout feature/peer-review-module
-git add -A && git commit -m "feat(cap): implement workflow UI"
+git add -A && git commit -m "feat(scope): description"
 git push origin feature/peer-review-module
 ```
 
-## Guiding Documents (Read for Full Context)
+---
+
+## Guiding Documents
 
 | Document | Purpose |
 |----------|---------|
-| `docs/REQUIREMENTS_v3.md` | Enterprise requirements, ICAO/CANSO alignment |
-| `docs/STRATEGIC_ROADMAP_v3.md` | Timeline, phases, milestones |
-| `docs/TASKS_v3.md` | Current sprint, implementation prompts |
-| `prisma/schema.prisma` | Database schema (1000+ lines) |
-| `docs/DATABASE_SCHEMA.md` | Schema documentation |
-
-## Aviation Terminology Quick Reference
-
-| Abbrev | Full Form |
-|--------|-----------|
-| ANSP | Air Navigation Service Provider |
-| CAP | Corrective Action Plan |
-| CE | Critical Element (CE-1 to CE-8) |
-| EI | Effective Implementation score |
-| PQ | Protocol Question |
-| SMS | Safety Management System |
-| SoE | Standard of Excellence (CANSO) |
-| USOAP CMA | Universal Safety Oversight Audit Programme - Continuous Monitoring Approach |
-
-## Best Practices for This Project
-
-1. **Keep changes small**: <200 lines per commit for reliability
-2. **Test incrementally**: Run typecheck/lint after each change
-3. **Check existing patterns**: Look at similar components before creating new ones
-4. **Consider COI**: Conflict of Interest filtering in reviewer assignments
-5. **Evidence management**: Files stored in Supabase, linked via Document model
-6. **Responsive design**: shadcn/ui components, test mobile views
-
-## Roberts FIR Context
-
-Boubacar's ANSP (Roberts FIR) covers Guinea, Liberia, and Sierra Leone.  
-Part of Team 3: NAMA (Nigeria), GCAA (Ghana) in WACAF region.
+| `REQUIREMENTS_v4.md` | Enterprise requirements, ICAO/CANSO alignment |
+| `STRATEGIC_ROADMAP_v4.md` | Timeline, phases, milestones |
+| `TASKS_v4.md` | Current sprint, remaining tasks |
+| `prisma/schema.prisma` | Database schema (1016 lines) |
+| `DATABASE_SCHEMA.md` | Schema documentation |
 
 ---
-*Last Updated: January 18, 2026 | Sprint: Peer Review Module Completion*
+
+*Last Updated: January 20, 2026 | Sprint: Training Demo Final Polish*

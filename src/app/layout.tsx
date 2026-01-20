@@ -1,8 +1,20 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Montserrat, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-montserrat",
+  display: "swap",
+});
+
+const sourceSans = Source_Sans_3({
+  subsets: ["latin"],
+  weight: ["400", "600"],
+  variable: "--font-source-sans",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "African ANSP Peer Review",
@@ -16,7 +28,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} antialiased`} suppressHydrationWarning>
+      <body
+        className={`${montserrat.variable} ${sourceSans.variable} font-sans antialiased`}
+        suppressHydrationWarning
+      >
         {children}
       </body>
     </html>

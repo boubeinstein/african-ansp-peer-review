@@ -65,28 +65,55 @@
     "admin": "Administration"
   },
   "auth": {
+    "hero": {
+      "badge": "Programme Approuvé par l'OACI",
+      "title": "Programme Africain de Revue par les Pairs des ANSP",
+      "subtitle": "Amélioration collaborative de la sécurité aérienne par des revues systématiques entre les Fournisseurs de Services de Navigation Aérienne africains.",
+      "tagline": "Renforcer la Sécurité Aérienne en Afrique par l'Excellence Collaborative",
+      "stats": {
+        "ansps": "ANSP Africains",
+        "experts": "Experts Évaluateurs",
+        "teams": "Équipes Régionales"
+      },
+      "partnership": "En partenariat avec l'OACI, CANSO & CAFAC"
+    },
     "login": {
-      "title": "Bon retour",
-      "subtitle": "Connectez-vous à votre compte pour continuer",
-      "signIn": "Se connecter",
-      "signingIn": "Connexion...",
-      "forgotPassword": "Mot de passe oublié?",
-      "noAccount": "Vous n'avez pas de compte?",
-      "signUp": "S'inscrire"
+      "title": "Bon Retour",
+      "description": "Connectez-vous à votre compte pour continuer",
+      "email": "Adresse Email",
+      "emailPlaceholder": "nom@organisation.aero",
+      "password": "Mot de Passe",
+      "forgotPassword": "Mot de passe oublié ?",
+      "signIn": "Se Connecter",
+      "signingIn": "Connexion en cours...",
+      "noAccount": "Vous n'avez pas de compte ?",
+      "signUp": "Demander l'Accès",
+      "success": "Bienvenue !",
+      "error": "Email ou mot de passe invalide"
     },
     "register": {
-      "title": "Créer un compte",
-      "subtitle": "Rejoignez le Programme de Revue par les Pairs ANSP Africains",
-      "createAccount": "Créer un compte",
-      "creating": "Création du compte...",
-      "haveAccount": "Vous avez déjà un compte?",
-      "signIn": "Se connecter",
-      "success": "Compte créé avec succès!",
-      "redirecting": "Redirection vers la connexion...",
-      "passwordRequirements": "Min 12 caractères avec majuscule, minuscule, chiffre et caractère spécial"
+      "title": "Demander l'Accès",
+      "description": "Soumettez vos informations pour demander l'accès à la plateforme",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Adresse Email",
+      "emailPlaceholder": "nom@organisation.aero",
+      "organization": "Organisation",
+      "organizationPlaceholder": "Sélectionnez votre ANSP",
+      "jobTitle": "Fonction",
+      "jobTitlePlaceholder": "ex: Responsable Sécurité",
+      "password": "Mot de Passe",
+      "confirmPassword": "Confirmer le Mot de Passe",
+      "passwordRequirements": "Min 12 caractères avec majuscule, minuscule, chiffre et caractère spécial",
+      "submit": "Soumettre la Demande",
+      "submitting": "Soumission en cours...",
+      "haveAccount": "Vous avez déjà un compte ?",
+      "signIn": "Se Connecter",
+      "success": "Demande d'accès soumise avec succès",
+      "error": "Échec de la soumission"
     },
     "fields": {
-      "email": "E-mail",
+      "email": "Email",
       "password": "Mot de passe",
       "confirmPassword": "Confirmer le mot de passe",
       "firstName": "Prénom",
@@ -94,11 +121,17 @@
       "language": "Langue préférée"
     },
     "errors": {
-      "invalidCredentials": "E-mail ou mot de passe invalide",
+      "invalidCredentials": "Email ou mot de passe invalide",
       "generic": "Une erreur s'est produite. Veuillez réessayer.",
       "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
       "unauthorized": "Vous n'êtes pas autorisé à accéder à cette ressource.",
       "networkError": "Erreur réseau. Veuillez vérifier votre connexion."
+    },
+    "footer": {
+      "copyright": "Programme Africain de Revue par les Pairs des ANSP. Tous droits réservés."
+    },
+    "language": {
+      "switch": "English"
     }
   },
   "dashboard": {

@@ -21,6 +21,24 @@
   --color-maturity-c: #EAB308;
   --color-maturity-d: #22C55E;
   --color-maturity-e: #3B82F6;
+
+  /* Aviation theme colors - ICAO */
+  --color-icao: #0072bc;
+  --color-icao-dark: #005a96;
+  --color-icao-light: #e8f4fc;
+
+  /* Aviation theme colors - CANSO */
+  --color-canso: #003366;
+  --color-canso-dark: #002244;
+
+  /* Aviation theme colors - African */
+  --color-african-gold: #d4a84b;
+  --color-african-gold-light: rgba(212, 168, 75, 0.2);
+
+  /* Font families */
+  --font-montserrat: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --font-source-sans: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -178,4 +196,99 @@ body {
 
 .question-list-scroll::-webkit-scrollbar-thumb:hover {
   background-color: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* ============================================
+   Aviation Professional Theme Utilities
+   ============================================ */
+
+/* Gradient backgrounds */
+.bg-aviation-gradient {
+  background: linear-gradient(135deg, #0f172a 0%, #003366 50%, #0072bc 100%);
+}
+
+.bg-aviation-button {
+  background: linear-gradient(135deg, #0072bc 0%, #003366 100%);
+}
+
+.bg-aviation-header {
+  background: linear-gradient(90deg, #003366 0%, #0072bc 100%);
+}
+
+/* Aviation shadows */
+.shadow-aviation {
+  box-shadow: 0 4px 14px 0 rgba(0, 114, 188, 0.39);
+}
+
+.shadow-aviation-sm {
+  box-shadow: 0 2px 8px 0 rgba(0, 114, 188, 0.25);
+}
+
+.shadow-aviation-lg {
+  box-shadow: 0 8px 24px 0 rgba(0, 114, 188, 0.45);
+}
+
+/* Pattern background for hero sections */
+.bg-aviation-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Gold accent for African identity */
+.border-african-gold {
+  border-color: #d4a84b;
+}
+
+.text-african-gold {
+  color: #d4a84b;
+}
+
+.bg-african-gold-light {
+  background-color: rgba(212, 168, 75, 0.2);
+}
+
+/* Typography utilities for aviation theme */
+.font-montserrat {
+  font-family: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-source-sans {
+  font-family: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ICAO brand colors */
+.bg-icao {
+  background-color: #0072bc;
+}
+
+.bg-icao-dark {
+  background-color: #005a96;
+}
+
+.bg-icao-light {
+  background-color: #e8f4fc;
+}
+
+.text-icao {
+  color: #0072bc;
+}
+
+.text-icao-dark {
+  color: #005a96;
+}
+
+/* CANSO brand colors */
+.bg-canso {
+  background-color: #003366;
+}
+
+.bg-canso-dark {
+  background-color: #002244;
+}
+
+.text-canso {
+  color: #003366;
+}
+
+.text-canso-dark {
+  color: #002244;
 }

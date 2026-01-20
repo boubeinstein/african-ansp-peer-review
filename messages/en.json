@@ -65,25 +65,52 @@
     "admin": "Administration"
   },
   "auth": {
+    "hero": {
+      "badge": "ICAO-Endorsed Programme",
+      "title": "African ANSP Peer Review Programme",
+      "subtitle": "Collaborative aviation safety enhancement through systematic peer reviews among African Air Navigation Service Providers.",
+      "tagline": "Enhancing Aviation Safety Across Africa Through Collaborative Excellence",
+      "stats": {
+        "ansps": "African ANSPs",
+        "experts": "Expert Reviewers",
+        "teams": "Regional Teams"
+      },
+      "partnership": "In partnership with ICAO, CANSO & AFCAC"
+    },
     "login": {
-      "title": "Welcome back",
-      "subtitle": "Sign in to your account to continue",
-      "signIn": "Sign in",
-      "signingIn": "Signing in...",
+      "title": "Welcome Back",
+      "description": "Sign in to your account to continue",
+      "email": "Email Address",
+      "emailPlaceholder": "name@organization.aero",
+      "password": "Password",
       "forgotPassword": "Forgot password?",
+      "signIn": "Sign In",
+      "signingIn": "Signing in...",
       "noAccount": "Don't have an account?",
-      "signUp": "Sign up"
+      "signUp": "Request Access",
+      "success": "Welcome back!",
+      "error": "Invalid email or password"
     },
     "register": {
-      "title": "Create an account",
-      "subtitle": "Join the African ANSP Peer Review Program",
-      "createAccount": "Create account",
-      "creating": "Creating account...",
+      "title": "Request Access",
+      "description": "Submit your details to request platform access",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "emailPlaceholder": "name@organization.aero",
+      "organization": "Organization",
+      "organizationPlaceholder": "Select your ANSP",
+      "jobTitle": "Job Title",
+      "jobTitlePlaceholder": "e.g., Safety Manager",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "passwordRequirements": "Min 12 characters with uppercase, lowercase, number, and special character",
+      "submit": "Submit Request",
+      "submitting": "Submitting...",
       "haveAccount": "Already have an account?",
-      "signIn": "Sign in",
-      "success": "Account created successfully!",
-      "redirecting": "Redirecting to login...",
-      "passwordRequirements": "Min 12 characters with uppercase, lowercase, number, and special character"
+      "signIn": "Sign In",
+      "success": "Access request submitted successfully",
+      "error": "Failed to submit request"
     },
     "fields": {
       "email": "Email",
@@ -99,6 +126,12 @@
       "sessionExpired": "Your session has expired. Please sign in again.",
       "unauthorized": "You are not authorized to access this resource.",
       "networkError": "Network error. Please check your connection."
+    },
+    "footer": {
+      "copyright": "African ANSP Peer Review Programme. All rights reserved."
+    },
+    "language": {
+      "switch": "Français"
     }
   },
   "dashboard": {

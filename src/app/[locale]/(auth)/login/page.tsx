@@ -1,21 +1,22 @@
-import { Suspense } from "react";
-import { setRequestLocale } from "next-intl/server";
-import { LoginForm } from "@/components/features/auth/login-form";
-import { Loader2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
+import { AuthLayout, LoginForm } from "@/components/auth";
 
 interface LoginPageProps {
   params: Promise<{ locale: string }>;
 }
 
-function LoginFormSkeleton() {
-  return (
-    <Card className="w-full max-w-md">
-      <CardContent className="flex items-center justify-center py-16">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </CardContent>
-    </Card>
-  );
+export async function generateMetadata({
+  params,
+}: LoginPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "auth.login" });
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
 }
 
 export default async function LoginPage({ params }: LoginPageProps) {
@@ -24,11 +25,15 @@ export default async function LoginPage({ params }: LoginPageProps) {
   // Enable static rendering
   setRequestLocale(locale);
 
+  // Redirect if already authenticated
+  const session = await auth();
+  if (session?.user) {
+    redirect(`/${locale}/dashboard`);
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4">
-      <Suspense fallback={<LoginFormSkeleton />}>
-        <LoginForm locale={locale} />
-      </Suspense>
-    </div>
+    <AuthLayout>
+      <LoginForm />
+    </AuthLayout>
   );
 }

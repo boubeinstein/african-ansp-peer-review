@@ -85,6 +85,10 @@ model User {
   // === User Preferences ===
   preferences              UserPreferences?
 
+  // === JoinRequest Relations ===
+  coordinatorReviews       JoinRequest[]          @relation("CoordinatorReview")
+  scDecisions              JoinRequest[]          @relation("SCDecision")
+
   @@map("users")
 }
 
@@ -1361,9 +1365,9 @@ model UserPreferences {
 model JoinRequest {
   id                    String            @id @default(cuid())
 
-  // Applicant
+  // Applicant organization
   organizationId        String            @map("organization_id")
-  organization          Organization      @relation(fields: [organizationId], references: [id])
+  organization          Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   // Contact person (ANSP Focal Point)
   contactName           String            @map("contact_name")
@@ -1375,21 +1379,31 @@ model JoinRequest {
   currentSmsMaturity    String?           @map("current_sms_maturity")  // Self-assessed: A, B, C, D, E
   commitmentLetterUrl   String?           @map("commitment_letter_url")  // Uploaded CEO/DG letter
   motivationStatement   String            @map("motivation_statement") @db.Text
-  proposedReviewers     Int               @default(2) @map("proposed_reviewers")  // How many reviewers they can nominate
+  proposedReviewerCount Int               @default(2) @map("proposed_reviewer_count")
   preferredTeam         Int?              @map("preferred_team")  // Optional preference (1-5)
   preferredLanguage     String            @default("en") @map("preferred_language")  // en, fr, both
+  additionalNotes       String?           @map("additional_notes") @db.Text
 
-  // Review process
-  status                JoinRequestStatus @default(PENDING)
-  coordinatorNotes      String?           @map("coordinator_notes") @db.Text
-  coordinatorReviewedAt DateTime?         @map("coordinator_reviewed_at")
-  coordinatorReviewedBy String?           @map("coordinator_reviewed_by")
+  // Coordinator review
+  status                    JoinRequestStatus @default(PENDING)
+  coordinatorNotes          String?           @map("coordinator_notes") @db.Text
+  coordinatorRecommendation String?           @map("coordinator_recommendation")  // APPROVE, REJECT, MORE_INFO
+  coordinatorRecommendedTeam Int?             @map("coordinator_recommended_team")
+  coordinatorReviewedAt     DateTime?         @map("coordinator_reviewed_at")
+  coordinatorReviewedById   String?           @map("coordinator_reviewed_by_id")
+  coordinatorReviewedBy     User?             @relation("CoordinatorReview", fields: [coordinatorReviewedById], references: [id])
+
+  // Steering Committee decision
   scDecision            String?           @map("sc_decision")  // APPROVED, REJECTED, MORE_INFO
   scDecisionNotes       String?           @map("sc_decision_notes") @db.Text
+  scAssignedTeam        Int?              @map("sc_assigned_team")
   scDecisionAt          DateTime?         @map("sc_decision_at")
-  scDecisionBy          String?           @map("sc_decision_by")
-  assignedTeam          Int?              @map("assigned_team")  // Final team assignment
+  scDecisionById        String?           @map("sc_decision_by_id")
+  scDecisionBy          User?             @relation("SCDecision", fields: [scDecisionById], references: [id])
+
+  // If rejected or more info needed
   rejectionReason       String?           @map("rejection_reason") @db.Text
+  additionalInfoRequest String?           @map("additional_info_request") @db.Text
 
   // Timestamps
   createdAt             DateTime          @default(now()) @map("created_at")
@@ -1397,5 +1411,6 @@ model JoinRequest {
 
   @@index([organizationId])
   @@index([status])
+  @@index([createdAt])
   @@map("join_requests")
 }

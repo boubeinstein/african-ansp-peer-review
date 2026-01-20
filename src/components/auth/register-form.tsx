@@ -20,7 +20,6 @@ import {
   User,
   Building2,
   Briefcase,
-  Plane,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -103,11 +102,6 @@ export function RegisterForm() {
   return (
     <Card className="border-0 shadow-xl bg-white">
       <CardHeader className="space-y-4 text-center pb-2">
-        {/* App Logo */}
-        <div className="mx-auto w-16 h-16 rounded-2xl bg-aviation-button flex items-center justify-center shadow-lg shadow-icao/25">
-          <Plane className="w-8 h-8 text-white transform -rotate-45" />
-        </div>
-
         <div>
           <CardTitle className="text-2xl font-bold text-slate-900 font-montserrat">
             {t("title")}

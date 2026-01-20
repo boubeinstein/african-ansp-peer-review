@@ -15,7 +15,7 @@ import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, Mail, Lock, Eye, EyeOff, Plane } from "lucide-react";
+import { Loader2, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -77,11 +77,6 @@ export function LoginForm() {
   return (
     <Card className="border-0 shadow-xl bg-white">
       <CardHeader className="space-y-4 text-center pb-2">
-        {/* App Logo */}
-        <div className="mx-auto w-16 h-16 rounded-2xl bg-aviation-button flex items-center justify-center shadow-lg shadow-icao/25">
-          <Plane className="w-8 h-8 text-white transform -rotate-45" />
-        </div>
-
         <div>
           <CardTitle className="text-2xl font-bold text-slate-900 font-montserrat">
             {t("title")}

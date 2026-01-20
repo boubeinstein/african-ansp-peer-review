@@ -11,7 +11,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Globe, Plane, Shield } from "lucide-react";
+import { Globe, Shield } from "lucide-react";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -32,16 +32,11 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10 bg-aviation-pattern" />
 
-        {/* Decorative Plane Icon */}
-        <div className="absolute top-20 right-10 opacity-20">
-          <Plane className="w-32 h-32 transform rotate-45" />
-        </div>
-
         {/* Content */}
         <div className="relative z-10 flex flex-col h-full p-8 lg:p-12 min-h-[400px] lg:min-h-screen">
           {/* Partner Logos */}
           <div className="flex items-center gap-4 lg:gap-6 mb-8 flex-wrap">
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2 lg:p-3">
+            <div className="bg-white shadow-md rounded-lg p-2 lg:p-3">
               <Image
                 src="/images/logos/International_Civil_Aviation_Organization_logo.svg"
                 alt="ICAO - International Civil Aviation Organization"
@@ -52,7 +47,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
               />
             </div>
             <div className="h-8 w-px bg-white/30 hidden sm:block" />
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2 lg:p-3">
+            <div className="bg-white shadow-md rounded-lg p-2 lg:p-3">
               <Image
                 src="/images/logos/CANSO.svg"
                 alt="CANSO - Civil Air Navigation Services Organisation"
@@ -92,7 +87,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center">
                 <div className="text-2xl lg:text-3xl font-bold text-african-gold">
-                  54
+                  20
                 </div>
                 <div className="text-xs lg:text-sm text-white/70">
                   {t("hero.stats.ansps")}

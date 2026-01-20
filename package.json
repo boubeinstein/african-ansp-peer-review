@@ -24,6 +24,7 @@
     "db:seed:demo:reseed": "npx tsx prisma/seed-demo.ts reseed",
     "db:seed:demo:status": "npx tsx prisma/seed-demo.ts status",
     "db:seed:training": "npx tsx prisma/seed-training.ts",
+    "db:seed:participants": "npx tsx prisma/seed-programme-participants.ts",
     "db:seed:all": "npx tsx prisma/seed.ts && npx tsx prisma/seed-dev-users.ts && npx tsx prisma/seed-training.ts"
   },
   "dependencies": {

@@ -51,32 +51,33 @@ const registerSchema = z.object({
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
-// 20 Programme Participants (5 teams × 4 each) - sorted alphabetically
+// 20 Programme Participants per CANSO 5th AFI Aviation Safety Symposium
 const ORGANIZATIONS = [
-  // Northern Africa Team
-  { id: "enna", name: "Établissement National de la Navigation Aérienne (Algeria)", icaoCode: "ENNA" },
-  { id: "nansc", name: "National Air Navigation Services Company (Egypt)", icaoCode: "NANSC" },
-  { id: "onda", name: "Office National des Aéroports (Morocco)", icaoCode: "ONDA" },
-  { id: "oaca", name: "Office de l'Aviation Civile et des Aéroports (Tunisia)", icaoCode: "OACA" },
-  // ESAF Team 1
-  { id: "ecaa", name: "Ethiopian Civil Aviation Authority", icaoCode: "ECAA" },
+  // Team 1 (4 members)
+  { id: "asecna", name: "ASECNA", icaoCode: "ASECNA" },
+  { id: "atns", name: "Air Traffic and Navigation Services (South Africa)", icaoCode: "ATNS" },
+  { id: "caab", name: "Civil Aviation Authority of Botswana", icaoCode: "CAAB" },
+  { id: "eswcaa", name: "Eswatini Civil Aviation Authority", icaoCode: "ESWCAA" },
+  // Team 2 (5 members)
+  { id: "bcaa", name: "Burundi Civil Aviation Authority", icaoCode: "BCAA" },
   { id: "kcaa", name: "Kenya Civil Aviation Authority", icaoCode: "KCAA" },
   { id: "rcaa", name: "Rwanda Civil Aviation Authority", icaoCode: "RCAA" },
-  { id: "ucaa", name: "Uganda Civil Aviation Authority", icaoCode: "UCAA" },
-  // ESAF Team 2
-  { id: "caam", name: "Civil Aviation Authority of Mozambique", icaoCode: "CAAM" },
   { id: "tcaa", name: "Tanzania Civil Aviation Authority", icaoCode: "TCAA" },
-  { id: "zcaa", name: "Zambia Civil Aviation Authority", icaoCode: "ZCAA" },
-  // WACAF Team 1
+  { id: "ucaa", name: "Uganda Civil Aviation Authority", icaoCode: "UCAA" },
+  // Team 3 (3 members)
   { id: "gcaa", name: "Ghana Civil Aviation Authority", icaoCode: "GCAA" },
-  { id: "lcaa", name: "Liberia Civil Aviation Authority", icaoCode: "LCAA" },
   { id: "nama", name: "Nigerian Airspace Management Agency", icaoCode: "NAMA" },
-  { id: "slcaa", name: "Sierra Leone Civil Aviation Authority", icaoCode: "SLCAA" },
-  // WACAF Team 2
-  { id: "asecna", name: "ASECNA", icaoCode: "ASECNA" },
+  { id: "rfir", name: "Roberts FIR (Guinea, Liberia, Sierra Leone)", icaoCode: "RFIR" },
+  // Team 4 (5 members)
   { id: "acm", name: "Aviation Civile de Madagascar", icaoCode: "ACM" },
-  { id: "mcaa", name: "Mauritius Civil Aviation Authority", icaoCode: "MCAA" },
-  { id: "rfir", name: "Roberts FIR (Liberia)", icaoCode: "RFIR" },
+  { id: "dca-mw", name: "Department of Civil Aviation (Malawi)", icaoCode: "DCA-MW" },
+  { id: "iacm", name: "Instituto de Aviação Civil de Moçambique", icaoCode: "IACM" },
+  { id: "zacl", name: "Zambia Airports Corporation Limited", icaoCode: "ZACL" },
+  { id: "caaz", name: "Civil Aviation Authority of Zimbabwe", icaoCode: "CAAZ" },
+  // Team 5 (3 members)
+  { id: "enna", name: "Établissement National de la Navigation Aérienne (Algeria)", icaoCode: "ENNA" },
+  { id: "onda", name: "Office National des Aéroports (Morocco)", icaoCode: "ONDA" },
+  { id: "oaca", name: "Office de l'Aviation Civile et des Aéroports (Tunisia)", icaoCode: "OACA" },
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 export function RegisterForm() {

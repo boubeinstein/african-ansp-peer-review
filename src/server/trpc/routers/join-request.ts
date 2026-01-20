@@ -42,7 +42,7 @@ const createJoinRequestSchema = z.object({
   proposedReviewerCount: z.number().min(2).max(10).default(2),
   preferredTeam: z.number().min(1).max(5).optional(),
   preferredLanguage: z.enum(["en", "fr", "both"]).default("en"),
-  commitmentLetterUrl: z.string().url().optional(),
+  commitmentLetterUrl: z.string().optional(),
   additionalNotes: z.string().optional(),
 });
 

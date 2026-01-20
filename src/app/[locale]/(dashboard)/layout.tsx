@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { AppShell } from "@/components/layout/app-shell";
@@ -21,20 +20,14 @@ export default async function DashboardLayout({
     redirect(`/${locale}/login`);
   }
 
-  // Check if user must change password (but not if already on change-password page)
-  const headersList = await headers();
-  const pathname = headersList.get("x-pathname") || "";
-  const isChangePasswordPage = pathname.includes("/change-password");
+  // Check if user must change password - redirect to (auth) route
+  const dbUser = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { mustChangePassword: true },
+  });
 
-  if (!isChangePasswordPage) {
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { mustChangePassword: true },
-    });
-
-    if (user?.mustChangePassword) {
-      redirect(`/${locale}/change-password`);
-    }
+  if (dbUser?.mustChangePassword) {
+    redirect(`/${locale}/change-password`);
   }
 
   const user = {

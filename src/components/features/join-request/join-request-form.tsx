@@ -60,7 +60,7 @@ const joinRequestSchema = z.object({
   preferredTeam: z.number().min(1).max(5).optional(),
   preferredLanguage: z.enum(["en", "fr", "both"]),
   additionalNotes: z.string().optional(),
-  commitmentLetterUrl: z.string().url().optional(),
+  commitmentLetterUrl: z.string().optional(),
 });
 
 type JoinRequestFormData = z.infer<typeof joinRequestSchema>;
@@ -78,12 +78,14 @@ export function JoinRequestForm() {
 
   const createMutation = trpc.joinRequest.create.useMutation({
     onSuccess: (data) => {
+      console.log("✅ Application submitted successfully:", data.id);
       setReferenceId(data.id);
       setSubmitted(true);
       toast.success(t("success.title"));
     },
     onError: (error) => {
-      toast.error(error.message);
+      console.error("❌ Submission error:", error);
+      toast.error(error.message || "Failed to submit application");
     },
     onSettled: () => {
       setIsLoading(false);
@@ -102,13 +104,25 @@ export function JoinRequestForm() {
       proposedReviewerCount: 2,
       preferredLanguage: locale as "en" | "fr",
     },
+    mode: "onChange", // Validate on change to see errors immediately
   });
 
   const motivationLength = watch("motivationStatement")?.length || 0;
 
+  // Debug: Log form errors when they change
+  if (Object.keys(errors).length > 0) {
+    console.log("📋 Form validation errors:", errors);
+  }
+
   async function onSubmit(data: JoinRequestFormData) {
+    console.log("📤 Submitting application:", data);
     setIsLoading(true);
     createMutation.mutate(data);
+  }
+
+  function onInvalid(errors: Record<string, unknown>) {
+    console.error("❌ Form validation failed:", errors);
+    toast.error("Please fill in all required fields correctly");
   }
 
   // Get organization name based on locale
@@ -239,7 +253,7 @@ export function JoinRequestForm() {
         {/* Application Form */}
         <Card>
           <CardContent className="pt-6">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-8">
               {/* Organization Section */}
               <div className="space-y-4">
                 <h3 className="font-semibold text-lg border-b pb-2">
@@ -251,7 +265,10 @@ export function JoinRequestForm() {
                   <div className="relative">
                     <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10 pointer-events-none" />
                     <Select
-                      onValueChange={(value) => setValue("organizationId", value)}
+                      onValueChange={(value) => {
+                        console.log("🏢 Organization selected:", value);
+                        setValue("organizationId", value, { shouldValidate: true });
+                      }}
                       disabled={orgsLoading}
                     >
                       <SelectTrigger

@@ -1,3 +1,4 @@
+import { UserRole } from "@prisma/client";
 import { Sidebar } from "./sidebar";
 import { Header } from "./header";
 
@@ -8,14 +9,14 @@ interface AppShellProps {
     firstName: string;
     lastName: string;
     email: string;
-    role: string;
+    role: UserRole;
   };
 }
 
 export function AppShell({ children, locale, user }: AppShellProps) {
   return (
     <div className="flex h-screen overflow-hidden">
-      <Sidebar locale={locale} />
+      <Sidebar locale={locale} userRole={user.role} />
       <div className="flex flex-1 flex-col overflow-hidden">
         <Header locale={locale} user={user} />
         <main className="flex-1 overflow-auto bg-muted/30 p-6">

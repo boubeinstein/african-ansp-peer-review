@@ -192,6 +192,19 @@ export function LoginForm() {
             </Link>
           </p>
         </div>
+
+        {/* Separate section for non-participants */}
+        <div className="mt-4 pt-4 border-t text-center">
+          <p className="text-xs text-slate-500">
+            {t("notParticipant")}{" "}
+            <Link
+              href={`/${locale}/join`}
+              className="font-medium text-icao hover:text-canso transition-colors"
+            >
+              {t("requestToJoin")}
+            </Link>
+          </p>
+        </div>
       </CardContent>
     </Card>
   );

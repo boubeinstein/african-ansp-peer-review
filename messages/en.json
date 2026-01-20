@@ -89,7 +89,9 @@
       "noAccount": "Don't have an account?",
       "signUp": "Request Access",
       "success": "Welcome back!",
-      "error": "Invalid email or password"
+      "error": "Invalid email or password",
+      "notParticipant": "Your organization is not yet a programme participant?",
+      "requestToJoin": "Request to Join"
     },
     "register": {
       "title": "Request Access",
@@ -110,7 +112,9 @@
       "haveAccount": "Already have an account?",
       "signIn": "Sign In",
       "success": "Access request submitted successfully",
-      "error": "Failed to submit request"
+      "error": "Failed to submit request",
+      "organizationNotListed": "Your organization is not in the list?",
+      "requestToJoin": "Request to Join the Programme"
     },
     "fields": {
       "email": "Email",

@@ -246,6 +246,19 @@ export function RegisterForm() {
                 {errors.organizationId.message}
               </p>
             )}
+
+            {/* Organization not listed notice */}
+            <div className="mt-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <p className="text-sm text-slate-600">
+                {t("organizationNotListed")}{" "}
+                <Link
+                  href={`/${locale}/join`}
+                  className="font-medium text-icao hover:text-canso transition-colors"
+                >
+                  {t("requestToJoin")}
+                </Link>
+              </p>
+            </div>
           </div>
 
           {/* Job Title Field */}

@@ -89,7 +89,9 @@
       "noAccount": "Vous n'avez pas de compte ?",
       "signUp": "Demander l'Accès",
       "success": "Bienvenue !",
-      "error": "Email ou mot de passe invalide"
+      "error": "Email ou mot de passe invalide",
+      "notParticipant": "Votre organisation n'est pas encore participante au programme ?",
+      "requestToJoin": "Demander à Rejoindre"
     },
     "register": {
       "title": "Demander l'Accès",
@@ -110,7 +112,9 @@
       "haveAccount": "Vous avez déjà un compte ?",
       "signIn": "Se Connecter",
       "success": "Demande d'accès soumise avec succès",
-      "error": "Échec de la soumission"
+      "error": "Échec de la soumission",
+      "organizationNotListed": "Votre organisation n'est pas dans la liste ?",
+      "requestToJoin": "Demander à Rejoindre le Programme"
     },
     "fields": {
       "email": "Email",

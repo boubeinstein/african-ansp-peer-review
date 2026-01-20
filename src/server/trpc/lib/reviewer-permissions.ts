@@ -92,11 +92,13 @@ export function canViewAllReviewers(session: Session | null): boolean {
  * Check if user can edit a specific reviewer profile
  * - Admins can edit any profile
  * - Coordinators can edit assigned reviewers
+ * - ANSP_ADMIN can edit reviewers from their own organization
  * - Reviewers can edit their own profile (limited fields)
  */
 export function canEditReviewer(
   session: Session | null,
-  reviewerUserId: string
+  reviewerUserId: string,
+  reviewerOrgId?: string | null
 ): boolean {
   if (!session?.user?.role) return false;
 
@@ -113,11 +115,26 @@ export function canEditReviewer(
     return true;
   }
 
+  // ANSP_ADMIN can edit reviewers from their own organization
+  if (
+    session.user.role === "ANSP_ADMIN" &&
+    session.user.organizationId &&
+    reviewerOrgId &&
+    session.user.organizationId === reviewerOrgId
+  ) {
+    return true;
+  }
+
   // Reviewers can edit their own profile
   if (
     REVIEWER_ROLES.includes(session.user.role as UserRole) &&
     session.user.id === reviewerUserId
   ) {
+    return true;
+  }
+
+  // Any user can edit their own profile
+  if (session.user.id === reviewerUserId) {
     return true;
   }
 
@@ -301,9 +318,10 @@ export function assertCanViewAllReviewers(session: Session | null): void {
  */
 export function assertCanEditReviewer(
   session: Session | null,
-  reviewerUserId: string
+  reviewerUserId: string,
+  reviewerOrgId?: string | null
 ): void {
-  if (!canEditReviewer(session, reviewerUserId)) {
+  if (!canEditReviewer(session, reviewerUserId, reviewerOrgId)) {
     throw new TRPCError({
       code: "FORBIDDEN",
       message: "You do not have permission to edit this reviewer profile",

@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { UserRole } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,7 +15,7 @@ import {
 import { ReviewerDirectory } from "@/components/features/reviewer/reviewer-directory";
 
 // Admin roles that can add reviewers
-const ADMIN_ROLES = ["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"];
+const ADMIN_ROLES: UserRole[] = [UserRole.SUPER_ADMIN, UserRole.SYSTEM_ADMIN, UserRole.PROGRAMME_COORDINATOR];
 
 interface ReviewersPageProps {
   params: Promise<{ locale: string }>;
@@ -33,8 +35,20 @@ export default async function ReviewersPage({ params }: ReviewersPageProps) {
   const t = await getTranslations({ locale, namespace: "reviewers" });
   const session = await auth();
 
+  // Redirect if not authenticated
+  if (!session?.user) {
+    redirect(`/${locale}/login`);
+  }
+
+  // Build user context for client component
+  const userContext = {
+    id: session.user.id,
+    role: session.user.role as UserRole,
+    organizationId: session.user.organizationId,
+  };
+
   // Check if current user is admin
-  const isAdmin = session?.user?.role && ADMIN_ROLES.includes(session.user.role);
+  const isAdmin = ADMIN_ROLES.includes(userContext.role);
 
   // Stats - these would come from API in production
   const stats = {
@@ -121,7 +135,7 @@ export default async function ReviewersPage({ params }: ReviewersPageProps) {
       </div>
 
       {/* Reviewer Directory */}
-      <ReviewerDirectory />
+      <ReviewerDirectory userContext={userContext} />
     </div>
   );
 }

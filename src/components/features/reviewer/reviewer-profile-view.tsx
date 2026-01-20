@@ -7,6 +7,7 @@
  * certifications, and statistics.
  */
 
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useLocale, useTranslations } from "next-intl";
 import {
@@ -55,7 +56,9 @@ import {
 interface ReviewerProfileViewProps {
   profile: ReviewerProfileFull;
   isOwnProfile?: boolean;
+  canEdit?: boolean;
   onEdit?: () => void;
+  editHref?: string;
   className?: string;
 }
 
@@ -118,7 +121,9 @@ function getCertificationStatus(expiryDate: Date | null): {
 export function ReviewerProfileView({
   profile,
   isOwnProfile = false,
+  canEdit = false,
   onEdit,
+  editHref,
   className,
 }: ReviewerProfileViewProps) {
   const t = useTranslations("reviewer");
@@ -178,11 +183,20 @@ export function ReviewerProfileView({
 
             {/* Actions and Stats */}
             <div className="md:ml-auto flex flex-col items-end gap-4">
-              {(isOwnProfile || onEdit) && (
-                <Button variant="outline" onClick={onEdit}>
-                  <Edit2 className="h-4 w-4 mr-2" />
-                  {t("profile.edit")}
-                </Button>
+              {(canEdit || isOwnProfile || onEdit) && (
+                editHref ? (
+                  <Button variant="outline" asChild>
+                    <Link href={editHref}>
+                      <Edit2 className="h-4 w-4 mr-2" />
+                      {t("profile.edit")}
+                    </Link>
+                  </Button>
+                ) : onEdit ? (
+                  <Button variant="outline" onClick={onEdit}>
+                    <Edit2 className="h-4 w-4 mr-2" />
+                    {t("profile.edit")}
+                  </Button>
+                ) : null
               )}
 
               <div className="grid grid-cols-3 gap-4 text-center">

@@ -13,3 +13,11 @@ export {
   getAllNavItems,
   type NavItem,
 } from "./navigation";
+
+export {
+  canEditReviewer,
+  canViewReviewer,
+  canCreateReviewer,
+  canApproveReviewer,
+  canDeleteReviewer,
+} from "./reviewer-permissions";

@@ -50,6 +50,7 @@ interface ReviewerTableProps {
   reviewers: ReviewerListItem[];
   onView: (id: string) => void;
   onEdit?: (id: string) => void;
+  canEdit?: (reviewer: ReviewerListItem) => boolean;
   sortBy: ReviewerSortField;
   sortOrder: "asc" | "desc";
   onSort: (field: ReviewerSortField) => void;
@@ -109,6 +110,7 @@ export function ReviewerTable({
   reviewers,
   onView,
   onEdit,
+  canEdit,
   sortBy,
   sortOrder,
   onSort,
@@ -348,7 +350,7 @@ export function ReviewerTable({
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    {onEdit && (
+                    {onEdit && (!canEdit || canEdit(reviewer)) && (
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>

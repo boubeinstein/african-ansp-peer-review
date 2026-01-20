@@ -1985,7 +1985,9 @@
     "error": {
       "loadFailed": "Failed to load reviewer profile",
       "notFound": "Reviewer Not Found",
-      "notFoundDescription": "The reviewer profile you're looking for doesn't exist or has been removed."
+      "notFoundDescription": "The reviewer profile you're looking for doesn't exist or has been removed.",
+      "unauthorized": "Unauthorized",
+      "noEditPermission": "You do not have permission to edit this reviewer profile."
     },
     "matching": {
       "title": "Find Matching Reviewers",

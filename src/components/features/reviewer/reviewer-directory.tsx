@@ -7,11 +7,13 @@
  * Supports card and table views with pagination.
  */
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { UserRole } from "@prisma/client";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc/client";
+import { canEditReviewer } from "@/lib/rbac";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -73,8 +75,18 @@ export interface ReviewerSearchFilters {
   searchQuery?: string;
 }
 
+/**
+ * User context passed from server-side auth
+ */
+export interface UserContext {
+  id: string;
+  role: UserRole;
+  organizationId?: string | null;
+}
+
 interface ReviewerDirectoryProps {
   initialFilters?: ReviewerSearchFilters;
+  userContext: UserContext;
   className?: string;
 }
 
@@ -141,11 +153,17 @@ function transformToListItem(profile: {
 
 export function ReviewerDirectory({
   initialFilters,
+  userContext,
   className,
 }: ReviewerDirectoryProps) {
   const t = useTranslations("reviewers");
   const locale = useLocale() as "en" | "fr";
   const router = useRouter();
+
+  // Get user permission context from props (passed from server-side auth)
+  const userRole = userContext.role;
+  const userOrgId = userContext.organizationId;
+  const userId = userContext.id;
 
   // State
   const [viewMode, setViewMode] = useState<"card" | "table">("card");
@@ -230,9 +248,42 @@ export function ReviewerDirectory({
     router.push(`/${locale}/reviewers/${id}`);
   }
 
-  function handleEditProfile(id: string) {
-    router.push(`/${locale}/reviewers/${id}/edit`);
-  }
+  // Check if user can edit a specific reviewer
+  const canEdit = useCallback(
+    (reviewer: ReviewerListItem): boolean => {
+      // Own profile
+      if (reviewer.userId === userId) {
+        return true;
+      }
+
+      // Permission check
+      if (!reviewer.homeOrganization?.id) {
+        return false;
+      }
+
+      return canEditReviewer({
+        userRole,
+        userOrgId,
+        reviewerOrgId: reviewer.homeOrganization.id,
+      });
+    },
+    [userRole, userOrgId, userId]
+  );
+
+  const handleEditProfile = useCallback(
+    (id: string) => {
+      router.push(`/${locale}/reviewers/${id}/edit`);
+    },
+    [router, locale]
+  );
+
+  // Get edit handler for a specific reviewer (returns undefined if no permission)
+  const getEditHandler = useCallback(
+    (reviewer: ReviewerListItem): ((id: string) => void) | undefined => {
+      return canEdit(reviewer) ? handleEditProfile : undefined;
+    },
+    [canEdit, handleEditProfile]
+  );
 
   function handleSort(field: ReviewerSortField) {
     if (sortBy === field) {
@@ -508,7 +559,7 @@ export function ReviewerDirectory({
               key={reviewer.id}
               reviewer={reviewer}
               onView={handleViewProfile}
-              onEdit={handleEditProfile}
+              onEdit={getEditHandler(reviewer)}
               isSelected={isSelected(reviewer.id)}
               onSelect={(checked) => handleSelectOne(reviewer.id, checked)}
             />
@@ -519,6 +570,7 @@ export function ReviewerDirectory({
           reviewers={reviewers}
           onView={handleViewProfile}
           onEdit={handleEditProfile}
+          canEdit={canEdit}
           sortBy={sortBy}
           sortOrder={sortOrder}
           onSort={handleSort}

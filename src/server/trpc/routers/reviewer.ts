@@ -372,7 +372,7 @@ export const reviewerRouter = router({
       // Get existing reviewer to check permissions
       const existing = await prisma.reviewerProfile.findUnique({
         where: { id },
-        select: { id: true, userId: true },
+        select: { id: true, userId: true, organizationId: true },
       });
 
       if (!existing) {
@@ -382,8 +382,8 @@ export const reviewerRouter = router({
         });
       }
 
-      // Check edit permission
-      assertCanEditReviewer(ctx.session, existing.userId);
+      // Check edit permission (includes ANSP_ADMIN organization check)
+      assertCanEditReviewer(ctx.session, existing.userId, existing.organizationId);
 
       // If user is editing their own profile, restrict to allowed fields
       const isSelfEdit = existing.userId === user.id;

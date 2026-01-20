@@ -1985,7 +1985,9 @@
     "error": {
       "loadFailed": "Échec du chargement du profil d'évaluateur",
       "notFound": "Évaluateur non trouvé",
-      "notFoundDescription": "Le profil d'évaluateur que vous recherchez n'existe pas ou a été supprimé."
+      "notFoundDescription": "Le profil d'évaluateur que vous recherchez n'existe pas ou a été supprimé.",
+      "unauthorized": "Non autorisé",
+      "noEditPermission": "Vous n'avez pas la permission de modifier ce profil d'évaluateur."
     },
     "matching": {
       "title": "Trouver des évaluateurs correspondants",

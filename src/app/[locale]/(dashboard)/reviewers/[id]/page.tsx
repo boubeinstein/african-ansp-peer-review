@@ -1,81 +1,71 @@
-"use client";
-
 /**
  * Reviewer Profile View Page
  *
  * Displays a reviewer's full profile with expertise, languages,
  * certifications, and availability information.
+ * Uses server-side auth for permission checking.
  */
 
-import { useRouter } from "next/navigation";
-import { useLocale, useTranslations } from "next-intl";
-import { trpc } from "@/lib/trpc/client";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { UserRole } from "@prisma/client";
+import { auth } from "@/lib/auth";
+import { createCaller, createServerContext } from "@/server/trpc";
+import { canEditReviewer } from "@/lib/rbac";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, AlertCircle } from "lucide-react";
 import { ReviewerProfileView } from "@/components/features/reviewer/reviewer-profile-view";
-import { use } from "react";
 
 interface ReviewerProfilePageProps {
   params: Promise<{ locale: string; id: string }>;
 }
 
-export default function ReviewerProfilePage({ params }: ReviewerProfilePageProps) {
-  const { id } = use(params);
-  const router = useRouter();
-  const locale = useLocale();
-  const t = useTranslations("reviewer");
+export async function generateMetadata({ params }: ReviewerProfilePageProps) {
+  const { locale, id } = await params;
+  const t = await getTranslations({ locale, namespace: "reviewer" });
 
-  // Fetch reviewer profile
-  const { data: reviewer, isLoading, error } = trpc.reviewer.getById.useQuery(
-    { id },
-    { retry: false }
-  );
+  try {
+    const ctx = await createServerContext();
+    const caller = createCaller(ctx);
+    const reviewer = await caller.reviewer.getById({ id });
 
-  // Handle edit navigation
-  const handleEdit = () => {
-    router.push(`/${locale}/reviewers/${id}/edit`);
+    if (reviewer) {
+      const fullName = `${reviewer.user.firstName} ${reviewer.user.lastName}`;
+      return {
+        title: `${fullName} - ${t("title")}`,
+      };
+    }
+  } catch {
+    // Reviewer not found
+  }
+
+  return {
+    title: t("title"),
   };
+}
 
-  // Handle back navigation
-  const handleBack = () => {
-    router.push(`/${locale}/reviewers`);
-  };
+export default async function ReviewerProfilePage({
+  params,
+}: ReviewerProfilePageProps) {
+  const { locale, id } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "reviewer" });
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="container mx-auto py-6 space-y-6">
-        <div className="flex items-center gap-4">
-          <Skeleton className="h-10 w-10 rounded-full" />
-          <div className="space-y-2">
-            <Skeleton className="h-6 w-48" />
-            <Skeleton className="h-4 w-32" />
-          </div>
-        </div>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="flex items-start gap-4">
-                <Skeleton className="h-20 w-20 rounded-full" />
-                <div className="space-y-2">
-                  <Skeleton className="h-8 w-64" />
-                  <Skeleton className="h-4 w-48" />
-                  <Skeleton className="h-4 w-40" />
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Skeleton className="h-64" />
-          <Skeleton className="h-64" />
-          <Skeleton className="h-64" />
-          <Skeleton className="h-64" />
-        </div>
-      </div>
-    );
+  // Get session for permission checking
+  const session = await auth();
+
+  // Fetch reviewer profile using tRPC server-side caller
+  let reviewer;
+  let error: string | null = null;
+
+  try {
+    const ctx = await createServerContext();
+    const caller = createCaller(ctx);
+    reviewer = await caller.reviewer.getById({ id });
+  } catch (e) {
+    error = e instanceof Error ? e.message : "Failed to load reviewer";
   }
 
   // Error state
@@ -88,12 +78,12 @@ export default function ReviewerProfilePage({ params }: ReviewerProfilePageProps
               <AlertCircle className="h-12 w-12 text-destructive" />
             </div>
             <h3 className="text-lg font-medium">{t("error.loadFailed")}</h3>
-            <p className="text-muted-foreground max-w-sm mt-2">
-              {error.message}
-            </p>
-            <Button variant="outline" className="mt-4" onClick={handleBack}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {t("actions.backToDirectory")}
+            <p className="text-muted-foreground max-w-sm mt-2">{error}</p>
+            <Button variant="outline" className="mt-4" asChild>
+              <Link href={`/${locale}/reviewers`}>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                {t("actions.backToDirectory")}
+              </Link>
             </Button>
           </CardContent>
         </Card>
@@ -103,39 +93,46 @@ export default function ReviewerProfilePage({ params }: ReviewerProfilePageProps
 
   // Not found state
   if (!reviewer) {
-    return (
-      <div className="container mx-auto py-6">
-        <Card className="py-12">
-          <CardContent className="flex flex-col items-center justify-center text-center">
-            <div className="rounded-full bg-muted p-6 mb-4">
-              <AlertCircle className="h-12 w-12 text-muted-foreground" />
-            </div>
-            <h3 className="text-lg font-medium">{t("error.notFound")}</h3>
-            <p className="text-muted-foreground max-w-sm mt-2">
-              {t("error.notFoundDescription")}
-            </p>
-            <Button variant="outline" className="mt-4" onClick={handleBack}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {t("actions.backToDirectory")}
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    notFound();
   }
+
+  // Check edit permission using server-side auth
+  const userRole = session?.user?.role as UserRole | undefined;
+  const userOrgId = session?.user?.organizationId;
+  const reviewerOrgId = reviewer.organizationId;
+  const isOwnProfile = reviewer.userId === session?.user?.id;
+
+  const hasEditPermission = Boolean(
+    isOwnProfile ||
+    (userRole &&
+      reviewerOrgId &&
+      canEditReviewer({
+        userRole,
+        userOrgId,
+        reviewerOrgId,
+      }))
+  );
+
+  const editHref = hasEditPermission
+    ? `/${locale}/reviewers/${id}/edit`
+    : undefined;
 
   return (
     <div className="container mx-auto py-6 space-y-6">
       {/* Back Button */}
-      <Button variant="ghost" onClick={handleBack} className="mb-2">
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        {t("actions.backToDirectory")}
+      <Button variant="ghost" className="mb-2" asChild>
+        <Link href={`/${locale}/reviewers`}>
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          {t("actions.backToDirectory")}
+        </Link>
       </Button>
 
       {/* Profile View */}
       <ReviewerProfileView
         profile={reviewer}
-        onEdit={handleEdit}
+        isOwnProfile={isOwnProfile}
+        canEdit={hasEditPermission}
+        editHref={editHref}
       />
     </div>
   );

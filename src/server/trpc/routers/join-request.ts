@@ -17,6 +17,15 @@ import {
 } from "@/server/trpc/trpc";
 import { prisma } from "@/lib/db";
 import { JoinRequestStatus, ParticipationStatus, UserRole } from "@prisma/client";
+import { createUserFromJoinRequest } from "@/lib/services/user-service";
+import {
+  sendApplicationReceivedEmail,
+  sendForwardedToSCEmail,
+  sendApprovalEmail,
+  sendRejectionEmail,
+  sendMoreInfoRequestEmail,
+  sendCredentialsEmail,
+} from "@/lib/email";
 
 // =============================================================================
 // INPUT SCHEMAS
@@ -149,7 +158,13 @@ export const joinRequestRouter = router({
         data: { participationStatus: ParticipationStatus.APPLIED },
       });
 
-      // TODO: Send email notification to coordinator
+      // Send confirmation email to applicant (and CC coordinator)
+      await sendApplicationReceivedEmail({
+        applicantEmail: input.contactEmail,
+        applicantName: input.contactName,
+        organizationName: joinRequest.organization.nameEn,
+        referenceId: joinRequest.id,
+      });
 
       return joinRequest;
     }),
@@ -327,7 +342,13 @@ export const joinRequestRouter = router({
         data: { participationStatus: ParticipationStatus.UNDER_REVIEW },
       });
 
-      // TODO: Send email notification to SC members
+      // Send notification email to applicant
+      await sendForwardedToSCEmail({
+        applicantEmail: updated.contactEmail,
+        applicantName: updated.contactName,
+        organizationName: updated.organization.nameEn,
+        recommendation: input.coordinatorRecommendation,
+      });
 
       return updated;
     }),
@@ -428,7 +449,63 @@ export const joinRequestRouter = router({
         });
       }
 
-      // TODO: Send email notification to applicant
+      // Send notification email based on decision
+      if (input.scDecision === "APPROVED") {
+        // Send approval notification email
+        await sendApprovalEmail({
+          applicantEmail: updated.contactEmail,
+          applicantName: updated.contactName,
+          organizationName: updated.organization.nameEn,
+          assignedTeam: input.scAssignedTeam!,
+        });
+
+        // Create user account for the applicant
+        try {
+          // Parse contact name into first/last name
+          const nameParts = updated.contactName.trim().split(/\s+/);
+          const firstName = nameParts[0] || "User";
+          const lastName = nameParts.slice(1).join(" ") || updated.contactName;
+
+          const { temporaryPassword } = await createUserFromJoinRequest({
+            email: updated.contactEmail,
+            firstName,
+            lastName,
+            organizationId: updated.organizationId,
+            jobTitle: updated.contactJobTitle,
+          });
+
+          // Send credentials email
+          const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/login`;
+          await sendCredentialsEmail({
+            applicantEmail: updated.contactEmail,
+            applicantName: updated.contactName,
+            organizationName: updated.organization.nameEn,
+            temporaryPassword,
+            loginUrl,
+          });
+
+          console.log(
+            `✅ User account created and credentials sent to ${updated.contactEmail}`
+          );
+        } catch (error) {
+          // Log error but don't fail the approval - admin can manually create account
+          console.error("Failed to create user account:", error);
+        }
+      } else if (input.scDecision === "REJECTED") {
+        await sendRejectionEmail({
+          applicantEmail: updated.contactEmail,
+          applicantName: updated.contactName,
+          organizationName: updated.organization.nameEn,
+          reason: input.rejectionReason!,
+        });
+      } else if (input.scDecision === "MORE_INFO") {
+        await sendMoreInfoRequestEmail({
+          applicantEmail: updated.contactEmail,
+          applicantName: updated.contactName,
+          organizationName: updated.organization.nameEn,
+          infoRequested: input.additionalInfoRequest!,
+        });
+      }
 
       return updated;
     }),

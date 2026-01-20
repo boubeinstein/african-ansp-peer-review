@@ -44,6 +44,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc/client";
+import { FileUpload } from "@/components/ui/file-upload";
 
 const joinRequestSchema = z.object({
   organizationId: z.string().min(1, "Organization is required"),
@@ -59,6 +60,7 @@ const joinRequestSchema = z.object({
   preferredTeam: z.number().min(1).max(5).optional(),
   preferredLanguage: z.enum(["en", "fr", "both"]),
   additionalNotes: z.string().optional(),
+  commitmentLetterUrl: z.string().url().optional(),
 });
 
 type JoinRequestFormData = z.infer<typeof joinRequestSchema>;
@@ -157,7 +159,7 @@ export function JoinRequestForm() {
             </div>
 
             <Button asChild className="w-full">
-              <Link href={`/${locale}`}>{t("success.backToHome")}</Link>
+              <Link href={`/${locale}/login`}>{t("success.backToLogin")}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -174,7 +176,7 @@ export function JoinRequestForm() {
           <div className="flex items-center gap-4 mb-6">
             <div className="bg-white rounded-lg p-2 shadow-md">
               <Image
-                src="/images/logos/icao-logo.png"
+                src="/images/logos/International_Civil_Aviation_Organization_logo.svg"
                 alt="ICAO"
                 width={80}
                 height={32}
@@ -183,7 +185,7 @@ export function JoinRequestForm() {
             </div>
             <div className="bg-white rounded-lg p-2 shadow-md">
               <Image
-                src="/images/logos/canso-logo.png"
+                src="/images/logos/CANSO.svg"
                 alt="CANSO"
                 width={80}
                 height={32}
@@ -503,6 +505,15 @@ export function JoinRequestForm() {
                     {...register("additionalNotes")}
                   />
                 </div>
+
+                {/* Commitment Letter Upload */}
+                <FileUpload
+                  value={watch("commitmentLetterUrl")}
+                  onChange={(url) => setValue("commitmentLetterUrl", url)}
+                  label={t("form.commitmentLetter")}
+                  helpText={t("form.commitmentLetterHelp")}
+                  disabled={isLoading}
+                />
               </div>
 
               {/* Submit Button */}

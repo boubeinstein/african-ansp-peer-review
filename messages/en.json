@@ -3950,6 +3950,8 @@
       "team5": "Team 5 (North Africa)",
       "additionalNotes": "Additional Notes",
       "additionalNotesPlaceholder": "Any other information you would like to share...",
+      "commitmentLetter": "Commitment Letter (Optional)",
+      "commitmentLetterHelp": "Upload a signed commitment letter from your organization's management",
       "submit": "Submit Application",
       "submitting": "Submitting application..."
     },
@@ -3961,7 +3963,8 @@
       "step1": "The Programme Coordinator will review your application",
       "step2": "If recommended, it will be submitted to the Steering Committee",
       "step3": "You will be notified of the decision by email",
-      "backToHome": "Back to Home"
+      "backToHome": "Back to Home",
+      "backToLogin": "Back to Sign In"
     },
     "status": {
       "pending": "Pending Review",

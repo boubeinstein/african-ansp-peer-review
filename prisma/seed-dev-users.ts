@@ -431,6 +431,26 @@ const USERS: Array<{
   },
 
   // ==========================================================================
+  // STEERING COMMITTEE
+  // ==========================================================================
+  {
+    email: "sc.chair@aaprp.org",
+    firstName: "Jean-Pierre",
+    lastName: "Mbeki",
+    role: UserRole.STEERING_COMMITTEE,
+    orgCode: "ASEC",
+    title: "Steering Committee Chair, ASECNA Director General",
+  },
+  {
+    email: "sc.vicechair@aaprp.org",
+    firstName: "Nkosinathi",
+    lastName: "Sishi",
+    role: UserRole.STEERING_COMMITTEE,
+    orgCode: "FAJA",
+    title: "Steering Committee Vice-Chair, ATNS CEO",
+  },
+
+  // ==========================================================================
   // TEAM 1 - ASECNA (Steering Committee Chair)
   // ==========================================================================
   {
@@ -840,6 +860,7 @@ async function seedUsers(
 
   const roleOrder: UserRole[] = [
     UserRole.SUPER_ADMIN,
+    UserRole.STEERING_COMMITTEE,
     UserRole.PROGRAMME_COORDINATOR,
     UserRole.ANSP_ADMIN,
     UserRole.SAFETY_MANAGER,
@@ -923,9 +944,11 @@ async function main() {
     console.log("     ──────────────────────────────────────────────────────────────");
     console.log("     superadmin@aaprp.org         - Full system access (CANSO)");
     console.log("     coordinator@aaprp.org        - Programme management (CANSO)");
-    console.log("     admin@asecna.aero            - ASECNA org admin (Team 1 Chair)");
-    console.log("     admin@atns.co.za             - ATNS org admin (Team 1 Vice-Chair)");
-    console.log("     bsdiallo@robertsfir.org     - Roberts FIR admin (Team 3)");
+    console.log("     sc.chair@aaprp.org           - Steering Committee Chair (ASECNA)");
+    console.log("     sc.vicechair@aaprp.org       - Steering Committee Vice-Chair (ATNS)");
+    console.log("     admin@asecna.aero            - ASECNA org admin (Team 1)");
+    console.log("     admin@atns.co.za             - ATNS org admin (Team 1)");
+    console.log("     bsdiallo@robertsfir.org      - Roberts FIR admin (Team 3)");
     console.log("     admin@nama.gov.ng            - NAMA org admin (Team 3)");
     console.log("     admin@onda.ma                - ONDA org admin (Team 5)");
     console.log("     ──────────────────────────────────────────────────────────────");

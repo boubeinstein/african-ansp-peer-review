@@ -3950,6 +3950,8 @@
       "team5": "Équipe 5 (Afrique du Nord)",
       "additionalNotes": "Notes Supplémentaires",
       "additionalNotesPlaceholder": "Toute autre information que vous souhaitez partager...",
+      "commitmentLetter": "Lettre d'Engagement (Optionnel)",
+      "commitmentLetterHelp": "Téléversez une lettre d'engagement signée par la direction de votre organisation",
       "submit": "Soumettre la Candidature",
       "submitting": "Soumission en cours..."
     },
@@ -3961,7 +3963,8 @@
       "step1": "Le Coordinateur du Programme examinera votre candidature",
       "step2": "Si recommandée, elle sera soumise au Comité de Pilotage",
       "step3": "Vous serez notifié de la décision par e-mail",
-      "backToHome": "Retour à l'Accueil"
+      "backToHome": "Retour à l'Accueil",
+      "backToLogin": "Retour à la Connexion"
     },
     "status": {
       "pending": "En Attente d'Examen",

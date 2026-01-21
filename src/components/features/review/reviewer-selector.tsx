@@ -8,7 +8,9 @@
  * - Right panel: Selected team members with role assignment
  *
  * Features:
- * - COI filtering (excludes host organization reviewers)
+ * - Team-based eligibility filtering (Rule 1: Same team as host)
+ * - COI filtering (Rule 2: No self-review)
+ * - Cross-team assignment support (Rule 3: Requires justification)
  * - Match scoring based on expertise, languages, certifications
  * - Lead qualification indicators
  * - Inline role assignment
@@ -16,6 +18,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 import type { TeamRole, ExpertiseArea, Language } from "@prisma/client";
@@ -29,6 +32,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Tooltip,
   TooltipContent,
@@ -51,6 +56,7 @@ import {
   X,
   Loader2,
   Briefcase,
+  Globe,
 } from "lucide-react";
 
 // Feature Components
@@ -74,6 +80,8 @@ export interface SelectedTeamMember {
   isLeadQualified: boolean;
   organization?: string;
   matchScore: number;
+  isCrossTeam?: boolean;
+  crossTeamJustification?: string;
 }
 
 export interface ReviewerSelectorProps {
@@ -87,7 +95,16 @@ export interface ReviewerSelectorProps {
   minTeamSize?: number;
 }
 
-// Eligible reviewer type based on API response structure
+// Team eligibility reviewer type from getTeamEligibleReviewers
+interface TeamEligibilityInfo {
+  id: string;
+  isSameTeam: boolean;
+  isSameOrg: boolean;
+  isEligible: boolean;
+  ineligibilityReason?: string;
+}
+
+// Legacy eligible reviewer type for backward compatibility
 interface EligibleReviewer {
   id: string;
   userId: string;
@@ -110,6 +127,13 @@ interface EligibleReviewer {
   canBeLead: boolean;
 }
 
+// Roles that can approve cross-team assignments
+const CROSS_TEAM_APPROVER_ROLES = [
+  "PROGRAMME_COORDINATOR",
+  "SUPER_ADMIN",
+  "SYSTEM_ADMIN",
+];
+
 // =============================================================================
 // COMPONENT
 // =============================================================================
@@ -126,12 +150,35 @@ export function ReviewerSelector({
 }: ReviewerSelectorProps) {
   const t = useTranslations("review.reviewerSelector");
   const loc = (locale as "en" | "fr") || "en";
+  const { data: session } = useSession();
 
   // Search and filter state
   const [search, setSearch] = useState("");
   const [availableOnly, setAvailableOnly] = useState(true);
 
-  // Fetch eligible reviewers
+  // Cross-team state
+  const [includeCrossTeam, setIncludeCrossTeam] = useState(false);
+  const [crossTeamJustifications, setCrossTeamJustifications] = useState<
+    Record<string, string>
+  >({});
+
+  // Check if user can approve cross-team assignments
+  const canApproveCrossTeam =
+    session?.user?.role &&
+    CROSS_TEAM_APPROVER_ROLES.includes(session.user.role);
+
+  // Fetch team-eligible reviewers (new endpoint)
+  const { data: teamData } = trpc.reviewer.getTeamEligibleReviewers.useQuery(
+    {
+      reviewId,
+      includeCrossTeam: canApproveCrossTeam ? includeCrossTeam : false,
+    },
+    {
+      enabled: !!reviewId,
+    }
+  );
+
+  // Fetch legacy eligible reviewers for match scoring
   const { data, isLoading, error } = trpc.reviewer.getEligibleForReview.useQuery(
     {
       reviewId,
@@ -145,8 +192,26 @@ export function ReviewerSelector({
     }
   );
 
+  // Combine team eligibility with legacy data
+  const teamReviewers = teamData?.reviewers ?? [];
+  const hostTeam = teamData?.hostTeam;
+  const totalEligible = teamData?.totalEligible ?? 0;
+
   const reviewers = (data?.reviewers ?? []) as EligibleReviewer[];
   const excludedOrg = data?.review?.hostOrganization;
+
+  // Get team eligibility info for a reviewer
+  const getTeamEligibility = (reviewerId: string): TeamEligibilityInfo | undefined => {
+    const reviewer = teamReviewers.find((r) => r.id === reviewerId);
+    if (!reviewer) return undefined;
+    return {
+      id: reviewer.id,
+      isSameTeam: reviewer.isSameTeam,
+      isSameOrg: reviewer.isSameOrg,
+      isEligible: reviewer.isEligible,
+      ineligibilityReason: reviewer.ineligibilityReason,
+    };
+  };
 
   // Check if a reviewer is selected
   const isSelected = (reviewerId: string) =>
@@ -159,6 +224,15 @@ export function ReviewerSelector({
   const addToTeam = (reviewer: EligibleReviewer) => {
     if (selectedTeam.length >= maxTeamSize) return;
     if (isSelected(reviewer.id)) return;
+
+    // Get team eligibility info
+    const teamEligibility = getTeamEligibility(reviewer.id);
+    const isCrossTeam = teamEligibility ? !teamEligibility.isSameTeam : false;
+
+    // Check if cross-team assignment is allowed
+    if (isCrossTeam && !canApproveCrossTeam) {
+      return; // Cannot add cross-team reviewer without approval rights
+    }
 
     // Determine initial role
     let initialRole: TeamRole = "REVIEWER";
@@ -174,9 +248,41 @@ export function ReviewerSelector({
       isLeadQualified: reviewer.isLeadQualified,
       organization: reviewer.organization?.nameEn,
       matchScore: reviewer.matchScore,
+      isCrossTeam,
+      crossTeamJustification: isCrossTeam
+        ? crossTeamJustifications[reviewer.id]
+        : undefined,
     };
 
     onTeamChange([...selectedTeam, newMember]);
+  };
+
+  // Update cross-team justification for a reviewer
+  const updateCrossTeamJustification = (
+    reviewerId: string,
+    justification: string
+  ) => {
+    setCrossTeamJustifications((prev) => ({
+      ...prev,
+      [reviewerId]: justification,
+    }));
+
+    // Also update in selected team if already selected
+    const updatedTeam = selectedTeam.map((m) => {
+      if (m.reviewerProfileId === reviewerId && m.isCrossTeam) {
+        return { ...m, crossTeamJustification: justification };
+      }
+      return m;
+    });
+    if (
+      updatedTeam.some(
+        (m) =>
+          m.reviewerProfileId === reviewerId &&
+          m.crossTeamJustification !== justification
+      )
+    ) {
+      onTeamChange(updatedTeam);
+    }
   };
 
   // Remove reviewer from team
@@ -207,6 +313,46 @@ export function ReviewerSelector({
     <div className="grid gap-6 lg:grid-cols-3">
       {/* Left Panel: Available Reviewers */}
       <div className="lg:col-span-2 space-y-4">
+        {/* Team Context Header */}
+        {hostTeam && (
+          <div className="p-3 bg-muted rounded-lg">
+            <div className="flex items-center gap-2">
+              <Globe className="h-4 w-4 text-primary" />
+              <p className="text-sm text-muted-foreground">
+                {loc === "fr" ? "Affichage des évaluateurs de" : "Showing reviewers from"}{" "}
+                <span className="font-medium text-foreground">{hostTeam.nameEn}</span>
+              </p>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1 ml-6">
+              {totalEligible} {loc === "fr" ? "évaluateurs éligibles disponibles" : "eligible reviewers available"}
+            </p>
+          </div>
+        )}
+
+        {/* Cross-Team Toggle (Programme Coordinator only) */}
+        {canApproveCrossTeam && (
+          <div className="flex items-center gap-2 p-3 border rounded-lg bg-amber-50/50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800">
+            <Switch
+              id="cross-team-toggle"
+              checked={includeCrossTeam}
+              onCheckedChange={setIncludeCrossTeam}
+            />
+            <Label
+              htmlFor="cross-team-toggle"
+              className="text-sm cursor-pointer"
+            >
+              {loc === "fr"
+                ? "Inclure les évaluateurs d'autres équipes"
+                : "Include reviewers from other teams"}
+            </Label>
+            {includeCrossTeam && (
+              <Badge variant="outline" className="ml-auto text-amber-600 border-amber-300">
+                {loc === "fr" ? "Approbation requise" : "Approval required"}
+              </Badge>
+            )}
+          </div>
+        )}
+
         {/* COI Notice */}
         {excludedOrg && (
           <Alert className="border-orange-200 bg-orange-50 dark:bg-orange-950/20">
@@ -306,15 +452,26 @@ export function ReviewerSelector({
                 <div className="space-y-3">
                   {reviewers.map((reviewer) => {
                     const selected = isSelected(reviewer.id);
+                    const teamEligibility = getTeamEligibility(reviewer.id);
+                    const isCrossTeam = teamEligibility
+                      ? !teamEligibility.isSameTeam
+                      : false;
+                    const canAdd =
+                      !selected &&
+                      (!isCrossTeam || canApproveCrossTeam) &&
+                      teamEligibility?.isEligible !== false;
 
                     return (
                       <div
                         key={reviewer.id}
-                        onClick={() => !selected && addToTeam(reviewer)}
+                        onClick={() => canAdd && addToTeam(reviewer)}
                         role="button"
                         tabIndex={0}
                         onKeyDown={(e) => {
-                          if ((e.key === 'Enter' || e.key === ' ') && !selected) {
+                          if (
+                            (e.key === "Enter" || e.key === " ") &&
+                            canAdd
+                          ) {
                             e.preventDefault();
                             addToTeam(reviewer);
                           }
@@ -323,13 +480,15 @@ export function ReviewerSelector({
                           "p-3 rounded-lg border transition-colors",
                           selected
                             ? "bg-primary/5 border-primary cursor-default"
-                            : "hover:bg-muted/50 cursor-pointer hover:border-primary"
+                            : canAdd
+                            ? "hover:bg-muted/50 cursor-pointer hover:border-primary"
+                            : "opacity-60 cursor-not-allowed"
                         )}
                       >
                         <div className="flex items-start justify-between gap-4">
                           {/* Reviewer Info */}
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 flex-wrap">
                               <span className="font-medium truncate">
                                 {reviewer.fullName}
                               </span>
@@ -345,6 +504,38 @@ export function ReviewerSelector({
                                   </Tooltip>
                                 </TooltipProvider>
                               )}
+
+                              {/* Eligibility Badges */}
+                              {teamEligibility?.isSameOrg && (
+                                <Badge variant="destructive" className="text-xs">
+                                  {loc === "fr"
+                                    ? "Même organisation"
+                                    : "Same Organization"}
+                                </Badge>
+                              )}
+                              {!teamEligibility?.isEligible &&
+                                !teamEligibility?.isSameOrg && (
+                                  <Badge
+                                    variant="outline"
+                                    className="text-xs text-orange-600 border-orange-300"
+                                  >
+                                    {teamEligibility?.ineligibilityReason ??
+                                      (loc === "fr"
+                                        ? "Non éligible"
+                                        : "Not eligible")}
+                                  </Badge>
+                                )}
+                              {isCrossTeam &&
+                                teamEligibility?.isEligible && (
+                                  <Badge
+                                    variant="outline"
+                                    className="text-xs text-amber-600 border-amber-300"
+                                  >
+                                    {loc === "fr"
+                                      ? "Inter-équipe"
+                                      : "Cross-Team"}
+                                  </Badge>
+                                )}
                             </div>
 
                             {reviewer.organization && (
@@ -356,7 +547,10 @@ export function ReviewerSelector({
                                     : reviewer.organization.nameEn}
                                 </span>
                                 {reviewer.organization.icaoCode && (
-                                  <Badge variant="outline" className="text-xs ml-1">
+                                  <Badge
+                                    variant="outline"
+                                    className="text-xs ml-1"
+                                  >
                                     {reviewer.organization.icaoCode}
                                   </Badge>
                                 )}
@@ -462,16 +656,29 @@ export function ReviewerSelector({
                 {selectedTeam.map((member) => (
                   <div
                     key={member.reviewerProfileId}
-                    className="p-3 rounded-lg border bg-muted/30"
+                    className={cn(
+                      "p-3 rounded-lg border",
+                      member.isCrossTeam
+                        ? "bg-amber-50/50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800"
+                        : "bg-muted/30"
+                    )}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-medium text-sm truncate">
                             {member.fullName}
                           </span>
                           {member.isLeadQualified && (
                             <Star className="h-3.5 w-3.5 text-yellow-500 shrink-0" />
+                          )}
+                          {member.isCrossTeam && (
+                            <Badge
+                              variant="outline"
+                              className="text-xs text-amber-600 border-amber-300"
+                            >
+                              {loc === "fr" ? "Inter-équipe" : "Cross-Team"}
+                            </Badge>
                           )}
                         </div>
                         {member.organization && (
@@ -494,12 +701,53 @@ export function ReviewerSelector({
                     <div className="mt-2">
                       <TeamMemberRoleSelect
                         value={member.role}
-                        onChange={(role) => updateRole(member.reviewerProfileId, role)}
+                        onChange={(role) =>
+                          updateRole(member.reviewerProfileId, role)
+                        }
                         isLeadQualified={member.isLeadQualified}
                         compact
                         className="w-full"
                       />
                     </div>
+
+                    {/* Cross-Team Justification */}
+                    {member.isCrossTeam && (
+                      <div className="mt-3 p-3 border border-amber-200 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-800 rounded-md">
+                        <Label className="text-xs text-amber-800 dark:text-amber-400 font-medium">
+                          {loc === "fr"
+                            ? "Justification inter-équipe (requis)"
+                            : "Cross-Team Justification (Required)"}
+                        </Label>
+                        <Textarea
+                          value={
+                            crossTeamJustifications[member.reviewerProfileId] ??
+                            member.crossTeamJustification ??
+                            ""
+                          }
+                          onChange={(e) =>
+                            updateCrossTeamJustification(
+                              member.reviewerProfileId,
+                              e.target.value
+                            )
+                          }
+                          placeholder={
+                            loc === "fr"
+                              ? "Expliquez pourquoi cette affectation inter-équipe est nécessaire..."
+                              : "Explain why this cross-team assignment is necessary..."
+                          }
+                          className="mt-1 text-sm min-h-[60px]"
+                        />
+                        {(crossTeamJustifications[member.reviewerProfileId] ??
+                          member.crossTeamJustification ??
+                          "").length < 10 && (
+                          <p className="text-xs text-amber-600 mt-1">
+                            {loc === "fr"
+                              ? "Minimum 10 caractères requis"
+                              : "Minimum 10 characters required"}
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

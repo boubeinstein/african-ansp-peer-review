@@ -18,7 +18,6 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { useSession } from "next-auth/react";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 import type { TeamRole, ExpertiseArea, Language } from "@prisma/client";
@@ -93,6 +92,8 @@ export interface ReviewerSelectorProps {
   locale?: string;
   maxTeamSize?: number;
   minTeamSize?: number;
+  /** Whether current user can approve cross-team assignments (passed from parent) */
+  canApproveCrossTeam?: boolean;
 }
 
 // Team eligibility reviewer type from getTeamEligibleReviewers
@@ -127,12 +128,6 @@ interface EligibleReviewer {
   canBeLead: boolean;
 }
 
-// Roles that can approve cross-team assignments
-const CROSS_TEAM_APPROVER_ROLES = [
-  "PROGRAMME_COORDINATOR",
-  "SUPER_ADMIN",
-  "SYSTEM_ADMIN",
-];
 
 // =============================================================================
 // COMPONENT
@@ -147,10 +142,10 @@ export function ReviewerSelector({
   locale = "en",
   maxTeamSize = 5,
   minTeamSize = 2,
+  canApproveCrossTeam = false,
 }: ReviewerSelectorProps) {
   const t = useTranslations("review.reviewerSelector");
   const loc = (locale as "en" | "fr") || "en";
-  const { data: session } = useSession();
 
   // Search and filter state
   const [search, setSearch] = useState("");
@@ -161,11 +156,6 @@ export function ReviewerSelector({
   const [crossTeamJustifications, setCrossTeamJustifications] = useState<
     Record<string, string>
   >({});
-
-  // Check if user can approve cross-team assignments
-  const canApproveCrossTeam =
-    session?.user?.role &&
-    CROSS_TEAM_APPROVER_ROLES.includes(session.user.role);
 
   // Fetch team-eligible reviewers (new endpoint)
   const { data: teamData } = trpc.reviewer.getTeamEligibleReviewers.useQuery(

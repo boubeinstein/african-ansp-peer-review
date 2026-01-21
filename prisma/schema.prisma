@@ -462,6 +462,9 @@ model Assessment {
   documents          Document[]
 
   @@index([organizationId, questionnaireId])
+  @@index([organizationId, status])
+  @@index([status])
+  @@index([createdAt])
   @@map("assessments")
 }
 
@@ -499,6 +502,8 @@ model AssessmentResponse {
   documents     ResponseDocument[]
 
   @@unique([assessmentId, questionId])
+  @@index([assessmentId])
+  @@index([questionId])
   @@map("assessment_responses")
 }
 

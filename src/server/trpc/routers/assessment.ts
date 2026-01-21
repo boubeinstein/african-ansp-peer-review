@@ -493,55 +493,68 @@ export const assessmentRouter = router({
       const title = input.title || generateAssessmentTitle(assessmentTypeCode, referenceNumber);
 
       // Create assessment with empty responses for all questions
-      const assessment = await prisma.$transaction(async (tx) => {
-        // Store selectedAuditAreas from input (only applicable for ANS assessments)
-        const selectedAuditAreas = questionnaire.type === "ANS_USOAP_CMA"
-          ? input.selectedAuditAreas
-          : [];
+      // Use extended timeout for bulk response creation (150+ responses possible)
+      const assessment = await prisma.$transaction(
+        async (tx) => {
+          // Store selectedAuditAreas from input (only applicable for ANS assessments)
+          const selectedAuditAreas =
+            questionnaire.type === "ANS_USOAP_CMA"
+              ? input.selectedAuditAreas
+              : [];
 
-        const newAssessment = await tx.assessment.create({
-          data: {
-            referenceNumber,
-            type: input.assessmentType,
-            title,
-            description: input.description,
-            dueDate: input.dueDate,
-            questionnaireId: questionnaire.id,
-            organizationId: user.organizationId!,
-            status: "DRAFT",
-            progress: 0,
-            selectedAuditAreas,
-          },
-          include: {
-            questionnaire: true,
-            organization: true,
-          },
-        });
-
-        console.log("[Assessment Create]", {
-          id: newAssessment.id,
-          title: newAssessment.title,
-          selectedAuditAreas: newAssessment.selectedAuditAreas,
-        });
-
-        // Get questions for this questionnaire (filtered by scope if provided)
-        const questions = await tx.question.findMany({
-          where: questionFilter,
-          select: { id: true },
-        });
-
-        // Create empty responses for all questions
-        if (questions.length > 0) {
-          await tx.assessmentResponse.createMany({
-            data: questions.map((q) => ({
-              assessmentId: newAssessment.id,
-              questionId: q.id,
-            })),
+          const newAssessment = await tx.assessment.create({
+            data: {
+              referenceNumber,
+              type: input.assessmentType,
+              title,
+              description: input.description,
+              dueDate: input.dueDate,
+              questionnaireId: questionnaire.id,
+              organizationId: user.organizationId!,
+              status: "DRAFT",
+              progress: 0,
+              selectedAuditAreas,
+            },
+            include: {
+              questionnaire: true,
+              organization: true,
+            },
           });
-        }
 
-        return newAssessment;
-      });
+          console.log("[Assessment Create]", {
+            id: newAssessment.id,
+            title: newAssessment.title,
+            selectedAuditAreas: newAssessment.selectedAuditAreas,
+          });
+
+          // Get questions for this questionnaire (filtered by scope if provided)
+          const questions = await tx.question.findMany({
+            where: questionFilter,
+            select: { id: true },
+          });
+
+          // Bulk create empty responses using createMany (fast!)
+          if (questions.length > 0) {
+            await tx.assessmentResponse.createMany({
+              data: questions.map((q) => ({
+                assessmentId: newAssessment.id,
+                questionId: q.id,
+              })),
+              skipDuplicates: true,
+            });
+
+            console.log(
+              `[Assessment Create] Created ${questions.length} response records`
+            );
+          }
+
+          return newAssessment;
+        },
+        {
+          timeout: 30000, // 30 seconds for bulk operations
+          maxWait: 10000, // Max 10s wait to acquire connection
+        }
+      );
 
       // Log audit entry
       await logAuditEntry(user.id, "CREATE", "Assessment", assessment.id, {

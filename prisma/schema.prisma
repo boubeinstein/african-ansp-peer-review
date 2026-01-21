@@ -552,6 +552,13 @@ model ReviewTeamMember {
   declinedAt        DateTime?        @map("declined_at")
   declineReason     String?          @map("decline_reason")
   createdAt         DateTime         @default(now()) @map("created_at")
+
+  // Cross-team assignment (Rule 3 exception)
+  isCrossTeamAssignment   Boolean   @default(false) @map("is_cross_team_assignment")
+  crossTeamJustification  String?   @map("cross_team_justification") @db.Text
+  crossTeamApprovedById   String?   @map("cross_team_approved_by_id")
+  crossTeamApprovedAt     DateTime? @map("cross_team_approved_at")
+
   review            Review           @relation(fields: [reviewId], references: [id])
   reviewerProfile   ReviewerProfile? @relation(fields: [reviewerProfileId], references: [id])
   user              User             @relation(fields: [userId], references: [id])

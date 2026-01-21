@@ -3,12 +3,12 @@
 /**
  * Regional Team Card Component
  *
- * Displays a regional peer review team with its members,
- * lead organization, and key statistics.
+ * Displays a peer review team with its members, lead organization, and key statistics.
+ * Teams are partnership-based (similar characteristics: airspace, equipment, procedures)
+ * - NOT strictly regional.
  */
 
 import { cn } from "@/lib/utils";
-import type { AfricanRegion } from "@prisma/client";
 
 // UI Components
 import {
@@ -22,7 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 // Icons
-import { Crown, Users, MapPin } from "lucide-react";
+import { Crown, Users } from "lucide-react";
 
 // =============================================================================
 // TYPES
@@ -42,7 +42,6 @@ interface RegionalTeamData {
   code: string;
   nameEn: string;
   nameFr: string;
-  region: AfricanRegion;
   isActive: boolean;
   leadOrganization: OrganizationSummary;
   memberOrganizations: OrganizationSummary[];
@@ -68,13 +67,6 @@ const TEAM_COLORS: Record<number, { bg: string; text: string; border: string }> 
   3: { bg: "bg-amber-500", text: "text-white", border: "border-amber-500" },
   4: { bg: "bg-purple-500", text: "text-white", border: "border-purple-500" },
   5: { bg: "bg-rose-500", text: "text-white", border: "border-rose-500" },
-};
-
-// Region labels
-const REGION_LABELS: Record<AfricanRegion, { en: string; fr: string; color: string }> = {
-  WACAF: { en: "West & Central Africa", fr: "Afrique de l'Ouest et Centrale", color: "bg-orange-100 text-orange-800" },
-  ESAF: { en: "Eastern & Southern Africa", fr: "Afrique de l'Est et Australe", color: "bg-green-100 text-green-800" },
-  NORTHERN: { en: "Northern Africa", fr: "Afrique du Nord", color: "bg-blue-100 text-blue-800" },
 };
 
 // =============================================================================
@@ -140,7 +132,6 @@ export function RegionalTeamCard({ team, locale, className }: RegionalTeamCardPr
   const isFrench = locale === "fr";
   const teamName = isFrench ? team.nameFr : team.nameEn;
   const leadOrgName = isFrench ? team.leadOrganization.nameFr : team.leadOrganization.nameEn;
-  const regionLabel = isFrench ? REGION_LABELS[team.region].fr : REGION_LABELS[team.region].en;
 
   const teamColor = TEAM_COLORS[team.teamNumber] || TEAM_COLORS[1];
   const memberCount = team._count?.memberOrganizations ?? team.memberOrganizations.length;
@@ -180,12 +171,8 @@ export function RegionalTeamCard({ team, locale, className }: RegionalTeamCardPr
               )}
             </div>
             <CardDescription className="mt-1">
-              <Badge variant="outline" className="mr-2 font-mono text-xs">
+              <Badge variant="outline" className="font-mono text-xs">
                 {team.code}
-              </Badge>
-              <Badge className={cn("text-xs", REGION_LABELS[team.region].color)}>
-                <MapPin className="h-3 w-3 mr-1" />
-                {regionLabel}
               </Badge>
             </CardDescription>
           </div>

@@ -43,7 +43,6 @@ model RegionalTeam {
   code                String         @unique
   nameEn              String         @map("name_en")
   nameFr              String         @map("name_fr")
-  region              AfricanRegion
   leadOrganizationId  String         @unique @map("lead_organization_id")
   leadOrganization    Organization   @relation("TeamLead", fields: [leadOrganizationId], references: [id])
   memberOrganizations Organization[] @relation("TeamMembers")

@@ -1,19 +1,20 @@
 import "dotenv/config";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient, AfricanRegion } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 // Team composition from 5A5thAFIAviationSafetySymposiumANSPPeerReviewMechanismbyCANSO.pdf
+// Teams are partnership-based (similar characteristics: airspace, equipment, procedures)
+// NOT regional - each member Organization has its own region field
 const REGIONAL_TEAMS: {
   teamNumber: number;
   code: string;
   nameEn: string;
   nameFr: string;
-  region: AfricanRegion;
   memberCodes: string[];
   leadCode: string;
 }[] = [
@@ -22,7 +23,6 @@ const REGIONAL_TEAMS: {
     code: "TEAM-1",
     nameEn: "Team 1 - ASECNA & Southern Africa Partnership",
     nameFr: "Équipe 1 - Partenariat ASECNA & Afrique Australe",
-    region: "WACAF",
     memberCodes: ["ASEC", "ATNS", "FBSK", "FDMS"],
     leadCode: "ASEC",
   },
@@ -31,7 +31,6 @@ const REGIONAL_TEAMS: {
     code: "TEAM-2",
     nameEn: "Team 2 - East African Community",
     nameFr: "Équipe 2 - Communauté d'Afrique de l'Est",
-    region: "ESAF",
     memberCodes: ["HUEN", "HTDA", "HBBA", "HRYR", "HKJK"],
     leadCode: "HKJK",
   },
@@ -40,8 +39,7 @@ const REGIONAL_TEAMS: {
     code: "TEAM-3",
     nameEn: "Team 3 - West African Anglophone",
     nameFr: "Équipe 3 - Afrique de l'Ouest Anglophone",
-    region: "WACAF",
-    memberCodes: ["NAMA", "DGAA", "RFIR"], // RFIR = Roberts FIR
+    memberCodes: ["NAMA", "DGAA", "RFIR"],
     leadCode: "NAMA",
   },
   {
@@ -49,7 +47,6 @@ const REGIONAL_TEAMS: {
     code: "TEAM-4",
     nameEn: "Team 4 - Southern & Eastern Africa",
     nameFr: "Équipe 4 - Afrique Australe et Orientale",
-    region: "ESAF",
     memberCodes: ["FQMA", "FWKI", "FMMI", "FVHA", "FLKK"],
     leadCode: "FQMA",
   },
@@ -58,15 +55,61 @@ const REGIONAL_TEAMS: {
     code: "TEAM-5",
     nameEn: "Team 5 - Northern Africa",
     nameFr: "Équipe 5 - Afrique du Nord",
-    region: "NORTHERN",
-    memberCodes: ["DGAC", "OACA", "DACM"], // Morocco, Tunisia, Algeria
+    memberCodes: ["DGAC", "OACA", "DACM"],
     leadCode: "DGAC",
+  },
+];
+
+// Northern Africa organizations that may not exist in the database yet
+const NORTHERN_AFRICA_ORGS = [
+  {
+    icaoCode: "DGAC",
+    nameEn: "Direction Générale de l'Aviation Civile",
+    nameFr: "Direction Générale de l'Aviation Civile",
+    country: "Morocco",
+    region: "NORTHERN" as const,
+    membershipStatus: "ACTIVE" as const,
+  },
+  {
+    icaoCode: "OACA",
+    nameEn: "Office de l'Aviation Civile et des Aéroports",
+    nameFr: "Office de l'Aviation Civile et des Aéroports",
+    country: "Tunisia",
+    region: "NORTHERN" as const,
+    membershipStatus: "ACTIVE" as const,
+  },
+  {
+    icaoCode: "DACM",
+    nameEn: "Direction de l'Aviation Civile et de la Météorologie",
+    nameFr: "Direction de l'Aviation Civile et de la Météorologie",
+    country: "Algeria",
+    region: "NORTHERN" as const,
+    membershipStatus: "ACTIVE" as const,
   },
 ];
 
 async function seedRegionalTeams() {
   console.log("🌍 Seeding Regional Teams...\n");
 
+  // Ensure Northern Africa organizations exist
+  console.log("📍 Ensuring Northern Africa organizations exist...\n");
+  for (const org of NORTHERN_AFRICA_ORGS) {
+    const existing = await prisma.organization.findFirst({
+      where: { icaoCode: org.icaoCode },
+    });
+
+    if (!existing) {
+      await prisma.organization.create({
+        data: org,
+      });
+      console.log(`  ✅ Created: ${org.icaoCode} - ${org.nameEn}`);
+    } else {
+      console.log(`  ℹ️ Exists: ${org.icaoCode} - ${existing.nameEn}`);
+    }
+  }
+  console.log("");
+
+  // Create regional teams
   for (const team of REGIONAL_TEAMS) {
     console.log(`Creating ${team.nameEn}...`);
 
@@ -87,7 +130,6 @@ async function seedRegionalTeams() {
         code: team.code,
         nameEn: team.nameEn,
         nameFr: team.nameFr,
-        region: team.region,
         leadOrganizationId: leadOrg.id,
       },
       create: {
@@ -95,7 +137,6 @@ async function seedRegionalTeams() {
         code: team.code,
         nameEn: team.nameEn,
         nameFr: team.nameFr,
-        region: team.region,
         leadOrganizationId: leadOrg.id,
         isActive: true,
       },

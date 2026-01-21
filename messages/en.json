@@ -94,6 +94,8 @@
       "signUp": "Request Access",
       "success": "Welcome back!",
       "error": "Invalid email or password",
+      "invalidCredentials": "Invalid email or password. Please try again.",
+      "loginFailed": "Login failed. Please try again.",
       "notParticipant": "Your organization is not yet a programme participant?",
       "requestToJoin": "Request to Join"
     },

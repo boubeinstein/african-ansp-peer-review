@@ -15,7 +15,7 @@ import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Loader2, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,7 +26,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { toast } from "sonner";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 
 const loginSchema = z.object({
@@ -42,6 +42,7 @@ export function LoginForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const {
     register,
@@ -53,6 +54,8 @@ export function LoginForm() {
 
   async function onSubmit(data: LoginFormData) {
     setIsLoading(true);
+    setError(null); // Clear previous error
+
     try {
       const result = await signIn("credentials", {
         email: data.email,
@@ -61,15 +64,17 @@ export function LoginForm() {
       });
 
       if (result?.error) {
-        toast.error(t("error"));
-      } else {
-        toast.success(t("success"));
+        setError(t("invalidCredentials"));
+        setIsLoading(false);
+        return;
+      }
+
+      if (result?.ok) {
         router.push(`/${locale}/dashboard`);
         router.refresh();
       }
     } catch {
-      toast.error(t("error"));
-    } finally {
+      setError(t("loginFailed"));
       setIsLoading(false);
     }
   }
@@ -162,6 +167,14 @@ export function LoginForm() {
               <p className="text-xs text-red-500">{errors.password.message}</p>
             )}
           </div>
+
+          {/* Error Alert */}
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
           {/* Submit Button */}
           <Button

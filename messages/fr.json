@@ -94,6 +94,8 @@
       "signUp": "Demander l'Accès",
       "success": "Bienvenue !",
       "error": "Email ou mot de passe invalide",
+      "invalidCredentials": "Email ou mot de passe invalide. Veuillez réessayer.",
+      "loginFailed": "Échec de la connexion. Veuillez réessayer.",
       "notParticipant": "Votre organisation n'est pas encore participante au programme ?",
       "requestToJoin": "Demander à Rejoindre"
     },

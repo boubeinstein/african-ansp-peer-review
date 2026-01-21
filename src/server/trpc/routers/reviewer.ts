@@ -59,6 +59,10 @@ import {
   MATCHING_WEIGHTS,
   REVIEWER_CAPACITY,
 } from "@/lib/reviewer/constants";
+import {
+  getEligibleReviewers,
+  validateReviewerAssignment,
+} from "@/server/services/reviewer-eligibility";
 import { matchingCriteriaSchema } from "@/lib/validations/reviewer";
 import {
   findMatchingReviewers,
@@ -3188,6 +3192,62 @@ export const reviewerRouter = router({
         excludedOrganizationId: review.hostOrganizationId,
         totalCount: reviewersWithScores.length,
       };
+    }),
+
+  // =============================================================================
+  // TEAM-BASED ELIGIBILITY
+  // =============================================================================
+
+  /**
+   * Get eligible reviewers for a review based on team membership rules
+   *
+   * Rule 1: SAME TEAM - Reviewer must be from same team as host ANSP
+   * Rule 2: NO SELF-REVIEW - Reviewer cannot be from host organization
+   */
+  getTeamEligibleReviewers: protectedProcedure
+    .input(
+      z.object({
+        reviewId: z.string(),
+        includeCrossTeam: z.boolean().default(false),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      // Only Programme Coordinator can see cross-team reviewers
+      const canSeeCrossTeam =
+        input.includeCrossTeam &&
+        ["PROGRAMME_COORDINATOR", "SUPER_ADMIN", "SYSTEM_ADMIN"].includes(
+          ctx.session.user.role
+        );
+
+      return getEligibleReviewers(input.reviewId, canSeeCrossTeam);
+    }),
+
+  /**
+   * Validate a reviewer assignment against eligibility rules
+   *
+   * Returns validation result with cross-team status
+   */
+  validateTeamAssignment: protectedProcedure
+    .input(
+      z.object({
+        reviewId: z.string(),
+        reviewerProfileId: z.string(),
+        crossTeamJustification: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const approverId = ["PROGRAMME_COORDINATOR", "SUPER_ADMIN"].includes(
+        ctx.session.user.role
+      )
+        ? ctx.session.user.id
+        : undefined;
+
+      return validateReviewerAssignment(
+        input.reviewId,
+        input.reviewerProfileId,
+        input.crossTeamJustification,
+        approverId
+      );
     }),
 });
 

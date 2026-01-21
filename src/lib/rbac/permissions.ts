@@ -46,7 +46,11 @@ export type Feature =
   | "settings"
   | "settings.system"
   | "settings.users"
-  | "settings.usersOwn";
+  | "settings.usersOwn"
+  | "admin"
+  | "admin.users"
+  | "admin.settings"
+  | "admin.logs";
 
 /**
  * Permission matrix - defines what each role can access
@@ -91,6 +95,10 @@ const permissions: Record<UserRole, Feature[]> = {
     "settings",
     "settings.system",
     "settings.users",
+    "admin",
+    "admin.users",
+    "admin.settings",
+    "admin.logs",
   ],
 
   SYSTEM_ADMIN: [
@@ -131,6 +139,10 @@ const permissions: Record<UserRole, Feature[]> = {
     "settings",
     "settings.system",
     "settings.users",
+    "admin",
+    "admin.users",
+    "admin.settings",
+    "admin.logs",
   ],
 
   PROGRAMME_COORDINATOR: [

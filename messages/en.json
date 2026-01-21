@@ -63,7 +63,9 @@
     "training": "Training",
     "settings": "Settings",
     "admin": "Administration",
-    "joinRequests": "Join Requests"
+    "joinRequests": "Join Requests",
+    "administration": "Administration",
+    "adminUsers": "Users"
   },
   "auth": {
     "hero": {

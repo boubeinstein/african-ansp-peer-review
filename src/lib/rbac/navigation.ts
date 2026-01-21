@@ -11,6 +11,7 @@ import {
   UserPlus,
   GraduationCap,
   Settings,
+  Shield,
   type LucideIcon,
 } from "lucide-react";
 import { hasPermission, type Feature } from "./permissions";
@@ -21,6 +22,7 @@ export interface NavItem {
   icon: LucideIcon;
   feature: Feature;
   badge?: number;
+  section?: "main" | "admin";
 }
 
 /**
@@ -92,6 +94,14 @@ const allNavItems: NavItem[] = [
     href: "/settings",
     icon: Settings,
     feature: "settings",
+  },
+  // Admin section - only visible to system administrators
+  {
+    name: "adminUsers",
+    href: "/admin/users",
+    icon: Shield,
+    feature: "admin.users",
+    section: "admin",
   },
 ];
 

@@ -76,61 +76,135 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
       <ScrollArea className="flex-1 px-3 py-4">
         <TooltipProvider delayDuration={0}>
           <nav className="flex flex-col gap-1">
-            {navItems.map((item) => {
-              const fullHref =
-                item.href === "/" ? `/${locale}` : `/${locale}${item.href}`;
-              const isActive =
-                item.href === "/"
-                  ? pathname === `/${locale}` || pathname === `/${locale}/`
-                  : pathname.startsWith(fullHref);
+            {/* Main navigation items */}
+            {navItems
+              .filter((item) => item.section !== "admin")
+              .map((item) => {
+                const fullHref =
+                  item.href === "/" ? `/${locale}` : `/${locale}${item.href}`;
+                const isActive =
+                  item.href === "/"
+                    ? pathname === `/${locale}` || pathname === `/${locale}/`
+                    : pathname.startsWith(fullHref);
 
-              const Icon = item.icon;
+                const Icon = item.icon;
 
-              const navLinkContent = (
-                <>
-                  <Icon
-                    className={cn("h-4 w-4 shrink-0", isActive && "text-primary")}
-                  />
-                  {!collapsed && <span>{t(item.name)}</span>}
-                </>
-              );
-
-              const linkClassName = cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
-                isActive
-                  ? "bg-primary/10 text-primary font-medium border-l-2 border-primary ml-[-2px]"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                collapsed && "justify-center px-2"
-              );
-
-              const navLink = (
-                <Link href={fullHref} className={linkClassName}>
-                  {navLinkContent}
-                </Link>
-              );
-
-              // Show tooltip only when collapsed
-              if (collapsed) {
-                return (
-                  <Tooltip key={item.name}>
-                    <TooltipTrigger asChild>{navLink}</TooltipTrigger>
-                    <TooltipContent
-                      side="right"
-                      className="flex items-center gap-2"
-                    >
-                      <span>{t(item.name)}</span>
-                      {isActive && (
-                        <span className="text-xs text-muted-foreground">
-                          (current)
-                        </span>
-                      )}
-                    </TooltipContent>
-                  </Tooltip>
+                const navLinkContent = (
+                  <>
+                    <Icon
+                      className={cn("h-4 w-4 shrink-0", isActive && "text-primary")}
+                    />
+                    {!collapsed && <span>{t(item.name)}</span>}
+                  </>
                 );
-              }
 
-              return <div key={item.name}>{navLink}</div>;
-            })}
+                const linkClassName = cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
+                  isActive
+                    ? "bg-primary/10 text-primary font-medium border-l-2 border-primary ml-[-2px]"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                  collapsed && "justify-center px-2"
+                );
+
+                const navLink = (
+                  <Link href={fullHref} className={linkClassName}>
+                    {navLinkContent}
+                  </Link>
+                );
+
+                // Show tooltip only when collapsed
+                if (collapsed) {
+                  return (
+                    <Tooltip key={item.name}>
+                      <TooltipTrigger asChild>{navLink}</TooltipTrigger>
+                      <TooltipContent
+                        side="right"
+                        className="flex items-center gap-2"
+                      >
+                        <span>{t(item.name)}</span>
+                        {isActive && (
+                          <span className="text-xs text-muted-foreground">
+                            (current)
+                          </span>
+                        )}
+                      </TooltipContent>
+                    </Tooltip>
+                  );
+                }
+
+                return <div key={item.name}>{navLink}</div>;
+              })}
+
+            {/* Admin section - only for system administrators */}
+            {navItems.some((item) => item.section === "admin") && (
+              <>
+                {/* Section divider */}
+                <div className="my-3 border-t" />
+
+                {/* Admin section header */}
+                {!collapsed && (
+                  <div className="px-3 py-2">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      {t("administration")}
+                    </span>
+                  </div>
+                )}
+
+                {/* Admin navigation items */}
+                {navItems
+                  .filter((item) => item.section === "admin")
+                  .map((item) => {
+                    const fullHref = `/${locale}${item.href}`;
+                    const isActive = pathname.startsWith(fullHref);
+
+                    const Icon = item.icon;
+
+                    const navLinkContent = (
+                      <>
+                        <Icon
+                          className={cn("h-4 w-4 shrink-0", isActive && "text-primary")}
+                        />
+                        {!collapsed && <span>{t(item.name)}</span>}
+                      </>
+                    );
+
+                    const linkClassName = cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
+                      isActive
+                        ? "bg-primary/10 text-primary font-medium border-l-2 border-primary ml-[-2px]"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                      collapsed && "justify-center px-2"
+                    );
+
+                    const navLink = (
+                      <Link href={fullHref} className={linkClassName}>
+                        {navLinkContent}
+                      </Link>
+                    );
+
+                    if (collapsed) {
+                      return (
+                        <Tooltip key={item.name}>
+                          <TooltipTrigger asChild>{navLink}</TooltipTrigger>
+                          <TooltipContent
+                            side="right"
+                            className="flex items-center gap-2"
+                          >
+                            <span>{t(item.name)}</span>
+                            {isActive && (
+                              <span className="text-xs text-muted-foreground">
+                                (current)
+                              </span>
+                            )}
+                          </TooltipContent>
+                        </Tooltip>
+                      );
+                    }
+
+                    return <div key={item.name}>{navLink}</div>;
+                  })}
+              </>
+            )}
           </nav>
         </TooltipProvider>
       </ScrollArea>

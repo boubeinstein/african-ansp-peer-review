@@ -63,7 +63,9 @@
     "training": "Formation",
     "settings": "Paramètres",
     "admin": "Administration",
-    "joinRequests": "Demandes d'Adhésion"
+    "joinRequests": "Demandes d'Adhésion",
+    "administration": "Administration",
+    "adminUsers": "Utilisateurs"
   },
   "auth": {
     "hero": {

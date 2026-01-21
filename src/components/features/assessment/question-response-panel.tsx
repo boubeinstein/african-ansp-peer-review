@@ -17,7 +17,6 @@ import {
   CheckCircle2,
   Send,
   Lock,
-  Eye,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -46,7 +45,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { useAssessmentWorkspace } from "./assessment-workspace-context";
 import { ANSResponse } from "./response-types/ans-response";
@@ -135,17 +133,6 @@ export function QuestionResponsePanel() {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Read-only banner for submitted/completed assessments */}
-      {isReadOnly && (
-        <Alert className="rounded-none border-x-0 border-t-0 bg-blue-50 border-blue-200">
-          <Eye className="h-4 w-4 text-blue-600" />
-          <AlertTitle className="text-blue-800">{tAssessment("readOnly.title")}</AlertTitle>
-          <AlertDescription className="text-blue-700">
-            {tAssessment("readOnly.description")}
-          </AlertDescription>
-        </Alert>
-      )}
-
       {/* Header with navigation */}
       <div className="flex items-center justify-between border-b p-4 bg-background">
         <div className="flex items-center gap-2">
@@ -171,6 +158,23 @@ export function QuestionResponsePanel() {
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
+
+          {/* Inline read-only indicator */}
+          {isReadOnly && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 rounded-md text-slate-600 cursor-help">
+                    <Lock className="h-3.5 w-3.5" />
+                    <span className="text-xs font-medium">{tAssessment("readOnly.badge")}</span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="max-w-xs">
+                  <p>{tAssessment("readOnly.tooltip")}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
 
         <div className="flex items-center gap-2">

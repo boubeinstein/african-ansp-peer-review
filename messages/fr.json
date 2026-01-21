@@ -671,7 +671,9 @@
     "completedReadOnly": "Cette évaluation a été terminée et est maintenant en lecture seule.",
     "readOnly": {
       "title": "Lecture seule",
-      "description": "Cette évaluation a été soumise et ne peut pas être modifiée. Vous pouvez consulter toutes les réponses et les preuves."
+      "description": "Cette évaluation a été soumise et ne peut pas être modifiée. Vous pouvez consulter toutes les réponses et les preuves.",
+      "badge": "Lecture seule",
+      "tooltip": "Cette évaluation a été finalisée. Les réponses et les preuves sont conservées pour référence."
     },
     "confirmSubmit": {
       "title": "Soumettre l'évaluation",

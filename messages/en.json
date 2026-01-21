@@ -671,7 +671,9 @@
     "completedReadOnly": "This assessment has been completed and is now read-only.",
     "readOnly": {
       "title": "View Only",
-      "description": "This assessment has been submitted and cannot be edited. You can view all responses and evidence."
+      "description": "This assessment has been submitted and cannot be edited. You can view all responses and evidence.",
+      "badge": "View Only",
+      "tooltip": "This assessment has been finalized. Responses and evidence are preserved for reference."
     },
     "confirmSubmit": {
       "title": "Submit Assessment",

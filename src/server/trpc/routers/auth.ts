@@ -8,6 +8,7 @@ import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { router, protectedProcedure, publicProcedure } from "@/server/trpc/trpc";
 import { prisma } from "@/lib/db";
+import { sendPasswordResetEmail } from "@/lib/email";
 
 export const authRouter = router({
   /**
@@ -56,13 +57,21 @@ export const authRouter = router({
         },
       });
 
-      // TODO: Send email with reset link
-      // For now, log the token (remove in production)
-      const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/en/reset-password?token=${token}`;
-      console.log(`Password reset link for ${input.email}: ${resetUrl}`);
+      // Build reset URL
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+      const resetUrl = `${baseUrl}/en/reset-password?token=${token}`;
 
-      // In production, use email service:
-      // await sendPasswordResetEmail(user.email, user.firstName, resetUrl);
+      // Send email via Resend (falls back to console in dev)
+      const emailResult = await sendPasswordResetEmail(
+        user.email,
+        user.firstName,
+        resetUrl
+      );
+
+      if (!emailResult.success) {
+        console.error("Failed to send reset email:", emailResult.error);
+        // Still return success to prevent email enumeration
+      }
 
       return { success: true };
     }),

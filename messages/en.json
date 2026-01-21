@@ -153,7 +153,8 @@
       "successTitle": "Check Your Email",
       "successMessage": "If an account exists for {email}, you will receive a password reset link shortly.",
       "backToLogin": "Back to Sign In",
-      "rememberPassword": "Remember your password? Sign in"
+      "rememberPassword": "Remember your password? Sign in",
+      "checkInbox": "Check your inbox and spam folder. The email may take a few minutes to arrive."
     },
     "resetPassword": {
       "title": "Reset Password",

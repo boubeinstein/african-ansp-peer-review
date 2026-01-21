@@ -153,7 +153,8 @@
       "successTitle": "Vérifiez Votre Email",
       "successMessage": "Si un compte existe pour {email}, vous recevrez un lien de réinitialisation sous peu.",
       "backToLogin": "Retour à la Connexion",
-      "rememberPassword": "Vous vous souvenez de votre mot de passe ? Connectez-vous"
+      "rememberPassword": "Vous vous souvenez de votre mot de passe ? Connectez-vous",
+      "checkInbox": "Vérifiez votre boîte de réception et vos spams. L'email peut prendre quelques minutes."
     },
     "resetPassword": {
       "title": "Réinitialiser le Mot de Passe",

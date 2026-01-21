@@ -13,7 +13,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, Mail, ArrowLeft, CheckCircle, Terminal } from "lucide-react";
+import { Loader2, Mail, ArrowLeft, CheckCircle } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,16 +75,13 @@ export function ForgotPasswordForm() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 pt-4">
-          {/* Dev mode notice */}
-          {process.env.NODE_ENV === "development" && (
-            <Alert className="bg-amber-50 border-amber-200">
-              <Terminal className="h-4 w-4 text-amber-600" />
-              <AlertDescription className="text-xs text-amber-800">
-                <strong>Dev Mode:</strong> Check terminal console for reset
-                link. Email sending will be enabled in production.
-              </AlertDescription>
-            </Alert>
-          )}
+          {/* Email delivery notice */}
+          <Alert className="bg-blue-50 border-blue-200">
+            <Mail className="h-4 w-4 text-blue-600" />
+            <AlertDescription className="text-sm text-blue-800">
+              {t("checkInbox")}
+            </AlertDescription>
+          </Alert>
 
           <Button asChild variant="outline" className="w-full h-11">
             <Link href={`/${locale}/login`}>

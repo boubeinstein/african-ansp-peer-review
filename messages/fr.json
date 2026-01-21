@@ -1214,6 +1214,39 @@
       "validationFailed": "Échec de la validation",
       "importSuccess": "Importation terminée avec succès",
       "importFailed": "Échec de l'importation"
+    },
+    "users": {
+      "title": "Gestion des Utilisateurs",
+      "subtitle": "Administrer les comptes, rôles et permissions",
+      "totalUsers": "Total Utilisateurs",
+      "activeUsers": "Actifs",
+      "inactiveUsers": "Inactifs",
+      "filterByRole": "Filtrer par Rôle",
+      "filterByOrg": "Filtrer par Organisation",
+      "filterByStatus": "Statut",
+      "searchPlaceholder": "Rechercher par nom ou email...",
+      "allRoles": "Tous les Rôles",
+      "allOrganizations": "Toutes les Organisations",
+      "allStatuses": "Tous les Statuts",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "columns": {
+        "name": "Nom",
+        "email": "Email",
+        "organization": "Organisation",
+        "role": "Rôle",
+        "status": "Statut",
+        "lastLogin": "Dernière Connexion",
+        "actions": "Actions"
+      },
+      "actions": {
+        "editRole": "Modifier le Rôle",
+        "deactivate": "Désactiver",
+        "activate": "Activer",
+        "resetPassword": "Réinitialiser le Mot de Passe"
+      },
+      "noUsers": "Aucun utilisateur trouvé",
+      "never": "Jamais"
     }
   },
   "errors": {

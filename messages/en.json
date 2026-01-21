@@ -1214,6 +1214,39 @@
       "validationFailed": "Validation failed",
       "importSuccess": "Import completed successfully",
       "importFailed": "Import failed"
+    },
+    "users": {
+      "title": "User Management",
+      "subtitle": "Administer user accounts, roles, and permissions",
+      "totalUsers": "Total Users",
+      "activeUsers": "Active",
+      "inactiveUsers": "Inactive",
+      "filterByRole": "Filter by Role",
+      "filterByOrg": "Filter by Organization",
+      "filterByStatus": "Status",
+      "searchPlaceholder": "Search by name or email...",
+      "allRoles": "All Roles",
+      "allOrganizations": "All Organizations",
+      "allStatuses": "All Statuses",
+      "active": "Active",
+      "inactive": "Inactive",
+      "columns": {
+        "name": "Name",
+        "email": "Email",
+        "organization": "Organization",
+        "role": "Role",
+        "status": "Status",
+        "lastLogin": "Last Login",
+        "actions": "Actions"
+      },
+      "actions": {
+        "editRole": "Edit Role",
+        "deactivate": "Deactivate",
+        "activate": "Activate",
+        "resetPassword": "Reset Password"
+      },
+      "noUsers": "No users found",
+      "never": "Never"
     }
   },
   "errors": {

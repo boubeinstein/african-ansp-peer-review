@@ -37,6 +37,9 @@ import {
   notifyReviewCompleted,
 } from "@/server/services/notification-service";
 
+// Team eligibility service
+import { validateReviewerAssignment } from "@/server/services/reviewer-eligibility";
+
 // =============================================================================
 // CONSTANTS & HELPERS
 // =============================================================================
@@ -1484,7 +1487,12 @@ export const reviewRouter = router({
     }),
 
   /**
-   * Add single member to team with COI check.
+   * Add single member to team with eligibility validation.
+   *
+   * Enforces team-based rules:
+   * - Rule 1: Same team as host ANSP (unless cross-team approved)
+   * - Rule 2: No self-review (cannot review own organization)
+   * - Rule 3: Cross-team requires justification + coordinator approval
    */
   addTeamMember: adminProcedure
     .input(
@@ -1494,10 +1502,11 @@ export const reviewRouter = router({
         reviewerProfileId: z.string().optional(),
         role: z.nativeEnum(TeamRole).default("REVIEWER"),
         assignedAreas: z.array(z.string()).default([]),
+        crossTeamJustification: z.string().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // Get review for COI check
+      // Get review for validation
       const review = await ctx.db.review.findUnique({
         where: { id: input.reviewId },
       });
@@ -1509,7 +1518,100 @@ export const reviewRouter = router({
         });
       }
 
-      // Check COI
+      // Validate eligibility using team-based rules
+      if (input.reviewerProfileId) {
+        const approverId = ["PROGRAMME_COORDINATOR", "SUPER_ADMIN"].includes(
+          ctx.session.user.role
+        )
+          ? ctx.session.user.id
+          : undefined;
+
+        const validation = await validateReviewerAssignment(
+          input.reviewId,
+          input.reviewerProfileId,
+          input.crossTeamJustification,
+          approverId
+        );
+
+        if (!validation.valid) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: validation.error ?? "Reviewer not eligible for this review",
+          });
+        }
+
+        // Check if already a member
+        const existing = await ctx.db.reviewTeamMember.findFirst({
+          where: {
+            reviewId: input.reviewId,
+            userId: input.userId,
+          },
+        });
+
+        if (existing) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "User is already a team member",
+          });
+        }
+
+        // If adding as lead, check no other lead exists
+        if (input.role === "LEAD_REVIEWER") {
+          const existingLead = await ctx.db.reviewTeamMember.findFirst({
+            where: {
+              reviewId: input.reviewId,
+              role: "LEAD_REVIEWER",
+            },
+          });
+
+          if (existingLead) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Review already has a Lead Reviewer",
+            });
+          }
+        }
+
+        // Create team member with cross-team tracking
+        const member = await ctx.db.reviewTeamMember.create({
+          data: {
+            reviewId: input.reviewId,
+            userId: input.userId,
+            reviewerProfileId: input.reviewerProfileId,
+            role: input.role,
+            assignedAreas: input.assignedAreas,
+            // Cross-team tracking (Rule 3)
+            isCrossTeamAssignment: validation.isCrossTeam,
+            crossTeamJustification: validation.isCrossTeam
+              ? input.crossTeamJustification
+              : null,
+            crossTeamApprovedById: validation.isCrossTeam ? approverId : null,
+            crossTeamApprovedAt: validation.isCrossTeam ? new Date() : null,
+          },
+          include: {
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+            reviewerProfile: {
+              select: {
+                id: true,
+                isLeadQualified: true,
+                expertiseAreas: true,
+              },
+            },
+          },
+        });
+
+        return member;
+      }
+
+      // Fallback for non-reviewer-profile assignments (legacy support)
+      // Still enforce basic COI check
       const user = await ctx.db.user.findUnique({
         where: { id: input.userId },
         select: { organizationId: true, firstName: true, lastName: true },

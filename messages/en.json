@@ -1676,6 +1676,9 @@
       "evidence": "Evidence",
       "notes": "Notes"
     },
+    "navigation": {
+      "answered": "answered"
+    },
     "panel": {
       "noQuestion": "No Question Selected",
       "selectQuestion": "Select a question from the sidebar to begin",

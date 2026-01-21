@@ -48,6 +48,7 @@ import { QuestionNavigationSidebar } from "@/components/features/assessment/ques
 import { QuestionResponsePanel } from "@/components/features/assessment/question-response-panel";
 import { AssessmentHelpDialog } from "@/components/features/assessment/assessment-help-dialog";
 import { AssessmentSettingsDialog } from "@/components/features/assessment/assessment-settings-dialog";
+import { AssessmentNavigation } from "@/components/features/assessment/assessment-navigation";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
 
@@ -379,8 +380,33 @@ function ReadOnlyBanner() {
 }
 
 function WorkspaceContent() {
-  const { isLoading, error } = useAssessmentWorkspace();
+  const {
+    isLoading,
+    error,
+    assessment,
+    currentQuestion,
+    currentQuestionIndex,
+    filteredQuestions,
+    responses,
+    goToNextQuestion,
+    goToPreviousQuestion,
+    updateResponse,
+    saveStatus,
+    saveCurrentResponse,
+    progressPercent,
+    answeredCount,
+    canSubmit: contextCanSubmit,
+    setIsSubmitDialogOpen,
+  } = useAssessmentWorkspace();
   const t = useTranslations("workspace");
+
+  const isEditable = assessment?.status === "DRAFT";
+  const isReadOnly = !isEditable;
+  const isAlreadySubmitted = assessment?.status === "SUBMITTED" ||
+    assessment?.status === "UNDER_REVIEW" ||
+    assessment?.status === "COMPLETED" ||
+    assessment?.status === "ARCHIVED";
+  const response = currentQuestion ? responses.get(currentQuestion.id) : null;
 
   if (isLoading) {
     return (
@@ -409,20 +435,50 @@ function WorkspaceContent() {
     );
   }
 
-  return (
-    <div className="flex flex-1 min-h-0 overflow-hidden">
-      {/* Left Sidebar - Question Navigation */}
-      <QuestionNavigationSidebar />
+  const handleFlag = () => {
+    if (currentQuestion) {
+      updateResponse(currentQuestion.id, { isFlagged: !response?.isFlagged });
+    }
+  };
 
-      {/* Main Content - Question Response */}
-      <motion.main
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="flex-1 min-h-0 overflow-hidden"
-      >
-        <QuestionResponsePanel />
-      </motion.main>
-    </div>
+  return (
+    <>
+      <div className="flex flex-1 min-h-0 overflow-hidden">
+        {/* Left Sidebar - Question Navigation */}
+        <QuestionNavigationSidebar />
+
+        {/* Main Content - Question Response */}
+        <motion.main
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex-1 min-h-0 overflow-y-auto"
+        >
+          <QuestionResponsePanel />
+        </motion.main>
+      </div>
+
+      {/* Sticky Navigation Footer */}
+      <AssessmentNavigation
+        currentIndex={currentQuestionIndex}
+        totalQuestions={filteredQuestions.length}
+        progress={progressPercent}
+        answeredCount={answeredCount}
+        onPrevious={goToPreviousQuestion}
+        onNext={goToNextQuestion}
+        onSave={saveCurrentResponse}
+        onSubmit={() => setIsSubmitDialogOpen(true)}
+        onFlag={handleFlag}
+        isFlagged={response?.isFlagged ?? false}
+        isFirstQuestion={currentQuestionIndex === 0}
+        isLastQuestion={currentQuestionIndex >= filteredQuestions.length - 1}
+        isReadOnly={isReadOnly}
+        isSaving={saveStatus === "saving"}
+        isSaved={saveStatus === "saved"}
+        hasError={saveStatus === "error"}
+        canSubmit={contextCanSubmit}
+        isAlreadySubmitted={isAlreadySubmitted}
+      />
+    </>
   );
 }
 

@@ -2,25 +2,9 @@
 
 import { useMemo } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { toast } from "sonner";
-import { trpc } from "@/lib/trpc/client";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Flag,
-  AlertTriangle,
-  Info,
-  Save,
-  Loader2,
-  CheckCircle2,
-  Send,
-  Lock,
-} from "lucide-react";
+import { AlertTriangle, Info } from "lucide-react";
 import { CollapsibleGuidance } from "./collapsible-guidance";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -29,24 +13,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Progress } from "@/components/ui/progress";
 import { useAssessmentWorkspace } from "./assessment-workspace-context";
 import { ANSResponse } from "./response-types/ans-response";
 import { SMSResponse } from "./response-types/sms-response";
@@ -56,53 +22,18 @@ import { MobilePanelsBar } from "./mobile-panels-bar";
 
 export function QuestionResponsePanel() {
   const locale = useLocale();
-  const router = useRouter();
   const t = useTranslations("workspace");
-  const tCommon = useTranslations("common");
-  const tAssessment = useTranslations("assessment");
   const {
     assessment,
     currentQuestion,
     currentQuestionIndex,
-    filteredQuestions,
     responses,
-    goToNextQuestion,
-    goToPreviousQuestion,
     updateResponse,
-    saveStatus,
-    saveCurrentResponse,
-    isOnLastQuestion,
-    progressPercent,
-    answeredCount,
-    totalCount,
   } = useAssessmentWorkspace();
 
-  // Check if assessment can be edited/submitted
+  // Check if assessment can be edited
   const isEditable = assessment?.status === "DRAFT";
   const isReadOnly = !isEditable;
-  const isAlreadySubmitted = assessment?.status === "SUBMITTED" ||
-    assessment?.status === "UNDER_REVIEW" ||
-    assessment?.status === "COMPLETED" ||
-    assessment?.status === "ARCHIVED";
-  const canSubmit = progressPercent === 100 && isEditable;
-
-  // Submit mutation
-  const submitMutation = trpc.assessment.submit.useMutation({
-    onSuccess: () => {
-      toast.success(tAssessment("submitSuccess"));
-      router.push(`/${locale}/assessments`);
-    },
-    onError: (error) => {
-      toast.error(error.message || tAssessment("submitError"));
-    },
-  });
-
-  const handleSubmit = async () => {
-    if (!assessment?.id) return;
-    await submitMutation.mutateAsync({ id: assessment.id });
-  };
-
-  const isSubmitting = submitMutation.isPending;
 
   const isANS = assessment?.questionnaireType === "ANS_USOAP_CMA";
   const response = currentQuestion ? responses.get(currentQuestion.id) : null;
@@ -134,117 +65,7 @@ export function QuestionResponsePanel() {
   }
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Header with navigation */}
-      <div className="flex items-center justify-between border-b p-4 bg-background">
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={goToPreviousQuestion}
-            disabled={currentQuestionIndex === 0}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span className="text-sm text-muted-foreground">
-            {t("panel.questionOf", {
-              current: currentQuestionIndex + 1,
-              total: filteredQuestions.length,
-            })}
-          </span>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={goToNextQuestion}
-            disabled={currentQuestionIndex >= filteredQuestions.length - 1}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-
-          {/* Inline read-only indicator */}
-          {isReadOnly && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 rounded-md text-slate-600 cursor-help">
-                    <Lock className="h-3.5 w-3.5" />
-                    <span className="text-xs font-medium">{tAssessment("readOnly.badge")}</span>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" className="max-w-xs">
-                  <p>{tAssessment("readOnly.tooltip")}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-        </div>
-
-        <div className="flex items-center gap-2">
-          {/* Save status */}
-          <div className="flex items-center gap-1 text-sm">
-            {saveStatus === "saving" && (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                <span className="text-muted-foreground">{t("panel.saving")}</span>
-              </>
-            )}
-            {saveStatus === "saved" && (
-              <>
-                <CheckCircle2 className="h-4 w-4 text-green-600" />
-                <span className="text-green-600">{t("panel.saved")}</span>
-              </>
-            )}
-            {saveStatus === "error" && (
-              <>
-                <AlertTriangle className="h-4 w-4 text-destructive" />
-                <span className="text-destructive">{t("panel.saveError")}</span>
-              </>
-            )}
-          </div>
-
-          {/* Manual save button - hidden when read-only */}
-          {!isReadOnly && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={saveCurrentResponse}
-              disabled={saveStatus === "saving"}
-            >
-              <Save className="h-4 w-4 mr-2" />
-              {t("panel.save")}
-            </Button>
-          )}
-
-          {/* Flag button - disabled when read-only */}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant={response?.isFlagged ? "default" : "outline"}
-                  size="icon"
-                  onClick={() =>
-                    updateResponse(currentQuestion.id, {
-                      isFlagged: !response?.isFlagged,
-                    })
-                  }
-                  disabled={isReadOnly}
-                  className={cn(
-                    response?.isFlagged && "bg-yellow-500 hover:bg-yellow-600"
-                  )}
-                >
-                  <Flag className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{response?.isFlagged ? t("panel.unflag") : t("panel.flag")}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      </div>
-
-      {/* Main content area - scrollable with responsive padding */}
-      <div className="flex-1 overflow-y-auto p-4 lg:p-6 pb-20 xl:pb-6">
+    <div className="p-4 lg:p-6 pb-24">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentQuestion.id}
@@ -369,109 +190,6 @@ export function QuestionResponsePanel() {
             </Card>
           </motion.div>
         </AnimatePresence>
-      </div>
-
-      {/* Footer with quick navigation - hidden on mobile to make room for bottom bar */}
-      <div className="hidden xl:block border-t p-4 bg-background">
-        <div className="flex items-center justify-between max-w-4xl mx-auto">
-          <Button
-            variant="outline"
-            onClick={goToPreviousQuestion}
-            disabled={currentQuestionIndex === 0}
-          >
-            <ChevronLeft className="h-4 w-4 mr-2" />
-            {t("panel.previous")}
-          </Button>
-
-          <div className="text-sm text-muted-foreground">
-            {t("panel.keyboardHint")}
-          </div>
-
-          {isOnLastQuestion ? (
-            isAlreadySubmitted ? (
-              <Button variant="outline" disabled>
-                <Lock className="h-4 w-4 mr-2" />
-                {tAssessment("alreadySubmitted")}
-              </Button>
-            ) : (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant={canSubmit ? "default" : "outline"}
-                    className={cn(canSubmit && "bg-green-600 hover:bg-green-700")}
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    ) : (
-                      <Send className="h-4 w-4 mr-2" />
-                    )}
-                    {isSubmitting ? tCommon("submitting") : tAssessment("actions.submit")}
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle className="flex items-center gap-2">
-                      {canSubmit ? (
-                        <CheckCircle2 className="h-5 w-5 text-green-500" />
-                      ) : (
-                        <AlertTriangle className="h-5 w-5 text-amber-500" />
-                      )}
-                      {tAssessment("confirmSubmit.title")}
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      {tAssessment("confirmSubmit.description")}
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <div className="py-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm">{tAssessment("progress.percentComplete", { percent: progressPercent })}</span>
-                      <span className="text-sm font-medium">{answeredCount}/{totalCount}</span>
-                    </div>
-                    <Progress value={progressPercent} className="h-2" />
-                    {canSubmit && (
-                      <p className="text-sm text-green-600 mt-2 flex items-center gap-1">
-                        <CheckCircle2 className="h-4 w-4" />
-                        {tAssessment("validation.canSubmit")}
-                      </p>
-                    )}
-                    {!canSubmit && (
-                      <p className="text-sm text-amber-600 mt-2 flex items-center gap-1">
-                        <AlertTriangle className="h-4 w-4" />
-                        {tAssessment("validation.cannotSubmit")}
-                      </p>
-                    )}
-                  </div>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel disabled={isSubmitting}>
-                      {tCommon("actions.cancel")}
-                    </AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={handleSubmit}
-                      disabled={!canSubmit || isSubmitting}
-                      className="bg-primary"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          {tCommon("submitting")}
-                        </>
-                      ) : (
-                        tCommon("actions.submit")
-                      )}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            )
-          ) : (
-            <Button onClick={goToNextQuestion}>
-              {t("panel.next")}
-              <ChevronRight className="h-4 w-4 ml-2" />
-            </Button>
-          )}
-        </div>
-      </div>
 
       {/* Mobile bottom bar for evidence and notes - visible on smaller screens */}
       <MobilePanelsBar

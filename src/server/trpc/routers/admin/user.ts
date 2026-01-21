@@ -323,7 +323,7 @@ export const adminUserRouter = router({
     await prisma.notification.create({
       data: {
         userId: newUser.id,
-        type: "SYSTEM",
+        type: "SYSTEM_ANNOUNCEMENT",
         titleEn: "Welcome to AAPRP",
         titleFr: "Bienvenue sur l'AAPRP",
         messageEn:
@@ -467,7 +467,7 @@ export const adminUserRouter = router({
     await prisma.notification.create({
       data: {
         userId: userId,
-        type: "SYSTEM",
+        type: "SYSTEM_ANNOUNCEMENT",
         titleEn: "Role Updated",
         titleFr: "Rôle Mis à Jour",
         messageEn: `Your role has been changed to ${role.replace(/_/g, " ")}.`,
@@ -525,7 +525,7 @@ export const adminUserRouter = router({
     await prisma.notification.create({
       data: {
         userId: userId,
-        type: "SYSTEM",
+        type: "SYSTEM_ANNOUNCEMENT",
         titleEn: isActive ? "Account Activated" : "Account Deactivated",
         titleFr: isActive ? "Compte Activé" : "Compte Désactivé",
         messageEn: isActive
@@ -644,7 +644,7 @@ export const adminUserRouter = router({
     await prisma.notification.create({
       data: {
         userId: userId,
-        type: "SYSTEM",
+        type: "SYSTEM_ANNOUNCEMENT",
         titleEn: "Password Reset",
         titleFr: "Réinitialisation du mot de passe",
         messageEn:

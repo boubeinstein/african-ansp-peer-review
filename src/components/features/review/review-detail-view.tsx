@@ -77,6 +77,13 @@ const MANAGEMENT_ROLES = [
   "PROGRAMME_COORDINATOR",
 ];
 
+// Roles that can approve cross-team reviewer assignments
+const CROSS_TEAM_APPROVER_ROLES = [
+  "PROGRAMME_COORDINATOR",
+  "SUPER_ADMIN",
+  "SYSTEM_ADMIN",
+];
+
 // =============================================================================
 // CONSTANTS
 // =============================================================================
@@ -135,6 +142,9 @@ export function ReviewDetailView({
 
   // Permission checks
   const canManageTeams = userRole ? MANAGEMENT_ROLES.includes(userRole) : false;
+  const canApproveCrossTeam = userRole
+    ? CROSS_TEAM_APPROVER_ROLES.includes(userRole)
+    : false;
 
   // Fetch review data
   const {
@@ -654,6 +664,7 @@ export function ReviewDetailView({
         onSuccess={() => {
           utils.review.getById.invalidate({ id: reviewId });
         }}
+        canApproveCrossTeam={canApproveCrossTeam}
       />
     </div>
   );

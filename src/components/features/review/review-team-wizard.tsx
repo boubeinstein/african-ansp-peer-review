@@ -13,17 +13,9 @@
 
 import { useState, useCallback } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { useSession } from "next-auth/react";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-
-// Roles that can approve cross-team assignments
-const CROSS_TEAM_APPROVER_ROLES = [
-  "PROGRAMME_COORDINATOR",
-  "SUPER_ADMIN",
-  "SYSTEM_ADMIN",
-];
 
 // UI Components
 import {
@@ -68,6 +60,8 @@ interface ReviewTeamWizardProps {
   onOpenChange: (open: boolean) => void;
   reviewId: string;
   onSuccess?: () => void;
+  /** Whether current user can approve cross-team assignments (passed from parent) */
+  canApproveCrossTeam?: boolean;
 }
 
 // =============================================================================
@@ -79,18 +73,13 @@ export function ReviewTeamWizard({
   onOpenChange,
   reviewId,
   onSuccess,
+  canApproveCrossTeam = false,
 }: ReviewTeamWizardProps) {
   const t = useTranslations("review.teamWizardDialog");
   const locale = useLocale();
-  const { data: session } = useSession();
 
   const [step, setStep] = useState(1);
   const [selectedTeam, setSelectedTeam] = useState<SelectedTeamMember[]>([]);
-
-  // Check if user can approve cross-team assignments
-  const canApproveCrossTeam =
-    session?.user?.role &&
-    CROSS_TEAM_APPROVER_ROLES.includes(session.user.role);
 
   // Handle dialog open/close with state reset
   const handleOpenChange = useCallback((newOpen: boolean) => {

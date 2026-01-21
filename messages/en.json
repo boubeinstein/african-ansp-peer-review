@@ -1220,6 +1220,8 @@
     "users": {
       "title": "User Management",
       "subtitle": "Administer user accounts, roles, and permissions",
+      "userList": "User List",
+      "userListDescription": "View and manage all users in the system",
       "totalUsers": "Total Users",
       "activeUsers": "Active",
       "inactiveUsers": "Inactive",
@@ -1232,6 +1234,8 @@
       "allStatuses": "All Statuses",
       "active": "Active",
       "inactive": "Inactive",
+      "you": "You",
+      "pagination": "Page {page} of {total}",
       "columns": {
         "name": "Name",
         "email": "Email",
@@ -1248,7 +1252,57 @@
         "resetPassword": "Reset Password"
       },
       "noUsers": "No users found",
-      "never": "Never"
+      "never": "Never",
+      "createUser": "Create User",
+      "editUser": "Edit User",
+      "changeRole": "Change Role",
+      "deleteUser": "Delete User",
+      "confirmDeleteTitle": "Delete User?",
+      "confirmDelete": "Are you sure you want to delete {name}? This action cannot be undone. The user will be anonymized and deactivated.",
+      "confirmDeactivateTitle": "Deactivate User?",
+      "confirmDeactivate": "Are you sure you want to deactivate {name}? They will no longer be able to sign in.",
+      "confirmActivateTitle": "Activate User?",
+      "confirmActivate": "Reactivate {name}? They will be able to sign in again.",
+      "confirmResetPasswordTitle": "Reset Password?",
+      "confirmResetPassword": "Are you sure you want to reset the password for {name}? They will be required to change their password on next login.",
+      "userCreated": "User created successfully",
+      "userUpdated": "User updated successfully",
+      "roleChanged": "Role changed successfully",
+      "userDeactivated": "User deactivated",
+      "userActivated": "User activated",
+      "userDeleted": "User deleted",
+      "currentRole": "Current Role",
+      "newRole": "New Role",
+      "selectNewRole": "Select New Role",
+      "downgrade": "Downgrade",
+      "upgrade": "Upgrade",
+      "changeRoleDescription": "Change the role for {name}",
+      "form": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email Address",
+        "title": "Job Title",
+        "organization": "Organization",
+        "role": "Role",
+        "selectOrganization": "Select organization...",
+        "selectRole": "Select role...",
+        "noOrganization": "No Organization",
+        "createDescription": "Enter the details for the new user. They will receive a temporary password.",
+        "editDescription": "Update the user's profile information."
+      },
+      "warnings": {
+        "downgradeTitle": "Role Downgrade",
+        "downgradeDescription": "This user will lose access to features associated with their current role.",
+        "upgradeTitle": "Role Upgrade",
+        "upgradeDescription": "This user will gain additional permissions and access to more features."
+      },
+      "permissions": {
+        "noCreatePermission": "You don't have permission to create users",
+        "noEditPermission": "You don't have permission to edit this user",
+        "noRoleChangePermission": "You don't have permission to change this user's role",
+        "noAssignableRoles": "There are no roles you can assign to this user",
+        "limitedToOwnOrg": "You can only manage users in your organization"
+      }
     }
   },
   "errors": {

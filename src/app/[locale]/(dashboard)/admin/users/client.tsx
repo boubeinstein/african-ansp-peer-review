@@ -3,7 +3,7 @@
 /**
  * Admin Users Client Component
  *
- * User management interface for system administrators.
+ * Enterprise user management interface with role-based CRUD permissions.
  * Provides user listing, filtering, role management, and account controls.
  */
 
@@ -14,6 +14,17 @@ import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import type { UserRole } from "@prisma/client";
+import {
+  getRoleDisplayName,
+  canManageUser,
+  canDeactivateUser,
+  canDeleteUser,
+  canResetPassword,
+} from "@/lib/permissions/user-management";
+
+// Components
+import { UserFormModal } from "@/components/features/admin/user-form-modal";
+import { ChangeRoleModal } from "@/components/features/admin/change-role-modal";
 
 // UI Components
 import { Button } from "@/components/ui/button";
@@ -51,14 +62,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -82,6 +85,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Loader2,
+  Plus,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 
 // =============================================================================
@@ -90,8 +96,28 @@ import {
 
 interface AdminUsersClientProps {
   userId: string;
-  userRole: string;
+  userRole: UserRole;
+  userOrgId: string | null;
   locale: string;
+}
+
+interface User {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  title: string | null;
+  role: UserRole;
+  isActive: boolean;
+  lastLoginAt: Date | null;
+  createdAt: Date;
+  organizationId: string | null;
+  organization: {
+    id: string;
+    nameEn: string;
+    nameFr: string | null;
+    icaoCode: string | null;
+  } | null;
 }
 
 // =============================================================================
@@ -111,20 +137,6 @@ const USER_ROLES: UserRole[] = [
   "STAFF",
   "OBSERVER",
 ];
-
-const ROLE_LABELS: Record<UserRole, string> = {
-  SUPER_ADMIN: "Super Admin",
-  SYSTEM_ADMIN: "System Admin",
-  STEERING_COMMITTEE: "Steering Committee",
-  PROGRAMME_COORDINATOR: "Programme Coordinator",
-  LEAD_REVIEWER: "Lead Reviewer",
-  PEER_REVIEWER: "Peer Reviewer",
-  ANSP_ADMIN: "ANSP Admin",
-  SAFETY_MANAGER: "Safety Manager",
-  QUALITY_MANAGER: "Quality Manager",
-  STAFF: "Staff",
-  OBSERVER: "Observer",
-};
 
 const ROLE_COLORS: Record<UserRole, string> = {
   SUPER_ADMIN: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
@@ -149,7 +161,7 @@ interface StatCardsProps {
     total: number;
     active: number;
     inactive: number;
-    byRole: Record<UserRole, number>;
+    byRole: Partial<Record<UserRole, number>>;
   } | undefined;
   isLoading: boolean;
 }
@@ -223,8 +235,9 @@ interface FiltersProps {
   onOrganizationChange: (value: string) => void;
   status: string;
   onStatusChange: (value: string) => void;
-  organizations: Array<{ id: string; nameEn: string; nameFr: string | null }> | undefined;
+  organizations: Array<{ id: string; nameEn: string; nameFr: string | null; icaoCode: string | null }> | undefined;
   locale: string;
+  showOrgFilter: boolean;
 }
 
 function Filters({
@@ -238,6 +251,7 @@ function Filters({
   onStatusChange,
   organizations,
   locale,
+  showOrgFilter,
 }: FiltersProps) {
   const t = useTranslations("admin.users");
 
@@ -260,24 +274,26 @@ function Filters({
           <SelectItem value="all">{t("allRoles")}</SelectItem>
           {USER_ROLES.map((r) => (
             <SelectItem key={r} value={r}>
-              {ROLE_LABELS[r]}
+              {getRoleDisplayName(r)}
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
-      <Select value={organizationId} onValueChange={onOrganizationChange}>
-        <SelectTrigger className="w-full sm:w-[200px]">
-          <SelectValue placeholder={t("filterByOrg")} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">{t("allOrganizations")}</SelectItem>
-          {organizations?.map((org) => (
-            <SelectItem key={org.id} value={org.id}>
-              {locale === "fr" && org.nameFr ? org.nameFr : org.nameEn}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      {showOrgFilter && (
+        <Select value={organizationId} onValueChange={onOrganizationChange}>
+          <SelectTrigger className="w-full sm:w-[200px]">
+            <SelectValue placeholder={t("filterByOrg")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t("allOrganizations")}</SelectItem>
+            {organizations?.map((org) => (
+              <SelectItem key={org.id} value={org.id}>
+                {org.icaoCode ? `${org.icaoCode} - ` : ""}{locale === "fr" && org.nameFr ? org.nameFr : org.nameEn}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
       <Select value={status} onValueChange={onStatusChange}>
         <SelectTrigger className="w-full sm:w-[140px]">
           <SelectValue placeholder={t("filterByStatus")} />
@@ -296,33 +312,18 @@ function Filters({
 // USERS TABLE
 // =============================================================================
 
-interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  title: string | null;
-  role: UserRole;
-  isActive: boolean;
-  lastLoginAt: Date | null;
-  createdAt: Date;
-  organization: {
-    id: string;
-    nameEn: string;
-    nameFr: string | null;
-    icaoCode: string | null;
-  } | null;
-}
-
 interface UsersTableProps {
   users: User[] | undefined;
   isLoading: boolean;
   locale: string;
   currentUserId: string;
-  currentUserRole: string;
+  currentUserRole: UserRole;
+  currentUserOrgId: string | null;
+  onEditUser: (user: User) => void;
   onEditRole: (user: User) => void;
   onToggleActive: (user: User) => void;
   onResetPassword: (user: User) => void;
+  onDeleteUser: (user: User) => void;
 }
 
 function UsersTable({
@@ -331,9 +332,12 @@ function UsersTable({
   locale,
   currentUserId,
   currentUserRole,
+  currentUserOrgId,
+  onEditUser,
   onEditRole,
   onToggleActive,
   onResetPassword,
+  onDeleteUser,
 }: UsersTableProps) {
   const t = useTranslations("admin.users");
 
@@ -356,14 +360,6 @@ function UsersTable({
     );
   }
 
-  // Check if current user can modify a target user
-  const canModifyUser = (targetUser: User): boolean => {
-    if (targetUser.id === currentUserId) return false;
-    if (currentUserRole === "SUPER_ADMIN") return true;
-    if (targetUser.role === "SUPER_ADMIN" || targetUser.role === "SYSTEM_ADMIN") return false;
-    return true;
-  };
-
   return (
     <Table>
       <TableHeader>
@@ -378,92 +374,152 @@ function UsersTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users.map((user) => (
-          <TableRow key={user.id}>
-            <TableCell>
-              <div>
-                <p className="font-medium">
-                  {user.firstName} {user.lastName}
-                </p>
-                {user.title && (
-                  <p className="text-sm text-muted-foreground">{user.title}</p>
-                )}
-              </div>
-            </TableCell>
-            <TableCell>{user.email}</TableCell>
-            <TableCell>
-              {user.organization ? (
+        {users.map((user) => {
+          const isSelf = user.id === currentUserId;
+          const canEdit = canManageUser(
+            currentUserRole,
+            currentUserOrgId,
+            user.role,
+            user.organization?.id ?? null
+          );
+          const canToggle = canDeactivateUser(
+            currentUserRole,
+            currentUserId,
+            currentUserOrgId,
+            user.id,
+            user.organization?.id ?? null
+          );
+          const canReset = canResetPassword(
+            currentUserRole,
+            currentUserId,
+            currentUserOrgId,
+            user.id,
+            user.organization?.id ?? null
+          );
+          const canDelete = canDeleteUser(
+            currentUserRole,
+            currentUserId,
+            currentUserOrgId,
+            user.id,
+            user.organization?.id ?? null
+          );
+
+          const hasAnyAction = canEdit || canToggle || canReset || canDelete;
+
+          return (
+            <TableRow key={user.id}>
+              <TableCell>
                 <div>
-                  <p className="text-sm">
-                    {locale === "fr" && user.organization.nameFr
-                      ? user.organization.nameFr
-                      : user.organization.nameEn}
+                  <p className="font-medium">
+                    {user.firstName} {user.lastName}
+                    {isSelf && (
+                      <Badge variant="outline" className="ml-2 text-xs">
+                        {t("you")}
+                      </Badge>
+                    )}
                   </p>
-                  {user.organization.icaoCode && (
-                    <p className="text-xs text-muted-foreground">
-                      {user.organization.icaoCode}
-                    </p>
+                  {user.title && (
+                    <p className="text-sm text-muted-foreground">{user.title}</p>
                   )}
                 </div>
-              ) : (
-                <span className="text-muted-foreground">-</span>
-              )}
-            </TableCell>
-            <TableCell>
-              <Badge className={cn("font-medium", ROLE_COLORS[user.role])}>
-                {ROLE_LABELS[user.role]}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              {user.isActive ? (
-                <Badge variant="outline" className="border-green-500 text-green-700">
-                  {t("active")}
+              </TableCell>
+              <TableCell>{user.email}</TableCell>
+              <TableCell>
+                {user.organization ? (
+                  <div>
+                    <p className="text-sm">
+                      {locale === "fr" && user.organization.nameFr
+                        ? user.organization.nameFr
+                        : user.organization.nameEn}
+                    </p>
+                    {user.organization.icaoCode && (
+                      <p className="text-xs text-muted-foreground">
+                        {user.organization.icaoCode}
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <span className="text-muted-foreground">-</span>
+                )}
+              </TableCell>
+              <TableCell>
+                <Badge className={cn("font-medium", ROLE_COLORS[user.role])}>
+                  {getRoleDisplayName(user.role)}
                 </Badge>
-              ) : (
-                <Badge variant="outline" className="border-red-500 text-red-700">
-                  {t("inactive")}
-                </Badge>
-              )}
-            </TableCell>
-            <TableCell>
-              {user.lastLoginAt ? (
-                format(new Date(user.lastLoginAt), "PP")
-              ) : (
-                <span className="text-muted-foreground">{t("never")}</span>
-              )}
-            </TableCell>
-            <TableCell>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    disabled={!canModifyUser(user)}
-                  >
-                    <MoreHorizontal className="h-4 w-4" />
-                    <span className="sr-only">Actions</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>{t("columns.actions")}</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onSelect={() => onEditRole(user)}>
-                    <Shield className="h-4 w-4 mr-2" />
-                    {t("actions.editRole")}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={() => onToggleActive(user)}>
-                    <UserCog className="h-4 w-4 mr-2" />
-                    {user.isActive ? t("actions.deactivate") : t("actions.activate")}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={() => onResetPassword(user)}>
-                    <KeyRound className="h-4 w-4 mr-2" />
-                    {t("actions.resetPassword")}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </TableCell>
-          </TableRow>
-        ))}
+              </TableCell>
+              <TableCell>
+                {user.isActive ? (
+                  <Badge variant="outline" className="border-green-500 text-green-700">
+                    {t("active")}
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="border-red-500 text-red-700">
+                    {t("inactive")}
+                  </Badge>
+                )}
+              </TableCell>
+              <TableCell>
+                {user.lastLoginAt ? (
+                  format(new Date(user.lastLoginAt), "PP")
+                ) : (
+                  <span className="text-muted-foreground">{t("never")}</span>
+                )}
+              </TableCell>
+              <TableCell>
+                {hasAnyAction && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm">
+                        <MoreHorizontal className="h-4 w-4" />
+                        <span className="sr-only">Actions</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>{t("columns.actions")}</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {canEdit && (
+                        <DropdownMenuItem onSelect={() => onEditUser(user)}>
+                          <Pencil className="h-4 w-4 mr-2" />
+                          {t("editUser")}
+                        </DropdownMenuItem>
+                      )}
+                      {canEdit && !isSelf && (
+                        <DropdownMenuItem onSelect={() => onEditRole(user)}>
+                          <Shield className="h-4 w-4 mr-2" />
+                          {t("changeRole")}
+                        </DropdownMenuItem>
+                      )}
+                      {canToggle && (
+                        <DropdownMenuItem onSelect={() => onToggleActive(user)}>
+                          <UserCog className="h-4 w-4 mr-2" />
+                          {user.isActive ? t("actions.deactivate") : t("actions.activate")}
+                        </DropdownMenuItem>
+                      )}
+                      {canReset && (
+                        <DropdownMenuItem onSelect={() => onResetPassword(user)}>
+                          <KeyRound className="h-4 w-4 mr-2" />
+                          {t("actions.resetPassword")}
+                        </DropdownMenuItem>
+                      )}
+                      {canDelete && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onSelect={() => onDeleteUser(user)}
+                            className="text-destructive focus:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            {t("deleteUser")}
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </TableCell>
+            </TableRow>
+          );
+        })}
       </TableBody>
     </Table>
   );
@@ -480,10 +536,12 @@ interface PaginationProps {
 }
 
 function Pagination({ page, totalPages, onPageChange }: PaginationProps) {
+  const t = useTranslations("admin.users");
+
   return (
     <div className="flex items-center justify-between">
       <p className="text-sm text-muted-foreground">
-        Page {page} of {totalPages}
+        {t("pagination", { page, total: totalPages })}
       </p>
       <div className="flex gap-2">
         <Button
@@ -514,6 +572,7 @@ function Pagination({ page, totalPages, onPageChange }: PaginationProps) {
 export function AdminUsersClient({
   userId,
   userRole,
+  userOrgId,
   locale,
 }: AdminUsersClientProps) {
   const t = useTranslations("admin.users");
@@ -526,55 +585,47 @@ export function AdminUsersClient({
   const [statusFilter, setStatusFilter] = useState("all");
   const [page, setPage] = useState(1);
 
-  // Dialog state
-  const [editRoleUser, setEditRoleUser] = useState<User | null>(null);
-  const [selectedRole, setSelectedRole] = useState<UserRole | "">("");
+  // Modal state
+  const [userFormOpen, setUserFormOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [changeRoleUser, setChangeRoleUser] = useState<User | null>(null);
   const [toggleActiveUser, setToggleActiveUser] = useState<User | null>(null);
   const [resetPasswordUser, setResetPasswordUser] = useState<User | null>(null);
+  const [deleteUser, setDeleteUser] = useState<User | null>(null);
+
+  // Fetch permissions
+  const { data: permissionsData } = trpc.admin.user.getMyPermissions.useQuery();
 
   // Fetch stats
-  const { data: stats, isLoading: statsLoading } =
-    trpc.admin.user.getStats.useQuery();
+  const { data: stats, isLoading: statsLoading } = trpc.admin.user.getStats.useQuery();
 
   // Fetch organizations for filter
-  const { data: organizations } = trpc.organization.getAll.useQuery();
+  const { data: organizations } = trpc.organization.listForDropdown.useQuery();
 
   // Fetch users
-  const { data: usersData, isLoading: usersLoading, refetch } =
-    trpc.admin.user.list.useQuery({
-      page,
-      limit: 20,
-      search: search || undefined,
-      role: roleFilter !== "all" ? (roleFilter as UserRole) : undefined,
-      organizationId: orgFilter !== "all" ? orgFilter : undefined,
-      isActive:
-        statusFilter === "all"
-          ? undefined
-          : statusFilter === "active"
-          ? true
-          : false,
-    });
-
-  // Mutations
-  const updateRoleMutation = trpc.admin.user.updateRole.useMutation({
-    onSuccess: () => {
-      toast.success("Role updated successfully");
-      setEditRoleUser(null);
-      setSelectedRole("");
-      refetch();
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
+  const {
+    data: usersData,
+    isLoading: usersLoading,
+    refetch,
+  } = trpc.admin.user.list.useQuery({
+    page,
+    limit: 20,
+    search: search || undefined,
+    role: roleFilter !== "all" ? (roleFilter as UserRole) : undefined,
+    organizationId: orgFilter !== "all" ? orgFilter : undefined,
+    isActive:
+      statusFilter === "all" ? undefined : statusFilter === "active" ? true : false,
   });
 
+  const utils = trpc.useUtils();
+
+  // Mutations
   const toggleActiveMutation = trpc.admin.user.toggleActive.useMutation({
     onSuccess: (data) => {
-      toast.success(
-        data.isActive ? "User activated successfully" : "User deactivated successfully"
-      );
+      toast.success(data.isActive ? t("userActivated") : t("userDeactivated"));
       setToggleActiveUser(null);
-      refetch();
+      utils.admin.user.list.invalidate();
+      utils.admin.user.getStats.invalidate();
     },
     onError: (error) => {
       toast.error(error.message);
@@ -584,8 +635,22 @@ export function AdminUsersClient({
   const resetPasswordMutation = trpc.admin.user.resetPassword.useMutation({
     onSuccess: (data) => {
       toast.success(data.message);
+      if (data.tempPassword) {
+        toast.info(`Temporary password: ${data.tempPassword}`, { duration: 10000 });
+      }
       setResetPasswordUser(null);
-      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const deleteMutation = trpc.admin.user.delete.useMutation({
+    onSuccess: () => {
+      toast.success(t("userDeleted"));
+      setDeleteUser(null);
+      utils.admin.user.list.invalidate();
+      utils.admin.user.getStats.invalidate();
     },
     onError: (error) => {
       toast.error(error.message);
@@ -593,18 +658,18 @@ export function AdminUsersClient({
   });
 
   // Handlers
-  const handleEditRole = (user: User) => {
-    setEditRoleUser(user);
-    setSelectedRole(user.role);
+  const handleCreateUser = () => {
+    setEditingUser(null);
+    setUserFormOpen(true);
   };
 
-  const handleConfirmEditRole = () => {
-    if (editRoleUser && selectedRole) {
-      updateRoleMutation.mutate({
-        userId: editRoleUser.id,
-        role: selectedRole as UserRole,
-      });
-    }
+  const handleEditUser = (user: User) => {
+    setEditingUser(user);
+    setUserFormOpen(true);
+  };
+
+  const handleEditRole = (user: User) => {
+    setChangeRoleUser(user);
   };
 
   const handleToggleActive = (user: User) => {
@@ -632,6 +697,22 @@ export function AdminUsersClient({
     }
   };
 
+  const handleDeleteUser = (user: User) => {
+    setDeleteUser(user);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deleteUser) {
+      deleteMutation.mutate({
+        userId: deleteUser.id,
+      });
+    }
+  };
+
+  const handleFormSuccess = () => {
+    refetch();
+  };
+
   // Reset page when filters change
   const handleSearchChange = (value: string) => {
     setSearch(value);
@@ -653,12 +734,23 @@ export function AdminUsersClient({
     setPage(1);
   };
 
+  const canCreate = permissionsData?.permissions.canCreate ?? false;
+  const showOrgFilter = permissionsData?.permissions.canRead === "all";
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="text-muted-foreground">{t("subtitle")}</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
+          <p className="text-muted-foreground">{t("subtitle")}</p>
+        </div>
+        {canCreate && (
+          <Button onClick={handleCreateUser}>
+            <Plus className="h-4 w-4 mr-2" />
+            {t("createUser")}
+          </Button>
+        )}
       </div>
 
       {/* Stat Cards */}
@@ -667,8 +759,8 @@ export function AdminUsersClient({
       {/* Main Content */}
       <Card>
         <CardHeader>
-          <CardTitle>{t("title")}</CardTitle>
-          <CardDescription>{t("subtitle")}</CardDescription>
+          <CardTitle>{t("userList")}</CardTitle>
+          <CardDescription>{t("userListDescription")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Filters */}
@@ -683,6 +775,7 @@ export function AdminUsersClient({
             onStatusChange={handleStatusChange}
             organizations={organizations}
             locale={locale}
+            showOrgFilter={showOrgFilter}
           />
 
           {/* Users Table */}
@@ -692,9 +785,12 @@ export function AdminUsersClient({
             locale={locale}
             currentUserId={userId}
             currentUserRole={userRole}
+            currentUserOrgId={userOrgId}
+            onEditUser={handleEditUser}
             onEditRole={handleEditRole}
             onToggleActive={handleToggleActive}
             onResetPassword={handleResetPassword}
+            onDeleteUser={handleDeleteUser}
           />
 
           {/* Pagination */}
@@ -708,55 +804,21 @@ export function AdminUsersClient({
         </CardContent>
       </Card>
 
-      {/* Edit Role Dialog */}
-      <Dialog open={!!editRoleUser} onOpenChange={() => setEditRoleUser(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t("actions.editRole")}</DialogTitle>
-            <DialogDescription>
-              Change role for {editRoleUser?.firstName} {editRoleUser?.lastName}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <Select
-              value={selectedRole}
-              onValueChange={(value) => setSelectedRole(value as UserRole)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select role" />
-              </SelectTrigger>
-              <SelectContent>
-                {USER_ROLES.map((r) => (
-                  <SelectItem
-                    key={r}
-                    value={r}
-                    disabled={
-                      (r === "SUPER_ADMIN" || r === "SYSTEM_ADMIN") &&
-                      userRole !== "SUPER_ADMIN"
-                    }
-                  >
-                    {ROLE_LABELS[r]}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditRoleUser(null)}>
-              {tCommon("cancel")}
-            </Button>
-            <Button
-              onClick={handleConfirmEditRole}
-              disabled={!selectedRole || updateRoleMutation.isPending}
-            >
-              {updateRoleMutation.isPending && (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              )}
-              {tCommon("save")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* User Form Modal (Create/Edit) */}
+      <UserFormModal
+        open={userFormOpen}
+        onOpenChange={setUserFormOpen}
+        user={editingUser}
+        onSuccess={handleFormSuccess}
+      />
+
+      {/* Change Role Modal */}
+      <ChangeRoleModal
+        open={!!changeRoleUser}
+        onOpenChange={(open) => !open && setChangeRoleUser(null)}
+        user={changeRoleUser}
+        onSuccess={handleFormSuccess}
+      />
 
       {/* Toggle Active Alert Dialog */}
       <AlertDialog
@@ -766,21 +828,20 @@ export function AdminUsersClient({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {toggleActiveUser?.isActive
-                ? t("actions.deactivate")
-                : t("actions.activate")}{" "}
-              User
+              {toggleActiveUser?.isActive ? t("confirmDeactivateTitle") : t("confirmActivateTitle")}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to{" "}
-              {toggleActiveUser?.isActive ? "deactivate" : "activate"}{" "}
-              {toggleActiveUser?.firstName} {toggleActiveUser?.lastName}?
-              {toggleActiveUser?.isActive &&
-                " They will no longer be able to log in."}
+              {toggleActiveUser?.isActive
+                ? t("confirmDeactivate", {
+                    name: `${toggleActiveUser?.firstName} ${toggleActiveUser?.lastName}`,
+                  })
+                : t("confirmActivate", {
+                    name: `${toggleActiveUser?.firstName} ${toggleActiveUser?.lastName}`,
+                  })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+            <AlertDialogCancel>{tCommon("actions.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmToggleActive}
               disabled={toggleActiveMutation.isPending}
@@ -793,9 +854,7 @@ export function AdminUsersClient({
               {toggleActiveMutation.isPending && (
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               )}
-              {toggleActiveUser?.isActive
-                ? t("actions.deactivate")
-                : t("actions.activate")}
+              {toggleActiveUser?.isActive ? t("actions.deactivate") : t("actions.activate")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -808,15 +867,15 @@ export function AdminUsersClient({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t("actions.resetPassword")}</AlertDialogTitle>
+            <AlertDialogTitle>{t("confirmResetPasswordTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to reset the password for{" "}
-              {resetPasswordUser?.firstName} {resetPasswordUser?.lastName}? They
-              will be required to change their password on next login.
+              {t("confirmResetPassword", {
+                name: `${resetPasswordUser?.firstName} ${resetPasswordUser?.lastName}`,
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+            <AlertDialogCancel>{tCommon("actions.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmResetPassword}
               disabled={resetPasswordMutation.isPending}
@@ -825,6 +884,33 @@ export function AdminUsersClient({
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               )}
               {t("actions.resetPassword")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete User Alert Dialog */}
+      <AlertDialog open={!!deleteUser} onOpenChange={() => setDeleteUser(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("confirmDeleteTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("confirmDelete", {
+                name: `${deleteUser?.firstName} ${deleteUser?.lastName}`,
+              })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{tCommon("actions.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              disabled={deleteMutation.isPending}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              {deleteMutation.isPending && (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              )}
+              {t("deleteUser")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -1220,6 +1220,8 @@
     "users": {
       "title": "Gestion des Utilisateurs",
       "subtitle": "Administrer les comptes, rôles et permissions",
+      "userList": "Liste des Utilisateurs",
+      "userListDescription": "Voir et gérer tous les utilisateurs du système",
       "totalUsers": "Total Utilisateurs",
       "activeUsers": "Actifs",
       "inactiveUsers": "Inactifs",
@@ -1232,6 +1234,8 @@
       "allStatuses": "Tous les Statuts",
       "active": "Actif",
       "inactive": "Inactif",
+      "you": "Vous",
+      "pagination": "Page {page} sur {total}",
       "columns": {
         "name": "Nom",
         "email": "Email",
@@ -1248,7 +1252,57 @@
         "resetPassword": "Réinitialiser le Mot de Passe"
       },
       "noUsers": "Aucun utilisateur trouvé",
-      "never": "Jamais"
+      "never": "Jamais",
+      "createUser": "Créer un Utilisateur",
+      "editUser": "Modifier l'Utilisateur",
+      "changeRole": "Changer le Rôle",
+      "deleteUser": "Supprimer l'Utilisateur",
+      "confirmDeleteTitle": "Supprimer l'Utilisateur ?",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer {name} ? Cette action est irréversible. L'utilisateur sera anonymisé et désactivé.",
+      "confirmDeactivateTitle": "Désactiver l'Utilisateur ?",
+      "confirmDeactivate": "Êtes-vous sûr de vouloir désactiver {name} ? Il ne pourra plus se connecter.",
+      "confirmActivateTitle": "Activer l'Utilisateur ?",
+      "confirmActivate": "Réactiver {name} ? Il pourra de nouveau se connecter.",
+      "confirmResetPasswordTitle": "Réinitialiser le Mot de Passe ?",
+      "confirmResetPassword": "Êtes-vous sûr de vouloir réinitialiser le mot de passe de {name} ? Il devra changer son mot de passe à la prochaine connexion.",
+      "userCreated": "Utilisateur créé avec succès",
+      "userUpdated": "Utilisateur mis à jour avec succès",
+      "roleChanged": "Rôle modifié avec succès",
+      "userDeactivated": "Utilisateur désactivé",
+      "userActivated": "Utilisateur activé",
+      "userDeleted": "Utilisateur supprimé",
+      "currentRole": "Rôle Actuel",
+      "newRole": "Nouveau Rôle",
+      "selectNewRole": "Sélectionner un Nouveau Rôle",
+      "downgrade": "Rétrogradation",
+      "upgrade": "Promotion",
+      "changeRoleDescription": "Changer le rôle de {name}",
+      "form": {
+        "firstName": "Prénom",
+        "lastName": "Nom",
+        "email": "Adresse Email",
+        "title": "Titre du Poste",
+        "organization": "Organisation",
+        "role": "Rôle",
+        "selectOrganization": "Sélectionner une organisation...",
+        "selectRole": "Sélectionner un rôle...",
+        "noOrganization": "Aucune Organisation",
+        "createDescription": "Entrez les informations du nouvel utilisateur. Il recevra un mot de passe temporaire.",
+        "editDescription": "Mettre à jour les informations du profil de l'utilisateur."
+      },
+      "warnings": {
+        "downgradeTitle": "Rétrogradation de Rôle",
+        "downgradeDescription": "Cet utilisateur perdra l'accès aux fonctionnalités associées à son rôle actuel.",
+        "upgradeTitle": "Promotion de Rôle",
+        "upgradeDescription": "Cet utilisateur obtiendra des permissions supplémentaires et l'accès à plus de fonctionnalités."
+      },
+      "permissions": {
+        "noCreatePermission": "Vous n'avez pas la permission de créer des utilisateurs",
+        "noEditPermission": "Vous n'avez pas la permission de modifier cet utilisateur",
+        "noRoleChangePermission": "Vous n'avez pas la permission de changer le rôle de cet utilisateur",
+        "noAssignableRoles": "Il n'y a aucun rôle que vous pouvez attribuer à cet utilisateur",
+        "limitedToOwnOrg": "Vous ne pouvez gérer que les utilisateurs de votre organisation"
+      }
     }
   },
   "errors": {

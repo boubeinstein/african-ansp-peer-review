@@ -3568,6 +3568,76 @@
         "title": "Submission Failed",
         "prerequisitesTitle": "Failed to Check Prerequisites"
       }
+    },
+    "new": {
+      "pageTitle": "Schedule Peer Review",
+      "pageDescription": "Create and schedule a new peer review for an organization",
+      "title": "Schedule New Peer Review",
+      "description": "Create a new peer review by selecting the host organization and configuring review details.",
+      "success": "Peer review created successfully",
+      "error": "Failed to create peer review",
+      "submit": "Schedule Review",
+      "sections": {
+        "organization": "Host Organization",
+        "organizationDesc": "Select the organization that will be reviewed",
+        "reviewType": "Review Type",
+        "reviewTypeDesc": "Choose the type and scope of the peer review",
+        "schedule": "Schedule",
+        "scheduleDesc": "Set the requested review dates",
+        "logistics": "Logistics",
+        "logisticsDesc": "Configure location, language and accommodation details",
+        "contact": "Primary Contact",
+        "contactDesc": "Provide the primary contact details for this review"
+      },
+      "fields": {
+        "hostOrganization": "Host Organization",
+        "selectOrganization": "Select an organization...",
+        "assessments": "Self-Assessments",
+        "assessmentsDesc": "Select the submitted assessments to be reviewed",
+        "submittedOn": "Submitted",
+        "noAssessments": "No submitted assessments available for this organization. The organization must complete and submit a self-assessment first.",
+        "type": "Review Type",
+        "focusAreas": "Focus Areas",
+        "focusAreasDesc": "Select specific areas to focus on for this review",
+        "startDate": "Requested Start Date",
+        "endDate": "Requested End Date",
+        "selectDate": "Select date",
+        "locationType": "Location Type",
+        "languagePreference": "Language Preference",
+        "accommodationProvided": "Accommodation Provided",
+        "accommodationDesc": "Host organization will provide accommodation for the review team",
+        "transportationProvided": "Transportation Provided",
+        "transportationDesc": "Host organization will arrange local transportation",
+        "contactName": "Contact Name",
+        "contactNamePlaceholder": "Enter contact name",
+        "contactEmail": "Contact Email",
+        "contactEmailPlaceholder": "Enter contact email",
+        "contactPhone": "Contact Phone",
+        "contactPhonePlaceholder": "Enter contact phone",
+        "specialRequirements": "Special Requirements",
+        "specialRequirementsPlaceholder": "Enter any special requirements or notes...",
+        "specialRequirementsDesc": "Add any additional requirements, constraints, or information relevant to this review"
+      },
+      "reviewTypes": {
+        "FULL": "Full Review",
+        "FULLDesc": "Comprehensive review covering all ANS and SMS areas",
+        "FOCUSED": "Focused Review",
+        "FOCUSEDDesc": "Targeted review focusing on specific areas",
+        "FOLLOW_UP": "Follow-up Review",
+        "FOLLOW_UPDesc": "Review to verify implementation of previous findings",
+        "SURVEILLANCE": "Surveillance Review",
+        "SURVEILLANCEDesc": "Periodic monitoring of ongoing compliance"
+      },
+      "locationTypes": {
+        "ON_SITE": "On-Site",
+        "REMOTE": "Remote",
+        "HYBRID": "Hybrid"
+      },
+      "languages": {
+        "EN": "English",
+        "FR": "French",
+        "BOTH": "Bilingual (EN/FR)"
+      }
     }
   },
   "report": {

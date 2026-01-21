@@ -831,6 +831,65 @@ export const assessmentRouter = router({
     }),
 
   /**
+   * List assessments by organization for review scheduling
+   * Used by coordinators when creating a new review
+   */
+  listByOrganization: protectedProcedure
+    .input(
+      z.object({
+        organizationId: z.string().cuid(),
+        status: z.nativeEnum(AssessmentStatus).optional(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const user = ctx.user;
+
+      // Only coordinators and admins can fetch assessments for any organization
+      if (
+        ![
+          "SUPER_ADMIN",
+          "SYSTEM_ADMIN",
+          "PROGRAMME_COORDINATOR",
+          "STEERING_COMMITTEE",
+        ].includes(user.role)
+      ) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to view these assessments",
+        });
+      }
+
+      const where: Prisma.AssessmentWhereInput = {
+        organizationId: input.organizationId,
+      };
+
+      if (input.status) {
+        where.status = input.status;
+      }
+
+      return prisma.assessment.findMany({
+        where,
+        select: {
+          id: true,
+          status: true,
+          type: true,
+          eiScore: true,
+          submittedAt: true,
+          questionnaire: {
+            select: {
+              id: true,
+              code: true,
+              type: true,
+              titleEn: true,
+              titleFr: true,
+            },
+          },
+        },
+        orderBy: { submittedAt: "desc" },
+      });
+    }),
+
+  /**
    * Get assessments for current user's organization
    */
   getMyAssessments: protectedProcedure

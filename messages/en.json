@@ -140,6 +140,41 @@
     },
     "language": {
       "switch": "Français"
+    },
+    "forgotPassword": {
+      "title": "Forgot Password",
+      "subtitle": "Enter your email address and we'll send you a link to reset your password.",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "name@organization.aero",
+      "submitButton": "Send Reset Link",
+      "submitting": "Sending...",
+      "successTitle": "Check Your Email",
+      "successMessage": "If an account exists for {email}, you will receive a password reset link shortly.",
+      "backToLogin": "Back to Sign In",
+      "rememberPassword": "Remember your password? Sign in"
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "subtitle": "Create a new password for your account",
+      "passwordLabel": "New Password",
+      "confirmPasswordLabel": "Confirm New Password",
+      "passwordRequirements": "At least 12 characters with uppercase, lowercase, number, and special character",
+      "submitButton": "Reset Password",
+      "submitting": "Resetting...",
+      "verifying": "Verifying reset link...",
+      "successTitle": "Password Reset Successfully",
+      "successMessage": "Your password has been updated. You can now sign in with your new password.",
+      "signIn": "Sign In",
+      "invalidToken": "Invalid Reset Link",
+      "expiredToken": "This password reset link is invalid or has expired.",
+      "requestNewLink": "Request New Reset Link",
+      "requirements": {
+        "length": "12+ characters",
+        "lowercase": "Lowercase letter",
+        "uppercase": "Uppercase letter",
+        "number": "Number",
+        "special": "Special character"
+      }
     }
   },
   "dashboard": {

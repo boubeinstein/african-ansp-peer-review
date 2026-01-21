@@ -140,6 +140,41 @@
     },
     "language": {
       "switch": "English"
+    },
+    "forgotPassword": {
+      "title": "Mot de Passe Oublié",
+      "subtitle": "Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+      "emailLabel": "Adresse Email",
+      "emailPlaceholder": "nom@organisation.aero",
+      "submitButton": "Envoyer le Lien",
+      "submitting": "Envoi en cours...",
+      "successTitle": "Vérifiez Votre Email",
+      "successMessage": "Si un compte existe pour {email}, vous recevrez un lien de réinitialisation sous peu.",
+      "backToLogin": "Retour à la Connexion",
+      "rememberPassword": "Vous vous souvenez de votre mot de passe ? Connectez-vous"
+    },
+    "resetPassword": {
+      "title": "Réinitialiser le Mot de Passe",
+      "subtitle": "Créez un nouveau mot de passe pour votre compte",
+      "passwordLabel": "Nouveau Mot de Passe",
+      "confirmPasswordLabel": "Confirmer le Nouveau Mot de Passe",
+      "passwordRequirements": "Au moins 12 caractères avec majuscule, minuscule, chiffre et caractère spécial",
+      "submitButton": "Réinitialiser le Mot de Passe",
+      "submitting": "Réinitialisation...",
+      "verifying": "Vérification du lien...",
+      "successTitle": "Mot de Passe Réinitialisé",
+      "successMessage": "Votre mot de passe a été mis à jour. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+      "signIn": "Se Connecter",
+      "invalidToken": "Lien Invalide",
+      "expiredToken": "Ce lien de réinitialisation est invalide ou a expiré.",
+      "requestNewLink": "Demander un Nouveau Lien",
+      "requirements": {
+        "length": "12+ caractères",
+        "lowercase": "Lettre minuscule",
+        "uppercase": "Lettre majuscule",
+        "number": "Chiffre",
+        "special": "Caractère spécial"
+      }
     }
   },
   "dashboard": {

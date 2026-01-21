@@ -64,6 +64,7 @@ model User {
   coordinatorReviews       JoinRequest[]          @relation("CoordinatorReview")
   scDecisions              JoinRequest[]          @relation("SCDecision")
   notifications            Notification[]
+  passwordResets           PasswordReset[]
   addedResponseDocuments   ResponseDocument[]     @relation("AddedResponseDocuments")
   reviewTeamMembers        ReviewTeamMember[]
   createdAvailabilitySlots ReviewerAvailability[] @relation("AvailabilityCreator")
@@ -74,6 +75,20 @@ model User {
   organization             Organization?          @relation(fields: [organizationId], references: [id])
 
   @@map("users")
+}
+
+model PasswordReset {
+  id        String    @id @default(cuid())
+  token     String    @unique
+  userId    String    @map("user_id")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("password_resets")
 }
 
 model Questionnaire {

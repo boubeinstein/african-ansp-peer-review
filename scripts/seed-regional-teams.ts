@@ -1,6 +1,11 @@
+import "dotenv/config";
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, AfricanRegion } from "@prisma/client";
 
-const prisma = new PrismaClient();
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 // Team composition from 5A5thAFIAviationSafetySymposiumANSPPeerReviewMechanismbyCANSO.pdf
 const REGIONAL_TEAMS: {
@@ -17,50 +22,45 @@ const REGIONAL_TEAMS: {
     code: "TEAM-1",
     nameEn: "Team 1 - ASECNA & Southern Africa Partnership",
     nameFr: "Équipe 1 - Partenariat ASECNA & Afrique Australe",
-    region: "WACAF", // ASECNA-led, primarily West/Central Africa
-    // ASECNA, ATNS (South Africa), Botswana CAA, Swaziland/Eswatini CAA
+    region: "WACAF",
     memberCodes: ["ASEC", "ATNS", "FBSK", "FDMS"],
-    leadCode: "ASEC", // ASECNA as largest member
+    leadCode: "ASEC",
   },
   {
     teamNumber: 2,
     code: "TEAM-2",
     nameEn: "Team 2 - East African Community",
     nameFr: "Équipe 2 - Communauté d'Afrique de l'Est",
-    region: "ESAF", // East and Southern Africa
-    // Uganda CAA, Tanzania CAA, Burundi CAA, Rwanda CAA, Kenya CAA
+    region: "ESAF",
     memberCodes: ["HUEN", "HTDA", "HBBA", "HRYR", "HKJK"],
-    leadCode: "HKJK", // Kenya CAA (KCAA)
+    leadCode: "HKJK",
   },
   {
     teamNumber: 3,
     code: "TEAM-3",
     nameEn: "Team 3 - West African Anglophone",
     nameFr: "Équipe 3 - Afrique de l'Ouest Anglophone",
-    region: "WACAF", // West and Central Africa
-    // NAMA (Nigeria), GCAA (Ghana), Roberts FIR (Guinea, Liberia, Sierra Leone)
-    memberCodes: ["NAMA", "DGAA", "GLRB"],
-    leadCode: "NAMA", // NAMA (Nigeria) as largest
+    region: "WACAF",
+    memberCodes: ["NAMA", "DGAA", "RFIR"], // RFIR = Roberts FIR
+    leadCode: "NAMA",
   },
   {
     teamNumber: 4,
     code: "TEAM-4",
     nameEn: "Team 4 - Southern & Eastern Africa",
     nameFr: "Équipe 4 - Afrique Australe et Orientale",
-    region: "ESAF", // East and Southern Africa
-    // Mozambique Airports, Malawi, Madagascar, Zimbabwe CAA, Zambia Airports
+    region: "ESAF",
     memberCodes: ["FQMA", "FWKI", "FMMI", "FVHA", "FLKK"],
-    leadCode: "FQMA", // Mozambique
+    leadCode: "FQMA",
   },
   {
     teamNumber: 5,
     code: "TEAM-5",
     nameEn: "Team 5 - Northern Africa",
     nameFr: "Équipe 5 - Afrique du Nord",
-    region: "NORTHERN", // Northern Africa
-    // Morocco CAA (ONDA), Tunisia, Algeria
-    memberCodes: ["GMMN", "DTTA", "DAAG"],
-    leadCode: "GMMN", // Morocco (ONDA)
+    region: "NORTHERN",
+    memberCodes: ["DGAC", "OACA", "DACM"], // Morocco, Tunisia, Algeria
+    leadCode: "DGAC",
   },
 ];
 
@@ -135,13 +135,21 @@ async function seedRegionalTeams() {
   });
 
   console.log("\n📋 Regional Teams Summary:");
-  console.log("─".repeat(60));
+  console.log("─".repeat(70));
+  console.log("Team 1: ASECNA, ATNS, Botswana, Eswatini");
+  console.log("Team 2: Uganda, Tanzania, Burundi, Rwanda, Kenya");
+  console.log("Team 3: NAMA (Nigeria), GCAA (Ghana), Roberts FIR");
+  console.log("Team 4: Mozambique, Malawi, Madagascar, Zimbabwe, Zambia");
+  console.log("Team 5: DGAC (Morocco), OACA (Tunisia), DACM (Algeria)");
+  console.log("─".repeat(70));
+
+  console.log("\n📊 Database Results:");
   for (const team of teamCounts) {
     console.log(
       `${team.code}: ${team._count.memberOrganizations} members | Lead: ${team.leadOrganization.nameEn} (${team.leadOrganization.icaoCode})`
     );
   }
-  console.log("─".repeat(60));
+  console.log("─".repeat(70));
   console.log("✅ Regional teams seeding complete!\n");
 }
 
@@ -150,4 +158,7 @@ seedRegionalTeams()
     console.error("❌ Seeding failed:", e);
     process.exit(1);
   })
-  .finally(() => prisma.$disconnect());
+  .finally(async () => {
+    await prisma.$disconnect();
+    await pool.end();
+  });

@@ -89,6 +89,8 @@ interface AnspStats {
   };
   latestEIScore: number | null;
   eiScoreTrend: number | null;
+  eiStatus: "preliminary" | "validated" | null;
+  eiAssessmentTitle: string | null;
   peerReviews: {
     asHost: number;
     findingsCount: number;
@@ -405,24 +407,38 @@ export const dashboardRouter = router({
           where: { organizationId },
           _count: true,
         }),
-        // Latest completed assessment with EI score
+        // Latest assessment with EI score (SUBMITTED, UNDER_REVIEW, or COMPLETED)
         db.assessment.findFirst({
           where: {
             organizationId,
-            status: "COMPLETED",
+            status: { in: ["SUBMITTED", "UNDER_REVIEW", "COMPLETED"] },
             eiScore: { not: null },
           },
-          orderBy: { completedAt: "desc" },
+          orderBy: [
+            { submittedAt: "desc" },
+            { completedAt: "desc" },
+          ],
+          select: {
+            eiScore: true,
+            status: true,
+            title: true,
+          },
         }),
-        // Previous completed assessment for trend
+        // Previous assessment with EI score for trend
         db.assessment.findFirst({
           where: {
             organizationId,
-            status: "COMPLETED",
+            status: { in: ["SUBMITTED", "UNDER_REVIEW", "COMPLETED"] },
             eiScore: { not: null },
           },
-          orderBy: { completedAt: "desc" },
+          orderBy: [
+            { submittedAt: "desc" },
+            { completedAt: "desc" },
+          ],
           skip: 1,
+          select: {
+            eiScore: true,
+          },
         }),
         // Reviews where this org is host
         db.review.count({
@@ -491,6 +507,13 @@ export const dashboardRouter = router({
         latestEIScore !== null && previousEIScore !== null
           ? latestEIScore - previousEIScore
           : null;
+      // Determine if EI is preliminary (SUBMITTED/UNDER_REVIEW) or validated (COMPLETED)
+      const eiStatus: "preliminary" | "validated" | null = latestAssessment
+        ? latestAssessment.status === "COMPLETED"
+          ? "validated"
+          : "preliminary"
+        : null;
+      const eiAssessmentTitle = latestAssessment?.title ?? null;
 
       // Transform CAPs by status
       const capsStatusMap: Record<string, number> = {};
@@ -504,6 +527,8 @@ export const dashboardRouter = router({
           assessments,
           latestEIScore,
           eiScoreTrend,
+          eiStatus,
+          eiAssessmentTitle,
           peerReviews: {
             asHost: reviewsAsHost,
             findingsCount,

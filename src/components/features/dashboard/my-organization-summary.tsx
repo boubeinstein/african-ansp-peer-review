@@ -56,6 +56,8 @@ interface MyOrganizationSummaryProps {
     };
     latestEIScore: number | null;
     eiScoreTrend: number | null;
+    eiStatus?: "preliminary" | "validated" | null;
+    eiAssessmentTitle?: string | null;
     peerReviews: {
       asHost: number;
       findingsCount: number;
@@ -98,9 +100,11 @@ function MyOrganizationSummarySkeleton() {
 interface EIScoreGaugeProps {
   score: number | null;
   trend: number | null;
+  status?: "preliminary" | "validated" | null;
+  assessmentTitle?: string | null;
 }
 
-function EIScoreGauge({ score, trend }: EIScoreGaugeProps) {
+function EIScoreGauge({ score, trend, status, assessmentTitle }: EIScoreGaugeProps) {
   const t = useTranslations("dashboard.sections");
 
   if (score === null) {
@@ -141,7 +145,19 @@ function EIScoreGauge({ score, trend }: EIScoreGaugeProps) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <span className="text-sm text-muted-foreground">{t("effectivenessIndex")}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">{t("effectivenessIndex")}</span>
+          {status === "preliminary" && (
+            <Badge variant="outline" className="text-xs text-amber-600 border-amber-300">
+              {t("preliminary")}
+            </Badge>
+          )}
+          {status === "validated" && (
+            <Badge variant="outline" className="text-xs text-green-600 border-green-300">
+              {t("validated")}
+            </Badge>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <span className={cn("text-2xl font-bold", getScoreColor(score))}>
             {score.toFixed(1)}%
@@ -171,6 +187,11 @@ function EIScoreGauge({ score, trend }: EIScoreGaugeProps) {
         <span>0%</span>
         <span>100%</span>
       </div>
+      {assessmentTitle && (
+        <p className="text-xs text-muted-foreground text-center">
+          {t("fromAssessment", { title: assessmentTitle })}
+        </p>
+      )}
     </div>
   );
 }
@@ -327,6 +348,8 @@ export function MyOrganizationSummary({
             <EIScoreGauge
               score={stats.latestEIScore}
               trend={stats.eiScoreTrend}
+              status={stats.eiStatus}
+              assessmentTitle={stats.eiAssessmentTitle}
             />
           </div>
           <div className="p-4 rounded-lg border">

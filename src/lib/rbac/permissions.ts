@@ -49,6 +49,7 @@ export type Feature =
   | "settings.usersOwn"
   | "admin"
   | "admin.users"
+  | "admin.roles"
   | "admin.settings"
   | "admin.logs";
 
@@ -97,6 +98,7 @@ const permissions: Record<UserRole, Feature[]> = {
     "settings.users",
     "admin",
     "admin.users",
+    "admin.roles",
     "admin.settings",
     "admin.logs",
   ],
@@ -141,6 +143,7 @@ const permissions: Record<UserRole, Feature[]> = {
     "settings.users",
     "admin",
     "admin.users",
+    "admin.roles",
     "admin.settings",
     "admin.logs",
   ],
@@ -182,6 +185,8 @@ const permissions: Record<UserRole, Feature[]> = {
     "training.manage",
     "settings",
     "settings.users",
+    "admin",
+    "admin.roles",
   ],
 
   STEERING_COMMITTEE: [
@@ -204,6 +209,8 @@ const permissions: Record<UserRole, Feature[]> = {
     "joinRequests",
     "joinRequests.scDecision",
     "settings",
+    "admin",
+    "admin.roles",
   ],
 
   LEAD_REVIEWER: [

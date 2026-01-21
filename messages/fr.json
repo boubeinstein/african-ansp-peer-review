@@ -65,7 +65,8 @@
     "admin": "Administration",
     "joinRequests": "Demandes d'Adhésion",
     "administration": "Administration",
-    "adminUsers": "Utilisateurs"
+    "adminUsers": "Utilisateurs",
+    "adminRoles": "Rôles"
   },
   "auth": {
     "hero": {
@@ -1303,6 +1304,91 @@
         "noAssignableRoles": "Il n'y a aucun rôle que vous pouvez attribuer à cet utilisateur",
         "limitedToOwnOrg": "Vous ne pouvez gérer que les utilisateurs de votre organisation"
       }
+    }
+  },
+  "roles": {
+    "pageTitle": "Rôles et Permissions du Système",
+    "pageSubtitle": "Documentation du contrôle d'accès basé sur les rôles aligné avec la gouvernance OACI",
+    "readOnlyNotice": "Documentation en lecture seule. Contacter l'Administrateur Système pour les modifications.",
+    "hierarchy": "Niveau Hiérarchique",
+    "permissions": "Permissions",
+    "canAssign": "Peut Attribuer les Rôles",
+    "typicalUsers": "Utilisateurs Typiques",
+    "noAssignableRoles": "Ne peut pas attribuer de rôles",
+    "permissionMatrix": "Matrice des Permissions",
+    "expandMatrix": "Voir la Matrice Complète",
+    "collapseMatrix": "Masquer la Matrice",
+    "permissionLabels": {
+      "create": "Créer des Utilisateurs",
+      "read": "Voir les Utilisateurs",
+      "update": "Modifier les Utilisateurs",
+      "delete": "Supprimer les Utilisateurs",
+      "changeRole": "Changer les Rôles",
+      "deactivate": "Désactiver les Utilisateurs",
+      "resetPassword": "Réinitialiser les Mots de Passe"
+    },
+    "accessLevels": {
+      "all": "Tous",
+      "ownOrg": "Propre Org",
+      "self": "Soi-même",
+      "none": "Aucun",
+      "lowerHierarchy": "Rôles Inférieurs"
+    },
+    "superAdmin": {
+      "title": "Super Administrateur",
+      "description": "Accès complet au système avec possibilité de contourner toutes les restrictions. Gère la configuration du système et tous les utilisateurs.",
+      "typical1": "Responsable Technique de la Plateforme"
+    },
+    "systemAdmin": {
+      "title": "Administrateur Système",
+      "description": "Configuration du système et gestion des utilisateurs. Ne peut pas supprimer les utilisateurs ni contourner les restrictions COI.",
+      "typical1": "Administrateur Informatique"
+    },
+    "steeringCommittee": {
+      "title": "Comité de Pilotage",
+      "description": "Supervision du programme et prise de décisions stratégiques. Accès en lecture seule à toutes les données du programme.",
+      "typical1": "Officier Régional de l'OACI",
+      "typical2": "Représentant CANSO Afrique"
+    },
+    "programmeCoordinator": {
+      "title": "Coordinateur du Programme",
+      "description": "Coordonne les activités de revue par les pairs, assigne les équipes de revue et gère le calendrier des revues.",
+      "typical1": "Coordinateur AAPRP"
+    },
+    "leadReviewer": {
+      "title": "Réviseur Principal",
+      "description": "Dirige les équipes de revue par les pairs, approuve les constats et assure la qualité des revues.",
+      "typical1": "Expert Senior en Sécurité Aérienne"
+    },
+    "peerReviewer": {
+      "title": "Réviseur Pair",
+      "description": "Effectue des revues par les pairs, saisit les constats et participe aux équipes de revue.",
+      "typical1": "Réviseur Pair Certifié"
+    },
+    "observer": {
+      "title": "Observateur",
+      "description": "Observe les revues par les pairs à des fins de formation. Accès en lecture seule aux revues assignées.",
+      "typical1": "Réviseur Stagiaire"
+    },
+    "anspAdmin": {
+      "title": "Administrateur ANSP",
+      "description": "Gère les utilisateurs de son organisation, les évaluations et la participation aux revues par les pairs.",
+      "typical1": "Point Focal ANSP"
+    },
+    "safetyManager": {
+      "title": "Responsable Sécurité",
+      "description": "Gère les évaluations liées à la sécurité et les plans d'actions correctives pour son organisation.",
+      "typical1": "Responsable Sécurité de l'Organisation"
+    },
+    "qualityManager": {
+      "title": "Responsable Qualité",
+      "description": "Gère les évaluations d'assurance qualité et la documentation de conformité.",
+      "typical1": "Responsable Qualité de l'Organisation"
+    },
+    "staff": {
+      "title": "Personnel",
+      "description": "Accès de base pour consulter les données de l'organisation et accomplir les tâches assignées.",
+      "typical1": "Membre du Personnel"
     }
   },
   "errors": {

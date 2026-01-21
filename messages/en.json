@@ -65,7 +65,8 @@
     "admin": "Administration",
     "joinRequests": "Join Requests",
     "administration": "Administration",
-    "adminUsers": "Users"
+    "adminUsers": "Users",
+    "adminRoles": "Roles"
   },
   "auth": {
     "hero": {
@@ -1303,6 +1304,91 @@
         "noAssignableRoles": "There are no roles you can assign to this user",
         "limitedToOwnOrg": "You can only manage users in your organization"
       }
+    }
+  },
+  "roles": {
+    "pageTitle": "System Roles & Permissions",
+    "pageSubtitle": "Documentation of role-based access control aligned with ICAO governance",
+    "readOnlyNotice": "Read-only documentation. Contact System Administrator for changes.",
+    "hierarchy": "Hierarchy Level",
+    "permissions": "Permissions",
+    "canAssign": "Can Assign Roles",
+    "typicalUsers": "Typical Users",
+    "noAssignableRoles": "Cannot assign roles to others",
+    "permissionMatrix": "Permission Matrix",
+    "expandMatrix": "View Full Permission Matrix",
+    "collapseMatrix": "Hide Permission Matrix",
+    "permissionLabels": {
+      "create": "Create Users",
+      "read": "View Users",
+      "update": "Edit Users",
+      "delete": "Delete Users",
+      "changeRole": "Change Roles",
+      "deactivate": "Deactivate Users",
+      "resetPassword": "Reset Passwords"
+    },
+    "accessLevels": {
+      "all": "All",
+      "ownOrg": "Own Org",
+      "self": "Self Only",
+      "none": "None",
+      "lowerHierarchy": "Lower Roles"
+    },
+    "superAdmin": {
+      "title": "Super Administrator",
+      "description": "Full system access with ability to override all restrictions. Manages system configuration and all users.",
+      "typical1": "Platform Technical Lead"
+    },
+    "systemAdmin": {
+      "title": "System Administrator",
+      "description": "System configuration and user management. Cannot delete users or override COI restrictions.",
+      "typical1": "IT Administrator"
+    },
+    "steeringCommittee": {
+      "title": "Steering Committee",
+      "description": "Programme oversight and strategic decision-making. Read-only access to all programme data.",
+      "typical1": "ICAO Regional Officer",
+      "typical2": "CANSO Africa Representative"
+    },
+    "programmeCoordinator": {
+      "title": "Programme Coordinator",
+      "description": "Coordinates peer review activities, assigns review teams, and manages the review schedule.",
+      "typical1": "AAPRP Coordinator"
+    },
+    "leadReviewer": {
+      "title": "Lead Reviewer",
+      "description": "Leads peer review teams, approves findings, and ensures review quality.",
+      "typical1": "Senior Aviation Safety Expert"
+    },
+    "peerReviewer": {
+      "title": "Peer Reviewer",
+      "description": "Conducts peer reviews, enters findings, and participates in review teams.",
+      "typical1": "Certified Peer Reviewer"
+    },
+    "observer": {
+      "title": "Observer",
+      "description": "Observes peer reviews for training purposes. Read-only access to assigned reviews.",
+      "typical1": "Trainee Reviewer"
+    },
+    "anspAdmin": {
+      "title": "ANSP Administrator",
+      "description": "Manages their organization's users, assessments, and peer review participation.",
+      "typical1": "ANSP Focal Point"
+    },
+    "safetyManager": {
+      "title": "Safety Manager",
+      "description": "Manages safety-related assessments and corrective action plans for their organization.",
+      "typical1": "Organization Safety Manager"
+    },
+    "qualityManager": {
+      "title": "Quality Manager",
+      "description": "Manages quality assurance assessments and compliance documentation.",
+      "typical1": "Organization Quality Manager"
+    },
+    "staff": {
+      "title": "Staff",
+      "description": "Basic access to view organization data and complete assigned tasks.",
+      "typical1": "Organization Staff Member"
     }
   },
   "errors": {

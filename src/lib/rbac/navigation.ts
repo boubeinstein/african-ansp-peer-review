@@ -12,6 +12,7 @@ import {
   GraduationCap,
   Settings,
   Shield,
+  ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
 import { hasPermission, type Feature } from "./permissions";
@@ -101,6 +102,13 @@ const allNavItems: NavItem[] = [
     href: "/admin/users",
     icon: Shield,
     feature: "admin.users",
+    section: "admin",
+  },
+  {
+    name: "adminRoles",
+    href: "/admin/roles",
+    icon: ShieldCheck,
+    feature: "admin.roles",
     section: "admin",
   },
 ];

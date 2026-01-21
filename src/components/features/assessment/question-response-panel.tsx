@@ -17,6 +17,7 @@ import {
   CheckCircle2,
   Send,
   Lock,
+  Eye,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { useAssessmentWorkspace } from "./assessment-workspace-context";
 import { ANSResponse } from "./response-types/ans-response";
@@ -76,7 +78,8 @@ export function QuestionResponsePanel() {
   } = useAssessmentWorkspace();
 
   // Check if assessment can be edited/submitted
-  const isEditable = assessment?.status === "IN_PROGRESS" || assessment?.status === "DRAFT";
+  const isEditable = assessment?.status === "DRAFT";
+  const isReadOnly = !isEditable;
   const isAlreadySubmitted = assessment?.status === "SUBMITTED" ||
     assessment?.status === "UNDER_REVIEW" ||
     assessment?.status === "COMPLETED" ||
@@ -132,6 +135,17 @@ export function QuestionResponsePanel() {
 
   return (
     <div className="flex flex-col h-full">
+      {/* Read-only banner for submitted/completed assessments */}
+      {isReadOnly && (
+        <Alert className="rounded-none border-x-0 border-t-0 bg-blue-50 border-blue-200">
+          <Eye className="h-4 w-4 text-blue-600" />
+          <AlertTitle className="text-blue-800">{tAssessment("readOnly.title")}</AlertTitle>
+          <AlertDescription className="text-blue-700">
+            {tAssessment("readOnly.description")}
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Header with navigation */}
       <div className="flex items-center justify-between border-b p-4 bg-background">
         <div className="flex items-center gap-2">
@@ -182,18 +196,20 @@ export function QuestionResponsePanel() {
             )}
           </div>
 
-          {/* Manual save button */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={saveCurrentResponse}
-            disabled={saveStatus === "saving"}
-          >
-            <Save className="h-4 w-4 mr-2" />
-            {t("panel.save")}
-          </Button>
+          {/* Manual save button - hidden when read-only */}
+          {!isReadOnly && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={saveCurrentResponse}
+              disabled={saveStatus === "saving"}
+            >
+              <Save className="h-4 w-4 mr-2" />
+              {t("panel.save")}
+            </Button>
+          )}
 
-          {/* Flag button */}
+          {/* Flag button - disabled when read-only */}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -205,6 +221,7 @@ export function QuestionResponsePanel() {
                       isFlagged: !response?.isFlagged,
                     })
                   }
+                  disabled={isReadOnly}
                   className={cn(
                     response?.isFlagged && "bg-yellow-500 hover:bg-yellow-600"
                   )}
@@ -310,6 +327,7 @@ export function QuestionResponsePanel() {
                     onChange={(value) =>
                       updateResponse(currentQuestion.id, { responseValue: value })
                     }
+                    disabled={isReadOnly}
                   />
                 ) : (
                   <SMSResponse
@@ -317,6 +335,7 @@ export function QuestionResponsePanel() {
                     onChange={(value) =>
                       updateResponse(currentQuestion.id, { maturityLevel: value })
                     }
+                    disabled={isReadOnly}
                   />
                 )}
               </CardContent>
@@ -332,6 +351,7 @@ export function QuestionResponsePanel() {
               onUrlsChange={(urls) =>
                 updateResponse(currentQuestion.id, { evidenceUrls: urls })
               }
+              disabled={isReadOnly}
             />
 
             {/* Comments section */}
@@ -349,6 +369,7 @@ export function QuestionResponsePanel() {
                   onInternalNotesChange={(value) =>
                     updateResponse(currentQuestion.id, { internalNotes: value })
                   }
+                  disabled={isReadOnly}
                 />
               </CardContent>
             </Card>

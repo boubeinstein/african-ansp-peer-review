@@ -669,6 +669,10 @@
     "alreadySubmitted": "Déjà soumise",
     "submittedReadOnly": "Cette évaluation a été soumise et est en cours d'évaluation. Elle est actuellement en lecture seule.",
     "completedReadOnly": "Cette évaluation a été terminée et est maintenant en lecture seule.",
+    "readOnly": {
+      "title": "Lecture seule",
+      "description": "Cette évaluation a été soumise et ne peut pas être modifiée. Vous pouvez consulter toutes les réponses et les preuves."
+    },
     "confirmSubmit": {
       "title": "Soumettre l'évaluation",
       "description": "Êtes-vous sûr de vouloir soumettre cette évaluation ? Une fois soumise, vous ne pourrez plus la modifier jusqu'à sa réouverture."

@@ -669,6 +669,10 @@
     "alreadySubmitted": "Already Submitted",
     "submittedReadOnly": "This assessment has been submitted and is under review. It is currently read-only.",
     "completedReadOnly": "This assessment has been completed and is now read-only.",
+    "readOnly": {
+      "title": "View Only",
+      "description": "This assessment has been submitted and cannot be edited. You can view all responses and evidence."
+    },
     "confirmSubmit": {
       "title": "Submit Assessment",
       "description": "Are you sure you want to submit this assessment? Once submitted, you will not be able to make changes until it is reopened."

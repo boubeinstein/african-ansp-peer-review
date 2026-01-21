@@ -11,6 +11,7 @@ import type {
   EventType,
   AssessmentStatus,
   AssessmentType,
+  USOAPAuditArea,
 } from "@prisma/client";
 import {
   isANSResponseAnswered,
@@ -105,9 +106,10 @@ export interface CreateEventInput {
 class ProgressService {
   /**
    * Calculate progress statistics for an assessment
+   * Respects selectedAuditAreas filter for accurate progress calculation
    */
   async getAssessmentProgress(assessmentId: string): Promise<ProgressStats> {
-    // Get assessment with questionnaire categories
+    // Get assessment with questionnaire categories and selectedAuditAreas
     const assessment = await prisma.assessment.findUnique({
       where: { id: assessmentId },
       include: {
@@ -115,9 +117,6 @@ class ProgressService {
           include: {
             categories: {
               orderBy: { sortOrder: "asc" },
-            },
-            questions: {
-              where: { isActive: true },
             },
           },
         },
@@ -129,11 +128,34 @@ class ProgressService {
       throw new Error("Assessment not found");
     }
 
-    const totalQuestions = assessment.questionnaire.questions.length;
     const questionnaireType = assessment.questionnaire.type;
+    const selectedAuditAreas = assessment.selectedAuditAreas as USOAPAuditArea[] | null;
 
-    // Use centralized helper for consistent answered counting
+    // Build question filter that respects selectedAuditAreas
+    const questionsWhere: Prisma.QuestionWhereInput = {
+      questionnaireId: assessment.questionnaireId,
+      isActive: true,
+    };
+
+    // Only filter by audit area if specific areas were selected
+    if (selectedAuditAreas && selectedAuditAreas.length > 0) {
+      questionsWhere.auditArea = { in: selectedAuditAreas };
+    }
+
+    // Get questions filtered by selectedAuditAreas
+    const questions = await prisma.question.findMany({
+      where: questionsWhere,
+      select: { id: true, categoryId: true },
+    });
+
+    const totalQuestions = questions.length;
+    const questionIdSet = new Set(questions.map((q) => q.id));
+
+    // Count answered responses only for questions in the selected scope
     const answeredResponses = assessment.responses.filter((r) => {
+      // Only count responses for questions in the selected scope
+      if (!questionIdSet.has(r.questionId)) return false;
+
       if (questionnaireType === "ANS_USOAP_CMA") {
         return isANSResponseAnswered(r.responseValue);
       }
@@ -146,14 +168,16 @@ class ProgressService {
         ? Math.round((answeredQuestions / totalQuestions) * 100)
         : 0;
 
-    // Calculate by category - use centralized helper
+    // Calculate by category - filtered by selectedAuditAreas
     const byCategory: CategoryProgressStats[] =
       assessment.questionnaire.categories.map((category) => {
-        const categoryQuestions = assessment.questionnaire.questions.filter(
+        const categoryQuestions = questions.filter(
           (q) => q.categoryId === category.id
         );
+        const categoryQuestionIds = new Set(categoryQuestions.map((q) => q.id));
+
         const categoryAnswered = assessment.responses.filter((r) => {
-          if (!categoryQuestions.some((q) => q.id === r.questionId)) {
+          if (!categoryQuestionIds.has(r.questionId)) {
             return false;
           }
           if (questionnaireType === "ANS_USOAP_CMA") {
@@ -175,7 +199,7 @@ class ProgressService {
                 )
               : 0,
         };
-      });
+      }).filter((cat) => cat.totalQuestions > 0); // Only include categories with questions in scope
 
     return {
       totalQuestions,

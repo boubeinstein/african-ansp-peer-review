@@ -2658,9 +2658,10 @@
     "stats": {
       "total": "Total Findings",
       "open": "Open",
+      "inProgress": "In Progress",
       "closed": "Closed",
       "overdue": "Overdue",
-      "byStatus": "By Status",
+      "critical": "Critical",
       "byType": "By Type",
       "bySeverity": "By Severity"
     },

@@ -2658,9 +2658,10 @@
     "stats": {
       "total": "Total des constatations",
       "open": "Ouvertes",
+      "inProgress": "En cours",
       "closed": "Clôturées",
       "overdue": "En retard",
-      "byStatus": "Par statut",
+      "critical": "Critiques",
       "byType": "Par type",
       "bySeverity": "Par gravité"
     },

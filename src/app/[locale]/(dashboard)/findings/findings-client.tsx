@@ -462,7 +462,7 @@ export function FindingsClient() {
           isLoading={statsLoading}
         />
         <StatsCard
-          title={t("stats.byStatus")}
+          title={t("stats.inProgress")}
           value={inProgressCount}
           icon={AlertCircle}
           variant="info"

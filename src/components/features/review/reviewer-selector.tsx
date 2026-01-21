@@ -187,8 +187,24 @@ export function ReviewerSelector({
   const hostTeam = teamData?.hostTeam;
   const totalEligible = teamData?.totalEligible ?? 0;
 
-  const reviewers = (data?.reviewers ?? []) as EligibleReviewer[];
+  const allReviewers = (data?.reviewers ?? []) as EligibleReviewer[];
   const excludedOrg = data?.review?.hostOrganization;
+
+  // Filter reviewers based on team eligibility
+  // Only show reviewers who are in the team eligibility list and are eligible
+  const reviewers = allReviewers.filter((reviewer) => {
+    const teamInfo = teamReviewers.find((tr) => tr.id === reviewer.id);
+    if (!teamInfo) {
+      // If team data not loaded yet or reviewer not in team data,
+      // fall back to legacy behavior (don't filter)
+      return teamReviewers.length === 0;
+    }
+    // Show if eligible (same team and not same org)
+    if (teamInfo.isEligible) return true;
+    // Also show cross-team reviewers if toggle is on and user has permission
+    if (includeCrossTeam && canApproveCrossTeam && !teamInfo.isSameOrg) return true;
+    return false;
+  });
 
   // Get team eligibility info for a reviewer
   const getTeamEligibility = (reviewerId: string): TeamEligibilityInfo | undefined => {

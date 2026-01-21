@@ -182,6 +182,36 @@ async function generateReferenceNumber(
   return `FND-${orgCode}-${year}-${sequence}`;
 }
 
+/**
+ * Build role-based visibility filter for findings
+ * Non-admin users can only see findings for their organization or reviews they're on
+ */
+function buildFindingVisibilityFilter(
+  userRole: UserRole,
+  userId: string,
+  userOrgId: string | null
+): Record<string, unknown> | null {
+  const isAdmin = FINDING_VIEW_ALL_ROLES.includes(userRole);
+
+  if (isAdmin) {
+    return null; // No filter needed - can see all findings
+  }
+
+  // Non-admin: filter to own org OR reviews user is on
+  return {
+    OR: [
+      { organizationId: userOrgId },
+      {
+        review: {
+          teamMembers: {
+            some: { userId },
+          },
+        },
+      },
+    ],
+  };
+}
+
 // ============================================================================
 // Router
 // ============================================================================
@@ -388,23 +418,17 @@ export const findingRouter = router({
       } = input;
 
       // Build where clause based on user's role
-      const isAdmin = FINDING_VIEW_ALL_ROLES.includes(user.role);
-
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const where: any = {};
 
-      // Non-admin users can only see findings for their organization or reviews they're on
-      if (!isAdmin) {
-        where.OR = [
-          { organizationId: user.organizationId },
-          {
-            review: {
-              teamMembers: {
-                some: { userId: user.id },
-              },
-            },
-          },
-        ];
+      // Apply role-based visibility filter
+      const visibilityFilter = buildFindingVisibilityFilter(
+        user.role,
+        user.id,
+        user.organizationId
+      );
+      if (visibilityFilter) {
+        Object.assign(where, visibilityFilter);
       }
 
       // Apply filters
@@ -851,13 +875,25 @@ export const findingRouter = router({
       const { user } = ctx.session;
       const { reviewId, organizationId } = input;
 
-      // Build where clause
+      // Build where clause with role-based visibility filter
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const where: any = {};
+
+      // Apply role-based visibility filter (same as list query)
+      const visibilityFilter = buildFindingVisibilityFilter(
+        user.role,
+        user.id,
+        user.organizationId
+      );
+      if (visibilityFilter) {
+        Object.assign(where, visibilityFilter);
+      }
+
+      // Apply optional input filters
       if (reviewId) where.reviewId = reviewId;
       if (organizationId) where.organizationId = organizationId;
 
-      // Check permissions for non-admin users
+      // Additional permission checks for explicit filters
       const isAdmin = FINDING_VIEW_ALL_ROLES.includes(user.role);
       if (!isAdmin) {
         if (organizationId && organizationId !== user.organizationId) {

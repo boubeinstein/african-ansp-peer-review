@@ -11,7 +11,7 @@ import {
   UserPlus,
   GraduationCap,
   Settings,
-  Shield,
+  UserCog,
   ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
@@ -100,7 +100,7 @@ const allNavItems: NavItem[] = [
   {
     name: "adminUsers",
     href: "/admin/users",
-    icon: Shield,
+    icon: UserCog,
     feature: "admin.users",
     section: "admin",
   },

@@ -962,6 +962,154 @@ export async function notifyFindingCreated(
  *
  * @param cap - CAP with finding and review data
  */
+/**
+ * Notify stakeholders when a peer review starts.
+ * - Team members: Review is starting
+ * - Host ANSP: Review has begun
+ *
+ * @param review - Review with host organization data
+ */
+export async function notifyReviewStarted(
+  review: ReviewForNotification
+): Promise<SendNotificationResult[]> {
+  const results: SendNotificationResult[] = [];
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "";
+  const reviewUrl = `${baseUrl}/reviews/${review.id}`;
+
+  // Format dates
+  const formatDate = (date: Date | null | undefined): string => {
+    if (!date) return "TBD";
+    return date.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  const endDate = formatDate(review.plannedEndDate);
+
+  // 1. Notify all team members
+  const teamMembers = await getReviewTeamRecipients(review.id);
+  if (teamMembers.length > 0) {
+    const result = await sendNotification(teamMembers, {
+      type: "REVIEW_STARTED",
+      titleEn: `Peer Review ${review.referenceNumber} Has Started`,
+      titleFr: `La Revue par les Pairs ${review.referenceNumber} a Commencé`,
+      messageEn: `The peer review at ${review.hostOrganization.nameEn} (${review.referenceNumber}) has officially started. Please ensure all assessment activities are conducted according to the review plan. Expected completion: ${endDate}.`,
+      messageFr: `La revue par les pairs chez ${review.hostOrganization.nameFr} (${review.referenceNumber}) a officiellement commencé. Veuillez vous assurer que toutes les activités d'évaluation sont menées conformément au plan de revue. Achèvement prévu : ${endDate}.`,
+      entityType: "Review",
+      entityId: review.id,
+      actionUrl: reviewUrl,
+      actionLabelEn: "View Review",
+      actionLabelFr: "Voir la Revue",
+      priority: "HIGH",
+    });
+    results.push(result);
+  }
+
+  // 2. Notify Host ANSP management
+  const hostAdmins = await getRecipientsByRole(
+    ["ANSP_ADMIN", "SAFETY_MANAGER", "QUALITY_MANAGER"],
+    review.hostOrganization.id
+  );
+  if (hostAdmins.length > 0) {
+    const result = await sendNotification(hostAdmins, {
+      type: "REVIEW_STARTED",
+      titleEn: `Your Peer Review Has Started - ${review.referenceNumber}`,
+      titleFr: `Votre Revue par les Pairs a Commencé - ${review.referenceNumber}`,
+      messageEn: `The peer review (${review.referenceNumber}) has officially begun. Please ensure staff availability and provide access to documentation as requested by the review team.`,
+      messageFr: `La revue par les pairs (${review.referenceNumber}) a officiellement commencé. Veuillez assurer la disponibilité du personnel et fournir l'accès à la documentation demandée par l'équipe de revue.`,
+      entityType: "Review",
+      entityId: review.id,
+      actionUrl: reviewUrl,
+      actionLabelEn: "View Details",
+      actionLabelFr: "Voir les Détails",
+      priority: "HIGH",
+    });
+    results.push(result);
+  }
+
+  return results;
+}
+
+/**
+ * Notify stakeholders when a peer review is completed.
+ * - Team members: Review completed acknowledgment
+ * - Host ANSP: Review completed, report pending
+ * - Programme management: Review completed
+ *
+ * @param review - Review with host organization data
+ */
+export async function notifyReviewCompleted(
+  review: ReviewForNotification
+): Promise<SendNotificationResult[]> {
+  const results: SendNotificationResult[] = [];
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "";
+  const reviewUrl = `${baseUrl}/reviews/${review.id}`;
+
+  // 1. Notify all team members
+  const teamMembers = await getReviewTeamRecipients(review.id);
+  if (teamMembers.length > 0) {
+    const result = await sendNotification(teamMembers, {
+      type: "REVIEW_COMPLETED",
+      titleEn: `Peer Review ${review.referenceNumber} - Review Completed`,
+      titleFr: `Revue par les Pairs ${review.referenceNumber} - Revue Terminée`,
+      messageEn: `The peer review at ${review.hostOrganization.nameEn} (${review.referenceNumber}) has been completed. Thank you for your contribution to improving aviation safety in Africa.`,
+      messageFr: `La revue par les pairs chez ${review.hostOrganization.nameFr} (${review.referenceNumber}) est terminée. Merci pour votre contribution à l'amélioration de la sécurité aérienne en Afrique.`,
+      entityType: "Review",
+      entityId: review.id,
+      actionUrl: reviewUrl,
+      actionLabelEn: "View Summary",
+      actionLabelFr: "Voir le Résumé",
+      priority: "NORMAL",
+    });
+    results.push(result);
+  }
+
+  // 2. Notify Host ANSP management
+  const hostAdmins = await getRecipientsByRole(
+    ["ANSP_ADMIN", "SAFETY_MANAGER", "QUALITY_MANAGER"],
+    review.hostOrganization.id
+  );
+  if (hostAdmins.length > 0) {
+    const result = await sendNotification(hostAdmins, {
+      type: "REVIEW_COMPLETED",
+      titleEn: `Peer Review Completed - ${review.referenceNumber}`,
+      titleFr: `Revue par les Pairs Terminée - ${review.referenceNumber}`,
+      messageEn: `Your peer review (${review.referenceNumber}) has been successfully completed. The final report will be shared with you shortly. Any findings requiring corrective action will be communicated separately.`,
+      messageFr: `Votre revue par les pairs (${review.referenceNumber}) a été complétée avec succès. Le rapport final vous sera communiqué prochainement. Les constatations nécessitant des actions correctives seront communiquées séparément.`,
+      entityType: "Review",
+      entityId: review.id,
+      actionUrl: reviewUrl,
+      actionLabelEn: "View Review",
+      actionLabelFr: "Voir la Revue",
+      priority: "HIGH",
+    });
+    results.push(result);
+  }
+
+  // 3. Notify Programme Coordinators
+  const coordinators = await getRecipientsByRole(["PROGRAMME_COORDINATOR"]);
+  if (coordinators.length > 0) {
+    const result = await sendNotification(coordinators, {
+      type: "REVIEW_COMPLETED",
+      titleEn: `Review Completed - ${review.hostOrganization.nameEn}`,
+      titleFr: `Revue Terminée - ${review.hostOrganization.nameFr}`,
+      messageEn: `Peer review ${review.referenceNumber} at ${review.hostOrganization.nameEn} has been completed. The final report is pending finalization.`,
+      messageFr: `La revue par les pairs ${review.referenceNumber} chez ${review.hostOrganization.nameFr} est terminée. Le rapport final est en attente de finalisation.`,
+      entityType: "Review",
+      entityId: review.id,
+      actionUrl: reviewUrl,
+      actionLabelEn: "View Details",
+      actionLabelFr: "Voir les Détails",
+      priority: "NORMAL",
+    });
+    results.push(result);
+  }
+
+  return results;
+}
+
 export async function notifyCAPOverdue(
   cap: CAPForNotification
 ): Promise<SendNotificationResult[]> {

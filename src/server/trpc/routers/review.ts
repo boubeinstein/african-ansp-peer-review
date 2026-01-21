@@ -27,6 +27,16 @@ import {
   Prisma,
 } from "@prisma/client";
 
+// Notification service imports
+import {
+  notifyReviewRequested,
+  notifyReviewApproved,
+  notifyTeamAssigned,
+  notifyReviewScheduled,
+  notifyReviewStarted,
+  notifyReviewCompleted,
+} from "@/server/services/notification-service";
+
 // =============================================================================
 // CONSTANTS & HELPERS
 // =============================================================================
@@ -676,7 +686,21 @@ export const reviewRouter = router({
         },
       });
 
-      // TODO: Send notification to Programme Coordinator
+      // Send notifications to stakeholders
+      try {
+        await notifyReviewRequested({
+          id: review.id,
+          referenceNumber: review.referenceNumber,
+          hostOrganization: {
+            id: review.hostOrganization.id,
+            nameEn: review.hostOrganization.nameEn,
+            nameFr: review.hostOrganization.nameFr,
+          },
+        });
+      } catch (error) {
+        console.error("[Review Create] Failed to send notifications:", error);
+        // Don't fail the request if notifications fail
+      }
 
       return review;
     }),
@@ -1199,6 +1223,46 @@ export const reviewRouter = router({
         return createdMembers;
       });
 
+      // Fetch review with host org for notifications
+      const reviewForNotification = await ctx.db.review.findUnique({
+        where: { id: reviewId },
+        include: {
+          hostOrganization: {
+            select: {
+              id: true,
+              nameEn: true,
+              nameFr: true,
+            },
+          },
+        },
+      });
+
+      // Send team assignment notifications
+      if (reviewForNotification) {
+        try {
+          await notifyTeamAssigned(
+            {
+              id: reviewForNotification.id,
+              referenceNumber: reviewForNotification.referenceNumber,
+              hostOrganization: {
+                id: reviewForNotification.hostOrganization.id,
+                nameEn: reviewForNotification.hostOrganization.nameEn,
+                nameFr: reviewForNotification.hostOrganization.nameFr ?? reviewForNotification.hostOrganization.nameEn,
+              },
+              plannedStartDate: reviewForNotification.plannedStartDate,
+              plannedEndDate: reviewForNotification.plannedEndDate,
+            },
+            assignments.map((a) => ({
+              userId: a.userId,
+              role: a.role,
+            }))
+          );
+        } catch (error) {
+          console.error("[Review Team Bulk] Failed to send notifications:", error);
+          // Don't fail the request if notifications fail
+        }
+      }
+
       return {
         success: true,
         teamMembers: result,
@@ -1341,6 +1405,30 @@ export const reviewRouter = router({
         memberCount: input.members.length,
         lead: input.members.find((m) => m.role === "LEAD_REVIEWER")?.userId,
       });
+
+      // Send team assignment notifications
+      try {
+        await notifyTeamAssigned(
+          {
+            id: review.id,
+            referenceNumber: review.referenceNumber,
+            hostOrganization: {
+              id: review.hostOrganization.id,
+              nameEn: review.hostOrganization.nameEn,
+              nameFr: review.hostOrganization.nameFr ?? review.hostOrganization.nameEn,
+            },
+            plannedStartDate: review.plannedStartDate,
+            plannedEndDate: review.plannedEndDate,
+          },
+          input.members.map((m) => ({
+            userId: m.userId,
+            role: m.role,
+          }))
+        );
+      } catch (error) {
+        console.error("[Review Team] Failed to send notifications:", error);
+        // Don't fail the request if notifications fail
+      }
 
       return { success: true, memberCount: result.count };
     }),
@@ -2331,11 +2419,45 @@ export const reviewRouter = router({
             select: {
               id: true,
               nameEn: true,
+              nameFr: true,
               icaoCode: true,
             },
           },
         },
       });
+
+      // Send status-specific notifications
+      try {
+        const reviewData = {
+          id: updatedReview.id,
+          referenceNumber: updatedReview.referenceNumber,
+          hostOrganization: {
+            id: updatedReview.hostOrganization.id,
+            nameEn: updatedReview.hostOrganization.nameEn,
+            nameFr: updatedReview.hostOrganization.nameFr ?? updatedReview.hostOrganization.nameEn,
+          },
+          plannedStartDate: updatedReview.plannedStartDate,
+          plannedEndDate: updatedReview.plannedEndDate,
+        };
+
+        switch (targetStatus) {
+          case "APPROVED":
+            await notifyReviewApproved(reviewData);
+            break;
+          case "SCHEDULED":
+            await notifyReviewScheduled(reviewData);
+            break;
+          case "IN_PROGRESS":
+            await notifyReviewStarted(reviewData);
+            break;
+          case "COMPLETED":
+            await notifyReviewCompleted(reviewData);
+            break;
+        }
+      } catch (error) {
+        console.error("[Review Transition] Failed to send notifications:", error);
+        // Don't fail the request if notifications fail
+      }
 
       return updatedReview;
     }),

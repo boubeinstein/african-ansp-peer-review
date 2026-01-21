@@ -15,6 +15,9 @@ import {
   PrismaClient,
 } from "@prisma/client";
 
+// Notification service import
+import { notifyFindingCreated } from "@/server/services/notification-service";
+
 // ============================================================================
 // Role Definitions
 // ============================================================================
@@ -274,6 +277,13 @@ export const findingRouter = router({
             select: {
               id: true,
               referenceNumber: true,
+              hostOrganization: {
+                select: {
+                  id: true,
+                  nameEn: true,
+                  nameFr: true,
+                },
+              },
             },
           },
           organization: {
@@ -302,6 +312,29 @@ export const findingRouter = router({
           },
         },
       });
+
+      // Send notification to host organization
+      try {
+        await notifyFindingCreated({
+          id: finding.id,
+          referenceNumber: finding.referenceNumber,
+          titleEn: finding.titleEn,
+          titleFr: finding.titleFr,
+          severity: finding.severity,
+          review: {
+            id: finding.review.id,
+            referenceNumber: finding.review.referenceNumber,
+            hostOrganization: {
+              id: finding.review.hostOrganization.id,
+              nameEn: finding.review.hostOrganization.nameEn,
+              nameFr: finding.review.hostOrganization.nameFr ?? finding.review.hostOrganization.nameEn,
+            },
+          },
+        });
+      } catch (error) {
+        console.error("[Finding Create] Failed to send notifications:", error);
+        // Don't fail the request if notifications fail
+      }
 
       return finding;
     }),

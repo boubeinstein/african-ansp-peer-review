@@ -7,6 +7,10 @@
  * Status Flow:
  * DRAFT → SUBMITTED → UNDER_REVIEW → ACCEPTED → IN_PROGRESS → COMPLETED → VERIFIED → CLOSED
  *                                  ↘ REJECTED → DRAFT (revision cycle)
+ *
+ * NOTE: Overdue CAP notifications (notifyCAPOverdue) should be triggered by a
+ * scheduled job (cron) rather than user actions. See src/server/jobs/ for
+ * scheduled notification jobs.
  */
 
 import { z } from "zod";

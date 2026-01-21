@@ -17,6 +17,7 @@ import { reportRouter } from "./report";
 import { trainingRouter } from "./training";
 import { settingsRouter } from "./settings";
 import { joinRequestRouter } from "./join-request";
+import { dashboardRouter } from "./dashboard";
 
 /**
  * Main app router combining all sub-routers
@@ -40,6 +41,7 @@ export const appRouter = router({
   training: trainingRouter,
   settings: settingsRouter,
   joinRequest: joinRequestRouter,
+  dashboard: dashboardRouter,
 });
 
 /**

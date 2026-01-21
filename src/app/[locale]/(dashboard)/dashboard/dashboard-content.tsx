@@ -1,40 +1,43 @@
 "use client";
 
+/**
+ * Dashboard Content - Role-Based KPI Dashboard
+ *
+ * Displays role-appropriate statistics, metrics, and quick actions
+ * aligned with ICAO/CANSO requirements for the AAPRP programme.
+ */
+
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import {
-  ClipboardList,
-  FileCheck,
-  FileText,
-  AlertTriangle,
-  Plus,
-  BookOpen,
-  GraduationCap,
-  ArrowRight,
-} from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { StatsCard, StatsGrid } from "@/components/features/dashboard/StatsCard";
-import { AssessmentStatusWidget } from "@/components/features/dashboard/AssessmentStatusWidget";
-import { RecentActivityWidget } from "@/components/features/dashboard/RecentActivityWidget";
-import { AttentionRequiredWidget } from "@/components/features/dashboard/AttentionRequiredWidget";
 import { trpc } from "@/lib/trpc/client";
+import { getRoleCategory, type RoleCategory } from "@/lib/dashboard-config";
+import { RoleStatCards, RoleStatCardsSkeleton } from "@/components/features/dashboard/role-stat-cards";
+import { ProgrammeOverview } from "@/components/features/dashboard/programme-overview";
+import { MyOrganizationSummary } from "@/components/features/dashboard/my-organization-summary";
+import { RoleQuickActions } from "@/components/features/dashboard/role-quick-actions";
+import { RecentActivityWidget } from "@/components/features/dashboard/RecentActivityWidget";
+import type { UserRole } from "@prisma/client";
 
 // =============================================================================
 // TYPES
 // =============================================================================
 
+interface Organization {
+  id: string;
+  nameEn: string;
+  nameFr?: string | null;
+  icaoCode: string | null;
+}
+
 interface DashboardContentProps {
   userName: string;
+  userRole: UserRole;
   organizationId?: string;
+  organization?: Organization | null;
+  locale: string;
 }
 
 // =============================================================================
@@ -48,11 +51,7 @@ function DashboardSkeleton() {
         <Skeleton className="h-8 w-64 mb-2" />
         <Skeleton className="h-4 w-96" />
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {[1, 2, 3, 4].map((i) => (
-          <Skeleton key={i} className="h-32" />
-        ))}
-      </div>
+      <RoleStatCardsSkeleton count={4} />
       <div className="grid gap-6 md:grid-cols-2">
         <Skeleton className="h-80" />
         <Skeleton className="h-80" />
@@ -62,62 +61,163 @@ function DashboardSkeleton() {
 }
 
 // =============================================================================
+// STAT VALUE TRANSFORMERS
+// =============================================================================
+
+// Type for the stats returned by the dashboard API
+type DashboardStatsResponse =
+  | { role: "PROGRAMME_ADMIN"; stats: {
+      totalAnsps: number;
+      activeParticipants: number;
+      totalAssessments: number;
+      totalReviews: number;
+      openFindingsBySeverity: Record<string, number>;
+      overdueCaps: number;
+      averageEIScore: number | null;
+      pendingJoinRequests: number;
+    }}
+  | { role: "COORDINATOR"; stats: {
+      reviewsCoordinating: { total: number; scheduled: number; inProgress: number; completed: number };
+      pendingTeamAssignments: number;
+      findingsAwaitingReview: number;
+      capsRequiringAttention: { overdue: number; pendingVerification: number };
+    }}
+  | { role: "REVIEWER"; stats: {
+      assignedReviews: { upcoming: number; inProgress: number; completed: number };
+      findingsRaised: { open: number; closed: number };
+      availabilityStatus: string;
+    }}
+  | { role: "ANSP"; stats: {
+      assessments: { draft: number; submitted: number; underReview: number; completed: number };
+      latestEIScore: number | null;
+      eiScoreTrend: number | null;
+      peerReviews: { asHost: number; findingsCount: number; openCaps: number };
+      capsByStatus: Record<string, number>;
+      overdueCaps: number;
+    }}
+  | { role: "LIMITED"; stats: {
+      submittedAssessments: number;
+      trainingModulesAvailable: number;
+    }};
+
+/**
+ * Transform API stats to flat key-value map for stat cards
+ */
+function transformStatsForCards(
+  roleCategory: RoleCategory,
+  stats: DashboardStatsResponse | null | undefined
+): Record<string, number | string | null> {
+  if (!stats) return {};
+
+  switch (roleCategory) {
+    case "PROGRAMME_ADMIN": {
+      if (stats.role !== "PROGRAMME_ADMIN") return {};
+      const s = stats.stats;
+      const totalOpenFindings = Object.values(s.openFindingsBySeverity).reduce(
+        (sum: number, count: number) => sum + count,
+        0
+      );
+      return {
+        totalAnsps: s.totalAnsps,
+        activeParticipants: s.activeParticipants,
+        openFindings: totalOpenFindings,
+        overdueCaps: s.overdueCaps,
+      };
+    }
+    case "COORDINATOR": {
+      if (stats.role !== "COORDINATOR") return {};
+      const s = stats.stats;
+      return {
+        reviewsTotal: s.reviewsCoordinating.total,
+        pendingTeamAssignments: s.pendingTeamAssignments,
+        findingsAwaitingReview: s.findingsAwaitingReview,
+        capsOverdue: s.capsRequiringAttention.overdue,
+      };
+    }
+    case "REVIEWER": {
+      if (stats.role !== "REVIEWER") return {};
+      const s = stats.stats;
+      return {
+        totalAssigned:
+          s.assignedReviews.upcoming +
+          s.assignedReviews.inProgress +
+          s.assignedReviews.completed,
+        inProgress: s.assignedReviews.inProgress,
+        findingsRaised: s.findingsRaised.open + s.findingsRaised.closed,
+        completed: s.assignedReviews.completed,
+      };
+    }
+    case "ANSP": {
+      if (stats.role !== "ANSP") return {};
+      const s = stats.stats;
+      return {
+        totalAssessments:
+          s.assessments.draft +
+          s.assessments.submitted +
+          s.assessments.underReview +
+          s.assessments.completed,
+        latestEIScore: s.latestEIScore,
+        openFindings: s.peerReviews.findingsCount,
+        activeCaps: s.peerReviews.openCaps,
+      };
+    }
+    case "LIMITED": {
+      if (stats.role !== "LIMITED") return {};
+      const s = stats.stats;
+      return {
+        submittedAssessments: s.submittedAssessments,
+        trainingModulesAvailable: s.trainingModulesAvailable,
+      };
+    }
+    default:
+      return {};
+  }
+}
+
+// =============================================================================
 // COMPONENT
 // =============================================================================
 
 export function DashboardContent({
   userName,
-  organizationId,
+  userRole,
+  // organizationId is passed but may be needed for future features
+  organization,
+  locale,
 }: DashboardContentProps) {
   const t = useTranslations("dashboard");
-  const router = useRouter();
+  const roleCategory = getRoleCategory(userRole);
 
   // Fetch dashboard stats
-  const { data: stats, isLoading: statsLoading } =
-    trpc.progress.getDashboardStats.useQuery({
-      organizationId,
-    });
+  const { data: statsData, isLoading: statsLoading } =
+    trpc.dashboard.getStats.useQuery();
 
-  // Fetch assessments needing attention
-  const { data: attentionItems } =
-    trpc.progress.getAssessmentsNeedingAttention.useQuery({
-      organizationId,
-      limit: 5,
-    });
+  // Fetch recent activity
+  const { data: recentActivity, isLoading: activityLoading } =
+    trpc.dashboard.getRecentActivity.useQuery({ limit: 10 });
 
-  // Handle navigation
-  const handleViewAllAssessments = () => {
-    router.push("/assessments");
-  };
+  // Cast stats to our expected type
+  const stats = statsData as DashboardStatsResponse | undefined;
 
-  const handleViewAllActivity = () => {
-    router.push("/assessments");
-  };
-
-  const handleAssessmentClick = (id: string) => {
-    router.push(`/assessments/${id}`);
-  };
+  // Transform stats for stat cards
+  const statValues = transformStatsForCards(roleCategory, stats);
 
   // Loading state
   if (statsLoading) {
     return <DashboardSkeleton />;
   }
 
-  // Default stats if none loaded
-  const assessmentStats = stats?.assessments ?? {
-    total: 0,
-    inProgress: 0,
-    completed: 0,
-    overdue: 0,
-  };
+  // Determine if user can create assessments (ANSP roles)
+  const canCreateAssessment = ["ANSP_ADMIN", "SAFETY_MANAGER", "QUALITY_MANAGER"].includes(
+    userRole
+  );
 
-  const byStatus = {
-    DRAFT: assessmentStats.inProgress,
-    SUBMITTED: 0,
-    UNDER_REVIEW: 0,
-    COMPLETED: assessmentStats.completed,
-    ARCHIVED: 0,
-  };
+  // Determine if user can create reviews (coordinator/admin roles)
+  const canCreateReview = [
+    "SUPER_ADMIN",
+    "SYSTEM_ADMIN",
+    "PROGRAMME_COORDINATOR",
+  ].includes(userRole);
 
   return (
     <div className="space-y-6">
@@ -129,135 +229,76 @@ export function DashboardContent({
           </h1>
           <p className="text-muted-foreground">{t("subtitle")}</p>
         </div>
-        <Button asChild>
-          <Link href="/assessments/new">
-            <Plus className="h-4 w-4 mr-2" />
-            {t("newAssessment")}
-          </Link>
-        </Button>
+        {canCreateAssessment && (
+          <Button asChild>
+            <Link href={`/${locale}/assessments/new`}>
+              <Plus className="h-4 w-4 mr-2" />
+              {t("newAssessment")}
+            </Link>
+          </Button>
+        )}
+        {canCreateReview && (
+          <Button asChild>
+            <Link href={`/${locale}/reviews/new`}>
+              <Plus className="h-4 w-4 mr-2" />
+              {t("newReview")}
+            </Link>
+          </Button>
+        )}
       </div>
 
-      {/* Stats Grid */}
-      <StatsGrid columns={4}>
-        <StatsCard
-          title={t("stats.totalAssessments")}
-          value={assessmentStats.total}
-          subtitle={`${assessmentStats.inProgress} ${t("stats.inProgress")}`}
-          icon={ClipboardList}
-          iconColor="text-blue-600"
-        />
-        <StatsCard
-          title={t("stats.completed")}
-          value={assessmentStats.completed}
-          icon={FileCheck}
-          iconColor="text-green-600"
-        />
-        <StatsCard
-          title={t("stats.documents")}
-          value={stats?.documents?.total ?? 0}
-          subtitle={`${stats?.documents?.thisWeek ?? 0} ${t("stats.thisWeek")}`}
-          icon={FileText}
-          iconColor="text-purple-600"
-        />
-        <StatsCard
-          title={t("stats.overdue")}
-          value={assessmentStats.overdue}
-          icon={AlertTriangle}
-          iconColor={
-            assessmentStats.overdue > 0 ? "text-red-600" : "text-muted-foreground"
-          }
-        />
-      </StatsGrid>
+      {/* Role-Based Stat Cards */}
+      <RoleStatCards
+        roleCategory={roleCategory}
+        stats={statValues}
+        isLoading={statsLoading}
+      />
 
       {/* Main Content Grid */}
       <div className="grid gap-6 md:grid-cols-2">
-        {/* Left Column */}
+        {/* Left Column - Role-specific content */}
         <div className="space-y-6">
-          {/* Assessment Status */}
-          <AssessmentStatusWidget
-            byStatus={byStatus}
-            overdueCount={assessmentStats.overdue}
-            onViewAll={handleViewAllAssessments}
-          />
+          {/* Programme Overview for Admin roles */}
+          {roleCategory === "PROGRAMME_ADMIN" &&
+            stats?.role === "PROGRAMME_ADMIN" && (
+              <ProgrammeOverview stats={stats.stats} isLoading={statsLoading} />
+            )}
 
-          {/* Attention Required */}
-          <AttentionRequiredWidget
-            assessments={attentionItems ?? []}
-            onViewAll={handleViewAllAssessments}
-            onAssessmentClick={handleAssessmentClick}
+          {/* My Organization Summary for ANSP roles */}
+          {roleCategory === "ANSP" &&
+            organization &&
+            stats?.role === "ANSP" && (
+              <MyOrganizationSummary
+                organization={organization}
+                stats={stats.stats}
+                locale={locale}
+                isLoading={statsLoading}
+              />
+            )}
+
+          {/* Quick Actions for all roles */}
+          <RoleQuickActions
+            userRole={userRole}
+            locale={locale}
+            isLoading={statsLoading}
           />
         </div>
 
-        {/* Right Column */}
+        {/* Right Column - Recent Activity */}
         <div className="space-y-6">
-          {/* Recent Activity */}
           <RecentActivityWidget
-            activities={stats?.activity ?? []}
-            onViewAll={handleViewAllActivity}
+            activities={
+              recentActivity?.map((a) => ({
+                id: a.id,
+                type: a.type,
+                title: a.title,
+                description: a.description,
+                timestamp: a.timestamp.toISOString(),
+              })) ?? []
+            }
+            onViewAll={() => {}}
+            isLoading={activityLoading}
           />
-
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("quickActions.title")}</CardTitle>
-              <CardDescription>{t("quickActions.description")}</CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-3">
-              <Link
-                href="/assessments/new"
-                className="flex items-center justify-between rounded-lg border p-4 hover:bg-muted/50 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-blue-100">
-                    <Plus className="h-4 w-4 text-blue-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium">{t("quickActions.newAssessment")}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {t("quickActions.newAssessmentDesc")}
-                    </p>
-                  </div>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground" />
-              </Link>
-
-              <Link
-                href="/questionnaires"
-                className="flex items-center justify-between rounded-lg border p-4 hover:bg-muted/50 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-purple-100">
-                    <BookOpen className="h-4 w-4 text-purple-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium">{t("quickActions.questionnaires")}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {t("quickActions.questionnairesDesc")}
-                    </p>
-                  </div>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground" />
-              </Link>
-
-              <Link
-                href="/training"
-                className="flex items-center justify-between rounded-lg border p-4 hover:bg-muted/50 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-green-100">
-                    <GraduationCap className="h-4 w-4 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium">{t("quickActions.training")}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {t("quickActions.trainingDesc")}
-                    </p>
-                  </div>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground" />
-              </Link>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

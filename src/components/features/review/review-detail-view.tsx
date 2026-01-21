@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 
 // Feature Components
 import { ReviewTeamWizard } from "./review-team-wizard";
+import { ReportActions } from "./report-actions";
 
 // UI Components
 import { Button } from "@/components/ui/button";
@@ -523,6 +524,16 @@ export function ReviewDetailView({
           )}
         </CardContent>
       </Card>
+
+      {/* Report Actions */}
+      <ReportActions
+        reviewId={reviewId}
+        reviewStatus={review.status}
+        locale={locale}
+        report={review.report}
+        canGenerateReport={canManageTeams}
+        canPublishReport={userRole === "SUPER_ADMIN" || userRole === "SYSTEM_ADMIN" || userRole === "STEERING_COMMITTEE"}
+      />
 
       {/* Special Requirements */}
       {review.specialRequirements && (

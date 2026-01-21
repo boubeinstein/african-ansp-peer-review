@@ -285,6 +285,7 @@
       "countries": "pays",
       "assessmentCompletion": "Achèvement des évaluations",
       "averageEIScore": "Score EI moyen",
+      "effectivenessIndex": "Indice d'Efficacité",
       "findingsDistribution": "Distribution des constats ouverts",
       "noOpenFindings": "Aucun constat ouvert - excellent!",
       "noEIScoreYet": "Pas encore de score EI",

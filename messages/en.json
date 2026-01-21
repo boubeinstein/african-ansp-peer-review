@@ -285,6 +285,7 @@
       "countries": "countries",
       "assessmentCompletion": "Assessment Completion",
       "averageEIScore": "Average EI Score",
+      "effectivenessIndex": "Effectiveness Index",
       "findingsDistribution": "Open Findings Distribution",
       "noOpenFindings": "No open findings - excellent!",
       "noEIScoreYet": "No EI score yet",

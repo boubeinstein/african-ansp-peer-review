@@ -422,12 +422,10 @@ export function FindingsClient() {
   const findings = (findingsData?.findings || []) as Finding[];
   const pagination = findingsData?.pagination;
 
-  // Calculate stats from byStatus and bySeverity
-  const inProgressCount =
-    (stats?.byStatus?.IN_PROGRESS || 0) +
-    (stats?.byStatus?.CAP_SUBMITTED || 0) +
-    (stats?.byStatus?.CAP_ACCEPTED || 0) +
-    (stats?.byStatus?.VERIFICATION || 0);
+  // Use individual status counts that match the dropdown filters
+  // Previously used aggregated counts which caused mismatch between stats and filtered lists
+  const openCount = stats?.byStatus?.OPEN || 0;
+  const inProgressCount = stats?.byStatus?.IN_PROGRESS || 0;
   const criticalCount = stats?.bySeverity?.CRITICAL || 0;
 
   const clearFilters = () => {
@@ -456,7 +454,7 @@ export function FindingsClient() {
         />
         <StatsCard
           title={t("stats.open")}
-          value={stats?.open || 0}
+          value={openCount}
           icon={Clock}
           variant="warning"
           isLoading={statsLoading}

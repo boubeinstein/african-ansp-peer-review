@@ -1690,7 +1690,8 @@
       "previous": "Previous",
       "next": "Next",
       "keyboardHint": "Use arrow keys to navigate",
-      "priority": "Priority PQ"
+      "priority": "Priority PQ",
+      "references": "References"
     },
     "ansResponse": {
       "title": "Response",

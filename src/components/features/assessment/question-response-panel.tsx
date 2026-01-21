@@ -18,6 +18,7 @@ import {
   Send,
   Lock,
 } from "lucide-react";
+import { CollapsibleGuidance } from "./collapsible-guidance";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -292,28 +293,16 @@ export function QuestionResponsePanel() {
                     <CardTitle className="text-xl leading-relaxed">
                       {questionText}
                     </CardTitle>
+
+                    {/* Collapsible guidance - placed after question text */}
+                    {guidanceText && (
+                      <div className="pt-2">
+                        <CollapsibleGuidance guidance={guidanceText} />
+                      </div>
+                    )}
                   </div>
                 </div>
               </CardHeader>
-
-              {/* Guidance text */}
-              {guidanceText && (
-                <CardContent>
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <div className="flex items-start gap-2">
-                      <Info className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium text-blue-800 mb-1">
-                          {t("panel.guidance")}
-                        </p>
-                        <p className="text-sm text-blue-700 whitespace-pre-wrap">
-                          {guidanceText}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              )}
             </Card>
 
             {/* Response section */}

@@ -1690,7 +1690,8 @@
       "previous": "Précédent",
       "next": "Suivant",
       "keyboardHint": "Utilisez les touches fléchées pour naviguer",
-      "priority": "QP prioritaire"
+      "priority": "QP prioritaire",
+      "references": "Références"
     },
     "ansResponse": {
       "title": "Réponse",

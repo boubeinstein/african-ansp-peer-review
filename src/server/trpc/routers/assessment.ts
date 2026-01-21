@@ -796,7 +796,7 @@ export const assessmentRouter = router({
       // Get total count
       const total = await prisma.assessment.count({ where });
 
-      // Get paginated assessments
+      // Get paginated assessments with responses for progress calculation
       const assessments = await prisma.assessment.findMany({
         where,
         include: {
@@ -812,8 +812,12 @@ export const assessmentRouter = router({
               titleFr: true,
             },
           },
-          _count: {
-            select: { responses: true },
+          responses: {
+            select: {
+              questionId: true,
+              responseValue: true,
+              maturityLevel: true,
+            },
           },
         },
         orderBy: { [sortBy]: sortOrder },
@@ -821,8 +825,71 @@ export const assessmentRouter = router({
         take: limit,
       });
 
+      // Calculate progress dynamically for each assessment
+      const assessmentsWithProgress = await Promise.all(
+        assessments.map(async (assessment) => {
+          const selectedAuditAreas = assessment.selectedAuditAreas as USOAPAuditArea[] | null;
+          const questionnaireType = assessment.questionnaire.type;
+
+          // Build question filter respecting selectedAuditAreas
+          const questionsWhere = getQuestionsWhereClause(
+            assessment.questionnaireId,
+            selectedAuditAreas
+          );
+
+          // Get total questions for this assessment's scope
+          const totalQuestions = await prisma.question.count({
+            where: questionsWhere,
+          });
+
+          // Get IDs of questions in scope
+          const questionsInScope = await prisma.question.findMany({
+            where: questionsWhere,
+            select: { id: true },
+          });
+          const questionIdSet = new Set(questionsInScope.map((q) => q.id));
+
+          // Count answered responses (only those in scope)
+          const answeredQuestions = assessment.responses.filter((r) => {
+            if (!questionIdSet.has(r.questionId)) return false;
+            if (questionnaireType === "ANS_USOAP_CMA") {
+              return isANSResponseAnswered(r.responseValue);
+            }
+            return isSMSResponseAnswered(r.maturityLevel);
+          }).length;
+
+          // Calculate progress
+          const calculatedProgress = totalQuestions > 0
+            ? Math.round((answeredQuestions / totalQuestions) * 100)
+            : 0;
+
+          // Return assessment with calculated progress (omit raw responses to reduce payload)
+          return {
+            id: assessment.id,
+            referenceNumber: assessment.referenceNumber,
+            title: assessment.title,
+            type: assessment.type,
+            status: assessment.status,
+            progress: calculatedProgress,
+            answeredQuestions,
+            totalQuestions,
+            overallScore: assessment.overallScore,
+            eiScore: assessment.eiScore,
+            maturityLevel: assessment.maturityLevel,
+            startedAt: assessment.startedAt,
+            submittedAt: assessment.submittedAt,
+            completedAt: assessment.completedAt,
+            dueDate: assessment.dueDate,
+            createdAt: assessment.createdAt,
+            updatedAt: assessment.updatedAt,
+            organization: assessment.organization,
+            questionnaire: assessment.questionnaire,
+          };
+        })
+      );
+
       return {
-        assessments,
+        assessments: assessmentsWithProgress,
         total,
         page,
         limit,

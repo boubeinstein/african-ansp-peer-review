@@ -73,6 +73,11 @@ export default function AssessmentDetailPage({ params }: PageProps) {
     ? assessment.organization.nameFr
     : assessment.organization.nameEn;
 
+  // Calculate progress from counts (don't rely on stored progress value which may be stale)
+  const calculatedProgress = assessment.totalQuestions > 0
+    ? Math.round((assessment.answeredQuestions / assessment.totalQuestions) * 100)
+    : 0;
+
   return (
     <div className="container py-6 space-y-6">
       {/* Header */}
@@ -142,7 +147,7 @@ export default function AssessmentDetailPage({ params }: PageProps) {
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-4">
-              <div className="text-2xl font-bold">{assessment.progress}%</div>
+              <div className="text-2xl font-bold">{calculatedProgress}%</div>
               <div className="text-sm text-muted-foreground">
                 {assessment.answeredQuestions} / {assessment.totalQuestions} {t("details.questionsAnswered")}
               </div>

@@ -22,6 +22,8 @@ import { cn } from "@/lib/utils";
 // Feature Components
 import { ReviewTeamWizard } from "./review-team-wizard";
 import { ReportActions } from "./report-actions";
+import { ReviewActionButton } from "./review-action-button";
+import { ReviewNextActions } from "./review-next-actions";
 
 // UI Components
 import { Button } from "@/components/ui/button";
@@ -232,17 +234,45 @@ export function ReviewDetailView({
           </p>
         </div>
 
-        {canEdit && (
-          <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          {/* Smart Action Button */}
+          <ReviewActionButton
+            reviewId={reviewId}
+            onAssignTeam={() => setTeamWizardOpen(true)}
+            onSetDates={() => {
+              // Could open a date picker dialog here
+              // For now, redirect to edit page
+              window.location.href = `/${locale}/reviews/${reviewId}/edit`;
+            }}
+            onSuccess={() => {
+              utils.review.getById.invalidate({ id: reviewId });
+            }}
+          />
+
+          {canEdit && (
             <Button variant="outline" size="sm" asChild>
               <Link href={`/${locale}/reviews/${reviewId}/edit`}>
                 <Edit className="h-4 w-4 mr-2" />
                 {t("edit")}
               </Link>
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
+
+      {/* Workflow Progress Panel - Always visible for management */}
+      {canManageTeams && (
+        <ReviewNextActions
+          reviewId={reviewId}
+          onAssignTeam={() => setTeamWizardOpen(true)}
+          onSetDates={() => {
+            window.location.href = `/${locale}/reviews/${reviewId}/edit`;
+          }}
+          onSuccess={() => {
+            utils.review.getById.invalidate({ id: reviewId });
+          }}
+        />
+      )}
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Host Organization */}
@@ -456,7 +486,8 @@ export function ReviewDetailView({
               </CardTitle>
               <CardDescription>{t("reviewTeamDescription")}</CardDescription>
             </div>
-            {canAssignTeam && (
+            {/* Only show "Assign Team" button if no team assigned yet */}
+            {canAssignTeam && review.teamMembers.length === 0 && (
               <Button
                 variant="outline"
                 size="sm"
@@ -464,6 +495,17 @@ export function ReviewDetailView({
               >
                 <UserPlus className="h-4 w-4 mr-2" />
                 {t("assignTeam")}
+              </Button>
+            )}
+            {/* Show "Modify Team" button if team exists and user can manage */}
+            {canAssignTeam && review.teamMembers.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setTeamWizardOpen(true)}
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                {t("modifyTeam")}
               </Button>
             )}
           </div>

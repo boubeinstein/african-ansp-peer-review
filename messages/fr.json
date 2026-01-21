@@ -3368,6 +3368,7 @@
         "trainee": "Stagiaire"
       },
       "assignTeam": "Assigner l'équipe",
+      "modifyTeam": "Modifier l'équipe",
       "noTeamMembers": "Aucun membre n'a encore été assigné à cette revue.",
       "assignTeamNow": "Assigner une équipe maintenant",
       "coiCannotAssign": "Conflit d'intérêts : Vous ne pouvez pas assigner des évaluateurs à la revue de votre propre organisation. Un autre coordinateur de programme doit gérer cette affectation.",
@@ -3879,6 +3880,100 @@
         "EN": "Anglais",
         "FR": "Français",
         "BOTH": "Bilingue (EN/FR)"
+      }
+    },
+    "workflow": {
+      "loading": "Chargement...",
+      "awaitingAction": "En attente d'action",
+      "completed": "Terminée",
+      "cancelled": "Annulée",
+      "transitionSuccess": "Statut de la revue mis à jour vers {status}",
+      "transitionError": "Échec de la mise à jour du statut de la revue",
+      "errorLoadingActions": "Échec du chargement des actions du flux de travail",
+      "cancel": "Annuler",
+      "confirm": "Confirmer",
+      "processing": "Traitement...",
+      "workflowProgress": "Progression du flux",
+      "workflowDescription": "Suivre la progression de cette revue par les pairs",
+      "progressPercent": "{percent}% terminé",
+      "currentStep": "En cours",
+      "teamMembers": "Équipe",
+      "findings": "Constatations",
+      "report": "Rapport",
+      "yes": "Oui",
+      "no": "Non",
+      "status": {
+        "requested": "Demandée",
+        "approved": "Approuvée",
+        "planning": "Planification",
+        "scheduled": "Programmée",
+        "in_progress": "En cours",
+        "report_drafting": "Rédaction du rapport",
+        "report_review": "Révision du rapport",
+        "completed": "Terminée",
+        "cancelled": "Annulée"
+      },
+      "actions": {
+        "approveRequest": "Approuver la demande",
+        "cancelRequest": "Annuler la demande",
+        "assignTeam": "Assigner l'équipe",
+        "startPlanning": "Démarrer la planification",
+        "setDates": "Définir les dates",
+        "scheduleReview": "Programmer la revue",
+        "startReview": "Démarrer la revue",
+        "completeFieldwork": "Terminer le travail de terrain",
+        "submitForReview": "Soumettre le rapport",
+        "finalizeReport": "Finaliser le rapport",
+        "requestRevisions": "Demander des révisions"
+      },
+      "confirmTitle": {
+        "approveRequest": "Approuver la demande de revue ?",
+        "cancelRequest": "Annuler la revue ?",
+        "scheduleReview": "Programmer la revue ?",
+        "startReview": "Démarrer la revue ?",
+        "completeFieldwork": "Terminer le travail de terrain ?",
+        "submitForReview": "Soumettre le rapport pour révision ?",
+        "finalizeReport": "Finaliser et terminer la revue ?",
+        "requestRevisions": "Demander des révisions du rapport ?"
+      },
+      "confirmDescription": {
+        "approveRequest": "Cela approuvera la demande de revue et la fera passer à l'étape de planification. L'organisation hôte sera notifiée.",
+        "cancelRequest": "Cela annulera la demande de revue. Cette action ne peut pas être annulée.",
+        "scheduleReview": "Cela marquera la revue comme programmée. Les membres de l'équipe seront notifiés des dates confirmées.",
+        "startReview": "Cela marquera la revue comme en cours. La date de début réelle sera enregistrée.",
+        "completeFieldwork": "Cela terminera la phase de travail sur le terrain et passera à la rédaction du rapport.",
+        "submitForReview": "Cela soumettra le rapport pour révision par la direction du programme.",
+        "finalizeReport": "Cela finalisera le rapport et marquera la revue comme terminée.",
+        "requestRevisions": "Cela renverra le rapport à l'équipe pour révisions."
+      },
+      "cancellationReason": "Motif d'annulation",
+      "revisionNotes": "Notes de révision",
+      "notesPlaceholder": "Ajouter des notes pertinentes...",
+      "checklist": {
+        "requestApproved": "Demande approuvée",
+        "teamAssigned": "Équipe de revue assignée",
+        "datesConfirmed": "Dates confirmées",
+        "reviewScheduled": "Revue programmée",
+        "reviewStarted": "Revue démarrée",
+        "reviewCompleted": "Travail de terrain terminé",
+        "reportDrafted": "Rapport rédigé",
+        "reportFinalized": "Rapport finalisé"
+      },
+      "hints": {
+        "requested": "Examinez les détails de la demande et approuvez pour procéder à l'affectation de l'équipe.",
+        "needsTeam": "Assignez une équipe de revue avec au moins un évaluateur principal et un évaluateur.",
+        "needsDates": "Définissez les dates de début et de fin prévues pour la revue.",
+        "readyToSchedule": "L'équipe et les dates sont définies. Programmez la revue pour notifier les participants.",
+        "scheduled": "La revue est programmée. Démarrez la revue lorsque l'équipe est prête à commencer le travail de terrain.",
+        "inProgress": "La revue est en cours. Terminez le travail de terrain lorsque toutes les activités sont terminées.",
+        "reportDrafting": "L'équipe de revue rédige le rapport. Soumettez une fois terminé pour révision par la direction.",
+        "reportReview": "Le rapport est en cours de révision. Approuvez pour finaliser ou demandez des révisions si nécessaire."
+      },
+      "role": {
+        "admin": "Gestion du Programme",
+        "leadReviewer": "Évaluateur Principal",
+        "teamMember": "Membre de l'Équipe",
+        "hostOrg": "Organisation Hôte"
       }
     }
   },

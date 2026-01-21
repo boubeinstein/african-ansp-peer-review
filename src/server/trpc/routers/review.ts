@@ -1950,6 +1950,396 @@ export const reviewRouter = router({
     });
   }),
 
+  // ==========================================================================
+  // STATUS TRANSITIONS & WORKFLOW
+  // ==========================================================================
+
+  /**
+   * Get available next actions for a review based on its current state.
+   * Used by the UI to display the smart action button and next actions panel.
+   */
+  getNextActions: protectedProcedure
+    .input(z.object({ reviewId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const review = await ctx.db.review.findUnique({
+        where: { id: input.reviewId },
+        include: {
+          teamMembers: {
+            include: {
+              user: {
+                select: { id: true, firstName: true, lastName: true },
+              },
+            },
+          },
+          findings: {
+            select: { id: true, status: true },
+          },
+          report: {
+            select: { id: true, status: true },
+          },
+          hostOrganization: {
+            select: { id: true, nameEn: true },
+          },
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
+      const userRole = ctx.session.user.role;
+      const userId = ctx.session.user.id;
+      const isAdmin = REVIEW_MANAGER_ROLES.includes(userRole);
+      const isTeamMember = review.teamMembers.some((tm) => tm.userId === userId);
+      const isLeadReviewer = review.teamMembers.some(
+        (tm) => tm.userId === userId && tm.role === "LEAD_REVIEWER"
+      );
+      const isHostOrg = review.hostOrganization.id === ctx.session.user.organizationId;
+
+      // Determine checklist items based on status
+      type ChecklistItem = {
+        key: string;
+        completed: boolean;
+        current: boolean;
+        actionable: boolean;
+      };
+
+      const checklist: ChecklistItem[] = [];
+
+      // Always show these steps
+      checklist.push({
+        key: "requestApproved",
+        completed: review.status !== "REQUESTED",
+        current: review.status === "REQUESTED",
+        actionable: review.status === "REQUESTED" && isAdmin,
+      });
+
+      checklist.push({
+        key: "teamAssigned",
+        completed: review.teamMembers.length > 0,
+        current: (review.status === "APPROVED" || review.status === "PLANNING") && review.teamMembers.length === 0,
+        actionable: (review.status === "APPROVED" || review.status === "PLANNING") && isAdmin,
+      });
+
+      checklist.push({
+        key: "datesConfirmed",
+        completed: !!review.plannedStartDate && !!review.plannedEndDate,
+        current: review.status === "PLANNING" && review.teamMembers.length > 0 && !review.plannedStartDate,
+        actionable: review.status === "PLANNING" && isAdmin,
+      });
+
+      checklist.push({
+        key: "reviewScheduled",
+        completed: ["SCHEDULED", "IN_PROGRESS", "REPORT_DRAFTING", "REPORT_REVIEW", "COMPLETED"].includes(review.status),
+        current: review.status === "PLANNING" && !!review.plannedStartDate,
+        actionable: review.status === "PLANNING" && isAdmin,
+      });
+
+      checklist.push({
+        key: "reviewStarted",
+        completed: ["IN_PROGRESS", "REPORT_DRAFTING", "REPORT_REVIEW", "COMPLETED"].includes(review.status),
+        current: review.status === "SCHEDULED",
+        actionable: review.status === "SCHEDULED" && isAdmin,
+      });
+
+      checklist.push({
+        key: "reviewCompleted",
+        completed: ["REPORT_DRAFTING", "REPORT_REVIEW", "COMPLETED"].includes(review.status),
+        current: review.status === "IN_PROGRESS",
+        actionable: review.status === "IN_PROGRESS" && (isAdmin || isLeadReviewer),
+      });
+
+      checklist.push({
+        key: "reportDrafted",
+        completed: ["REPORT_REVIEW", "COMPLETED"].includes(review.status),
+        current: review.status === "REPORT_DRAFTING",
+        actionable: review.status === "REPORT_DRAFTING" && (isAdmin || isLeadReviewer),
+      });
+
+      checklist.push({
+        key: "reportFinalized",
+        completed: review.status === "COMPLETED",
+        current: review.status === "REPORT_REVIEW",
+        actionable: review.status === "REPORT_REVIEW" && isAdmin,
+      });
+
+      // Determine primary action based on status
+      type NextAction = {
+        action: string;
+        targetStatus: string | null;
+        canPerform: boolean;
+        requiresConfirmation: boolean;
+        variant: "default" | "outline" | "secondary" | "destructive";
+      } | null;
+
+      let primaryAction: NextAction = null;
+      const secondaryActions: NextAction[] = [];
+
+      switch (review.status) {
+        case "REQUESTED":
+          primaryAction = {
+            action: "approveRequest",
+            targetStatus: "APPROVED",
+            canPerform: isAdmin,
+            requiresConfirmation: true,
+            variant: "default",
+          };
+          secondaryActions.push({
+            action: "cancelRequest",
+            targetStatus: "CANCELLED",
+            canPerform: isAdmin || isHostOrg,
+            requiresConfirmation: true,
+            variant: "destructive",
+          });
+          break;
+
+        case "APPROVED":
+          if (review.teamMembers.length === 0) {
+            primaryAction = {
+              action: "assignTeam",
+              targetStatus: null,
+              canPerform: isAdmin,
+              requiresConfirmation: false,
+              variant: "default",
+            };
+          } else {
+            primaryAction = {
+              action: "startPlanning",
+              targetStatus: "PLANNING",
+              canPerform: isAdmin,
+              requiresConfirmation: false,
+              variant: "default",
+            };
+          }
+          break;
+
+        case "PLANNING":
+          if (review.teamMembers.length === 0) {
+            primaryAction = {
+              action: "assignTeam",
+              targetStatus: null,
+              canPerform: isAdmin,
+              requiresConfirmation: false,
+              variant: "default",
+            };
+          } else if (!review.plannedStartDate || !review.plannedEndDate) {
+            primaryAction = {
+              action: "setDates",
+              targetStatus: null,
+              canPerform: isAdmin,
+              requiresConfirmation: false,
+              variant: "default",
+            };
+          } else {
+            primaryAction = {
+              action: "scheduleReview",
+              targetStatus: "SCHEDULED",
+              canPerform: isAdmin,
+              requiresConfirmation: true,
+              variant: "default",
+            };
+          }
+          break;
+
+        case "SCHEDULED":
+          primaryAction = {
+            action: "startReview",
+            targetStatus: "IN_PROGRESS",
+            canPerform: isAdmin,
+            requiresConfirmation: true,
+            variant: "default",
+          };
+          break;
+
+        case "IN_PROGRESS":
+          primaryAction = {
+            action: "completeFieldwork",
+            targetStatus: "REPORT_DRAFTING",
+            canPerform: isAdmin || isLeadReviewer,
+            requiresConfirmation: true,
+            variant: "default",
+          };
+          break;
+
+        case "REPORT_DRAFTING":
+          primaryAction = {
+            action: "submitForReview",
+            targetStatus: "REPORT_REVIEW",
+            canPerform: isAdmin || isLeadReviewer,
+            requiresConfirmation: true,
+            variant: "default",
+          };
+          break;
+
+        case "REPORT_REVIEW":
+          primaryAction = {
+            action: "finalizeReport",
+            targetStatus: "COMPLETED",
+            canPerform: isAdmin,
+            requiresConfirmation: true,
+            variant: "default",
+          };
+          secondaryActions.push({
+            action: "requestRevisions",
+            targetStatus: "REPORT_DRAFTING",
+            canPerform: isAdmin,
+            requiresConfirmation: true,
+            variant: "outline",
+          });
+          break;
+
+        case "COMPLETED":
+          // No actions for completed reviews
+          break;
+
+        case "CANCELLED":
+          // No actions for cancelled reviews
+          break;
+      }
+
+      return {
+        review: {
+          id: review.id,
+          status: review.status,
+          referenceNumber: review.referenceNumber,
+          hasTeam: review.teamMembers.length > 0,
+          teamSize: review.teamMembers.length,
+          hasLeadReviewer: review.teamMembers.some((tm) => tm.role === "LEAD_REVIEWER"),
+          hasDates: !!review.plannedStartDate && !!review.plannedEndDate,
+          findingsCount: review.findings.length,
+          openFindingsCount: review.findings.filter((f) => f.status === "OPEN").length,
+          hasReport: !!review.report,
+          reportStatus: review.report?.status ?? null,
+        },
+        checklist,
+        primaryAction,
+        secondaryActions: secondaryActions.filter((a) => a !== null && a.canPerform),
+        userContext: {
+          isAdmin,
+          isTeamMember,
+          isLeadReviewer,
+          isHostOrg,
+        },
+      };
+    }),
+
+  /**
+   * Transition review to a new status with validation.
+   * This is the explicit mutation for status transitions.
+   */
+  transitionStatus: adminProcedure
+    .input(
+      z.object({
+        reviewId: z.string(),
+        targetStatus: z.nativeEnum(ReviewStatus),
+        notes: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { reviewId, targetStatus, notes } = input;
+
+      const review = await ctx.db.review.findUnique({
+        where: { id: reviewId },
+        include: {
+          teamMembers: {
+            select: { id: true, role: true },
+          },
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
+      // Define valid transitions
+      const validTransitions: Record<ReviewStatus, ReviewStatus[]> = {
+        REQUESTED: ["APPROVED", "CANCELLED"],
+        APPROVED: ["PLANNING", "SCHEDULED", "CANCELLED"],
+        PLANNING: ["SCHEDULED", "CANCELLED"],
+        SCHEDULED: ["IN_PROGRESS", "CANCELLED"],
+        IN_PROGRESS: ["REPORT_DRAFTING", "CANCELLED"],
+        REPORT_DRAFTING: ["REPORT_REVIEW"],
+        REPORT_REVIEW: ["COMPLETED", "REPORT_DRAFTING"],
+        COMPLETED: [],
+        CANCELLED: [],
+      };
+
+      if (!validTransitions[review.status]?.includes(targetStatus)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Cannot transition from ${review.status} to ${targetStatus}`,
+        });
+      }
+
+      // Additional validation based on target status
+      if (targetStatus === "SCHEDULED") {
+        // Must have team assigned and dates set
+        if (review.teamMembers.length === 0) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Cannot schedule review without a team assigned",
+          });
+        }
+        const hasLead = review.teamMembers.some((tm) => tm.role === "LEAD_REVIEWER");
+        if (!hasLead) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Cannot schedule review without a Lead Reviewer",
+          });
+        }
+        if (!review.plannedStartDate || !review.plannedEndDate) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Cannot schedule review without planned dates",
+          });
+        }
+      }
+
+      // Build update data
+      const updateData: Prisma.ReviewUpdateInput = {
+        status: targetStatus,
+      };
+
+      // Set timestamps based on transition
+      if (targetStatus === "IN_PROGRESS" && !review.actualStartDate) {
+        updateData.actualStartDate = new Date();
+      }
+      if (targetStatus === "COMPLETED") {
+        updateData.actualEndDate = new Date();
+      }
+
+      // Append notes if provided
+      if (notes) {
+        const timestamp = new Date().toISOString();
+        const existingNotes = review.specialRequirements || "";
+        updateData.specialRequirements = existingNotes
+          ? `${existingNotes}\n\n[${timestamp}] Status changed to ${targetStatus}: ${notes}`
+          : `[${timestamp}] Status changed to ${targetStatus}: ${notes}`;
+      }
+
+      const updatedReview = await ctx.db.review.update({
+        where: { id: reviewId },
+        data: updateData,
+        include: {
+          hostOrganization: {
+            select: {
+              id: true,
+              nameEn: true,
+              icaoCode: true,
+            },
+          },
+        },
+      });
+
+      return updatedReview;
+    }),
+
   /**
    * Get CAP statistics
    */

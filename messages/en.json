@@ -3368,6 +3368,7 @@
         "trainee": "Trainee"
       },
       "assignTeam": "Assign Team",
+      "modifyTeam": "Modify Team",
       "noTeamMembers": "No team members have been assigned to this review yet.",
       "assignTeamNow": "Assign a team now",
       "coiCannotAssign": "Conflict of interest: You cannot assign reviewers to your own organization's peer review. Another programme coordinator must handle this assignment.",
@@ -3879,6 +3880,100 @@
         "EN": "English",
         "FR": "French",
         "BOTH": "Bilingual (EN/FR)"
+      }
+    },
+    "workflow": {
+      "loading": "Loading...",
+      "awaitingAction": "Awaiting Action",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "transitionSuccess": "Review status updated to {status}",
+      "transitionError": "Failed to update review status",
+      "errorLoadingActions": "Failed to load workflow actions",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "processing": "Processing...",
+      "workflowProgress": "Workflow Progress",
+      "workflowDescription": "Track the progress of this peer review",
+      "progressPercent": "{percent}% complete",
+      "currentStep": "Current",
+      "teamMembers": "Team",
+      "findings": "Findings",
+      "report": "Report",
+      "yes": "Yes",
+      "no": "No",
+      "status": {
+        "requested": "Requested",
+        "approved": "Approved",
+        "planning": "Planning",
+        "scheduled": "Scheduled",
+        "in_progress": "In Progress",
+        "report_drafting": "Report Drafting",
+        "report_review": "Report Review",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
+      "actions": {
+        "approveRequest": "Approve Request",
+        "cancelRequest": "Cancel Request",
+        "assignTeam": "Assign Team",
+        "startPlanning": "Start Planning",
+        "setDates": "Set Dates",
+        "scheduleReview": "Schedule Review",
+        "startReview": "Start Review",
+        "completeFieldwork": "Complete Fieldwork",
+        "submitForReview": "Submit Report",
+        "finalizeReport": "Finalize Report",
+        "requestRevisions": "Request Revisions"
+      },
+      "confirmTitle": {
+        "approveRequest": "Approve Review Request?",
+        "cancelRequest": "Cancel Review?",
+        "scheduleReview": "Schedule Review?",
+        "startReview": "Start Review?",
+        "completeFieldwork": "Complete Fieldwork?",
+        "submitForReview": "Submit Report for Review?",
+        "finalizeReport": "Finalize and Complete Review?",
+        "requestRevisions": "Request Report Revisions?"
+      },
+      "confirmDescription": {
+        "approveRequest": "This will approve the review request and move it to the planning stage. The host organization will be notified.",
+        "cancelRequest": "This will cancel the review request. This action cannot be undone.",
+        "scheduleReview": "This will mark the review as scheduled. Team members will be notified of the confirmed dates.",
+        "startReview": "This will mark the review as in progress. The actual start date will be recorded.",
+        "completeFieldwork": "This will complete the on-site fieldwork phase and move to report drafting.",
+        "submitForReview": "This will submit the report for programme management review.",
+        "finalizeReport": "This will finalize the report and mark the review as completed.",
+        "requestRevisions": "This will send the report back to the team for revisions."
+      },
+      "cancellationReason": "Cancellation Reason",
+      "revisionNotes": "Revision Notes",
+      "notesPlaceholder": "Add any relevant notes...",
+      "checklist": {
+        "requestApproved": "Request approved",
+        "teamAssigned": "Review team assigned",
+        "datesConfirmed": "Dates confirmed",
+        "reviewScheduled": "Review scheduled",
+        "reviewStarted": "Review started",
+        "reviewCompleted": "Fieldwork completed",
+        "reportDrafted": "Report drafted",
+        "reportFinalized": "Report finalized"
+      },
+      "hints": {
+        "requested": "Review the request details and approve to proceed with team assignment.",
+        "needsTeam": "Assign a review team with at least one Lead Reviewer and one Reviewer.",
+        "needsDates": "Set the planned start and end dates for the review.",
+        "readyToSchedule": "Team and dates are set. Schedule the review to notify participants.",
+        "scheduled": "Review is scheduled. Start the review when the team is ready to begin fieldwork.",
+        "inProgress": "Review is in progress. Complete fieldwork when all activities are done.",
+        "reportDrafting": "Review team is drafting the report. Submit when complete for management review.",
+        "reportReview": "Report is under review. Approve to finalize or request revisions if needed."
+      },
+      "role": {
+        "admin": "Programme Management",
+        "leadReviewer": "Lead Reviewer",
+        "teamMember": "Team Member",
+        "hostOrg": "Host Organization"
       }
     }
   },

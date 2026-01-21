@@ -21,6 +21,7 @@ model Organization {
   updatedAt           DateTime            @updatedAt @map("updated_at")
   joinedProgrammeAt   DateTime?           @map("joined_programme_at")
   participationStatus ParticipationStatus @default(REGISTERED) @map("participation_status")
+  regionalTeamId      String?             @map("regional_team_id")
   assessments         Assessment[]
   coiOverrides        COIOverride[]       @relation("COIOverrides")
   documents           Document[]
@@ -30,8 +31,27 @@ model Organization {
   homeReviewers       ReviewerProfile[]   @relation("HomeReviewers")
   reviewsAsHost       Review[]            @relation("HostANSP")
   users               User[]
+  regionalTeam        RegionalTeam?       @relation("TeamMembers", fields: [regionalTeamId], references: [id])
+  leadsTeam           RegionalTeam?       @relation("TeamLead")
 
   @@map("organizations")
+}
+
+model RegionalTeam {
+  id                  String         @id @default(cuid())
+  teamNumber          Int            @unique @map("team_number")
+  code                String         @unique
+  nameEn              String         @map("name_en")
+  nameFr              String         @map("name_fr")
+  region              AfricanRegion
+  leadOrganizationId  String         @unique @map("lead_organization_id")
+  leadOrganization    Organization   @relation("TeamLead", fields: [leadOrganizationId], references: [id])
+  memberOrganizations Organization[] @relation("TeamMembers")
+  isActive            Boolean        @default(true) @map("is_active")
+  createdAt           DateTime       @default(now()) @map("created_at")
+  updatedAt           DateTime       @updatedAt @map("updated_at")
+
+  @@map("regional_teams")
 }
 
 model User {
@@ -730,21 +750,29 @@ model ResponseDocument {
 }
 
 model Notification {
-  id          String    @id @default(cuid())
-  userId      String    @map("user_id")
-  type        String
-  titleEn     String    @map("title_en")
-  titleFr     String    @map("title_fr")
-  messageEn   String    @map("message_en")
-  messageFr   String    @map("message_fr")
-  link        String?
-  data        Json?
-  readAt      DateTime? @map("read_at")
-  emailSentAt DateTime? @map("email_sent_at")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  user        User      @relation(fields: [userId], references: [id])
+  id             String               @id @default(cuid())
+  userId         String               @map("user_id")
+  type           NotificationType     @default(SYSTEM_ANNOUNCEMENT)
+  titleEn        String               @map("title_en")
+  titleFr        String               @map("title_fr")
+  messageEn      String               @map("message_en")
+  messageFr      String               @map("message_fr")
+  entityType     String?              @map("entity_type")
+  entityId       String?              @map("entity_id")
+  actionUrl      String?              @map("action_url")
+  actionLabelEn  String?              @map("action_label_en")
+  actionLabelFr  String?              @map("action_label_fr")
+  priority       NotificationPriority @default(NORMAL)
+  link           String?
+  data           Json?
+  readAt         DateTime?            @map("read_at")
+  emailSentAt    DateTime?            @map("email_sent_at")
+  createdAt      DateTime             @default(now()) @map("created_at")
+  user           User                 @relation(fields: [userId], references: [id])
 
   @@index([userId, readAt])
+  @@index([userId, type])
+  @@index([entityType, entityId])
   @@map("notifications")
 }
 
@@ -1243,4 +1271,34 @@ enum DigestFrequency {
   IMMEDIATE
   DAILY
   WEEKLY
+}
+
+enum NotificationType {
+  REVIEW_REQUESTED
+  REVIEW_APPROVED
+  REVIEW_REJECTED
+  TEAM_ASSIGNED
+  TEAM_INVITATION
+  REVIEW_SCHEDULED
+  REVIEW_STARTED
+  REVIEW_COMPLETED
+  FINDING_CREATED
+  CAP_REQUIRED
+  CAP_SUBMITTED
+  CAP_ACCEPTED
+  CAP_REJECTED
+  CAP_OVERDUE
+  CAP_VERIFIED
+  REPORT_DRAFT_READY
+  REPORT_SUBMITTED
+  REPORT_APPROVED
+  SYSTEM_ANNOUNCEMENT
+  REMINDER
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
 }

@@ -269,9 +269,11 @@ export function ReportActions({
           {/* Draft State */}
           {displayStatus === "DRAFT" && (
             <>
-              <Button variant="outline" onClick={handleDownloadReport}>
-                <Eye className="h-4 w-4 mr-2" />
-                {t("viewDraft")}
+              <Button variant="outline" asChild>
+                <Link href={`/${locale}/reviews/${reviewId}/report`}>
+                  <Eye className="h-4 w-4 mr-2" />
+                  {t("viewDraft")}
+                </Link>
               </Button>
 
               {canGenerateReport && (
@@ -297,9 +299,11 @@ export function ReportActions({
           {/* Under Review State */}
           {displayStatus === "UNDER_REVIEW" && (
             <>
-              <Button variant="outline" onClick={handleDownloadReport}>
-                <Eye className="h-4 w-4 mr-2" />
-                {t("viewReport")}
+              <Button variant="outline" asChild>
+                <Link href={`/${locale}/reviews/${reviewId}/report`}>
+                  <Eye className="h-4 w-4 mr-2" />
+                  {t("viewReport")}
+                </Link>
               </Button>
 
               {canPublishReport && (

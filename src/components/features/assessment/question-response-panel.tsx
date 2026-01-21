@@ -52,6 +52,7 @@ import { ANSResponse } from "./response-types/ans-response";
 import { SMSResponse } from "./response-types/sms-response";
 import { CommentsSection } from "./comments-section";
 import { EvidencePanel } from "./evidence-panel";
+import { MobilePanelsBar } from "./mobile-panels-bar";
 
 export function QuestionResponsePanel() {
   const locale = useLocale();
@@ -242,8 +243,8 @@ export function QuestionResponsePanel() {
         </div>
       </div>
 
-      {/* Main content area - scrollable */}
-      <div className="flex-1 overflow-y-auto p-6">
+      {/* Main content area - scrollable with responsive padding */}
+      <div className="flex-1 overflow-y-auto p-4 lg:p-6 pb-20 xl:pb-6">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentQuestion.id}
@@ -251,7 +252,7 @@ export function QuestionResponsePanel() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="max-w-3xl mx-auto space-y-6"
+            className="max-w-4xl mx-auto space-y-4 lg:space-y-6"
           >
             {/* Question card */}
             <Card>
@@ -370,9 +371,9 @@ export function QuestionResponsePanel() {
         </AnimatePresence>
       </div>
 
-      {/* Footer with quick navigation */}
-      <div className="border-t p-4 bg-background">
-        <div className="flex items-center justify-between max-w-3xl mx-auto">
+      {/* Footer with quick navigation - hidden on mobile to make room for bottom bar */}
+      <div className="hidden xl:block border-t p-4 bg-background">
+        <div className="flex items-center justify-between max-w-4xl mx-auto">
           <Button
             variant="outline"
             onClick={goToPreviousQuestion}
@@ -471,6 +472,38 @@ export function QuestionResponsePanel() {
           )}
         </div>
       </div>
+
+      {/* Mobile bottom bar for evidence and notes - visible on smaller screens */}
+      <MobilePanelsBar
+        evidenceContent={
+          <EvidencePanel
+            evidenceDescription={response?.evidenceDescription ?? ""}
+            evidenceUrls={response?.evidenceUrls ?? []}
+            onDescriptionChange={(value) =>
+              updateResponse(currentQuestion.id, { evidenceDescription: value })
+            }
+            onUrlsChange={(urls) =>
+              updateResponse(currentQuestion.id, { evidenceUrls: urls })
+            }
+            disabled={isReadOnly}
+          />
+        }
+        notesContent={
+          <CommentsSection
+            assessorNotes={response?.assessorNotes ?? ""}
+            internalNotes={response?.internalNotes ?? ""}
+            onAssessorNotesChange={(value) =>
+              updateResponse(currentQuestion.id, { assessorNotes: value })
+            }
+            onInternalNotesChange={(value) =>
+              updateResponse(currentQuestion.id, { internalNotes: value })
+            }
+            disabled={isReadOnly}
+          />
+        }
+        evidenceCount={(response?.evidenceUrls?.length ?? 0) + (response?.evidenceDescription ? 1 : 0)}
+        hasNotes={!!(response?.assessorNotes || response?.internalNotes)}
+      />
     </div>
   );
 }

@@ -1672,6 +1672,10 @@
       "next": "Suivant",
       "flag": "Marquer"
     },
+    "mobile": {
+      "evidence": "Preuves",
+      "notes": "Notes"
+    },
     "panel": {
       "noQuestion": "Aucune question sélectionnée",
       "selectQuestion": "Sélectionnez une question dans la barre latérale pour commencer",

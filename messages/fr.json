@@ -3847,6 +3847,68 @@
         "BOTH": "Bilingue (AN/FR)"
       }
     },
+    "invitations": {
+      "title": "Invitations aux revues",
+      "description": "Missions de revue en attente de votre réponse",
+      "noInvitations": "Vous n'avez aucune invitation en attente.",
+      "invitedOn": "Invité le {date}",
+      "tbd": "À déterminer",
+      "accept": "Accepter",
+      "decline": "Décliner",
+      "cancel": "Annuler",
+      "confirmDecline": "Décliner l'invitation",
+      "acceptSuccess": "Vous avez accepté l'invitation pour la revue {reference}",
+      "declineSuccess": "Invitation déclinée",
+      "declineDialog": {
+        "title": "Décliner l'invitation",
+        "description": "Veuillez indiquer la raison de votre refus. Cela aide les coordinateurs à trouver un remplaçant approprié.",
+        "reasonLabel": "Raison du refus",
+        "reasonPlaceholder": "Veuillez expliquer pourquoi vous ne pouvez pas participer à cette revue (ex: conflit d'agenda, charge de travail, raisons personnelles)...",
+        "minChars": "Veuillez fournir au moins 10 caractères"
+      },
+      "coordinator": {
+        "title": "Invitations de l'équipe",
+        "description": "Gérer le statut des invitations des membres de l'équipe",
+        "sendAll": "Envoyer tout ({count})",
+        "invitationsSent": "{count} invitation(s) envoyée(s)",
+        "invitationResent": "Invitation renvoyée",
+        "invitationWithdrawn": "Invitation retirée",
+        "teamConfirmation": "Progression de la confirmation",
+        "confirmed": "confirmé(s)",
+        "teamReady": {
+          "title": "Équipe prête",
+          "description": "Tous les membres de l'équipe ont confirmé leur participation. La revue peut passer à la planification."
+        },
+        "teamNotReady": {
+          "title": "Équipe non prête",
+          "needsLead": "Un responsable d'équipe confirmé est requis.",
+          "awaitingResponses": "En attente des réponses des membres de l'équipe.",
+          "needsToSend": "Certaines invitations n'ont pas encore été envoyées."
+        },
+        "teamMembers": "Membres de l'équipe",
+        "declineReason": "Raison",
+        "statuses": {
+          "pending": "En attente",
+          "invited": "Invité",
+          "confirmed": "Confirmé",
+          "declined": "Décliné",
+          "withdrawn": "Retiré"
+        },
+        "actions": {
+          "send": "Envoyer l'invitation",
+          "resend": "Renvoyer l'invitation",
+          "withdraw": "Retirer l'invitation",
+          "replace": "Remplacer",
+          "replaceTooltip": "Trouver un remplaçant pour ce membre"
+        },
+        "withdrawDialog": {
+          "title": "Retirer l'invitation ?",
+          "description": "Cela annulera l'invitation. L'évaluateur sera informé que son invitation a été retirée.",
+          "confirm": "Retirer"
+        },
+        "cancel": "Annuler"
+      }
+    },
     "edit": {
       "pageTitle": "Modifier la demande de revue",
       "pageDescription": "Modifier votre demande de revue par les pairs",

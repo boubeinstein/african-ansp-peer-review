@@ -3847,6 +3847,68 @@
         "BOTH": "Bilingual (EN/FR)"
       }
     },
+    "invitations": {
+      "title": "Review Invitations",
+      "description": "Review assignments pending your response",
+      "noInvitations": "You have no pending review invitations.",
+      "invitedOn": "Invited on {date}",
+      "tbd": "TBD",
+      "accept": "Accept",
+      "decline": "Decline",
+      "cancel": "Cancel",
+      "confirmDecline": "Decline Invitation",
+      "acceptSuccess": "You have accepted the invitation for review {reference}",
+      "declineSuccess": "Invitation declined",
+      "declineDialog": {
+        "title": "Decline Invitation",
+        "description": "Please provide a reason for declining this invitation. This helps coordinators find a suitable replacement.",
+        "reasonLabel": "Reason for Declining",
+        "reasonPlaceholder": "Please explain why you cannot participate in this review (e.g., scheduling conflict, workload, personal reasons)...",
+        "minChars": "Please provide at least 10 characters"
+      },
+      "coordinator": {
+        "title": "Team Invitations",
+        "description": "Manage invitation status for team members",
+        "sendAll": "Send All ({count})",
+        "invitationsSent": "{count} invitation(s) sent",
+        "invitationResent": "Invitation resent",
+        "invitationWithdrawn": "Invitation withdrawn",
+        "teamConfirmation": "Team Confirmation Progress",
+        "confirmed": "confirmed",
+        "teamReady": {
+          "title": "Team Ready",
+          "description": "All team members have confirmed their participation. The review can proceed to scheduling."
+        },
+        "teamNotReady": {
+          "title": "Team Not Ready",
+          "needsLead": "A confirmed Lead Reviewer is required.",
+          "awaitingResponses": "Waiting for team members to respond to their invitations.",
+          "needsToSend": "Some invitations have not been sent yet."
+        },
+        "teamMembers": "Team Members",
+        "declineReason": "Reason",
+        "statuses": {
+          "pending": "Pending",
+          "invited": "Invited",
+          "confirmed": "Confirmed",
+          "declined": "Declined",
+          "withdrawn": "Withdrawn"
+        },
+        "actions": {
+          "send": "Send Invitation",
+          "resend": "Resend Invitation",
+          "withdraw": "Withdraw Invitation",
+          "replace": "Replace",
+          "replaceTooltip": "Find a replacement for this declined member"
+        },
+        "withdrawDialog": {
+          "title": "Withdraw Invitation?",
+          "description": "This will cancel the invitation. The reviewer will be notified that their invitation has been withdrawn.",
+          "confirm": "Withdraw"
+        },
+        "cancel": "Cancel"
+      }
+    },
     "edit": {
       "pageTitle": "Edit Review Request",
       "pageDescription": "Edit your peer review request",

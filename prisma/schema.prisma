@@ -575,10 +575,15 @@ model ReviewTeamMember {
   reviewerProfileId String?          @map("reviewer_profile_id")
   role              TeamRole         @default(REVIEWER)
   assignedAreas     String[]         @default([]) @map("assigned_areas")
+  createdAt         DateTime         @default(now()) @map("created_at")
+
+  // Invitation workflow
+  invitationStatus  InvitationStatus @default(PENDING) @map("invitation_status")
+  invitedAt         DateTime?        @map("invited_at")
+  respondedAt       DateTime?        @map("responded_at")
   confirmedAt       DateTime?        @map("confirmed_at")
   declinedAt        DateTime?        @map("declined_at")
   declineReason     String?          @map("decline_reason")
-  createdAt         DateTime         @default(now()) @map("created_at")
 
   // Cross-team assignment (Rule 3 exception)
   isCrossTeamAssignment   Boolean   @default(false) @map("is_cross_team_assignment")
@@ -591,6 +596,7 @@ model ReviewTeamMember {
   user              User             @relation(fields: [userId], references: [id])
 
   @@unique([reviewId, userId])
+  @@index([userId, invitationStatus])
   @@map("review_team_members")
 }
 
@@ -1273,6 +1279,14 @@ enum TeamRole {
   TECHNICAL_EXPERT
   OBSERVER
   TRAINEE
+}
+
+enum InvitationStatus {
+  PENDING     // Initial state when member is added
+  INVITED     // Invitation sent to reviewer
+  CONFIRMED   // Reviewer accepted invitation
+  DECLINED    // Reviewer declined invitation
+  WITHDRAWN   // Coordinator withdrew the invitation
 }
 
 enum FindingType {

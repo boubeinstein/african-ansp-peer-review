@@ -25,6 +25,7 @@ import {
   ReviewLocationType,
   LanguagePreference,
   ApprovalStatus,
+  InvitationStatus,
   Prisma,
 } from "@prisma/client";
 
@@ -1573,35 +1574,85 @@ export const reviewRouter = router({
     }),
 
   /**
-   * Team member responds to invitation
+   * Team member responds to invitation (accept or decline).
+   * Updates invitation status and timestamps.
    */
   respondToInvitation: protectedProcedure
-    .input(teamMemberResponseSchema)
+    .input(
+      z.object({
+        membershipId: z.string(),
+        accept: z.boolean(),
+        declineReason: z.string().optional(),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
-      const userId = ctx.session.user.id;
-
-      const teamMember = await ctx.db.reviewTeamMember.findFirst({
-        where: {
-          reviewId: input.reviewId,
-          userId: userId,
+      // Get the membership
+      const membership = await ctx.db.reviewTeamMember.findUnique({
+        where: { id: input.membershipId },
+        include: {
+          review: true,
         },
       });
 
-      if (!teamMember) {
+      if (!membership) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "You are not assigned to this review",
+          message: "Invitation not found",
         });
       }
 
-      return ctx.db.reviewTeamMember.update({
-        where: { id: teamMember.id },
+      // Verify the current user is the invited member
+      if (membership.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You can only respond to your own invitations",
+        });
+      }
+
+      // Verify the invitation is in INVITED status
+      if (membership.invitationStatus !== "INVITED") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Cannot respond to invitation in ${membership.invitationStatus} status`,
+        });
+      }
+
+      // Validate decline reason if declining
+      if (!input.accept && (!input.declineReason || input.declineReason.trim().length < 10)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Please provide a reason for declining (at least 10 characters)",
+        });
+      }
+
+      const now = new Date();
+
+      // Update the membership
+      const updated = await ctx.db.reviewTeamMember.update({
+        where: { id: input.membershipId },
         data: {
-          confirmedAt: input.confirmed ? new Date() : null,
-          declinedAt: input.confirmed ? null : new Date(),
-          declineReason: input.confirmed ? null : input.declineReason,
+          invitationStatus: input.accept ? "CONFIRMED" : "DECLINED",
+          respondedAt: now,
+          confirmedAt: input.accept ? now : null,
+          declinedAt: input.accept ? null : now,
+          declineReason: input.accept ? null : input.declineReason,
+        },
+        include: {
+          review: true,
+          user: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
         },
       });
+
+      return {
+        success: true,
+        status: updated.invitationStatus,
+        reviewReference: updated.review.referenceNumber,
+      };
     }),
 
   /**
@@ -3088,6 +3139,361 @@ export const reviewRouter = router({
         inProgress,
         completed,
         overdue,
+      };
+    }),
+
+  // =============================================================================
+  // INVITATION MANAGEMENT
+  // =============================================================================
+
+  /**
+   * Send invitations to team members.
+   * Updates status from PENDING to INVITED for specified members.
+   */
+  sendInvitations: adminProcedure
+    .input(
+      z.object({
+        reviewId: z.string(),
+        memberIds: z.array(z.string()).optional(), // If not provided, sends to all PENDING
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const review = await ctx.db.review.findUnique({
+        where: { id: input.reviewId },
+        include: {
+          hostOrganization: true,
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
+      // Build where clause for members to invite
+      const whereClause: Prisma.ReviewTeamMemberWhereInput = {
+        reviewId: input.reviewId,
+        invitationStatus: "PENDING",
+      };
+
+      if (input.memberIds && input.memberIds.length > 0) {
+        whereClause.id = { in: input.memberIds };
+      }
+
+      // Update all matching members to INVITED
+      const result = await ctx.db.reviewTeamMember.updateMany({
+        where: whereClause,
+        data: {
+          invitationStatus: "INVITED",
+          invitedAt: new Date(),
+        },
+      });
+
+      // TODO: Send notification emails to invited members
+      // This would integrate with the notification service
+
+      return {
+        success: true,
+        invitedCount: result.count,
+      };
+    }),
+
+  /**
+   * Resend invitation to a team member.
+   */
+  resendInvitation: adminProcedure
+    .input(
+      z.object({
+        membershipId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const membership = await ctx.db.reviewTeamMember.findUnique({
+        where: { id: input.membershipId },
+      });
+
+      if (!membership) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Team member not found",
+        });
+      }
+
+      // Can only resend if status is INVITED or PENDING
+      if (!["INVITED", "PENDING"].includes(membership.invitationStatus)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Cannot resend invitation in ${membership.invitationStatus} status`,
+        });
+      }
+
+      // Update invitation timestamp
+      const updated = await ctx.db.reviewTeamMember.update({
+        where: { id: input.membershipId },
+        data: {
+          invitationStatus: "INVITED",
+          invitedAt: new Date(),
+        },
+      });
+
+      // TODO: Resend notification email
+
+      return {
+        success: true,
+        invitedAt: updated.invitedAt,
+      };
+    }),
+
+  /**
+   * Withdraw an invitation (coordinator cancels before response).
+   */
+  withdrawInvitation: adminProcedure
+    .input(
+      z.object({
+        membershipId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const membership = await ctx.db.reviewTeamMember.findUnique({
+        where: { id: input.membershipId },
+      });
+
+      if (!membership) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Team member not found",
+        });
+      }
+
+      // Can only withdraw if status is INVITED or PENDING
+      if (!["INVITED", "PENDING"].includes(membership.invitationStatus)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Cannot withdraw invitation in ${membership.invitationStatus} status`,
+        });
+      }
+
+      // Update to WITHDRAWN status
+      await ctx.db.reviewTeamMember.update({
+        where: { id: input.membershipId },
+        data: {
+          invitationStatus: "WITHDRAWN",
+        },
+      });
+
+      // TODO: Notify the member that their invitation was withdrawn
+
+      return { success: true };
+    }),
+
+  /**
+   * Remove and replace a declined team member.
+   */
+  replaceDeclinedMember: adminProcedure
+    .input(
+      z.object({
+        membershipId: z.string(),
+        replacementUserId: z.string(),
+        replacementReviewerProfileId: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const membership = await ctx.db.reviewTeamMember.findUnique({
+        where: { id: input.membershipId },
+        include: {
+          review: true,
+        },
+      });
+
+      if (!membership) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Team member not found",
+        });
+      }
+
+      // Can only replace if status is DECLINED
+      if (membership.invitationStatus !== "DECLINED") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Can only replace declined members",
+        });
+      }
+
+      // Delete the old membership and create a new one in a transaction
+      const [, newMember] = await ctx.db.$transaction([
+        ctx.db.reviewTeamMember.delete({
+          where: { id: input.membershipId },
+        }),
+        ctx.db.reviewTeamMember.create({
+          data: {
+            reviewId: membership.reviewId,
+            userId: input.replacementUserId,
+            reviewerProfileId: input.replacementReviewerProfileId,
+            role: membership.role,
+            assignedAreas: membership.assignedAreas,
+            invitationStatus: "PENDING",
+          },
+          include: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+              },
+            },
+          },
+        }),
+      ]);
+
+      return {
+        success: true,
+        newMember: {
+          id: newMember.id,
+          name: `${newMember.user.firstName} ${newMember.user.lastName}`,
+        },
+      };
+    }),
+
+  /**
+   * Get pending invitations for current user (reviewer view).
+   */
+  getMyInvitations: protectedProcedure.query(async ({ ctx }) => {
+    const invitations = await ctx.db.reviewTeamMember.findMany({
+      where: {
+        userId: ctx.session.user.id,
+        invitationStatus: "INVITED",
+      },
+      include: {
+        review: {
+          include: {
+            hostOrganization: {
+              select: {
+                id: true,
+                nameEn: true,
+                nameFr: true,
+                icaoCode: true,
+                country: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        invitedAt: "desc",
+      },
+    });
+
+    return invitations.map((inv) => ({
+      id: inv.id,
+      role: inv.role,
+      invitedAt: inv.invitedAt,
+      review: {
+        id: inv.review.id,
+        referenceNumber: inv.review.referenceNumber,
+        reviewType: inv.review.reviewType,
+        plannedStartDate: inv.review.plannedStartDate,
+        plannedEndDate: inv.review.plannedEndDate,
+        hostOrganization: inv.review.hostOrganization,
+        areasInScope: inv.review.areasInScope,
+      },
+    }));
+  }),
+
+  /**
+   * Get invitation statistics for a review (coordinator view).
+   */
+  getInvitationStats: protectedProcedure
+    .input(
+      z.object({
+        reviewId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const members = await ctx.db.reviewTeamMember.findMany({
+        where: { reviewId: input.reviewId },
+        select: {
+          invitationStatus: true,
+        },
+      });
+
+      const stats = {
+        total: members.length,
+        pending: members.filter((m) => m.invitationStatus === "PENDING").length,
+        invited: members.filter((m) => m.invitationStatus === "INVITED").length,
+        confirmed: members.filter((m) => m.invitationStatus === "CONFIRMED").length,
+        declined: members.filter((m) => m.invitationStatus === "DECLINED").length,
+        withdrawn: members.filter((m) => m.invitationStatus === "WITHDRAWN").length,
+      };
+
+      return {
+        ...stats,
+        isTeamReady: stats.confirmed >= 2 && stats.pending === 0 && stats.invited === 0,
+        hasLead: false, // Will need to check role as well
+      };
+    }),
+
+  /**
+   * Get team with full invitation details (coordinator view).
+   */
+  getTeamWithInvitations: protectedProcedure
+    .input(
+      z.object({
+        reviewId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const members = await ctx.db.reviewTeamMember.findMany({
+        where: { reviewId: input.reviewId },
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+          reviewerProfile: {
+            include: {
+              homeOrganization: {
+                select: {
+                  id: true,
+                  nameEn: true,
+                  nameFr: true,
+                  icaoCode: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: [{ role: "asc" }, { createdAt: "asc" }],
+      });
+
+      // Calculate stats
+      const stats = {
+        total: members.length,
+        pending: members.filter((m) => m.invitationStatus === "PENDING").length,
+        invited: members.filter((m) => m.invitationStatus === "INVITED").length,
+        confirmed: members.filter((m) => m.invitationStatus === "CONFIRMED").length,
+        declined: members.filter((m) => m.invitationStatus === "DECLINED").length,
+        withdrawn: members.filter((m) => m.invitationStatus === "WITHDRAWN").length,
+      };
+
+      const hasConfirmedLead = members.some(
+        (m) => m.role === "LEAD_REVIEWER" && m.invitationStatus === "CONFIRMED"
+      );
+
+      return {
+        members,
+        stats,
+        isTeamReady:
+          stats.confirmed >= 2 &&
+          stats.pending === 0 &&
+          stats.invited === 0 &&
+          hasConfirmedLead,
+        hasConfirmedLead,
       };
     }),
 });

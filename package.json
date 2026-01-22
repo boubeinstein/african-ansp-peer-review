@@ -26,6 +26,8 @@
     "db:seed:training": "npx tsx prisma/seed-training.ts",
     "db:seed:participants": "npx tsx prisma/seed-programme-participants.ts",
     "db:seed:participation": "npx tsx prisma/seed-participation-status.ts",
+    "db:seed:teams": "npx tsx prisma/seed-teams-and-orgs.ts",
+    "db:seed:teams:cleanup": "npx tsx prisma/seed-teams-and-orgs.ts cleanup",
     "db:seed:all": "npx tsx prisma/seed.ts && npx tsx prisma/seed-dev-users.ts && npx tsx prisma/seed-training.ts"
   },
   "dependencies": {

@@ -179,7 +179,7 @@ const findingTypeTranslations: Record<string, { en: string; fr: string }> = {
 export function FindingNotificationEmail(props: FindingNotificationEmailProps) {
   const {
     recipientName,
-    organizationName,
+    organizationName: _organizationName,
     reviewReference,
     findingReference,
     findingTitle,

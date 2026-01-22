@@ -116,7 +116,7 @@ const severityTranslations: Record<string, { en: string; fr: string }> = {
 export function CAPDeadlineReminderEmail(props: CAPDeadlineReminderEmailProps) {
   const {
     recipientName,
-    organizationName,
+    organizationName: _organizationName,
     reviewReference,
     findingReference,
     findingTitle,

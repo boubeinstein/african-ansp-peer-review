@@ -12,9 +12,7 @@ import {
   Container,
   Section,
   Text,
-  Hr,
   Link,
-  Img,
   Preview,
 } from "@react-email/components";
 import * as React from "react";

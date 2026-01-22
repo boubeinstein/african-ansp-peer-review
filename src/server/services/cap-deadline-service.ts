@@ -13,7 +13,6 @@
 import { db } from "@/lib/db";
 import {
   CAPStatus,
-  MilestoneStatus,
   Prisma,
   type CorrectiveActionPlan,
   type CAPMilestone,
@@ -97,9 +96,6 @@ const TRACKABLE_STATUSES: CAPStatus[] = [
   "IN_PROGRESS",
   "COMPLETED", // Still need verification
 ];
-
-/** Statuses that are considered "closed" and don't need deadline tracking */
-const CLOSED_STATUSES: CAPStatus[] = ["VERIFIED", "CLOSED"];
 
 // =============================================================================
 // DEADLINE CALCULATIONS
@@ -190,8 +186,6 @@ export function calculateMilestoneProgress(milestones: CAPMilestone[]): {
   upcoming: number;
   inProgress: number;
 } {
-  const today = startOfDay(new Date());
-
   const completed = milestones.filter((m) => m.status === "COMPLETED").length;
   const overdue = milestones.filter(
     (m) =>
@@ -413,9 +407,6 @@ export async function getOverdueMilestones(): Promise<
  */
 export async function detectEscalationEvents(): Promise<EscalationEvent[]> {
   const events: EscalationEvent[] = [];
-  const today = startOfDay(new Date());
-  const sevenDaysFromNow = addDays(today, 7);
-  const oneDayFromNow = addDays(today, 1);
 
   // Get all trackable CAPs with their findings and assigned users
   const caps = await db.correctiveActionPlan.findMany({

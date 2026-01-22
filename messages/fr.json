@@ -2649,7 +2649,8 @@
     "actions": {
       "requestReview": "Demander une revue",
       "viewAll": "Voir tout",
-      "assignTeam": "Assigner l'équipe"
+      "assignTeam": "Assigner l'équipe",
+      "manageTeam": "Gérer l'équipe"
     },
     "status": {
       "REQUESTED": "Demandée",

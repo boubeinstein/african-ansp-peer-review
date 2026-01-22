@@ -2649,7 +2649,8 @@
     "actions": {
       "requestReview": "Request Review",
       "viewAll": "View All",
-      "assignTeam": "Assign Team"
+      "assignTeam": "Assign Team",
+      "manageTeam": "Manage Team"
     },
     "status": {
       "REQUESTED": "Requested",

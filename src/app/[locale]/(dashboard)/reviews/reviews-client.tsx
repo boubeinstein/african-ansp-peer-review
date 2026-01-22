@@ -48,6 +48,7 @@ import {
   LayoutGrid,
   List,
   UserPlus,
+  UserCog,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -552,7 +553,7 @@ function ReviewCard({
               </div>
             </div>
 
-            {/* Assign Team Button */}
+            {/* Assign/Manage Team Button */}
             {canAssignTeam && (
               <Button
                 variant={needsTeam ? "default" : "outline"}
@@ -563,8 +564,17 @@ function ReviewCard({
                   onAssignTeam(review.id);
                 }}
               >
-                <UserPlus className="h-4 w-4 mr-1" />
-                {t("actions.assignTeam")}
+                {review.teamMemberCount > 0 ? (
+                  <>
+                    <UserCog className="h-4 w-4 mr-1" />
+                    {t("actions.manageTeam")}
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="h-4 w-4 mr-1" />
+                    {t("actions.assignTeam")}
+                  </>
+                )}
               </Button>
             )}
 
@@ -628,7 +638,7 @@ function ReviewCard({
           </span>
         </div>
 
-        {/* Assign Team Button */}
+        {/* Assign/Manage Team Button */}
         {canAssignTeam && (
           <Button
             variant={needsTeam ? "default" : "outline"}
@@ -639,8 +649,17 @@ function ReviewCard({
               onAssignTeam(review.id);
             }}
           >
-            <UserPlus className="h-4 w-4 mr-2" />
-            {t("actions.assignTeam")}
+            {review.teamMemberCount > 0 ? (
+              <>
+                <UserCog className="h-4 w-4 mr-2" />
+                {t("actions.manageTeam")}
+              </>
+            ) : (
+              <>
+                <UserPlus className="h-4 w-4 mr-2" />
+                {t("actions.assignTeam")}
+              </>
+            )}
           </Button>
         )}
       </CardContent>

@@ -54,6 +54,17 @@ import {
   getStatusFlow,
 } from "@/server/services/review-state-machine";
 
+// Audit logging
+import {
+  logCreate,
+  logUpdate,
+  logStatusChange,
+  logAssignment,
+  logApproval,
+  logRejection,
+  logSubmission,
+} from "@/server/services/audit";
+
 // =============================================================================
 // CONSTANTS & HELPERS
 // =============================================================================
@@ -711,6 +722,23 @@ export const reviewRouter = router({
         },
       });
 
+      // Log audit event
+      await logCreate({
+        userId: ctx.user.id,
+        entityType: "Review",
+        entityId: review.id,
+        newState: {
+          referenceNumber: review.referenceNumber,
+          hostOrganizationId: review.hostOrganizationId,
+          reviewType: review.reviewType,
+          status: review.status,
+        },
+        metadata: {
+          hostOrganization: review.hostOrganization.nameEn,
+          assessmentIds: input.assessmentIds,
+        },
+      });
+
       // Send notifications to stakeholders
       try {
         await notifyReviewRequested({
@@ -915,6 +943,19 @@ export const reviewRouter = router({
           message: `Cannot transition to ${input.targetStatus}: ${result.errors?.join(", ")}`,
         });
       }
+
+      // Log audit event for status change
+      await logStatusChange({
+        userId,
+        entityType: "Review",
+        entityId: input.reviewId,
+        previousStatus: result.previousStatus || "UNKNOWN",
+        newStatus: input.targetStatus,
+        metadata: {
+          reason: input.reason,
+          notes: input.notes,
+        },
+      });
 
       // Fetch review with relations needed for notifications
       const reviewForNotification = await ctx.db.review.findUnique({
@@ -1521,7 +1562,7 @@ export const reviewRouter = router({
         }
       }
 
-      return ctx.db.reviewTeamMember.create({
+      const teamMember = await ctx.db.reviewTeamMember.create({
         data: {
           reviewId: input.reviewId,
           userId: input.userId,
@@ -1547,6 +1588,22 @@ export const reviewRouter = router({
           },
         },
       });
+
+      // Log audit event
+      await logAssignment({
+        userId: ctx.user.id,
+        entityType: "ReviewTeamMember",
+        entityId: teamMember.id,
+        assigneeId: input.userId,
+        metadata: {
+          reviewId: input.reviewId,
+          role: input.role,
+          assignedAreas: input.assignedAreas,
+          assigneeName: `${teamMember.user.firstName} ${teamMember.user.lastName}`,
+        },
+      });
+
+      return teamMember;
     }),
 
   /**
@@ -2507,7 +2564,7 @@ export const reviewRouter = router({
         }
       }
 
-      return ctx.db.finding.create({
+      const finding = await ctx.db.finding.create({
         data: {
           ...input,
           referenceNumber: generateFindingNumber(
@@ -2525,6 +2582,25 @@ export const reviewRouter = router({
           },
         },
       });
+
+      // Log audit event
+      await logCreate({
+        userId: ctx.user.id,
+        entityType: "Finding",
+        entityId: finding.id,
+        newState: {
+          referenceNumber: finding.referenceNumber,
+          severity: input.severity,
+          findingType: input.findingType,
+          reviewId: input.reviewId,
+        },
+        metadata: {
+          reviewReference: review.referenceNumber,
+          title: input.titleEn,
+        },
+      });
+
+      return finding;
     }),
 
   /**

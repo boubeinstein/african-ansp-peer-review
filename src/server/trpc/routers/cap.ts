@@ -21,6 +21,16 @@ import {
   roleProcedure,
 } from "../trpc";
 import { CAPStatus, UserRole } from "@prisma/client";
+import {
+  logCreate,
+  logUpdate,
+  logDelete,
+  logSubmission,
+  logApproval,
+  logRejection,
+  logVerification,
+  logStatusChange,
+} from "@/server/services/audit";
 
 // =============================================================================
 // ROLE DEFINITIONS
@@ -283,13 +293,18 @@ export const capRouter = router({
       });
 
       // Log the creation
-      await ctx.db.auditLog.create({
-        data: {
-          userId: user.id,
-          action: "CREATE",
-          entityType: "CorrectiveActionPlan",
-          entityId: cap.id,
-          newData: JSON.parse(JSON.stringify(cap)),
+      await logCreate({
+        userId: user.id,
+        entityType: "CorrectiveActionPlan",
+        entityId: cap.id,
+        newState: {
+          findingId: input.findingId,
+          status: "DRAFT",
+          dueDate: input.dueDate,
+        },
+        metadata: {
+          findingReference: cap.finding.referenceNumber,
+          severity: cap.finding.severity,
         },
       });
 
@@ -483,15 +498,17 @@ export const capRouter = router({
       });
 
       // Log the update
-      await ctx.db.auditLog.create({
-        data: {
-          userId: user.id,
-          action: "UPDATE",
-          entityType: "CorrectiveActionPlan",
-          entityId: id,
-          previousData: JSON.parse(JSON.stringify(existing)),
-          newData: JSON.parse(JSON.stringify(updated)),
+      await logUpdate({
+        userId: user.id,
+        entityType: "CorrectiveActionPlan",
+        entityId: id,
+        previousState: {
+          rootCauseEn: existing.rootCauseEn,
+          correctiveActionEn: existing.correctiveActionEn,
+          dueDate: existing.dueDate,
+          assignedToId: existing.assignedToId,
         },
+        newState: updateData,
       });
 
       return updated;
@@ -558,15 +575,15 @@ export const capRouter = router({
         data: { status: "CAP_SUBMITTED" },
       });
 
-      // Log the transition
-      await ctx.db.auditLog.create({
-        data: {
-          userId: user.id,
-          action: "STATUS_CHANGE",
-          entityType: "CorrectiveActionPlan",
-          entityId: input.id,
-          previousData: { status: cap.status },
-          newData: { status: "SUBMITTED", notes: input.notes },
+      // Log the submission
+      await logSubmission({
+        userId: user.id,
+        entityType: "CorrectiveActionPlan",
+        entityId: input.id,
+        metadata: {
+          previousStatus: cap.status,
+          notes: input.notes,
+          findingReference: updated.finding.referenceNumber,
         },
       });
 
@@ -612,15 +629,13 @@ export const capRouter = router({
       });
 
       // Log the transition
-      await ctx.db.auditLog.create({
-        data: {
-          userId: user.id,
-          action: "STATUS_CHANGE",
-          entityType: "CorrectiveActionPlan",
-          entityId: input.id,
-          previousData: { status: cap.status },
-          newData: { status: "UNDER_REVIEW", notes: input.notes },
-        },
+      await logStatusChange({
+        userId: user.id,
+        entityType: "CorrectiveActionPlan",
+        entityId: input.id,
+        previousStatus: cap.status,
+        newStatus: "UNDER_REVIEW",
+        metadata: { notes: input.notes },
       });
 
       return updated;
@@ -671,16 +686,12 @@ export const capRouter = router({
         data: { status: "CAP_ACCEPTED" },
       });
 
-      // Log the transition
-      await ctx.db.auditLog.create({
-        data: {
-          userId: user.id,
-          action: "STATUS_CHANGE",
-          entityType: "CorrectiveActionPlan",
-          entityId: input.id,
-          previousData: { status: cap.status },
-          newData: { status: "ACCEPTED", notes: input.notes },
-        },
+      // Log the acceptance
+      await logApproval({
+        userId: user.id,
+        entityType: "CorrectiveActionPlan",
+        entityId: input.id,
+        metadata: { previousStatus: cap.status, notes: input.notes },
       });
 
       return updated;
@@ -731,15 +742,11 @@ export const capRouter = router({
       });
 
       // Log the rejection with reason
-      await ctx.db.auditLog.create({
-        data: {
-          userId: user.id,
-          action: "STATUS_CHANGE",
-          entityType: "CorrectiveActionPlan",
-          entityId: input.id,
-          previousData: { status: cap.status },
-          newData: { status: "REJECTED", reason: input.reason },
-        },
+      await logRejection({
+        userId: user.id,
+        entityType: "CorrectiveActionPlan",
+        entityId: input.id,
+        metadata: { previousStatus: cap.status, reason: input.reason },
       });
 
       return updated;
@@ -801,15 +808,13 @@ export const capRouter = router({
       });
 
       // Log the transition
-      await ctx.db.auditLog.create({
-        data: {
-          userId: user.id,
-          action: "STATUS_CHANGE",
-          entityType: "CorrectiveActionPlan",
-          entityId: input.id,
-          previousData: { status: cap.status },
-          newData: { status: "IN_PROGRESS", notes: input.notes },
-        },
+      await logStatusChange({
+        userId: user.id,
+        entityType: "CorrectiveActionPlan",
+        entityId: input.id,
+        previousStatus: cap.status,
+        newStatus: "IN_PROGRESS",
+        metadata: { notes: input.notes },
       });
 
       return updated;
@@ -871,18 +876,13 @@ export const capRouter = router({
       });
 
       // Log the transition
-      await ctx.db.auditLog.create({
-        data: {
-          userId: user.id,
-          action: "STATUS_CHANGE",
-          entityType: "CorrectiveActionPlan",
-          entityId: input.id,
-          previousData: { status: cap.status },
-          newData: {
-            status: "COMPLETED",
-            implementationNotes: input.implementationNotes,
-          },
-        },
+      await logStatusChange({
+        userId: user.id,
+        entityType: "CorrectiveActionPlan",
+        entityId: input.id,
+        previousStatus: cap.status,
+        newStatus: "COMPLETED",
+        metadata: { implementationNotes: input.implementationNotes },
       });
 
       return updated;
@@ -937,18 +937,15 @@ export const capRouter = router({
       });
 
       // Log the verification
-      await ctx.db.auditLog.create({
-        data: {
-          userId: user.id,
-          action: "STATUS_CHANGE",
-          entityType: "CorrectiveActionPlan",
-          entityId: input.id,
-          previousData: { status: cap.status },
-          newData: {
-            status: "VERIFIED",
-            verificationMethod: input.verificationMethod,
-            verificationNotes: input.verificationNotes,
-          },
+      await logVerification({
+        userId: user.id,
+        entityType: "CorrectiveActionPlan",
+        entityId: input.id,
+        verified: true,
+        metadata: {
+          previousStatus: cap.status,
+          verificationMethod: input.verificationMethod,
+          verificationNotes: input.verificationNotes,
         },
       });
 
@@ -996,18 +993,16 @@ export const capRouter = router({
       });
 
       // Log the failed verification
-      await ctx.db.auditLog.create({
-        data: {
-          userId: user.id,
-          action: "STATUS_CHANGE",
-          entityType: "CorrectiveActionPlan",
-          entityId: input.id,
-          previousData: { status: cap.status },
-          newData: {
-            status: "IN_PROGRESS",
-            verificationMethod: input.verificationMethod,
-            failureReason: input.failureReason,
-          },
+      await logStatusChange({
+        userId: user.id,
+        entityType: "CorrectiveActionPlan",
+        entityId: input.id,
+        previousStatus: cap.status,
+        newStatus: "IN_PROGRESS",
+        metadata: {
+          verificationFailed: true,
+          verificationMethod: input.verificationMethod,
+          failureReason: input.failureReason,
         },
       });
 
@@ -1062,15 +1057,13 @@ export const capRouter = router({
       });
 
       // Log the closure
-      await ctx.db.auditLog.create({
-        data: {
-          userId: user.id,
-          action: "STATUS_CHANGE",
-          entityType: "CorrectiveActionPlan",
-          entityId: input.id,
-          previousData: { status: cap.status },
-          newData: { status: "CLOSED", notes: input.notes },
-        },
+      await logStatusChange({
+        userId: user.id,
+        entityType: "CorrectiveActionPlan",
+        entityId: input.id,
+        previousStatus: cap.status,
+        newStatus: "CLOSED",
+        metadata: { notes: input.notes },
       });
 
       return updated;
@@ -1371,13 +1364,15 @@ export const capRouter = router({
       });
 
       // Log the deletion
-      await ctx.db.auditLog.create({
-        data: {
-          userId: user.id,
-          action: "DELETE",
-          entityType: "CorrectiveActionPlan",
-          entityId: input.id,
-          previousData: JSON.parse(JSON.stringify(cap)),
+      await logDelete({
+        userId: user.id,
+        entityType: "CorrectiveActionPlan",
+        entityId: input.id,
+        previousState: {
+          findingId: cap.findingId,
+          status: cap.status,
+          rootCauseEn: cap.rootCauseEn,
+          dueDate: cap.dueDate,
         },
       });
 

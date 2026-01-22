@@ -21,6 +21,7 @@ import { joinRequestRouter } from "./join-request";
 import { dashboardRouter } from "./dashboard";
 import { notificationRouter } from "./notification";
 import { analyticsRouter } from "./analytics";
+import { auditRouter } from "./audit";
 
 /**
  * Main app router combining all sub-routers
@@ -48,6 +49,7 @@ export const appRouter = router({
   dashboard: dashboardRouter,
   notification: notificationRouter,
   analytics: analyticsRouter,
+  audit: auditRouter,
 });
 
 /**

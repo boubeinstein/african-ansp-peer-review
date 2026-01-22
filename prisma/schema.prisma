@@ -940,20 +940,22 @@ model Notification {
 }
 
 model AuditLog {
-  id           String   @id @default(cuid())
-  userId       String?  @map("user_id")
-  action       String
-  entityType   String   @map("entity_type")
-  entityId     String   @map("entity_id")
-  previousData Json?    @map("previous_data")
-  newData      Json?    @map("new_data")
-  ipAddress    String?  @map("ip_address")
-  userAgent    String?  @map("user_agent")
-  createdAt    DateTime @default(now()) @map("created_at")
-  user         User?    @relation(fields: [userId], references: [id])
+  id            String      @id @default(cuid())
+  userId        String      @map("user_id")
+  action        AuditAction
+  entityType    String      @map("entity_type")
+  entityId      String      @map("entity_id")
+  previousState Json?       @map("previous_state")
+  newState      Json?       @map("new_state")
+  metadata      Json?
+  ipAddress     String?     @map("ip_address")
+  userAgent     String?     @map("user_agent")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  user          User        @relation(fields: [userId], references: [id])
 
   @@index([entityType, entityId])
-  @@index([userId, createdAt])
+  @@index([userId])
+  @@index([createdAt])
   @@map("audit_logs")
 }
 
@@ -1527,4 +1529,20 @@ enum NotificationPriority {
   NORMAL
   HIGH
   URGENT
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  STATUS_CHANGE
+  APPROVAL
+  REJECTION
+  ASSIGNMENT
+  SUBMISSION
+  VERIFICATION
+  LOGIN
+  LOGOUT
+  EXPORT
+  VIEW_SENSITIVE
 }

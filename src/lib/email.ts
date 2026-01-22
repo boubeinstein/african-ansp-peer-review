@@ -91,6 +91,8 @@ interface ApplicationReceivedData {
   applicantName: string;
   organizationName: string;
   referenceId: string;
+  isAccessRequest?: boolean;
+  orgAdminEmail?: string | null;
 }
 
 interface ForwardedToSCData {
@@ -132,9 +134,18 @@ interface CredentialsEmailData {
 export async function sendApplicationReceivedEmail(
   data: ApplicationReceivedData
 ): Promise<EmailResult> {
+  const requestType = data.isAccessRequest ? "Access request" : "Programme join application";
   console.log(
-    `[EMAIL] Application received confirmation sent to ${data.applicantEmail}`
+    `[EMAIL] ${requestType} confirmation sent to ${data.applicantEmail} for ${data.organizationName}`
   );
+
+  // If access request and org admin exists, notify them too
+  if (data.isAccessRequest && data.orgAdminEmail) {
+    console.log(
+      `[EMAIL] Access request notification sent to org admin ${data.orgAdminEmail}`
+    );
+  }
+
   // TODO: Implement with Resend when ready
   return { success: true };
 }

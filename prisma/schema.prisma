@@ -983,6 +983,7 @@ model UserPreferences {
 model JoinRequest {
   id                         String            @id @default(cuid())
   organizationId             String            @map("organization_id")
+  requestType                JoinRequestType   @default(PROGRAMME_JOIN) @map("request_type")
   contactName                String            @map("contact_name")
   contactEmail               String            @map("contact_email")
   contactPhone               String?           @map("contact_phone")
@@ -1075,6 +1076,11 @@ enum JoinRequestStatus {
   REJECTED
   MORE_INFO
   WITHDRAWN
+}
+
+enum JoinRequestType {
+  PROGRAMME_JOIN  // Non-member organization wants to join the programme
+  USER_ACCESS     // User wants access to an existing member organization
 }
 
 enum QuestionnaireType {

@@ -897,7 +897,7 @@ async function seedUsers(): Promise<void> {
           reviewsAsLead: userData.reviewsAsLead,
           isAvailable: true,
           reviewerType: "PEER_REVIEWER" as ReviewerType,
-          selectionStatus: "APPROVED" as ReviewerSelectionStatus,
+          selectionStatus: "SELECTED" as ReviewerSelectionStatus,
           preferredContactMethod: "EMAIL" as ContactMethod,
         },
       });
@@ -918,7 +918,7 @@ async function seedUsers(): Promise<void> {
           reviewsAsLead: userData.reviewsAsLead,
           isAvailable: true,
           reviewerType: "PEER_REVIEWER" as ReviewerType,
-          selectionStatus: "APPROVED" as ReviewerSelectionStatus,
+          selectionStatus: "SELECTED" as ReviewerSelectionStatus,
           preferredContactMethod: "EMAIL" as ContactMethod,
         },
       });

@@ -6,6 +6,7 @@ import { UserRole } from "@prisma/client";
 export type Feature =
   | "dashboard"
   | "dashboard.global"
+  | "analytics"
   | "questionnaires"
   | "questionnaires.manage"
   | "assessments"
@@ -60,6 +61,7 @@ const permissions: Record<UserRole, Feature[]> = {
   SUPER_ADMIN: [
     "dashboard",
     "dashboard.global",
+    "analytics",
     "questionnaires",
     "questionnaires.manage",
     "assessments",
@@ -106,6 +108,7 @@ const permissions: Record<UserRole, Feature[]> = {
   SYSTEM_ADMIN: [
     "dashboard",
     "dashboard.global",
+    "analytics",
     "questionnaires",
     "questionnaires.manage",
     "assessments",
@@ -151,6 +154,7 @@ const permissions: Record<UserRole, Feature[]> = {
   PROGRAMME_COORDINATOR: [
     "dashboard",
     "dashboard.global",
+    "analytics",
     "questionnaires",
     "questionnaires.manage",
     "assessments",
@@ -192,6 +196,7 @@ const permissions: Record<UserRole, Feature[]> = {
   STEERING_COMMITTEE: [
     "dashboard",
     "dashboard.global",
+    "analytics",
     "assessments",
     "assessments.all",
     "peerReviews",

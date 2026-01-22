@@ -1,6 +1,7 @@
 import { UserRole } from "@prisma/client";
 import {
   LayoutDashboard,
+  BarChart3,
   ClipboardList,
   FileCheck,
   Users,
@@ -35,6 +36,12 @@ const allNavItems: NavItem[] = [
     href: "/dashboard",
     icon: LayoutDashboard,
     feature: "dashboard",
+  },
+  {
+    name: "analytics",
+    href: "/analytics",
+    icon: BarChart3,
+    feature: "analytics",
   },
   {
     name: "questionnaires",

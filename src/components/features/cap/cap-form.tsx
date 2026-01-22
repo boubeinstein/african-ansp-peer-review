@@ -46,7 +46,6 @@ import {
   Save,
   Send,
   AlertTriangle,
-  Languages,
 } from "lucide-react";
 import { format, addDays } from "date-fns";
 import { AutoTranslateButton } from "@/components/features/translation/auto-translate-button";

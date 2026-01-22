@@ -1,4 +1,24 @@
 import { db } from "@/lib/db";
+import { TeamRole } from "@prisma/client";
+
+// =============================================================================
+// TYPES
+// =============================================================================
+
+interface LeadReviewerValidationResult {
+  valid: boolean;
+  errors: string[];
+  warnings: string[];
+  canOverride: boolean;
+  profile?: {
+    id: string;
+    fullName: string;
+    isLeadQualified: boolean;
+    reviewsCompleted: number;
+    reviewsAsLead: number;
+    status: string;
+  };
+}
 
 interface EligibilityResult {
   reviewers: ReviewerWithDetails[];
@@ -200,4 +220,280 @@ export async function validateReviewerAssignment(
   }
 
   return { valid: true, isCrossTeam };
+}
+
+// =============================================================================
+// LEAD REVIEWER VALIDATION
+// =============================================================================
+
+/**
+ * Minimum number of reviews required to be a Lead Reviewer
+ */
+const MIN_REVIEWS_FOR_LEAD = 3;
+
+/**
+ * Validate Lead Reviewer assignment against eligibility rules
+ *
+ * Rules:
+ * 1. Must have LEAD_QUALIFIED status or isLeadQualified flag
+ * 2. Must have completed at least 3 reviews as regular reviewer
+ * 3. Must not have conflict of interest with host organization
+ * 4. Only one Lead Reviewer per review (existing lead check)
+ * 5. Programme Coordinator can approve exceptions
+ */
+export async function validateLeadReviewerAssignment(
+  reviewerProfileId: string,
+  reviewId: string,
+  options?: {
+    /** Skip the "only one lead" check (for replacement scenarios) */
+    skipExistingLeadCheck?: boolean;
+    /** The ID of the member being replaced (to exclude from check) */
+    replacingMemberId?: string;
+  }
+): Promise<LeadReviewerValidationResult> {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  // Get reviewer profile with full details
+  const profile = await db.reviewerProfile.findUnique({
+    where: { id: reviewerProfileId },
+    include: {
+      user: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          organizationId: true,
+        },
+      },
+      homeOrganization: {
+        select: { id: true },
+      },
+    },
+  });
+
+  if (!profile) {
+    return {
+      valid: false,
+      errors: ["Reviewer profile not found"],
+      warnings: [],
+      canOverride: false,
+    };
+  }
+
+  const fullName = `${profile.user.firstName} ${profile.user.lastName}`;
+
+  // Get review details
+  const review = await db.review.findUnique({
+    where: { id: reviewId },
+    select: {
+      id: true,
+      hostOrganizationId: true,
+      hostOrganization: {
+        select: { nameEn: true },
+      },
+    },
+  });
+
+  if (!review) {
+    return {
+      valid: false,
+      errors: ["Review not found"],
+      warnings: [],
+      canOverride: false,
+      profile: {
+        id: profile.id,
+        fullName,
+        isLeadQualified: profile.isLeadQualified,
+        reviewsCompleted: profile.reviewsCompleted,
+        reviewsAsLead: profile.reviewsAsLead,
+        status: profile.status,
+      },
+    };
+  }
+
+  // Rule 1: Must be Lead Qualified
+  const isQualified = profile.isLeadQualified || profile.status === "LEAD_QUALIFIED";
+  if (!isQualified) {
+    errors.push("Reviewer must have Lead Qualified status");
+  }
+
+  // Rule 2: Minimum experience (at least 3 reviews completed)
+  if (profile.reviewsCompleted < MIN_REVIEWS_FOR_LEAD) {
+    errors.push(
+      `Lead Reviewer must have completed at least ${MIN_REVIEWS_FOR_LEAD} reviews (has ${profile.reviewsCompleted})`
+    );
+  }
+
+  // Rule 3: Check COI - Home organization
+  const reviewerOrgId = profile.homeOrganizationId || profile.user.organizationId;
+  if (reviewerOrgId === review.hostOrganizationId) {
+    errors.push(
+      `Lead Reviewer cannot be from host organization (${review.hostOrganization?.nameEn})`
+    );
+  }
+
+  // Rule 3: Check COI - Declared conflicts
+  const activeCOI = await db.reviewerCOI.findFirst({
+    where: {
+      reviewerProfileId: reviewerProfileId,
+      organizationId: review.hostOrganizationId,
+      isActive: true,
+      OR: [
+        { endDate: null },
+        { endDate: { gt: new Date() } },
+      ],
+    },
+  });
+
+  if (activeCOI) {
+    // Check if there's an approved override for this specific review
+    const override = await db.cOIOverride.findFirst({
+      where: {
+        reviewerProfileId: reviewerProfileId,
+        organizationId: review.hostOrganizationId,
+        reviewId: reviewId,
+        isRevoked: false,
+        OR: [
+          { expiresAt: null },
+          { expiresAt: { gt: new Date() } },
+        ],
+      },
+    });
+
+    if (!override) {
+      errors.push(
+        `Reviewer has a declared conflict of interest with ${review.hostOrganization?.nameEn}`
+      );
+    } else {
+      warnings.push("COI override has been approved for this assignment");
+    }
+  }
+
+  // Rule 4: Only one Lead Reviewer per review
+  if (!options?.skipExistingLeadCheck) {
+    const existingLeadQuery: Parameters<typeof db.reviewTeamMember.findFirst>[0] = {
+      where: {
+        reviewId,
+        role: "LEAD_REVIEWER" as TeamRole,
+        invitationStatus: { notIn: ["DECLINED", "WITHDRAWN"] },
+      },
+    };
+
+    // Exclude the member being replaced
+    if (options?.replacingMemberId) {
+      existingLeadQuery.where = {
+        ...existingLeadQuery.where,
+        id: { not: options.replacingMemberId },
+      };
+    }
+
+    // Also exclude if the same reviewer is already assigned (e.g., role change scenario)
+    existingLeadQuery.where = {
+      ...existingLeadQuery.where,
+      reviewerProfileId: { not: reviewerProfileId },
+    };
+
+    const existingLead = await db.reviewTeamMember.findFirst(existingLeadQuery);
+
+    if (existingLead) {
+      errors.push("Review already has a Lead Reviewer assigned");
+    }
+  }
+
+  // Determine if errors can be overridden by Programme Coordinator
+  // Only qualification and experience errors can be overridden, not COI or duplicate lead
+  const canOverride =
+    errors.length > 0 &&
+    errors.every(
+      (e) =>
+        e.includes("Lead Qualified status") ||
+        e.includes("completed at least")
+    );
+
+  return {
+    valid: errors.length === 0,
+    errors,
+    warnings,
+    canOverride,
+    profile: {
+      id: profile.id,
+      fullName,
+      isLeadQualified: profile.isLeadQualified,
+      reviewsCompleted: profile.reviewsCompleted,
+      reviewsAsLead: profile.reviewsAsLead,
+      status: profile.status,
+    },
+  };
+}
+
+/**
+ * Get lead qualification requirements summary for a reviewer
+ */
+export async function getLeadQualificationStatus(
+  reviewerProfileId: string
+): Promise<{
+  isQualified: boolean;
+  requirements: {
+    name: string;
+    met: boolean;
+    current: string;
+    required: string;
+  }[];
+}> {
+  const profile = await db.reviewerProfile.findUnique({
+    where: { id: reviewerProfileId },
+    select: {
+      status: true,
+      isLeadQualified: true,
+      reviewsCompleted: true,
+      reviewsAsLead: true,
+      certifications: {
+        where: {
+          certificationType: "LEAD_REVIEWER",
+          OR: [
+            { expiryDate: null },
+            { expiryDate: { gt: new Date() } },
+          ],
+        },
+      },
+    },
+  });
+
+  if (!profile) {
+    return {
+      isQualified: false,
+      requirements: [],
+    };
+  }
+
+  const hasLeadStatus = profile.isLeadQualified || profile.status === "LEAD_QUALIFIED";
+  const hasMinReviews = profile.reviewsCompleted >= MIN_REVIEWS_FOR_LEAD;
+  const hasLeadCert = profile.certifications.length > 0;
+
+  const requirements = [
+    {
+      name: "Lead Qualified Status",
+      met: hasLeadStatus,
+      current: hasLeadStatus ? "Yes" : "No",
+      required: "Yes",
+    },
+    {
+      name: "Minimum Reviews Completed",
+      met: hasMinReviews,
+      current: `${profile.reviewsCompleted} reviews`,
+      required: `${MIN_REVIEWS_FOR_LEAD} reviews`,
+    },
+    {
+      name: "Lead Reviewer Certification",
+      met: hasLeadCert,
+      current: hasLeadCert ? "Active" : "None",
+      required: "Valid certification",
+    },
+  ];
+
+  return {
+    isQualified: hasLeadStatus && hasMinReviews,
+    requirements,
+  };
 }

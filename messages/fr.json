@@ -3748,7 +3748,10 @@
           "OBSERVER": "Observateur",
           "TRAINEE": "Stagiaire"
         },
-        "notLeadQualified": "Ce évaluateur n'est pas qualifié pour être évaluateur principal"
+        "notLeadQualified": "Ce évaluateur n'est pas qualifié pour être évaluateur principal",
+        "leadRequirements": "Exigences pour évaluateur principal",
+        "requiresLeadStatus": "Doit avoir le statut Qualifié Chef d'équipe",
+        "requiresMinReviews": "Doit compléter au moins {required} revues (actuellement {current})"
       },
       "error": {
         "title": "Erreur",

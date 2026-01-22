@@ -40,7 +40,11 @@ import {
 } from "@/server/services/notification-service";
 
 // Team eligibility service
-import { validateReviewerAssignment } from "@/server/services/reviewer-eligibility";
+import {
+  validateReviewerAssignment,
+  validateLeadReviewerAssignment,
+  getLeadQualificationStatus,
+} from "@/server/services/reviewer-eligibility";
 
 // Status state machine
 import {
@@ -1826,11 +1830,27 @@ export const reviewRouter = router({
         }
 
         // Check lead qualification if assigning as LEAD_REVIEWER
-        if (assignment.role === "LEAD_REVIEWER" && !profile.isLeadQualified) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Selected Lead Reviewer is not lead-qualified",
-          });
+        if (assignment.role === "LEAD_REVIEWER") {
+          const leadValidation = await validateLeadReviewerAssignment(
+            assignment.reviewerProfileId,
+            reviewId,
+            { skipExistingLeadCheck: true } // We already validated exactly one lead above
+          );
+
+          if (!leadValidation.valid) {
+            // Check if user can approve exceptions
+            const canApproveException =
+              leadValidation.canOverride &&
+              ["PROGRAMME_COORDINATOR", "SUPER_ADMIN"].includes(ctx.session.user.role);
+
+            if (!canApproveException) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: `Lead Reviewer requirements not met: ${leadValidation.errors.join("; ")}`,
+              });
+            }
+            // Coordinator can override qualification/experience requirements
+          }
         }
       }
 
@@ -2222,20 +2242,26 @@ export const reviewRouter = router({
           });
         }
 
-        // If adding as lead, check no other lead exists
+        // If adding as lead, validate lead reviewer requirements
         if (input.role === "LEAD_REVIEWER") {
-          const existingLead = await ctx.db.reviewTeamMember.findFirst({
-            where: {
-              reviewId: input.reviewId,
-              role: "LEAD_REVIEWER",
-            },
-          });
+          const leadValidation = await validateLeadReviewerAssignment(
+            input.reviewerProfileId,
+            input.reviewId
+          );
 
-          if (existingLead) {
-            throw new TRPCError({
-              code: "BAD_REQUEST",
-              message: "Review already has a Lead Reviewer",
-            });
+          if (!leadValidation.valid) {
+            // Check if user can approve exceptions
+            const canApproveException =
+              leadValidation.canOverride &&
+              ["PROGRAMME_COORDINATOR", "SUPER_ADMIN"].includes(ctx.session.user.role);
+
+            if (!canApproveException) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: `Lead Reviewer requirements not met: ${leadValidation.errors.join("; ")}`,
+              });
+            }
+            // If coordinator can override, allow with warning logged
           }
         }
 
@@ -3495,5 +3521,51 @@ export const reviewRouter = router({
           hasConfirmedLead,
         hasConfirmedLead,
       };
+    }),
+
+  // =============================================================================
+  // LEAD REVIEWER VALIDATION
+  // =============================================================================
+
+  /**
+   * Validate if a reviewer can be assigned as Lead Reviewer.
+   * Returns detailed validation results with requirements breakdown.
+   */
+  validateLeadReviewer: protectedProcedure
+    .input(
+      z.object({
+        reviewerProfileId: z.string(),
+        reviewId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const validation = await validateLeadReviewerAssignment(
+        input.reviewerProfileId,
+        input.reviewId
+      );
+
+      // Check if current user can approve exceptions
+      const canApprove = ["PROGRAMME_COORDINATOR", "SUPER_ADMIN"].includes(
+        ctx.session.user.role
+      );
+
+      return {
+        ...validation,
+        canUserApproveException: canApprove && validation.canOverride,
+      };
+    }),
+
+  /**
+   * Get lead qualification status for a reviewer.
+   * Returns requirements checklist with current status.
+   */
+  getLeadQualificationStatus: protectedProcedure
+    .input(
+      z.object({
+        reviewerProfileId: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      return getLeadQualificationStatus(input.reviewerProfileId);
     }),
 });

@@ -3748,7 +3748,10 @@
           "OBSERVER": "Observer",
           "TRAINEE": "Trainee"
         },
-        "notLeadQualified": "This reviewer is not qualified to be Lead Reviewer"
+        "notLeadQualified": "This reviewer is not qualified to be Lead Reviewer",
+        "leadRequirements": "Lead Reviewer Requirements",
+        "requiresLeadStatus": "Must have Lead Qualified status",
+        "requiresMinReviews": "Must complete at least {required} reviews (currently {current})"
       },
       "error": {
         "title": "Error",

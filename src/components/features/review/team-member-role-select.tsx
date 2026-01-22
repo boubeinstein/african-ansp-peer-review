@@ -38,6 +38,8 @@ export interface TeamMemberRoleSelectProps {
   value: TeamRole;
   onChange: (role: TeamRole) => void;
   isLeadQualified: boolean;
+  /** Number of reviews completed (for tooltip) */
+  reviewsCompleted?: number;
   disabled?: boolean;
   compact?: boolean;
   className?: string;
@@ -112,10 +114,13 @@ const ROLE_CONFIG: Record<
 // COMPONENT
 // =============================================================================
 
+const MIN_REVIEWS_FOR_LEAD = 3;
+
 export function TeamMemberRoleSelect({
   value,
   onChange,
   isLeadQualified,
+  reviewsCompleted = 0,
   disabled = false,
   compact = false,
   className,
@@ -123,6 +128,22 @@ export function TeamMemberRoleSelect({
   const t = useTranslations("review.teamWizard.roles");
 
   const config = ROLE_CONFIG[value];
+  const needsMoreReviews = reviewsCompleted < MIN_REVIEWS_FOR_LEAD;
+
+  // Generate tooltip content for lead requirements
+  const getLeadRequirementsTooltip = () => {
+    const requirements: string[] = [];
+    if (!isLeadQualified) {
+      requirements.push(t("requiresLeadStatus"));
+    }
+    if (needsMoreReviews) {
+      requirements.push(t("requiresMinReviews", {
+        current: reviewsCompleted,
+        required: MIN_REVIEWS_FOR_LEAD
+      }));
+    }
+    return requirements;
+  };
 
   return (
     <Select
@@ -150,28 +171,38 @@ export function TeamMemberRoleSelect({
       </SelectTrigger>
       <SelectContent>
         {TEAM_ROLES.map((role) => {
-          const isDisabled = role === "LEAD_REVIEWER" && !isLeadQualified;
+          const isRoleDisabled = role === "LEAD_REVIEWER" && (!isLeadQualified || needsMoreReviews);
+          const requirements = role === "LEAD_REVIEWER" ? getLeadRequirementsTooltip() : [];
 
           return (
             <SelectItem
               key={role}
               value={role}
-              disabled={isDisabled}
-              className={cn(isDisabled && "opacity-50")}
+              disabled={isRoleDisabled}
+              className={cn(isRoleDisabled && "opacity-50")}
             >
               <div className="flex items-center gap-2">
                 {role === "LEAD_REVIEWER" && (
                   <Star className="h-3.5 w-3.5 text-yellow-500" />
                 )}
                 <span>{t(role)}</span>
-                {isDisabled && (
+                {isRoleDisabled && requirements.length > 0 && (
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <AlertCircle className="h-3.5 w-3.5 text-orange-500" />
                       </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{t("notLeadQualified")}</p>
+                      <TooltipContent className="max-w-xs">
+                        <div className="space-y-1">
+                          <p className="font-medium">{t("leadRequirements")}</p>
+                          <ul className="text-xs space-y-0.5">
+                            {requirements.map((req, i) => (
+                              <li key={i} className="flex items-center gap-1">
+                                <span className="text-red-500">•</span> {req}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>

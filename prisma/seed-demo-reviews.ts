@@ -302,16 +302,13 @@ async function printSummary(): Promise<void> {
   const reviews = await prisma.review.findMany({
     include: {
       hostOrganization: {
-        select: { icaoCode: true, nameEn: true, regionalTeamId: true },
-        include: { regionalTeam: { select: { nameEn: true } } },
+        include: { regionalTeam: true },
       },
       teamMembers: {
         include: {
-          user: { select: { firstName: true, lastName: true } },
+          user: true,
           reviewerProfile: {
-            include: {
-              homeOrganization: { select: { icaoCode: true, regionalTeamId: true } },
-            },
+            include: { homeOrganization: true },
           },
         },
       },

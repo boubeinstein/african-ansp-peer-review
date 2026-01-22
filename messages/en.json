@@ -5338,5 +5338,83 @@
     "applyTranslation": "Apply Translation",
     "autoTranslated": "Auto-translated",
     "autoTranslatedTooltip": "This content was auto-translated. Review before publishing."
+  },
+  "shortcuts": {
+    "title": "Keyboard Shortcuts",
+    "description": "Use keyboard shortcuts to navigate quickly and perform common actions.",
+    "tip": "Press ? anywhere to show this help dialog",
+    "categories": {
+      "global": "Global",
+      "navigation": "Navigation",
+      "reviews": "Reviews",
+      "findings": "Findings",
+      "caps": "CAPs"
+    },
+    "shortcuts": {
+      "global": {
+        "ctrl_k": "Open quick search",
+        "ctrl_n": "New (context-aware)",
+        "ctrl__": "Show keyboard shortcuts",
+        "?": "Show keyboard shortcuts",
+        "escape": "Close dialog / Cancel"
+      },
+      "navigation": {
+        "g_d": "Go to Dashboard",
+        "g_r": "Go to Reviews",
+        "g_f": "Go to Findings",
+        "g_c": "Go to CAPs",
+        "g_o": "Go to Organizations",
+        "g_e": "Go to Reviewers (Experts)",
+        "g_a": "Go to Analytics",
+        "g_s": "Go to Settings"
+      },
+      "reviews": {
+        "r_n": "New review request",
+        "r_l": "Reviews list"
+      },
+      "findings": {
+        "f_l": "Findings list"
+      },
+      "caps": {
+        "c_l": "CAPs list"
+      }
+    }
+  },
+  "commandPalette": {
+    "placeholder": "Search commands and pages...",
+    "noResults": "No results found",
+    "categories": {
+      "actions": "Actions",
+      "navigation": "Navigation"
+    },
+    "commands": {
+      "dashboard": "Dashboard",
+      "reviews": "Reviews",
+      "findings": "Findings",
+      "caps": "CAPs",
+      "organizations": "Organizations",
+      "reviewers": "Reviewers",
+      "analytics": "Analytics",
+      "settings": "Settings",
+      "newReview": "New Review Request",
+      "showShortcuts": "Keyboard Shortcuts"
+    },
+    "descriptions": {
+      "dashboard": "Go to main dashboard",
+      "reviews": "Manage peer review requests",
+      "findings": "View and manage findings",
+      "caps": "Corrective action plans",
+      "organizations": "ANSPs and CAAs",
+      "reviewers": "Expert reviewers pool",
+      "analytics": "Statistics and reports",
+      "settings": "Application settings",
+      "newReview": "Create a new review request",
+      "showShortcuts": "View all keyboard shortcuts"
+    },
+    "footer": {
+      "navigate": "to navigate",
+      "select": "to select",
+      "close": "to close"
+    }
   }
 }

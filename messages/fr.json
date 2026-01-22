@@ -5338,5 +5338,83 @@
     "applyTranslation": "Appliquer la Traduction",
     "autoTranslated": "Traduit automatiquement",
     "autoTranslatedTooltip": "Ce contenu a été traduit automatiquement. Vérifiez avant de publier."
+  },
+  "shortcuts": {
+    "title": "Raccourcis Clavier",
+    "description": "Utilisez les raccourcis clavier pour naviguer rapidement et effectuer des actions courantes.",
+    "tip": "Appuyez sur ? n'importe où pour afficher cette aide",
+    "categories": {
+      "global": "Global",
+      "navigation": "Navigation",
+      "reviews": "Revues",
+      "findings": "Constats",
+      "caps": "PAC"
+    },
+    "shortcuts": {
+      "global": {
+        "ctrl_k": "Ouvrir la recherche rapide",
+        "ctrl_n": "Nouveau (contextuel)",
+        "ctrl__": "Afficher les raccourcis clavier",
+        "?": "Afficher les raccourcis clavier",
+        "escape": "Fermer la boîte de dialogue / Annuler"
+      },
+      "navigation": {
+        "g_d": "Aller au Tableau de Bord",
+        "g_r": "Aller aux Revues",
+        "g_f": "Aller aux Constats",
+        "g_c": "Aller aux PAC",
+        "g_o": "Aller aux Organisations",
+        "g_e": "Aller aux Examinateurs",
+        "g_a": "Aller aux Analytiques",
+        "g_s": "Aller aux Paramètres"
+      },
+      "reviews": {
+        "r_n": "Nouvelle demande de revue",
+        "r_l": "Liste des revues"
+      },
+      "findings": {
+        "f_l": "Liste des constats"
+      },
+      "caps": {
+        "c_l": "Liste des PAC"
+      }
+    }
+  },
+  "commandPalette": {
+    "placeholder": "Rechercher des commandes et des pages...",
+    "noResults": "Aucun résultat trouvé",
+    "categories": {
+      "actions": "Actions",
+      "navigation": "Navigation"
+    },
+    "commands": {
+      "dashboard": "Tableau de Bord",
+      "reviews": "Revues",
+      "findings": "Constats",
+      "caps": "PAC",
+      "organizations": "Organisations",
+      "reviewers": "Examinateurs",
+      "analytics": "Analytiques",
+      "settings": "Paramètres",
+      "newReview": "Nouvelle Demande de Revue",
+      "showShortcuts": "Raccourcis Clavier"
+    },
+    "descriptions": {
+      "dashboard": "Aller au tableau de bord principal",
+      "reviews": "Gérer les demandes de revue par les pairs",
+      "findings": "Voir et gérer les constats",
+      "caps": "Plans d'actions correctives",
+      "organizations": "ANSP et CAA",
+      "reviewers": "Pool d'examinateurs experts",
+      "analytics": "Statistiques et rapports",
+      "settings": "Paramètres de l'application",
+      "newReview": "Créer une nouvelle demande de revue",
+      "showShortcuts": "Voir tous les raccourcis clavier"
+    },
+    "footer": {
+      "navigate": "pour naviguer",
+      "select": "pour sélectionner",
+      "close": "pour fermer"
+    }
   }
 }

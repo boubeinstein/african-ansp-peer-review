@@ -3141,6 +3141,16 @@
         "responsibleDepartmentPlaceholder": "Department or unit responsible",
         "findingSummary": "Finding Summary"
       },
+      "severity": {
+        "suggested": "Suggested",
+        "suggestionTitle": "AI Severity Suggestion",
+        "factors": "Contributing factors",
+        "applySuggestion": "Apply Suggestion",
+        "currentlyOverridden": "You've selected a different severity",
+        "overrideJustification": "Override Justification",
+        "overrideJustificationPlaceholder": "Explain why you've chosen a different severity level...",
+        "overrideJustificationHint": "Suggested: {suggested}, Selected: {selected}. Please provide justification for this override."
+      },
       "exitDialog": {
         "title": "Unsaved Changes",
         "description": "You have unsaved changes. Would you like to save them as a draft before leaving?",

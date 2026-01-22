@@ -3141,6 +3141,16 @@
         "responsibleDepartmentPlaceholder": "Département ou unité responsable",
         "findingSummary": "Résumé de la Constatation"
       },
+      "severity": {
+        "suggested": "Suggéré",
+        "suggestionTitle": "Suggestion de Sévérité par IA",
+        "factors": "Facteurs contributifs",
+        "applySuggestion": "Appliquer la Suggestion",
+        "currentlyOverridden": "Vous avez sélectionné une sévérité différente",
+        "overrideJustification": "Justification du Changement",
+        "overrideJustificationPlaceholder": "Expliquez pourquoi vous avez choisi un niveau de sévérité différent...",
+        "overrideJustificationHint": "Suggéré: {suggested}, Sélectionné: {selected}. Veuillez justifier ce changement."
+      },
       "exitDialog": {
         "title": "Modifications Non Enregistrées",
         "description": "Vous avez des modifications non enregistrées. Souhaitez-vous les enregistrer comme brouillon avant de quitter ?",

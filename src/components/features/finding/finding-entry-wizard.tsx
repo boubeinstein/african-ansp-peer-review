@@ -93,6 +93,11 @@ import {
   Link2,
   FileUp,
   Plus,
+  Lightbulb,
+  Sparkles,
+  ChevronDown,
+  ChevronUp,
+  Info,
 } from "lucide-react";
 
 // Utilities and API
@@ -103,6 +108,12 @@ import {
   CRITICAL_ELEMENTS,
   ICAO_REFERENCE_TYPES,
 } from "@/lib/questionnaire/constants";
+import {
+  calculateSeveritySuggestion,
+  getConfidenceLabel,
+  getConfidenceColor,
+  type SeveritySuggestion,
+} from "@/lib/finding/severity-suggestion";
 
 // Types
 import type {
@@ -126,6 +137,7 @@ const findingWizardSchema = z.object({
     "CONCERN",
   ]),
   severity: z.enum(["CRITICAL", "MAJOR", "MINOR", "OBSERVATION"]),
+  severityOverrideJustification: z.string().optional(),
   auditArea: z.enum(["LEG", "ORG", "PEL", "OPS", "AIR", "AIG", "ANS", "AGA", "SSP"]).optional(),
   icaoReference: z.string().optional(),
   criticalElement: z
@@ -335,6 +347,11 @@ export function FindingEntryWizard({
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
 
+  // Severity suggestion state
+  const [severitySuggestion, setSeveritySuggestion] = useState<SeveritySuggestion | null>(null);
+  const [showSuggestionDetails, setShowSuggestionDetails] = useState(false);
+  const [hasSeverityOverride, setHasSeverityOverride] = useState(false);
+
   // Auto-save timer ref
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -344,6 +361,7 @@ export function FindingEntryWizard({
     defaultValues: {
       findingType: initialData?.findingType || "OBSERVATION",
       severity: initialData?.severity || "MINOR",
+      severityOverrideJustification: initialData?.severityOverrideJustification || "",
       auditArea: initialData?.auditArea,
       icaoReference: initialData?.icaoReference || "",
       criticalElement: initialData?.criticalElement || null,
@@ -374,14 +392,52 @@ export function FindingEntryWizard({
   const watchFindingType = useWatch({ control: form.control, name: "findingType" });
   const watchSeverity = useWatch({ control: form.control, name: "severity" });
   const watchSuggestedTimeline = useWatch({ control: form.control, name: "suggestedTimeline" });
+  const watchAuditArea = useWatch({ control: form.control, name: "auditArea" });
+  const watchCriticalElement = useWatch({ control: form.control, name: "criticalElement" });
+  const watchIcaoReference = useWatch({ control: form.control, name: "icaoReference" });
+  const watchDescriptionEn = useWatch({ control: form.control, name: "descriptionEn" });
+  const watchTitleEn = useWatch({ control: form.control, name: "titleEn" });
   const formValues = useWatch({ control: form.control });
 
-  // Auto-suggest severity when finding type changes
+  // Calculate severity suggestion when relevant values change
+  useEffect(() => {
+    const suggestion = calculateSeveritySuggestion({
+      findingType: watchFindingType,
+      auditArea: watchAuditArea,
+      criticalElement: watchCriticalElement,
+      icaoReference: watchIcaoReference,
+      descriptionEn: watchDescriptionEn,
+      titleEn: watchTitleEn,
+    });
+    setSeveritySuggestion(suggestion);
+
+    // Check if current severity differs from suggestion
+    if (watchSeverity && watchSeverity !== suggestion.suggested) {
+      setHasSeverityOverride(true);
+    } else {
+      setHasSeverityOverride(false);
+    }
+  }, [
+    watchFindingType,
+    watchAuditArea,
+    watchCriticalElement,
+    watchIcaoReference,
+    watchDescriptionEn,
+    watchTitleEn,
+    watchSeverity,
+  ]);
+
+  // Auto-suggest severity when finding type changes (initial only)
   useEffect(() => {
     if (watchFindingType) {
-      const suggested = SUGGESTED_SEVERITY[watchFindingType];
-      if (suggested && !initialData?.severity) {
-        form.setValue("severity", suggested);
+      // Use the calculated suggestion if available
+      if (severitySuggestion && !initialData?.severity) {
+        form.setValue("severity", severitySuggestion.suggested);
+      } else if (!initialData?.severity) {
+        const suggested = SUGGESTED_SEVERITY[watchFindingType];
+        if (suggested) {
+          form.setValue("severity", suggested);
+        }
       }
 
       // Auto-set CAP required for non-conformities
@@ -389,7 +445,7 @@ export function FindingEntryWizard({
         form.setValue("capRequired", true);
       }
     }
-  }, [watchFindingType, form, initialData?.severity]);
+  }, [watchFindingType, form, initialData?.severity, severitySuggestion]);
 
   // Auto-set target close date when timeline is selected
   useEffect(() => {
@@ -675,7 +731,15 @@ export function FindingEntryWizard({
                             <FormItem>
                               <FormLabel>{t("filterBySeverity")} *</FormLabel>
                               <Select
-                                onValueChange={field.onChange}
+                                onValueChange={(value) => {
+                                  field.onChange(value);
+                                  // Track if user is overriding suggestion
+                                  if (severitySuggestion && value !== severitySuggestion.suggested) {
+                                    setHasSeverityOverride(true);
+                                  } else {
+                                    setHasSeverityOverride(false);
+                                  }
+                                }}
                                 value={field.value}
                               >
                                 <FormControl>
@@ -690,6 +754,11 @@ export function FindingEntryWizard({
                                         <Badge className={cn("text-xs", SEVERITY_STYLES[severity].color)}>
                                           {t(`severity.${severity}`)}
                                         </Badge>
+                                        {severitySuggestion?.suggested === severity && (
+                                          <span className="text-xs text-muted-foreground ml-1">
+                                            ({tWizard("severity.suggested")})
+                                          </span>
+                                        )}
                                       </div>
                                     </SelectItem>
                                   ))}
@@ -703,6 +772,126 @@ export function FindingEntryWizard({
                           )}
                         />
                       </div>
+
+                      {/* Severity Suggestion Card */}
+                      {severitySuggestion && watchFindingType !== "GOOD_PRACTICE" && (
+                        <div
+                          className={cn(
+                            "rounded-lg border p-4 space-y-3",
+                            getConfidenceColor(severitySuggestion.confidence)
+                          )}
+                        >
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex items-center gap-2">
+                              <Sparkles className="h-5 w-5" />
+                              <div>
+                                <span className="font-medium">
+                                  {tWizard("severity.suggestionTitle")}
+                                </span>
+                                <div className="flex items-center gap-2 mt-1">
+                                  <Badge className={cn(SEVERITY_STYLES[severitySuggestion.suggested].color)}>
+                                    {t(`severity.${severitySuggestion.suggested}`)}
+                                  </Badge>
+                                  <span className="text-xs">
+                                    {getConfidenceLabel(severitySuggestion.confidence, locale)}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setShowSuggestionDetails(!showSuggestionDetails)}
+                            >
+                              {showSuggestionDetails ? (
+                                <ChevronUp className="h-4 w-4" />
+                              ) : (
+                                <ChevronDown className="h-4 w-4" />
+                              )}
+                            </Button>
+                          </div>
+
+                          {/* Suggestion Factors */}
+                          {showSuggestionDetails && severitySuggestion.factors.length > 0 && (
+                            <div className="space-y-2 pt-2 border-t">
+                              <span className="text-xs font-medium text-muted-foreground">
+                                {tWizard("severity.factors")}:
+                              </span>
+                              <ul className="space-y-1">
+                                {severitySuggestion.factors.map((factor) => (
+                                  <li
+                                    key={factor.id}
+                                    className="flex items-center gap-2 text-xs"
+                                  >
+                                    <Check className="h-3 w-3" />
+                                    <span>
+                                      {locale === "fr" ? factor.descriptionFr : factor.description}
+                                    </span>
+                                    {factor.points > 0 && (
+                                      <Badge variant="outline" className="text-[10px] px-1 py-0">
+                                        +{factor.points}
+                                      </Badge>
+                                    )}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {/* Apply Suggestion Button */}
+                          {hasSeverityOverride && (
+                            <div className="flex items-center gap-2 pt-2">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  form.setValue("severity", severitySuggestion.suggested);
+                                  form.setValue("severityOverrideJustification", "");
+                                  setHasSeverityOverride(false);
+                                }}
+                              >
+                                <Lightbulb className="h-4 w-4 mr-2" />
+                                {tWizard("severity.applySuggestion")}
+                              </Button>
+                              <span className="text-xs text-muted-foreground">
+                                {tWizard("severity.currentlyOverridden")}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Override Justification Field */}
+                      {hasSeverityOverride && severitySuggestion && (
+                        <FormField
+                          control={form.control}
+                          name="severityOverrideJustification"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="flex items-center gap-2">
+                                <Info className="h-4 w-4 text-amber-500" />
+                                {tWizard("severity.overrideJustification")}
+                              </FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder={tWizard("severity.overrideJustificationPlaceholder")}
+                                  className="min-h-[80px] resize-y"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                {tWizard("severity.overrideJustificationHint", {
+                                  suggested: t(`severity.${severitySuggestion.suggested}`),
+                                  selected: t(`severity.${watchSeverity}`),
+                                })}
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
 
                       {/* Audit Area and Critical Element */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

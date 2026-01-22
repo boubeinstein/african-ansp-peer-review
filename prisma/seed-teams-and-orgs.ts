@@ -300,26 +300,42 @@ async function seedOrganizations(): Promise<Map<string, string>> {
   const orgIdMap = new Map<string, string>();
 
   for (const org of ORGANIZATIONS) {
-    const created = await prisma.organization.upsert({
-      where: { icaoCode: org.icaoCode },
-      update: {
-        icaoCode: org.icaoCode,
-        nameEn: org.nameEn,
-        nameFr: org.nameFr,
-        country: org.country,
-        region: org.region,
-        membershipStatus: "ACTIVE" as MembershipStatus,
-      },
-      create: {
-        code: org.code,
-        icaoCode: org.icaoCode,
-        nameEn: org.nameEn,
-        nameFr: org.nameFr,
-        country: org.country,
-        region: org.region,
-        membershipStatus: "ACTIVE" as MembershipStatus,
+    // Find existing org by code or icaoCode
+    const existing = await prisma.organization.findFirst({
+      where: {
+        OR: [
+          { icaoCode: org.icaoCode },
+        ],
       },
     });
+
+    let created;
+    if (existing) {
+      // Update existing
+      created = await prisma.organization.update({
+        where: { id: existing.id },
+        data: {
+          icaoCode: org.icaoCode,
+          nameEn: org.nameEn,
+          nameFr: org.nameFr,
+          country: org.country,
+          region: org.region,
+          membershipStatus: "ACTIVE" as MembershipStatus,
+        },
+      });
+    } else {
+      // Create new
+      created = await prisma.organization.create({
+        data: {
+          icaoCode: org.icaoCode,
+          nameEn: org.nameEn,
+          nameFr: org.nameFr,
+          country: org.country,
+          region: org.region,
+          membershipStatus: "ACTIVE" as MembershipStatus,
+        },
+      });
+    }
 
     orgIdMap.set(org.code, created.id);
     console.log(`  ✅ ${org.code}: ${org.nameEn}`);

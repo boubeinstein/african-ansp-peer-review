@@ -5,6 +5,10 @@
 import "dotenv/config";
 import { Pool } from "pg";
 
+interface PostgresError extends Error {
+  code?: string;
+}
+
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 async function fullResetSQL() {
@@ -51,13 +55,14 @@ async function fullResetSQL() {
         const match = sql.match(/(?:FROM|UPDATE)\s+(\w+)/i);
         const tableName = match ? match[1] : 'unknown';
         console.log(`  ✅ ${tableName}: ${result.rowCount} rows`);
-      } catch (e: any) {
+      } catch (e: unknown) {
+        const error = e as PostgresError;
         const match = sql.match(/(?:FROM|UPDATE)\s+(\w+)/i);
         const tableName = match ? match[1] : 'unknown';
-        if (e.code === '42P01') {
+        if (error.code === '42P01') {
           console.log(`  ⚠️ ${tableName}: table doesn't exist`);
         } else {
-          console.log(`  ❌ ${tableName}: ${e.message}`);
+          console.log(`  ❌ ${tableName}: ${error.message}`);
         }
       }
     }
@@ -69,29 +74,33 @@ async function fullResetSQL() {
     try {
       await client.query(`UPDATE organizations SET ${teamCol} = NULL`);
       console.log(`  ✅ organizations: team reference cleared`);
-    } catch (e: any) {
-      console.log(`  ⚠️ organizations team clear: ${e.message}`);
+    } catch (e: unknown) {
+      const error = e as PostgresError;
+      console.log(`  ⚠️ organizations team clear: ${error.message}`);
     }
 
     try {
       await client.query('DELETE FROM peer_support_teams');
       console.log(`  ✅ peer_support_teams: deleted`);
-    } catch (e: any) {
-      console.log(`  ⚠️ peer_support_teams: ${e.message}`);
+    } catch (e: unknown) {
+      const error = e as PostgresError;
+      console.log(`  ⚠️ peer_support_teams: ${error.message}`);
     }
 
     try {
       await client.query('DELETE FROM regional_teams');
       console.log(`  ✅ regional_teams: deleted`);
-    } catch (e: any) {
-      console.log(`  ⚠️ regional_teams: ${e.message}`);
+    } catch (e: unknown) {
+      const error = e as PostgresError;
+      console.log(`  ⚠️ regional_teams: ${error.message}`);
     }
 
     try {
       const result = await client.query('DELETE FROM organizations');
       console.log(`  ✅ organizations: ${result.rowCount} rows deleted`);
-    } catch (e: any) {
-      console.log(`  ❌ organizations: ${e.message}`);
+    } catch (e: unknown) {
+      const error = e as PostgresError;
+      console.log(`  ❌ organizations: ${error.message}`);
     }
 
     console.log("\n✅ Reset complete");

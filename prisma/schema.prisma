@@ -79,6 +79,8 @@ model User {
   revokedCOIOverrides      COIOverride[]          @relation("COIOverrideRevoker")
   assignedCAPs             CorrectiveActionPlan[] @relation("AssignedTo")
   capComments              CAPComment[]           @relation("CAPCommentAuthor")
+  uploadedEvidence         CAPEvidence[]          @relation("CAPEvidenceUploader")
+  reviewedEvidence         CAPEvidence[]          @relation("CAPEvidenceReviewer")
   uploadedDocuments        Document[]             @relation("UploadedDocuments")
   assignedFindings         Finding[]              @relation("AssignedTo")
   coordinatorReviews       JoinRequest[]          @relation("CoordinatorReview")
@@ -727,6 +729,7 @@ model CorrectiveActionPlan {
   documents          Document[]
   milestones         CAPMilestone[]
   comments           CAPComment[]
+  evidence           CAPEvidence[]
 
   @@map("corrective_action_plans")
 }
@@ -745,6 +748,7 @@ model CAPMilestone {
   createdAt     DateTime        @default(now()) @map("created_at")
   updatedAt     DateTime        @updatedAt @map("updated_at")
   cap           CorrectiveActionPlan @relation(fields: [capId], references: [id], onDelete: Cascade)
+  evidence      CAPEvidence[]
 
   @@index([capId])
   @@index([targetDate])
@@ -766,6 +770,42 @@ model CAPComment {
   @@index([capId])
   @@index([authorId])
   @@map("cap_comments")
+}
+
+model CAPEvidence {
+  id                String          @id @default(cuid())
+  capId             String          @map("cap_id")
+  milestoneId       String?         @map("milestone_id")
+  category          EvidenceCategory
+  titleEn           String          @map("title_en")
+  titleFr           String?         @map("title_fr")
+  descriptionEn     String?         @db.Text @map("description_en")
+  descriptionFr     String?         @db.Text @map("description_fr")
+  evidenceDate      DateTime        @map("evidence_date")
+  fileUrl           String          @map("file_url")
+  fileName          String          @map("file_name")
+  fileType          String          @map("file_type")
+  fileSize          Int             @map("file_size")
+  status            EvidenceStatus  @default(PENDING)
+  uploadedById      String          @map("uploaded_by_id")
+  uploadedAt        DateTime        @default(now()) @map("uploaded_at")
+  reviewedById      String?         @map("reviewed_by_id")
+  reviewedAt        DateTime?       @map("reviewed_at")
+  reviewerCommentEn String?         @db.Text @map("reviewer_comment_en")
+  reviewerCommentFr String?         @db.Text @map("reviewer_comment_fr")
+  rejectionReason   String?         @db.Text @map("rejection_reason")
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
+  cap               CorrectiveActionPlan @relation(fields: [capId], references: [id], onDelete: Cascade)
+  milestone         CAPMilestone?   @relation(fields: [milestoneId], references: [id])
+  uploadedBy        User            @relation("CAPEvidenceUploader", fields: [uploadedById], references: [id])
+  reviewedBy        User?           @relation("CAPEvidenceReviewer", fields: [reviewedById], references: [id])
+
+  @@index([capId])
+  @@index([milestoneId])
+  @@index([status])
+  @@index([uploadedById])
+  @@map("cap_evidence")
 }
 
 model TrainingModule {
@@ -1377,6 +1417,22 @@ enum MilestoneStatus {
   COMPLETED
   OVERDUE
   CANCELLED
+}
+
+enum EvidenceCategory {
+  PROCEDURE_UPDATE
+  TRAINING_RECORD
+  PHOTO
+  REPORT
+  OTHER
+}
+
+enum EvidenceStatus {
+  PENDING
+  UNDER_REVIEW
+  ACCEPTED
+  REJECTED
+  MORE_INFO_REQUIRED
 }
 
 enum ResourceType {

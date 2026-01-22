@@ -13,6 +13,7 @@ import { coiRouter } from "./coi";
 import { reviewRouter } from "./review";
 import { findingRouter } from "./finding";
 import { capRouter } from "./cap";
+import { capEvidenceRouter } from "./cap-evidence";
 import { reportRouter } from "./report";
 import { trainingRouter } from "./training";
 import { settingsRouter } from "./settings";
@@ -37,6 +38,7 @@ export const appRouter = router({
   review: reviewRouter,
   finding: findingRouter,
   cap: capRouter,
+  capEvidence: capEvidenceRouter,
   report: reportRouter,
   training: trainingRouter,
   settings: settingsRouter,

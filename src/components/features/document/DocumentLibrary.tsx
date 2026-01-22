@@ -116,6 +116,14 @@ const CATEGORY_COLORS: Record<DocumentCategory, string> = {
   TRAINING: "bg-pink-100 text-pink-800",
   EVIDENCE: "bg-gray-100 text-gray-800",
   OTHER: "bg-slate-100 text-slate-800",
+  // Review-specific categories
+  PRE_VISIT_REQUEST: "bg-indigo-100 text-indigo-800",
+  HOST_SUBMISSION: "bg-teal-100 text-teal-800",
+  INTERVIEW_NOTES: "bg-amber-100 text-amber-800",
+  DRAFT_REPORT: "bg-rose-100 text-rose-800",
+  FINAL_REPORT: "bg-emerald-100 text-emerald-800",
+  CAP_EVIDENCE: "bg-cyan-100 text-cyan-800",
+  CORRESPONDENCE: "bg-violet-100 text-violet-800",
 };
 
 const CATEGORIES: DocumentCategory[] = [

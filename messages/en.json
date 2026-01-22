@@ -2831,6 +2831,59 @@
         "update": "Failed to update checklist item",
         "complete": "Failed to complete fieldwork"
       }
+    },
+    "documents": {
+      "title": "Review Documents",
+      "description": "Manage documents related to this peer review",
+      "uploadButton": "Upload Document",
+      "noDocuments": "No documents uploaded yet",
+      "totalDocuments": "{count, plural, =0 {No documents} =1 {1 document} other {# documents}}",
+      "totalSize": "Total size: {size}",
+      "allCategories": "All",
+      "view": "View",
+      "download": "Download",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "categories": {
+        "PRE_VISIT_REQUEST": "Pre-Visit Request",
+        "HOST_SUBMISSION": "Host Submission",
+        "EVIDENCE": "Evidence",
+        "INTERVIEW_NOTES": "Interview Notes",
+        "DRAFT_REPORT": "Draft Report",
+        "FINAL_REPORT": "Final Report",
+        "CAP_EVIDENCE": "CAP Evidence",
+        "CORRESPONDENCE": "Correspondence",
+        "OTHER": "Other"
+      },
+      "upload": {
+        "title": "Upload Documents",
+        "description": "Upload files to this review. Supported formats: PDF, DOCX, XLSX, PNG, JPG",
+        "dragDrop": "Drag & drop files here, or click to browse",
+        "dropHere": "Drop files here...",
+        "allowedTypes": "PDF, DOCX, XLSX, PNG, JPG",
+        "maxSize": "Maximum file size: {size}",
+        "selectedFiles": "Selected files",
+        "category": "Category",
+        "descriptionLabel": "Description (optional)",
+        "descriptionPlaceholder": "Add a description for these documents...",
+        "confidential": "Mark as confidential (visible only to review team)",
+        "uploading": "Uploading...",
+        "uploadButton": "Upload"
+      },
+      "deleteConfirm": {
+        "title": "Delete Document?",
+        "description": "Are you sure you want to delete \"{name}\"? This action cannot be undone."
+      },
+      "success": {
+        "uploaded": "Documents uploaded successfully",
+        "deleted": "Document deleted successfully"
+      },
+      "error": {
+        "invalidType": "Invalid file type",
+        "fileTooLarge": "File exceeds 50MB limit",
+        "upload": "Failed to upload document",
+        "delete": "Failed to delete document"
+      }
     }
   },
   "finding": {

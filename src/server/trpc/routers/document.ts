@@ -10,6 +10,10 @@ import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure } from "../trpc";
 import { documentService } from "@/server/services/document.service";
 import { prisma } from "@/lib/db";
+import { DocumentCategory } from "@prisma/client";
+
+// All document categories as zod enum
+const AllDocumentCategories = z.nativeEnum(DocumentCategory);
 
 // =============================================================================
 // INPUT SCHEMAS
@@ -22,18 +26,7 @@ const CreateDocumentInput = z.object({
   fileUrl: z.string().min(1).refine((val) => val.startsWith("/") || val.startsWith("http"), { message: "Must be a valid URL or path" }),
   fileType: z.string(),
   fileSize: z.number().min(0),
-  category: z
-    .enum([
-      "POLICY",
-      "PROCEDURE",
-      "RECORD",
-      "CERTIFICATE",
-      "REPORT",
-      "TRAINING",
-      "EVIDENCE",
-      "OTHER",
-    ])
-    .optional(),
+  category: AllDocumentCategories.optional(),
   tags: z.array(z.string()).optional(),
   language: z.enum(["EN", "FR"]).optional(),
   organizationId: z.string().cuid().optional(),
@@ -44,18 +37,7 @@ const CreateUrlReferenceInput = z.object({
   url: z.string().url(),
   name: z.string().min(1).max(255),
   description: z.string().max(1000).optional(),
-  category: z
-    .enum([
-      "POLICY",
-      "PROCEDURE",
-      "RECORD",
-      "CERTIFICATE",
-      "REPORT",
-      "TRAINING",
-      "EVIDENCE",
-      "OTHER",
-    ])
-    .optional(),
+  category: AllDocumentCategories.optional(),
   organizationId: z.string().cuid().optional(),
   assessmentId: z.string().cuid().optional(),
 });
@@ -81,18 +63,7 @@ const GetByResponseInput = z.object({
 
 const GetByOrganizationInput = z.object({
   organizationId: z.string().cuid(),
-  category: z
-    .enum([
-      "POLICY",
-      "PROCEDURE",
-      "RECORD",
-      "CERTIFICATE",
-      "REPORT",
-      "TRAINING",
-      "EVIDENCE",
-      "OTHER",
-    ])
-    .optional(),
+  category: AllDocumentCategories.optional(),
   assessmentId: z.string().cuid().optional(),
   tags: z.array(z.string()).optional(),
   search: z.string().optional(),
@@ -102,18 +73,7 @@ const UpdateDocumentInput = z.object({
   documentId: z.string().cuid(),
   name: z.string().min(1).max(255).optional(),
   description: z.string().max(1000).optional(),
-  category: z
-    .enum([
-      "POLICY",
-      "PROCEDURE",
-      "RECORD",
-      "CERTIFICATE",
-      "REPORT",
-      "TRAINING",
-      "EVIDENCE",
-      "OTHER",
-    ])
-    .optional(),
+  category: AllDocumentCategories.optional(),
   tags: z.array(z.string()).optional(),
   language: z.enum(["EN", "FR"]).optional(),
 });
@@ -124,6 +84,37 @@ const DeleteDocumentInput = z.object({
 
 const GetDocumentInput = z.object({
   documentId: z.string().cuid(),
+});
+
+const CreateReviewDocumentInput = z.object({
+  reviewId: z.string().cuid(),
+  name: z.string().min(1).max(255),
+  originalName: z.string().optional(),
+  description: z.string().max(1000).optional(),
+  fileUrl: z.string().min(1),
+  fileType: z.string(),
+  fileSize: z.number().min(0).max(52428800), // 50MB max
+  category: AllDocumentCategories,
+  isConfidential: z.boolean().default(false),
+});
+
+const GetReviewDocumentsInput = z.object({
+  reviewId: z.string().cuid(),
+  category: AllDocumentCategories.optional(),
+});
+
+const UpdateReviewDocumentInput = z.object({
+  documentId: z.string().cuid(),
+  name: z.string().min(1).max(255).optional(),
+  description: z.string().max(1000).optional(),
+  category: AllDocumentCategories.optional(),
+  isConfidential: z.boolean().optional(),
+});
+
+const GetUploadUrlInput = z.object({
+  reviewId: z.string().cuid(),
+  fileName: z.string(),
+  category: AllDocumentCategories,
 });
 
 // =============================================================================
@@ -579,4 +570,352 @@ export const documentRouter = router({
   getConstraints: protectedProcedure.query(() => {
     return documentService.getConstraints();
   }),
+
+  // ===========================================================================
+  // REVIEW DOCUMENT PROCEDURES
+  // ===========================================================================
+
+  /**
+   * Get documents for a review
+   */
+  getByReview: protectedProcedure
+    .input(GetReviewDocumentsInput)
+    .query(async ({ input, ctx }) => {
+      // Verify review exists
+      const review = await prisma.review.findUnique({
+        where: { id: input.reviewId },
+        include: {
+          teamMembers: { select: { userId: true } },
+          hostOrganization: { select: { id: true } },
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
+      // Check access - must be admin, team member, or host org member
+      const isAdmin = ["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR", "STEERING_COMMITTEE"].includes(
+        ctx.user.role as string
+      );
+      const isTeamMember = review.teamMembers.some((m) => m.userId === ctx.user.id);
+      const isHostOrg = ctx.user.organizationId === review.hostOrganization.id;
+
+      if (!isAdmin && !isTeamMember && !isHostOrg) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to view documents for this review",
+        });
+      }
+
+      const where: {
+        reviewId: string;
+        isDeleted: boolean;
+        category?: typeof input.category;
+        isConfidential?: boolean;
+      } = {
+        reviewId: input.reviewId,
+        isDeleted: false,
+      };
+
+      if (input.category) {
+        where.category = input.category;
+      }
+
+      // Non-admin host org members can only see non-confidential documents
+      if (isHostOrg && !isAdmin && !isTeamMember) {
+        where.isConfidential = false;
+      }
+
+      const documents = await prisma.document.findMany({
+        where,
+        include: {
+          uploadedBy: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+        orderBy: [{ category: "asc" }, { uploadedAt: "desc" }],
+      });
+
+      return documents;
+    }),
+
+  /**
+   * Create a document record for a review
+   */
+  createForReview: protectedProcedure
+    .input(CreateReviewDocumentInput)
+    .mutation(async ({ input, ctx }) => {
+      // Verify review exists
+      const review = await prisma.review.findUnique({
+        where: { id: input.reviewId },
+        include: {
+          teamMembers: { select: { userId: true } },
+          hostOrganization: { select: { id: true } },
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
+      // Check access - must be admin, team member, or host org member
+      const isAdmin = ["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(
+        ctx.user.role as string
+      );
+      const isTeamMember = review.teamMembers.some((m) => m.userId === ctx.user.id);
+      const isHostOrg = ctx.user.organizationId === review.hostOrganization.id;
+
+      if (!isAdmin && !isTeamMember && !isHostOrg) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to upload documents for this review",
+        });
+      }
+
+      // Host org members can only upload HOST_SUBMISSION and CAP_EVIDENCE
+      if (isHostOrg && !isTeamMember && !isAdmin) {
+        const allowedCategories = ["HOST_SUBMISSION", "CAP_EVIDENCE"];
+        if (!allowedCategories.includes(input.category)) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You can only upload host submissions and CAP evidence",
+          });
+        }
+      }
+
+      const document = await prisma.document.create({
+        data: {
+          name: input.name,
+          originalName: input.originalName,
+          description: input.description,
+          fileUrl: input.fileUrl,
+          fileType: input.fileType,
+          fileSize: input.fileSize,
+          category: input.category,
+          isConfidential: input.isConfidential,
+          reviewId: input.reviewId,
+          uploadedById: ctx.user.id,
+        },
+        include: {
+          uploadedBy: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+      });
+
+      return document;
+    }),
+
+  /**
+   * Update a review document
+   */
+  updateReviewDocument: protectedProcedure
+    .input(UpdateReviewDocumentInput)
+    .mutation(async ({ input, ctx }) => {
+      const document = await prisma.document.findUnique({
+        where: { id: input.documentId },
+        include: {
+          review: {
+            include: {
+              teamMembers: { select: { userId: true } },
+            },
+          },
+        },
+      });
+
+      if (!document || !document.review) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Document not found",
+        });
+      }
+
+      // Check access - must be admin, team member, or document uploader
+      const isAdmin = ["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(
+        ctx.user.role as string
+      );
+      const isTeamMember = document.review.teamMembers.some((m) => m.userId === ctx.user.id);
+      const isUploader = document.uploadedById === ctx.user.id;
+
+      if (!isAdmin && !isTeamMember && !isUploader) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to update this document",
+        });
+      }
+
+      const { documentId, ...updateData } = input;
+
+      const updated = await prisma.document.update({
+        where: { id: documentId },
+        data: updateData,
+        include: {
+          uploadedBy: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+      });
+
+      return updated;
+    }),
+
+  /**
+   * Delete a review document
+   */
+  deleteReviewDocument: protectedProcedure
+    .input(DeleteDocumentInput)
+    .mutation(async ({ input, ctx }) => {
+      const document = await prisma.document.findUnique({
+        where: { id: input.documentId },
+        include: {
+          review: {
+            include: {
+              teamMembers: { select: { userId: true } },
+            },
+          },
+        },
+      });
+
+      if (!document || !document.review) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Document not found",
+        });
+      }
+
+      // Check access - must be admin, team lead, or document uploader
+      const isAdmin = ["SUPER_ADMIN", "SYSTEM_ADMIN"].includes(ctx.user.role as string);
+      const isUploader = document.uploadedById === ctx.user.id;
+
+      if (!isAdmin && !isUploader) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to delete this document",
+        });
+      }
+
+      // Soft delete
+      await prisma.document.update({
+        where: { id: input.documentId },
+        data: {
+          isDeleted: true,
+          deletedAt: new Date(),
+        },
+      });
+
+      return { success: true };
+    }),
+
+  /**
+   * Get signed upload URL for Supabase Storage
+   */
+  getReviewUploadUrl: protectedProcedure
+    .input(GetUploadUrlInput)
+    .mutation(async ({ input, ctx }) => {
+      // Verify review exists and user has access
+      const review = await prisma.review.findUnique({
+        where: { id: input.reviewId },
+        include: {
+          teamMembers: { select: { userId: true } },
+          hostOrganization: { select: { id: true } },
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
+      const isAdmin = ["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(
+        ctx.user.role as string
+      );
+      const isTeamMember = review.teamMembers.some((m) => m.userId === ctx.user.id);
+      const isHostOrg = ctx.user.organizationId === review.hostOrganization.id;
+
+      if (!isAdmin && !isTeamMember && !isHostOrg) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to upload documents for this review",
+        });
+      }
+
+      // Generate storage path
+      const timestamp = Date.now();
+      const safeName = input.fileName.replace(/[^a-zA-Z0-9.-]/g, "_");
+      const storagePath = `reviews/${input.reviewId}/${input.category}/${timestamp}_${safeName}`;
+
+      // Return the path for client-side upload
+      // Client will use Supabase client to upload directly
+      return {
+        storagePath,
+        bucket: "review-documents",
+      };
+    }),
+
+  /**
+   * Get review document statistics
+   */
+  getReviewDocumentStats: protectedProcedure
+    .input(z.object({ reviewId: z.string().cuid() }))
+    .query(async ({ input, ctx }) => {
+      const review = await prisma.review.findUnique({
+        where: { id: input.reviewId },
+        include: {
+          teamMembers: { select: { userId: true } },
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
+      const documents = await prisma.document.findMany({
+        where: {
+          reviewId: input.reviewId,
+          isDeleted: false,
+        },
+        select: {
+          category: true,
+          fileSize: true,
+        },
+      });
+
+      const byCategory: Record<string, number> = {};
+      let totalSize = 0;
+
+      documents.forEach((doc) => {
+        byCategory[doc.category] = (byCategory[doc.category] || 0) + 1;
+        totalSize += doc.fileSize;
+      });
+
+      return {
+        total: documents.length,
+        byCategory,
+        totalSize,
+      };
+    }),
 });

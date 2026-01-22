@@ -26,6 +26,7 @@ import { ReviewActionButton } from "./review-action-button";
 import { ReviewNextActions } from "./review-next-actions";
 import { ReviewTimeline } from "./review-timeline";
 import { FieldworkChecklist } from "./fieldwork-checklist";
+import { DocumentManager } from "./document-manager";
 
 // UI Components
 import { Button } from "@/components/ui/button";
@@ -652,6 +653,15 @@ export function ReviewDetailView({
           }
         />
       )}
+
+      {/* Document Manager */}
+      <DocumentManager
+        reviewId={reviewId}
+        isTeamMember={review.teamMembers.some((m) => m.user.id === userId)}
+        isAdmin={["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(userRole || "")}
+        isHostOrg={userOrganizationId === review.hostOrganization.id}
+        userId={userId || ""}
+      />
 
       {/* Report Actions */}
       <ReportActions

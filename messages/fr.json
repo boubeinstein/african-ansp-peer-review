@@ -2831,6 +2831,59 @@
         "update": "Échec de la mise à jour de l'élément",
         "complete": "Échec de la finalisation du travail de terrain"
       }
+    },
+    "documents": {
+      "title": "Documents de la revue",
+      "description": "Gérer les documents liés à cette revue par les pairs",
+      "uploadButton": "Téléverser un document",
+      "noDocuments": "Aucun document téléversé",
+      "totalDocuments": "{count, plural, =0 {Aucun document} =1 {1 document} other {# documents}}",
+      "totalSize": "Taille totale : {size}",
+      "allCategories": "Tous",
+      "view": "Voir",
+      "download": "Télécharger",
+      "delete": "Supprimer",
+      "cancel": "Annuler",
+      "categories": {
+        "PRE_VISIT_REQUEST": "Demande pré-visite",
+        "HOST_SUBMISSION": "Soumission de l'hôte",
+        "EVIDENCE": "Preuve",
+        "INTERVIEW_NOTES": "Notes d'entretien",
+        "DRAFT_REPORT": "Projet de rapport",
+        "FINAL_REPORT": "Rapport final",
+        "CAP_EVIDENCE": "Preuve PAC",
+        "CORRESPONDENCE": "Correspondance",
+        "OTHER": "Autre"
+      },
+      "upload": {
+        "title": "Téléverser des documents",
+        "description": "Téléversez des fichiers pour cette revue. Formats supportés : PDF, DOCX, XLSX, PNG, JPG",
+        "dragDrop": "Glissez-déposez des fichiers ici, ou cliquez pour parcourir",
+        "dropHere": "Déposez les fichiers ici...",
+        "allowedTypes": "PDF, DOCX, XLSX, PNG, JPG",
+        "maxSize": "Taille maximale : {size}",
+        "selectedFiles": "Fichiers sélectionnés",
+        "category": "Catégorie",
+        "descriptionLabel": "Description (optionnel)",
+        "descriptionPlaceholder": "Ajoutez une description pour ces documents...",
+        "confidential": "Marquer comme confidentiel (visible uniquement par l'équipe de revue)",
+        "uploading": "Téléversement...",
+        "uploadButton": "Téléverser"
+      },
+      "deleteConfirm": {
+        "title": "Supprimer le document ?",
+        "description": "Êtes-vous sûr de vouloir supprimer \"{name}\" ? Cette action est irréversible."
+      },
+      "success": {
+        "uploaded": "Documents téléversés avec succès",
+        "deleted": "Document supprimé avec succès"
+      },
+      "error": {
+        "invalidType": "Type de fichier invalide",
+        "fileTooLarge": "Le fichier dépasse la limite de 50 Mo",
+        "upload": "Échec du téléversement",
+        "delete": "Échec de la suppression"
+      }
     }
   },
   "finding": {

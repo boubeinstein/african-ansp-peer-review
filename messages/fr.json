@@ -3300,7 +3300,7 @@
       "cancel": "Annuler"
     },
     "timeline": {
-      "title": "Historique des statuts",
+      "title": "Chronologie du PAC",
       "event": "événement",
       "events": "événements",
       "latest": "Dernier",
@@ -3314,14 +3314,24 @@
       "hideDetails": "Masquer les détails",
       "moreEvents": "autres événements",
       "summaryText": "{count} changements de statut, dernier : {status}",
-      "created": "PAC créé",
-      "submitted": "Soumis pour examen",
-      "accepted": "Accepté par l'examinateur",
-      "rejected": "Rejeté - Révision requise",
-      "inProgress": "Mise en œuvre commencée",
-      "completed": "Mise en œuvre terminée",
-      "verified": "Mise en œuvre vérifiée",
-      "closed": "PAC clôturé",
+      "created": "Créé",
+      "submitted": "Soumis",
+      "accepted": "Accepté",
+      "rejected": "Rejeté",
+      "inProgress": "En cours",
+      "completed": "Terminé",
+      "verified": "Vérifié",
+      "closed": "Clôturé",
+      "deadline": "Échéance",
+      "progress": "Progression",
+      "statusProgress": "Progression du statut",
+      "milestones": "Jalons",
+      "overdue": "En retard",
+      "dueToday": "Échéance aujourd'hui",
+      "dueSoon": "Échéance proche",
+      "daysRemaining": "{days} jours restants",
+      "daysOverdue": "{days} jours de retard",
+      "onTrack": "Dans les délais",
       "actions": {
         "created": "PAC créé",
         "submitted": "Soumis pour examen",
@@ -3333,6 +3343,43 @@
         "verified": "Mise en œuvre vérifiée",
         "closed": "PAC clôturé"
       }
+    },
+    "milestones": {
+      "title": "Jalons",
+      "add": "Ajouter un jalon",
+      "edit": "Modifier le jalon",
+      "delete": "Supprimer le jalon",
+      "noMilestones": "Aucun jalon défini",
+      "status": {
+        "PENDING": "En attente",
+        "IN_PROGRESS": "En cours",
+        "COMPLETED": "Terminé",
+        "OVERDUE": "En retard",
+        "CANCELLED": "Annulé"
+      },
+      "fields": {
+        "titleEn": "Titre (Anglais)",
+        "titleFr": "Titre (Français)",
+        "targetDate": "Date cible",
+        "completedDate": "Date de réalisation",
+        "description": "Description"
+      }
+    },
+    "comments": {
+      "title": "Commentaires",
+      "add": "Ajouter un commentaire",
+      "noComments": "Aucun commentaire",
+      "internal": "Note interne",
+      "internalHint": "Ce commentaire n'est visible que par les examinateurs",
+      "placeholder": "Ajouter un commentaire...",
+      "postedBy": "Publié par {name} le {date}"
+    },
+    "deadline": {
+      "dueIn": "Échéance dans {days} jours",
+      "dueToday": "Échéance aujourd'hui",
+      "overdue": "{days} jours de retard",
+      "critical": "Critique - Échéance proche",
+      "warning": "Échéance approche"
     },
     "detail": {
       "title": "Plan d'Action Corrective",

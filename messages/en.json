@@ -3300,7 +3300,7 @@
       "cancel": "Cancel"
     },
     "timeline": {
-      "title": "Status History",
+      "title": "CAP Timeline",
       "event": "event",
       "events": "events",
       "latest": "Latest",
@@ -3314,14 +3314,24 @@
       "hideDetails": "Hide Details",
       "moreEvents": "more events",
       "summaryText": "{count} status changes, latest: {status}",
-      "created": "CAP Created",
-      "submitted": "Submitted for Review",
-      "accepted": "Accepted by Reviewer",
-      "rejected": "Rejected - Revision Required",
-      "inProgress": "Implementation Started",
-      "completed": "Implementation Completed",
-      "verified": "Implementation Verified",
-      "closed": "CAP Closed",
+      "created": "Created",
+      "submitted": "Submitted",
+      "accepted": "Accepted",
+      "rejected": "Rejected",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "verified": "Verified",
+      "closed": "Closed",
+      "deadline": "Deadline",
+      "progress": "Progress",
+      "statusProgress": "Status Progress",
+      "milestones": "Milestones",
+      "overdue": "Overdue",
+      "dueToday": "Due Today",
+      "dueSoon": "Due Soon",
+      "daysRemaining": "{days} days remaining",
+      "daysOverdue": "{days} days overdue",
+      "onTrack": "On Track",
       "actions": {
         "created": "CAP created",
         "submitted": "Submitted for review",
@@ -3333,6 +3343,43 @@
         "verified": "Implementation verified",
         "closed": "CAP closed"
       }
+    },
+    "milestones": {
+      "title": "Milestones",
+      "add": "Add Milestone",
+      "edit": "Edit Milestone",
+      "delete": "Delete Milestone",
+      "noMilestones": "No milestones defined",
+      "status": {
+        "PENDING": "Pending",
+        "IN_PROGRESS": "In Progress",
+        "COMPLETED": "Completed",
+        "OVERDUE": "Overdue",
+        "CANCELLED": "Cancelled"
+      },
+      "fields": {
+        "titleEn": "Title (English)",
+        "titleFr": "Title (French)",
+        "targetDate": "Target Date",
+        "completedDate": "Completed Date",
+        "description": "Description"
+      }
+    },
+    "comments": {
+      "title": "Comments",
+      "add": "Add Comment",
+      "noComments": "No comments yet",
+      "internal": "Internal Note",
+      "internalHint": "This comment is only visible to reviewers",
+      "placeholder": "Add a comment...",
+      "postedBy": "Posted by {name} on {date}"
+    },
+    "deadline": {
+      "dueIn": "Due in {days} days",
+      "dueToday": "Due Today",
+      "overdue": "{days} days overdue",
+      "critical": "Critical - Due Soon",
+      "warning": "Approaching Deadline"
     },
     "detail": {
       "title": "Corrective Action Plan",

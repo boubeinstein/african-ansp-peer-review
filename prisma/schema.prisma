@@ -78,6 +78,7 @@ model User {
   approvedCOIOverrides     COIOverride[]          @relation("COIOverrideApprover")
   revokedCOIOverrides      COIOverride[]          @relation("COIOverrideRevoker")
   assignedCAPs             CorrectiveActionPlan[] @relation("AssignedTo")
+  capComments              CAPComment[]           @relation("CAPCommentAuthor")
   uploadedDocuments        Document[]             @relation("UploadedDocuments")
   assignedFindings         Finding[]              @relation("AssignedTo")
   coordinatorReviews       JoinRequest[]          @relation("CoordinatorReview")
@@ -697,31 +698,74 @@ model Finding {
 }
 
 model CorrectiveActionPlan {
-  id                 String     @id @default(cuid())
-  findingId          String     @unique @map("finding_id")
-  rootCauseEn        String     @map("root_cause_en")
-  rootCauseFr        String     @map("root_cause_fr")
-  correctiveActionEn String     @map("corrective_action_en")
-  correctiveActionFr String     @map("corrective_action_fr")
-  preventiveActionEn String?    @map("preventive_action_en")
-  preventiveActionFr String?    @map("preventive_action_fr")
-  status             CAPStatus  @default(DRAFT)
-  assignedToId       String?    @map("assigned_to_id")
-  submittedAt        DateTime?  @map("submitted_at")
-  acceptedAt         DateTime?  @map("accepted_at")
-  dueDate            DateTime   @map("due_date")
-  completedAt        DateTime?  @map("completed_at")
-  verifiedAt         DateTime?  @map("verified_at")
-  verificationMethod String?    @map("verification_method")
-  verificationNotes  String?    @map("verification_notes")
-  verifiedById       String?    @map("verified_by_id")
-  createdAt          DateTime   @default(now()) @map("created_at")
-  updatedAt          DateTime   @updatedAt @map("updated_at")
-  assignedTo         User?      @relation("AssignedTo", fields: [assignedToId], references: [id])
-  finding            Finding    @relation(fields: [findingId], references: [id])
+  id                 String         @id @default(cuid())
+  findingId          String         @unique @map("finding_id")
+  rootCauseEn        String         @map("root_cause_en")
+  rootCauseFr        String         @map("root_cause_fr")
+  correctiveActionEn String         @map("corrective_action_en")
+  correctiveActionFr String         @map("corrective_action_fr")
+  preventiveActionEn String?        @map("preventive_action_en")
+  preventiveActionFr String?        @map("preventive_action_fr")
+  status             CAPStatus      @default(DRAFT)
+  assignedToId       String?        @map("assigned_to_id")
+  submittedAt        DateTime?      @map("submitted_at")
+  acceptedAt         DateTime?      @map("accepted_at")
+  dueDate            DateTime       @map("due_date")
+  completedAt        DateTime?      @map("completed_at")
+  verifiedAt         DateTime?      @map("verified_at")
+  verificationMethod String?        @map("verification_method")
+  verificationNotes  String?        @map("verification_notes")
+  verifiedById       String?        @map("verified_by_id")
+  rejectionReason    String?        @map("rejection_reason")
+  implementedAt      DateTime?      @map("implemented_at")
+  closedAt           DateTime?      @map("closed_at")
+  closedById         String?        @map("closed_by_id")
+  createdAt          DateTime       @default(now()) @map("created_at")
+  updatedAt          DateTime       @updatedAt @map("updated_at")
+  assignedTo         User?          @relation("AssignedTo", fields: [assignedToId], references: [id])
+  finding            Finding        @relation(fields: [findingId], references: [id])
   documents          Document[]
+  milestones         CAPMilestone[]
+  comments           CAPComment[]
 
   @@map("corrective_action_plans")
+}
+
+model CAPMilestone {
+  id            String          @id @default(cuid())
+  capId         String          @map("cap_id")
+  titleEn       String          @map("title_en")
+  titleFr       String?         @map("title_fr")
+  descriptionEn String?         @map("description_en")
+  descriptionFr String?         @map("description_fr")
+  targetDate    DateTime        @map("target_date")
+  completedDate DateTime?       @map("completed_date")
+  status        MilestoneStatus @default(PENDING)
+  sortOrder     Int             @default(0) @map("sort_order")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+  cap           CorrectiveActionPlan @relation(fields: [capId], references: [id], onDelete: Cascade)
+
+  @@index([capId])
+  @@index([targetDate])
+  @@map("cap_milestones")
+}
+
+model CAPComment {
+  id        String   @id @default(cuid())
+  capId     String   @map("cap_id")
+  authorId  String   @map("author_id")
+  contentEn String   @db.Text @map("content_en")
+  contentFr String?  @db.Text @map("content_fr")
+  isInternal Boolean @default(false) @map("is_internal")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  cap       CorrectiveActionPlan @relation(fields: [capId], references: [id], onDelete: Cascade)
+  author    User     @relation("CAPCommentAuthor", fields: [authorId], references: [id])
+
+  @@index([capId])
+  @@index([authorId])
+  @@map("cap_comments")
 }
 
 model TrainingModule {
@@ -1325,6 +1369,14 @@ enum CAPStatus {
   COMPLETED
   VERIFIED
   CLOSED
+}
+
+enum MilestoneStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  OVERDUE
+  CANCELLED
 }
 
 enum ResourceType {

@@ -7,7 +7,7 @@
  * Opened with Ctrl+K, allows quick navigation and actions.
  */
 
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import {
@@ -31,7 +31,6 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
@@ -241,18 +240,20 @@ export function CommandPalette({
     return groups;
   }, [filteredCommands]);
 
-  // Reset selection when search changes
-  useEffect(() => {
+  // Handle search change - reset selection when search changes
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
     setSelectedIndex(0);
-  }, [search]);
+  }, []);
 
-  // Reset search when dialog opens
-  useEffect(() => {
-    if (open) {
+  // Handle dialog open change - reset state when opening
+  const handleOpenChange = useCallback((newOpen: boolean) => {
+    if (newOpen) {
       setSearch("");
       setSelectedIndex(0);
     }
-  }, [open]);
+    onOpenChange(newOpen);
+  }, [onOpenChange]);
 
   // Handle keyboard navigation
   const handleKeyDown = useCallback(
@@ -298,14 +299,14 @@ export function CommandPalette({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-lg p-0 gap-0 overflow-hidden">
         {/* Search Input */}
         <div className="flex items-center border-b px-3">
           <Search className="h-4 w-4 text-muted-foreground shrink-0" />
           <Input
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={handleSearchChange}
             onKeyDown={handleKeyDown}
             placeholder={t("placeholder")}
             className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-12"

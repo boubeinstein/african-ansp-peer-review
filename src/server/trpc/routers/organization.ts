@@ -9,7 +9,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure, adminProcedure } from "../trpc";
 import { prisma } from "@/lib/db";
-import { Prisma, AfricanRegion, MembershipStatus } from "@prisma/client";
+import { Prisma, AfricanRegion, MembershipStatus, AuditAction } from "@prisma/client";
 import {
   organizationCreateSchema,
   organizationUpdateSchema,
@@ -56,7 +56,7 @@ const organizationListInclude = {
  */
 async function logAuditEntry(
   userId: string,
-  action: string,
+  action: AuditAction,
   entityId: string,
   newData?: Record<string, unknown>
 ): Promise<void> {
@@ -67,7 +67,7 @@ async function logAuditEntry(
         action,
         entityType: "Organization",
         entityId,
-        newData: newData ? JSON.stringify(newData) : Prisma.JsonNull,
+        newState: newData ? JSON.stringify(newData) : Prisma.JsonNull,
       },
     });
   } catch (error) {
@@ -404,7 +404,7 @@ export const organizationRouter = router({
         include: organizationWithCountsInclude,
       });
 
-      await logAuditEntry(ctx.user.id, "CREATE", organization.id, {
+      await logAuditEntry(ctx.user.id, AuditAction.CREATE, organization.id, {
         nameEn: input.nameEn,
         icaoCode: input.icaoCode,
         region: input.region,
@@ -478,7 +478,7 @@ export const organizationRouter = router({
         include: organizationWithCountsInclude,
       });
 
-      await logAuditEntry(ctx.user.id, "UPDATE", id, {
+      await logAuditEntry(ctx.user.id, AuditAction.UPDATE, id, {
         updatedFields: Object.keys(data),
       });
 
@@ -528,7 +528,7 @@ export const organizationRouter = router({
         include: organizationListInclude,
       });
 
-      await logAuditEntry(ctx.user.id, "UPDATE_STATUS", input.id, {
+      await logAuditEntry(ctx.user.id, AuditAction.STATUS_CHANGE, input.id, {
         previousStatus: existing.membershipStatus,
         newStatus: input.membershipStatus,
         notes: input.notes,
@@ -597,7 +597,7 @@ export const organizationRouter = router({
         where: { id: input.id },
       });
 
-      await logAuditEntry(ctx.user.id, "DELETE", input.id, {
+      await logAuditEntry(ctx.user.id, AuditAction.DELETE, input.id, {
         deletedOrganization: organization.nameEn,
         icaoCode: organization.icaoCode,
       });

@@ -17,6 +17,7 @@ import {
   ExpertiseArea,
   Language,
   Prisma,
+  AuditAction,
 } from "@prisma/client";
 import {
   createReviewerProfileSchema,
@@ -106,9 +107,9 @@ const SELECTION_STATUS_TRANSITIONS: Record<
  */
 async function logAuditEntry(
   userId: string,
-  action: string,
+  action: AuditAction,
   entityId: string,
-  newData?: Record<string, unknown>
+  newState?: Record<string, unknown>
 ): Promise<void> {
   try {
     await prisma.auditLog.create({
@@ -117,7 +118,7 @@ async function logAuditEntry(
         action,
         entityType: "ReviewerProfile",
         entityId,
-        newData: newData ? JSON.stringify(newData) : Prisma.JsonNull,
+        newState: newState ? JSON.stringify(newState) : Prisma.JsonNull,
       },
     });
   } catch (error) {
@@ -347,7 +348,7 @@ export const reviewerRouter = router({
         include: reviewerProfileInclude,
       });
 
-      await logAuditEntry(user.id, "CREATE", reviewer.id, {
+      await logAuditEntry(user.id, AuditAction.CREATE, reviewer.id, {
         userId: input.userId,
         homeOrganizationId: input.homeOrganizationId,
         reviewerType: reviewer.reviewerType,
@@ -453,7 +454,7 @@ export const reviewerRouter = router({
         include: reviewerProfileInclude,
       });
 
-      await logAuditEntry(user.id, "UPDATE", id, {
+      await logAuditEntry(user.id, AuditAction.UPDATE, id, {
         updatedFields: Object.keys(data),
         isSelfEdit,
       });
@@ -532,7 +533,7 @@ export const reviewerRouter = router({
         include: reviewerProfileListInclude,
       });
 
-      await logAuditEntry(ctx.user.id, "UPDATE_STATUS", input.id, {
+      await logAuditEntry(ctx.user.id, AuditAction.STATUS_CHANGE, input.id, {
         previousStatus: reviewer.selectionStatus,
         newStatus: input.selectionStatus,
         notes: input.notes,
@@ -2195,7 +2196,7 @@ export const reviewerRouter = router({
         where: { id: input.id },
       });
 
-      await logAuditEntry(ctx.user.id, "DELETE", input.id, {
+      await logAuditEntry(ctx.user.id, AuditAction.DELETE, input.id, {
         deletedUserId: reviewer.userId,
       });
 
@@ -2375,7 +2376,7 @@ export const reviewerRouter = router({
 
       await prisma.reviewerCOI.delete({ where: { id: input.id } });
 
-      await logAuditEntry(ctx.user.id, "DELETE_COI", input.id, {
+      await logAuditEntry(ctx.user.id, AuditAction.DELETE, input.id, {
         reviewerProfileId: coi.reviewerProfileId,
         organizationId: coi.organizationId,
         coiType: coi.coiType,

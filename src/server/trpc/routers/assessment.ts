@@ -24,6 +24,7 @@ import {
   CriticalElement,
   CANSOStudyArea,
   Prisma,
+  AuditAction,
 } from "@prisma/client";
 import {
   calculateEIScore,
@@ -203,7 +204,7 @@ async function checkAssessmentAccess(
  */
 async function logAuditEntry(
   userId: string,
-  action: string,
+  action: AuditAction,
   entityType: string,
   entityId: string,
   newData?: Record<string, unknown>
@@ -215,7 +216,7 @@ async function logAuditEntry(
         action,
         entityType,
         entityId,
-        newData: newData ? JSON.stringify(newData) : Prisma.JsonNull,
+        newState: newData ? JSON.stringify(newData) : Prisma.JsonNull,
       },
     });
   } catch (error) {
@@ -557,7 +558,7 @@ export const assessmentRouter = router({
       );
 
       // Log audit entry
-      await logAuditEntry(user.id, "CREATE", "Assessment", assessment.id, {
+      await logAuditEntry(user.id, AuditAction.CREATE, "Assessment", assessment.id, {
         referenceNumber,
         type: input.assessmentType,
         title,
@@ -1086,7 +1087,7 @@ export const assessmentRouter = router({
         });
       });
 
-      await logAuditEntry(ctx.user.id, "DELETE", "Assessment", input.id, {
+      await logAuditEntry(ctx.user.id, AuditAction.DELETE, "Assessment", input.id, {
         previousStatus: assessment.status,
         title: assessment.title,
       });
@@ -1146,7 +1147,7 @@ export const assessmentRouter = router({
         data: { status: "ARCHIVED" },
       });
 
-      await logAuditEntry(ctx.user.id, "ARCHIVE", "Assessment", input.id, {
+      await logAuditEntry(ctx.user.id, AuditAction.STATUS_CHANGE, "Assessment", input.id, {
         previousStatus: assessment.status,
       });
 
@@ -1200,7 +1201,7 @@ export const assessmentRouter = router({
         },
       });
 
-      await logAuditEntry(ctx.user.id, "START", "Assessment", input.id, {
+      await logAuditEntry(ctx.user.id, AuditAction.STATUS_CHANGE, "Assessment", input.id, {
         startedAt: updated.startedAt?.toISOString(),
       });
 
@@ -1421,7 +1422,7 @@ export const assessmentRouter = router({
         },
       });
 
-      await logAuditEntry(ctx.user.id, "SUBMIT", "Assessment", input.id, {
+      await logAuditEntry(ctx.user.id, AuditAction.SUBMISSION, "Assessment", input.id, {
         overallScore,
         eiScore,
         maturityLevel,
@@ -1473,7 +1474,7 @@ export const assessmentRouter = router({
         data: { status: "UNDER_REVIEW" },
       });
 
-      await logAuditEntry(ctx.user.id, "START_REVIEW", "Assessment", input.id);
+      await logAuditEntry(ctx.user.id, AuditAction.STATUS_CHANGE, "Assessment", input.id);
 
       return updated;
     }),
@@ -1525,7 +1526,7 @@ export const assessmentRouter = router({
         },
       });
 
-      await logAuditEntry(ctx.user.id, "COMPLETE", "Assessment", input.id, {
+      await logAuditEntry(ctx.user.id, AuditAction.STATUS_CHANGE, "Assessment", input.id, {
         completionNotes: input.completionNotes,
       });
 
@@ -1581,7 +1582,7 @@ export const assessmentRouter = router({
         },
       });
 
-      await logAuditEntry(ctx.user.id, "REOPEN", "Assessment", input.id, {
+      await logAuditEntry(ctx.user.id, AuditAction.STATUS_CHANGE, "Assessment", input.id, {
         reason: input.reason,
         previousStatus: assessment.status,
       });
@@ -1907,7 +1908,7 @@ export const assessmentRouter = router({
         data: { progress },
       });
 
-      await logAuditEntry(ctx.user.id, "BULK_UPDATE", "Assessment", input.assessmentId, {
+      await logAuditEntry(ctx.user.id, AuditAction.UPDATE, "Assessment", input.assessmentId, {
         responseCount: results.length,
       });
 
@@ -2177,7 +2178,7 @@ export const assessmentRouter = router({
         },
       });
 
-      await logAuditEntry(ctx.user.id, "ADD_EVIDENCE", "AssessmentResponse", response.id, {
+      await logAuditEntry(ctx.user.id, AuditAction.UPDATE, "AssessmentResponse", response.id, {
         evidenceUrl: input.evidenceUrl,
       });
 
@@ -2246,7 +2247,7 @@ export const assessmentRouter = router({
         },
       });
 
-      await logAuditEntry(ctx.user.id, "REMOVE_EVIDENCE", "AssessmentResponse", response.id, {
+      await logAuditEntry(ctx.user.id, AuditAction.UPDATE, "AssessmentResponse", response.id, {
         removedUrl: input.evidenceUrl,
       });
 
@@ -2596,7 +2597,7 @@ export const assessmentRouter = router({
         });
       }
 
-      await logAuditEntry(ctx.user.id, "EXPORT", "Assessment", input.assessmentId, {
+      await logAuditEntry(ctx.user.id, AuditAction.EXPORT, "Assessment", input.assessmentId, {
         format: input.format,
       });
 

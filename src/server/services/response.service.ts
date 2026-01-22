@@ -16,6 +16,7 @@ import {
   CriticalElement,
   SMSComponent,
   CANSOStudyArea,
+  AuditAction,
 } from "@prisma/client";
 import {
   MATURITY_LEVEL_MAP,
@@ -929,7 +930,7 @@ export async function validateQuestionInQuestionnaire(
  */
 export async function logResponseAudit(
   userId: string,
-  action: string,
+  action: AuditAction,
   assessmentId: string,
   questionId: string,
   data?: Record<string, unknown>
@@ -941,7 +942,7 @@ export async function logResponseAudit(
         action,
         entityType: "AssessmentResponse",
         entityId: `${assessmentId}:${questionId}`,
-        newData: data ? JSON.stringify(data) : Prisma.JsonNull,
+        newState: data ? JSON.stringify(data) : Prisma.JsonNull,
       },
     });
   } catch (error) {

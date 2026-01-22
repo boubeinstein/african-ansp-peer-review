@@ -18,7 +18,7 @@ import {
   protectedProcedure,
   roleProcedure,
 } from "../trpc";
-import { EvidenceCategory, EvidenceStatus, UserRole, MilestoneStatus } from "@prisma/client";
+import { EvidenceCategory, EvidenceStatus, UserRole, MilestoneStatus, AuditAction } from "@prisma/client";
 
 // =============================================================================
 // ROLE DEFINITIONS
@@ -207,10 +207,10 @@ export const capEvidenceRouter = router({
       await ctx.db.auditLog.create({
         data: {
           userId: user.id,
-          action: "CREATE",
+          action: AuditAction.CREATE,
           entityType: "CAPEvidence",
           entityId: evidence.id,
-          newData: JSON.parse(JSON.stringify(evidence)),
+          newState: JSON.parse(JSON.stringify(evidence)),
         },
       });
 
@@ -490,11 +490,11 @@ export const capEvidenceRouter = router({
       await ctx.db.auditLog.create({
         data: {
           userId: user.id,
-          action: "REVIEW",
+          action: AuditAction.VERIFICATION,
           entityType: "CAPEvidence",
           entityId: input.evidenceId,
-          previousData: { status: evidence.status },
-          newData: {
+          previousState: { status: evidence.status },
+          newState: {
             status: input.status,
             reviewerCommentEn: input.reviewerCommentEn,
             rejectionReason: input.rejectionReason,
@@ -551,10 +551,10 @@ export const capEvidenceRouter = router({
       await ctx.db.auditLog.create({
         data: {
           userId: user.id,
-          action: "DELETE",
+          action: AuditAction.DELETE,
           entityType: "CAPEvidence",
           entityId: input.evidenceId,
-          previousData: JSON.parse(JSON.stringify(evidence)),
+          previousState: JSON.parse(JSON.stringify(evidence)),
         },
       });
 

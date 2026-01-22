@@ -9,7 +9,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure, adminProcedure } from "../trpc";
 import { prisma } from "@/lib/db";
-import { Prisma } from "@prisma/client";
+import { Prisma, AuditAction } from "@prisma/client";
 import {
   // Schemas
   createCOISchema,
@@ -42,7 +42,7 @@ import {
  */
 async function logAuditEntry(
   userId: string,
-  action: string,
+  action: AuditAction,
   entityId: string,
   newData?: Record<string, unknown>
 ): Promise<void> {
@@ -53,7 +53,7 @@ async function logAuditEntry(
         action,
         entityType: "ReviewerCOI",
         entityId,
-        newData: newData ? JSON.stringify(newData) : Prisma.JsonNull,
+        newState: newData ? JSON.stringify(newData) : Prisma.JsonNull,
       },
     });
   } catch (error) {
@@ -496,7 +496,7 @@ export const coiRouter = router({
         },
       });
 
-      await logAuditEntry(ctx.user.id, "CREATE_COI", coi.id, {
+      await logAuditEntry(ctx.user.id, AuditAction.CREATE, coi.id, {
         reviewerProfileId: input.reviewerProfileId,
         organizationId: input.organizationId,
         coiType: input.coiType,
@@ -604,7 +604,7 @@ export const coiRouter = router({
         },
       });
 
-      await logAuditEntry(ctx.user.id, "UPDATE_COI", id, {
+      await logAuditEntry(ctx.user.id, AuditAction.UPDATE, id, {
         updatedFields: Object.keys(data),
       });
 
@@ -635,7 +635,7 @@ export const coiRouter = router({
 
       const result = await syncAutoDetectedCOIs(prisma, input.reviewerProfileId);
 
-      await logAuditEntry(ctx.user.id, "SYNC_AUTO_COI", input.reviewerProfileId, {
+      await logAuditEntry(ctx.user.id, AuditAction.UPDATE, input.reviewerProfileId, {
         created: result.created,
         deactivated: result.deactivated,
       });
@@ -705,7 +705,7 @@ export const coiRouter = router({
         });
       }
 
-      await logAuditEntry(ctx.user.id, "DELETE_COI", input.id, {
+      await logAuditEntry(ctx.user.id, AuditAction.DELETE, input.id, {
         reviewerProfileId: coi.reviewerProfileId,
         organizationId: coi.organizationId,
         coiType: coi.coiType,
@@ -935,7 +935,7 @@ export const coiRouter = router({
         },
       });
 
-      await logAuditEntry(ctx.user.id, "CREATE_OVERRIDE", override.id, {
+      await logAuditEntry(ctx.user.id, AuditAction.CREATE, override.id, {
         reviewerProfileId: input.reviewerProfileId,
         organizationId: input.organizationId,
         reviewId: input.reviewId,
@@ -1002,7 +1002,7 @@ export const coiRouter = router({
         },
       });
 
-      await logAuditEntry(ctx.user.id, "REVOKE_OVERRIDE", input.id, {
+      await logAuditEntry(ctx.user.id, AuditAction.UPDATE, input.id, {
         revokeReason: input.revokeReason,
       });
 

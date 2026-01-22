@@ -512,7 +512,7 @@ export async function executeTransition(
   userId: string,
   userRole: UserRole,
   metadata?: { reason?: string; notes?: string }
-): Promise<{ success: boolean; review?: Awaited<ReturnType<typeof db.review.update>>; errors?: string[] }> {
+): Promise<{ success: boolean; review?: Awaited<ReturnType<typeof db.review.update>>; previousStatus?: ReviewStatus; errors?: string[] }> {
   // Validate transition
   const check = await canTransition(reviewId, targetStatus, userRole);
 
@@ -599,6 +599,7 @@ export async function executeTransition(
   return {
     success: true,
     review: updatedReview,
+    previousStatus: currentReview.status,
   };
 }
 

@@ -6,6 +6,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
+import { AuditAction } from "@prisma/client";
 import { router, protectedProcedure, publicProcedure } from "@/server/trpc/trpc";
 import { prisma } from "@/lib/db";
 import { sendPasswordResetEmail } from "@/lib/email";
@@ -185,10 +186,11 @@ export const authRouter = router({
       // Log for audit
       await prisma.auditLog.create({
         data: {
-          action: "PASSWORD_RESET",
+          action: AuditAction.UPDATE,
           entityType: "User",
           entityId: resetRecord.userId,
           userId: resetRecord.userId,
+          metadata: { action: "password_reset" },
         },
       });
 

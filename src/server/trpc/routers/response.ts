@@ -12,6 +12,7 @@
 
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { AuditAction } from "@prisma/client";
 import { router, protectedProcedure } from "../trpc";
 import {
   SaveResponseInput,
@@ -129,7 +130,7 @@ export const responseRouter = router({
       );
 
       // Log audit
-      await logResponseAudit(ctx.user.id, "SAVE_RESPONSE", input.assessmentId, input.questionId, {
+      await logResponseAudit(ctx.user.id, AuditAction.UPDATE, input.assessmentId, input.questionId, {
         ansResponse: input.ansResponse,
         smsResponse: input.smsResponse,
         isDraft: input.isDraft,
@@ -198,7 +199,7 @@ export const responseRouter = router({
       );
 
       // Log audit
-      await logResponseAudit(ctx.user.id, "BULK_SAVE_RESPONSES", input.assessmentId, "bulk", {
+      await logResponseAudit(ctx.user.id, AuditAction.UPDATE, input.assessmentId, "bulk", {
         count: result.updatedCount,
         failed: result.failedCount,
       });
@@ -341,7 +342,7 @@ export const responseRouter = router({
       );
 
       // Log audit
-      await logResponseAudit(ctx.user.id, "DELETE_RESPONSE", input.assessmentId, input.questionId);
+      await logResponseAudit(ctx.user.id, AuditAction.DELETE, input.assessmentId, input.questionId);
 
       return result;
     }),
@@ -395,7 +396,7 @@ export const responseRouter = router({
         // Log audit
         await logResponseAudit(
           ctx.user.id,
-          "ADD_EVIDENCE",
+          AuditAction.UPDATE,
           input.assessmentId,
           input.questionId,
           { evidenceUrl: input.evidenceUrl }
@@ -455,7 +456,7 @@ export const responseRouter = router({
         // Log audit
         await logResponseAudit(
           ctx.user.id,
-          "REMOVE_EVIDENCE",
+          AuditAction.UPDATE,
           input.assessmentId,
           input.questionId,
           { removedUrl: input.evidenceUrl }

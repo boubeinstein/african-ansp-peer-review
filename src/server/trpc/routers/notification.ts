@@ -1,0 +1,329 @@
+/**
+ * Notification Router
+ *
+ * Handles in-app notifications for users including:
+ * - Fetching notifications (paginated, filterable)
+ * - Marking notifications as read
+ * - Getting unread count
+ * - Notification preferences
+ */
+
+import { z } from "zod";
+import { TRPCError } from "@trpc/server";
+import { router, protectedProcedure } from "../trpc";
+import { NotificationType, NotificationPriority } from "@prisma/client";
+
+// =============================================================================
+// INPUT SCHEMAS
+// =============================================================================
+
+const listNotificationsSchema = z.object({
+  page: z.number().min(1).default(1),
+  pageSize: z.number().min(1).max(50).default(20),
+  unreadOnly: z.boolean().optional().default(false),
+  type: z.nativeEnum(NotificationType).optional(),
+  priority: z.nativeEnum(NotificationPriority).optional(),
+});
+
+// =============================================================================
+// ROUTER
+// =============================================================================
+
+export const notificationRouter = router({
+  /**
+   * Get paginated list of notifications for the current user
+   */
+  list: protectedProcedure
+    .input(listNotificationsSchema)
+    .query(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+      const { page, pageSize, unreadOnly, type, priority } = input;
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const where: any = {
+        userId: user.id,
+      };
+
+      if (unreadOnly) {
+        where.readAt = null;
+      }
+
+      if (type) {
+        where.type = type;
+      }
+
+      if (priority) {
+        where.priority = priority;
+      }
+
+      const [notifications, total] = await Promise.all([
+        ctx.db.notification.findMany({
+          where,
+          orderBy: { createdAt: "desc" },
+          take: pageSize,
+          skip: (page - 1) * pageSize,
+        }),
+        ctx.db.notification.count({ where }),
+      ]);
+
+      return {
+        notifications,
+        pagination: {
+          page,
+          pageSize,
+          total,
+          totalPages: Math.ceil(total / pageSize),
+          hasMore: page * pageSize < total,
+        },
+      };
+    }),
+
+  /**
+   * Get recent notifications (for dropdown)
+   */
+  getRecent: protectedProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(20).default(5),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+
+      const notifications = await ctx.db.notification.findMany({
+        where: { userId: user.id },
+        orderBy: { createdAt: "desc" },
+        take: input.limit,
+      });
+
+      const unreadCount = await ctx.db.notification.count({
+        where: {
+          userId: user.id,
+          readAt: null,
+        },
+      });
+
+      return {
+        notifications,
+        unreadCount,
+      };
+    }),
+
+  /**
+   * Get unread notification count
+   */
+  getUnreadCount: protectedProcedure.query(async ({ ctx }) => {
+    const { user } = ctx.session;
+
+    const count = await ctx.db.notification.count({
+      where: {
+        userId: user.id,
+        readAt: null,
+      },
+    });
+
+    return { count };
+  }),
+
+  /**
+   * Mark a single notification as read
+   */
+  markAsRead: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+
+      // Verify ownership
+      const notification = await ctx.db.notification.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!notification) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Notification not found",
+        });
+      }
+
+      if (notification.userId !== user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You can only mark your own notifications as read",
+        });
+      }
+
+      // Already read
+      if (notification.readAt) {
+        return notification;
+      }
+
+      return ctx.db.notification.update({
+        where: { id: input.id },
+        data: { readAt: new Date() },
+      });
+    }),
+
+  /**
+   * Mark multiple notifications as read
+   */
+  markMultipleAsRead: protectedProcedure
+    .input(z.object({ ids: z.array(z.string().cuid()) }))
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+
+      const result = await ctx.db.notification.updateMany({
+        where: {
+          id: { in: input.ids },
+          userId: user.id,
+          readAt: null,
+        },
+        data: { readAt: new Date() },
+      });
+
+      return { count: result.count };
+    }),
+
+  /**
+   * Mark all notifications as read
+   */
+  markAllAsRead: protectedProcedure.mutation(async ({ ctx }) => {
+    const { user } = ctx.session;
+
+    const result = await ctx.db.notification.updateMany({
+      where: {
+        userId: user.id,
+        readAt: null,
+      },
+      data: { readAt: new Date() },
+    });
+
+    return { count: result.count };
+  }),
+
+  /**
+   * Delete a notification
+   */
+  delete: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+
+      // Verify ownership
+      const notification = await ctx.db.notification.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!notification) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Notification not found",
+        });
+      }
+
+      if (notification.userId !== user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You can only delete your own notifications",
+        });
+      }
+
+      await ctx.db.notification.delete({
+        where: { id: input.id },
+      });
+
+      return { success: true };
+    }),
+
+  /**
+   * Delete all read notifications
+   */
+  deleteAllRead: protectedProcedure.mutation(async ({ ctx }) => {
+    const { user } = ctx.session;
+
+    const result = await ctx.db.notification.deleteMany({
+      where: {
+        userId: user.id,
+        readAt: { not: null },
+      },
+    });
+
+    return { count: result.count };
+  }),
+
+  /**
+   * Get notification by ID
+   */
+  getById: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .query(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+
+      const notification = await ctx.db.notification.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!notification) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Notification not found",
+        });
+      }
+
+      if (notification.userId !== user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You can only view your own notifications",
+        });
+      }
+
+      // Mark as read when viewing
+      if (!notification.readAt) {
+        await ctx.db.notification.update({
+          where: { id: input.id },
+          data: { readAt: new Date() },
+        });
+      }
+
+      return notification;
+    }),
+
+  /**
+   * Get notification statistics
+   */
+  getStats: protectedProcedure.query(async ({ ctx }) => {
+    const { user } = ctx.session;
+
+    const [total, unread, byType, byPriority] = await Promise.all([
+      ctx.db.notification.count({
+        where: { userId: user.id },
+      }),
+      ctx.db.notification.count({
+        where: { userId: user.id, readAt: null },
+      }),
+      ctx.db.notification.groupBy({
+        by: ["type"],
+        where: { userId: user.id, readAt: null },
+        _count: true,
+      }),
+      ctx.db.notification.groupBy({
+        by: ["priority"],
+        where: { userId: user.id, readAt: null },
+        _count: true,
+      }),
+    ]);
+
+    return {
+      total,
+      unread,
+      read: total - unread,
+      byType: byType.reduce(
+        (acc, item) => ({ ...acc, [item.type]: item._count }),
+        {} as Record<NotificationType, number>
+      ),
+      byPriority: byPriority.reduce(
+        (acc, item) => ({ ...acc, [item.priority]: item._count }),
+        {} as Record<NotificationPriority, number>
+      ),
+    };
+  }),
+});

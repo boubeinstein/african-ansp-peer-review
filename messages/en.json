@@ -5160,5 +5160,49 @@
       "decided": "No decided applications",
       "all": "No applications found"
     }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "pageTitle": "Notifications",
+    "pageDescription": "View and manage your notifications",
+    "viewAll": "View all notifications",
+    "markAllRead": "Mark all as read",
+    "markSelectedRead": "Mark selected as read",
+    "deleteAllRead": "Delete all read",
+    "noNotifications": "No notifications",
+    "noNotificationsDescription": "You're all caught up! Check back later for new notifications.",
+    "view": "View",
+    "preferences": "Preferences",
+    "stats": {
+      "total": "Total",
+      "unread": "Unread",
+      "urgent": "Urgent",
+      "read": "Read"
+    },
+    "filters": {
+      "label": "Filters",
+      "all": "All",
+      "unreadOnly": "Unread",
+      "type": "Type",
+      "allTypes": "All types",
+      "priority": "Priority",
+      "allPriorities": "All priorities"
+    },
+    "selectAll": "Select all",
+    "selected": "{count} selected",
+    "pagination": {
+      "showing": "Showing {from}-{to} of {total}",
+      "page": "Page {page} of {total}"
+    },
+    "deleteConfirm": {
+      "title": "Delete read notifications?",
+      "description": "This will permanently delete {count} read notifications. This action cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
+    "deleteSingle": {
+      "title": "Delete notification?",
+      "description": "This will permanently delete this notification. This action cannot be undone."
+    }
   }
 }

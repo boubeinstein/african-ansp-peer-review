@@ -19,6 +19,7 @@ import { trainingRouter } from "./training";
 import { settingsRouter } from "./settings";
 import { joinRequestRouter } from "./join-request";
 import { dashboardRouter } from "./dashboard";
+import { notificationRouter } from "./notification";
 
 /**
  * Main app router combining all sub-routers
@@ -44,6 +45,7 @@ export const appRouter = router({
   settings: settingsRouter,
   joinRequest: joinRequestRouter,
   dashboard: dashboardRouter,
+  notification: notificationRouter,
 });
 
 /**

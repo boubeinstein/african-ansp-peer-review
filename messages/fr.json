@@ -5160,5 +5160,49 @@
       "decided": "Aucune candidature décidée",
       "all": "Aucune candidature trouvée"
     }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "pageTitle": "Notifications",
+    "pageDescription": "Consultez et gérez vos notifications",
+    "viewAll": "Voir toutes les notifications",
+    "markAllRead": "Tout marquer comme lu",
+    "markSelectedRead": "Marquer la sélection comme lue",
+    "deleteAllRead": "Supprimer les notifications lues",
+    "noNotifications": "Aucune notification",
+    "noNotificationsDescription": "Vous êtes à jour ! Revenez plus tard pour de nouvelles notifications.",
+    "view": "Voir",
+    "preferences": "Préférences",
+    "stats": {
+      "total": "Total",
+      "unread": "Non lues",
+      "urgent": "Urgentes",
+      "read": "Lues"
+    },
+    "filters": {
+      "label": "Filtres",
+      "all": "Toutes",
+      "unreadOnly": "Non lues",
+      "type": "Type",
+      "allTypes": "Tous les types",
+      "priority": "Priorité",
+      "allPriorities": "Toutes les priorités"
+    },
+    "selectAll": "Tout sélectionner",
+    "selected": "{count} sélectionnée(s)",
+    "pagination": {
+      "showing": "Affichage {from}-{to} sur {total}",
+      "page": "Page {page} sur {total}"
+    },
+    "deleteConfirm": {
+      "title": "Supprimer les notifications lues ?",
+      "description": "Cela supprimera définitivement {count} notifications lues. Cette action est irréversible.",
+      "cancel": "Annuler",
+      "confirm": "Supprimer"
+    },
+    "deleteSingle": {
+      "title": "Supprimer la notification ?",
+      "description": "Cela supprimera définitivement cette notification. Cette action est irréversible."
+    }
   }
 }

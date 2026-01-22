@@ -439,6 +439,14 @@ export const reviewRouter = router({
             },
           },
           report: true,
+          approvals: {
+            select: {
+              id: true,
+              status: true,
+              approvedAt: true,
+            },
+            orderBy: { createdAt: "desc" },
+          },
         },
       });
 

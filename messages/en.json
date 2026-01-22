@@ -2757,6 +2757,31 @@
         "title": "No Pending Requests",
         "description": "All review requests have been processed"
       }
+    },
+    "timeline": {
+      "progress": "Progress",
+      "phasesComplete": "phases complete",
+      "currentPhase": "Current",
+      "blockedAt": "Blocked at",
+      "inProgress": "In Progress",
+      "blocked": "Blocked",
+      "pending": "Pending",
+      "expected": "Expected",
+      "expectedDateTooltip": "Based on requested dates",
+      "sameDay": "Same day",
+      "teamMembers": "{count, plural, =1 {1 team member} other {# team members}}",
+      "findings": "{count, plural, =1 {1 finding} other {# findings}}",
+      "phases": {
+        "requestSubmitted": "Request Submitted",
+        "requestApproved": "Request Approved",
+        "teamAssigned": "Team Assigned",
+        "datesConfirmed": "Dates Confirmed",
+        "reviewStarted": "Review Started",
+        "fieldworkComplete": "Fieldwork Complete",
+        "reportDrafted": "Report Drafted",
+        "reportFinalized": "Report Finalized",
+        "reviewClosed": "Review Closed"
+      }
     }
   },
   "finding": {
@@ -3462,6 +3487,10 @@
       "noTeamMembers": "No team members have been assigned to this review yet.",
       "assignTeamNow": "Assign a team now",
       "coiCannotAssign": "Conflict of interest: You cannot assign reviewers to your own organization's peer review. Another programme coordinator must handle this assignment.",
+      "timeline": {
+        "title": "Review Timeline",
+        "description": "Track the progress of this peer review through each phase"
+      },
       "report": {
         "title": "Review Report",
         "description": "Generate and manage the peer review report",

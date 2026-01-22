@@ -2757,6 +2757,31 @@
         "title": "Aucune demande en attente",
         "description": "Toutes les demandes de revue ont été traitées"
       }
+    },
+    "timeline": {
+      "progress": "Progression",
+      "phasesComplete": "phases terminées",
+      "currentPhase": "En cours",
+      "blockedAt": "Bloqué à",
+      "inProgress": "En cours",
+      "blocked": "Bloqué",
+      "pending": "En attente",
+      "expected": "Prévu",
+      "expectedDateTooltip": "Basé sur les dates demandées",
+      "sameDay": "Même jour",
+      "teamMembers": "{count, plural, =1 {1 membre d'équipe} other {# membres d'équipe}}",
+      "findings": "{count, plural, =1 {1 constat} other {# constats}}",
+      "phases": {
+        "requestSubmitted": "Demande soumise",
+        "requestApproved": "Demande approuvée",
+        "teamAssigned": "Équipe assignée",
+        "datesConfirmed": "Dates confirmées",
+        "reviewStarted": "Revue démarrée",
+        "fieldworkComplete": "Travail de terrain terminé",
+        "reportDrafted": "Rapport rédigé",
+        "reportFinalized": "Rapport finalisé",
+        "reviewClosed": "Revue clôturée"
+      }
     }
   },
   "finding": {
@@ -3462,6 +3487,10 @@
       "noTeamMembers": "Aucun membre n'a encore été assigné à cette revue.",
       "assignTeamNow": "Assigner une équipe maintenant",
       "coiCannotAssign": "Conflit d'intérêts : Vous ne pouvez pas assigner des évaluateurs à la revue de votre propre organisation. Un autre coordinateur de programme doit gérer cette affectation.",
+      "timeline": {
+        "title": "Chronologie de la revue",
+        "description": "Suivez la progression de cette revue par les pairs à travers chaque phase"
+      },
       "report": {
         "title": "Rapport de revue",
         "description": "Générer et gérer le rapport de revue par les pairs",

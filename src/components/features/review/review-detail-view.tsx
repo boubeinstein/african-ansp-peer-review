@@ -24,6 +24,7 @@ import { ReviewTeamWizard } from "./review-team-wizard";
 import { ReportActions } from "./report-actions";
 import { ReviewActionButton } from "./review-action-button";
 import { ReviewNextActions } from "./review-next-actions";
+import { ReviewTimeline } from "./review-timeline";
 
 // UI Components
 import { Button } from "@/components/ui/button";
@@ -37,6 +38,11 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 // Icons
 import {
@@ -46,10 +52,12 @@ import {
   Building2,
   Calendar,
   CheckCircle2,
+  ChevronDown,
   Clock,
   Edit,
   FileText,
   Globe,
+  History,
   Mail,
   MapPin,
   Phone,
@@ -139,6 +147,8 @@ export function ReviewDetailView({
 
   // Team assignment wizard state
   const [teamWizardOpen, setTeamWizardOpen] = useState(false);
+  // Timeline collapsible state
+  const [timelineOpen, setTimelineOpen] = useState(false);
 
   // Permission checks
   const canManageTeams = userRole ? MANAGEMENT_ROLES.includes(userRole) : false;
@@ -283,6 +293,53 @@ export function ReviewDetailView({
           }}
         />
       )}
+
+      {/* Review Timeline - Collapsible panel */}
+      <Collapsible open={timelineOpen} onOpenChange={setTimelineOpen}>
+        <Card>
+          <CollapsibleTrigger asChild>
+            <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <History className="h-5 w-5" />
+                  {t("timeline.title")}
+                </CardTitle>
+                <ChevronDown
+                  className={cn(
+                    "h-5 w-5 text-muted-foreground transition-transform duration-200",
+                    timelineOpen && "rotate-180"
+                  )}
+                />
+              </div>
+              <CardDescription>{t("timeline.description")}</CardDescription>
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="pt-0">
+              <ReviewTimeline
+                review={{
+                  id: review.id,
+                  status: review.status,
+                  requestedDate: review.requestedDate,
+                  requestedStartDate: review.requestedStartDate,
+                  requestedEndDate: review.requestedEndDate,
+                  plannedStartDate: review.plannedStartDate,
+                  plannedEndDate: review.plannedEndDate,
+                  actualStartDate: review.actualStartDate,
+                  actualEndDate: review.actualEndDate,
+                  createdAt: review.createdAt,
+                  updatedAt: review.updatedAt,
+                  teamMembers: review.teamMembers,
+                  approvals: review.approvals,
+                  report: review.report,
+                  findings: review.findings,
+                }}
+                showDurations={true}
+              />
+            </CardContent>
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Host Organization */}

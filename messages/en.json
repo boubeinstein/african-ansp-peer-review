@@ -2668,6 +2668,22 @@
       "FOCUSED": "Focused Review",
       "FOLLOW_UP": "Follow-up Review",
       "SURVEILLANCE": "Surveillance"
+    },
+    "statusTransition": {
+      "title": "Change Review Status",
+      "description": "Select a new status for review {reference}",
+      "currentStatus": "Current Status",
+      "availableTransitions": "Available Transitions",
+      "noTransitionsAvailable": "No status transitions available from current state or you don't have permission.",
+      "reasonLabel": "Reason",
+      "reasonPlaceholder": "Please provide a reason for this status change...",
+      "reasonRequired": "A reason of at least 10 characters is required",
+      "cancel": "Cancel",
+      "confirmTransition": "Confirm Transition",
+      "transitioning": "Transitioning...",
+      "success": "Status Updated",
+      "successDescription": "Review status changed to {status}",
+      "error": "Transition Failed"
     }
   },
   "finding": {

@@ -110,7 +110,8 @@ export function ReviewActionButton({
   // Transition mutation
   const transitionMutation = trpc.review.transitionStatus.useMutation({
     onSuccess: (data) => {
-      toast.success(t("transitionSuccess", { status: t(`status.${data.status.toLowerCase()}`) }));
+      const statusKey = data?.status ? data.status.toLowerCase() : "unknown";
+      toast.success(t("transitionSuccess", { status: t(`status.${statusKey}`) }));
       utils.review.getById.invalidate({ id: reviewId });
       utils.review.getNextActions.invalidate({ reviewId });
       setConfirmDialogOpen(false);

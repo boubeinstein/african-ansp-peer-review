@@ -40,6 +40,14 @@ import {
 // Team eligibility service
 import { validateReviewerAssignment } from "@/server/services/reviewer-eligibility";
 
+// Status state machine
+import {
+  canTransition,
+  executeTransition,
+  getAvailableTransitions,
+  getStatusFlow,
+} from "@/server/services/review-state-machine";
+
 // =============================================================================
 // CONSTANTS & HELPERS
 // =============================================================================
@@ -833,6 +841,109 @@ export const reviewRouter = router({
         },
       });
     }),
+
+  // ==========================================================================
+  // STATUS TRANSITIONS (State Machine)
+  // ==========================================================================
+
+  /**
+   * Get available status transitions for a review
+   */
+  getAvailableTransitions: protectedProcedure
+    .input(z.object({ reviewId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const userRole = ctx.session.user.role as UserRole;
+      return getAvailableTransitions(input.reviewId, userRole);
+    }),
+
+  /**
+   * Check if a specific transition is valid
+   */
+  canTransitionTo: protectedProcedure
+    .input(
+      z.object({
+        reviewId: z.string(),
+        targetStatus: z.nativeEnum(ReviewStatus),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const userRole = ctx.session.user.role as UserRole;
+      return canTransition(input.reviewId, input.targetStatus, userRole);
+    }),
+
+  /**
+   * Execute a status transition with validation
+   */
+  transitionStatus: protectedProcedure
+    .input(
+      z.object({
+        reviewId: z.string(),
+        targetStatus: z.nativeEnum(ReviewStatus),
+        reason: z.string().optional(),
+        notes: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userRole = ctx.session.user.role as UserRole;
+      const userId = ctx.session.user.id;
+
+      const result = await executeTransition(
+        input.reviewId,
+        input.targetStatus,
+        userId,
+        userRole,
+        { reason: input.reason, notes: input.notes }
+      );
+
+      if (!result.success) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Cannot transition to ${input.targetStatus}: ${result.errors?.join(", ")}`,
+        });
+      }
+
+      // Fetch review with relations needed for notifications
+      const reviewForNotification = await ctx.db.review.findUnique({
+        where: { id: input.reviewId },
+        include: {
+          hostOrganization: {
+            select: { id: true, nameEn: true, nameFr: true },
+          },
+        },
+      });
+
+      // Send notifications based on new status
+      if (reviewForNotification) {
+        try {
+          switch (input.targetStatus) {
+            case "APPROVED":
+              await notifyReviewApproved(reviewForNotification);
+              break;
+            case "SCHEDULED":
+              await notifyReviewScheduled(reviewForNotification);
+              break;
+            case "IN_PROGRESS":
+              await notifyReviewStarted(reviewForNotification);
+              break;
+            case "COMPLETED":
+              await notifyReviewCompleted(reviewForNotification);
+              break;
+          }
+        } catch (notifyError) {
+          // Log but don't fail the transition if notification fails
+          console.error("Notification failed:", notifyError);
+        }
+      }
+
+      return result.review;
+    }),
+
+  /**
+   * Get the status flow documentation
+   */
+  getStatusFlow: protectedProcedure.query(() => {
+    return getStatusFlow();
+  }),
 
   // ==========================================================================
   // MUTATIONS - TEAM MANAGEMENT
@@ -2414,154 +2525,6 @@ export const reviewRouter = router({
           isHostOrg,
         },
       };
-    }),
-
-  /**
-   * Transition review to a new status with validation.
-   * This is the explicit mutation for status transitions.
-   */
-  transitionStatus: adminProcedure
-    .input(
-      z.object({
-        reviewId: z.string(),
-        targetStatus: z.nativeEnum(ReviewStatus),
-        notes: z.string().optional(),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { reviewId, targetStatus, notes } = input;
-
-      const review = await ctx.db.review.findUnique({
-        where: { id: reviewId },
-        include: {
-          teamMembers: {
-            select: { id: true, role: true },
-          },
-        },
-      });
-
-      if (!review) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Review not found",
-        });
-      }
-
-      // Define valid transitions
-      const validTransitions: Record<ReviewStatus, ReviewStatus[]> = {
-        REQUESTED: ["APPROVED", "CANCELLED"],
-        APPROVED: ["PLANNING", "SCHEDULED", "CANCELLED"],
-        PLANNING: ["SCHEDULED", "CANCELLED"],
-        SCHEDULED: ["IN_PROGRESS", "CANCELLED"],
-        IN_PROGRESS: ["REPORT_DRAFTING", "CANCELLED"],
-        REPORT_DRAFTING: ["REPORT_REVIEW"],
-        REPORT_REVIEW: ["COMPLETED", "REPORT_DRAFTING"],
-        COMPLETED: [],
-        CANCELLED: [],
-      };
-
-      if (!validTransitions[review.status]?.includes(targetStatus)) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: `Cannot transition from ${review.status} to ${targetStatus}`,
-        });
-      }
-
-      // Additional validation based on target status
-      if (targetStatus === "SCHEDULED") {
-        // Must have team assigned and dates set
-        if (review.teamMembers.length === 0) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Cannot schedule review without a team assigned",
-          });
-        }
-        const hasLead = review.teamMembers.some((tm) => tm.role === "LEAD_REVIEWER");
-        if (!hasLead) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Cannot schedule review without a Lead Reviewer",
-          });
-        }
-        if (!review.plannedStartDate || !review.plannedEndDate) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Cannot schedule review without planned dates",
-          });
-        }
-      }
-
-      // Build update data
-      const updateData: Prisma.ReviewUpdateInput = {
-        status: targetStatus,
-      };
-
-      // Set timestamps based on transition
-      if (targetStatus === "IN_PROGRESS" && !review.actualStartDate) {
-        updateData.actualStartDate = new Date();
-      }
-      if (targetStatus === "COMPLETED") {
-        updateData.actualEndDate = new Date();
-      }
-
-      // Append notes if provided
-      if (notes) {
-        const timestamp = new Date().toISOString();
-        const existingNotes = review.specialRequirements || "";
-        updateData.specialRequirements = existingNotes
-          ? `${existingNotes}\n\n[${timestamp}] Status changed to ${targetStatus}: ${notes}`
-          : `[${timestamp}] Status changed to ${targetStatus}: ${notes}`;
-      }
-
-      const updatedReview = await ctx.db.review.update({
-        where: { id: reviewId },
-        data: updateData,
-        include: {
-          hostOrganization: {
-            select: {
-              id: true,
-              nameEn: true,
-              nameFr: true,
-              icaoCode: true,
-            },
-          },
-        },
-      });
-
-      // Send status-specific notifications
-      try {
-        const reviewData = {
-          id: updatedReview.id,
-          referenceNumber: updatedReview.referenceNumber,
-          hostOrganization: {
-            id: updatedReview.hostOrganization.id,
-            nameEn: updatedReview.hostOrganization.nameEn,
-            nameFr: updatedReview.hostOrganization.nameFr ?? updatedReview.hostOrganization.nameEn,
-          },
-          plannedStartDate: updatedReview.plannedStartDate,
-          plannedEndDate: updatedReview.plannedEndDate,
-        };
-
-        switch (targetStatus) {
-          case "APPROVED":
-            await notifyReviewApproved(reviewData);
-            break;
-          case "SCHEDULED":
-            await notifyReviewScheduled(reviewData);
-            break;
-          case "IN_PROGRESS":
-            await notifyReviewStarted(reviewData);
-            break;
-          case "COMPLETED":
-            await notifyReviewCompleted(reviewData);
-            break;
-        }
-      } catch (error) {
-        console.error("[Review Transition] Failed to send notifications:", error);
-        // Don't fail the request if notifications fail
-      }
-
-      return updatedReview;
     }),
 
   /**

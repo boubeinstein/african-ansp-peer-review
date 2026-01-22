@@ -2668,6 +2668,22 @@
       "FOCUSED": "Revue ciblée",
       "FOLLOW_UP": "Revue de suivi",
       "SURVEILLANCE": "Surveillance"
+    },
+    "statusTransition": {
+      "title": "Changer le statut de la revue",
+      "description": "Sélectionnez un nouveau statut pour la revue {reference}",
+      "currentStatus": "Statut actuel",
+      "availableTransitions": "Transitions disponibles",
+      "noTransitionsAvailable": "Aucune transition de statut disponible depuis l'état actuel ou vous n'avez pas la permission.",
+      "reasonLabel": "Raison",
+      "reasonPlaceholder": "Veuillez fournir une raison pour ce changement de statut...",
+      "reasonRequired": "Une raison d'au moins 10 caractères est requise",
+      "cancel": "Annuler",
+      "confirmTransition": "Confirmer la transition",
+      "transitioning": "Transition en cours...",
+      "success": "Statut mis à jour",
+      "successDescription": "Le statut de la revue a été changé en {status}",
+      "error": "Échec de la transition"
     }
   },
   "finding": {

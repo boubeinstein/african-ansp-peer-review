@@ -9,9 +9,14 @@
  *   npx tsx prisma/seed-teams-and-orgs.ts cleanup  # Clean and reseed
  */
 
+import "dotenv/config";
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, AfricanRegion, MembershipStatus } from "@prisma/client";
 
-const prisma = new PrismaClient();
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 // =============================================================================
 // DATA
@@ -290,102 +295,63 @@ const TEAMS: TeamData[] = [
 // SEED FUNCTIONS
 // =============================================================================
 
-async function cleanup() {
-  console.log("🧹 Cleaning up existing data...");
-
-  // Delete in correct order due to foreign key constraints
-  // First, remove team references from organizations
-  await prisma.organization.updateMany({
-    where: { regionalTeamId: { not: null } },
-    data: { regionalTeamId: null },
-  });
-
-  // Delete teams
-  const deletedTeams = await prisma.regionalTeam.deleteMany({
-    where: {
-      code: { in: TEAMS.map((t) => t.code) },
-    },
-  });
-  console.log(`   Deleted ${deletedTeams.count} teams`);
-
-  // Delete organizations
-  const deletedOrgs = await prisma.organization.deleteMany({
-    where: {
-      icaoCode: { in: ORGANIZATIONS.map((o) => o.icaoCode) },
-    },
-  });
-  console.log(`   Deleted ${deletedOrgs.count} organizations`);
-}
-
 async function seedOrganizations(): Promise<Map<string, string>> {
-  console.log("\n📍 Creating organizations...");
+  console.log("\n🏢 Seeding Organizations...\n");
   const orgIdMap = new Map<string, string>();
 
   for (const org of ORGANIZATIONS) {
-    const existing = await prisma.organization.findFirst({
+    const created = await prisma.organization.upsert({
       where: { icaoCode: org.icaoCode },
-    });
-
-    if (existing) {
-      console.log(`   ⏭️  ${org.code} already exists, skipping`);
-      orgIdMap.set(org.code, existing.id);
-      continue;
-    }
-
-    const created = await prisma.organization.create({
-      data: {
+      update: {
+        icaoCode: org.icaoCode,
         nameEn: org.nameEn,
         nameFr: org.nameFr,
-        icaoCode: org.icaoCode,
         country: org.country,
         region: org.region,
-        peerReviewTeam: org.teamNumber,
-        membershipStatus: MembershipStatus.ACTIVE,
-        joinedAt: new Date(),
-        joinedProgrammeAt: new Date(),
-        participationStatus: "ACTIVE",
+        membershipStatus: "ACTIVE" as MembershipStatus,
+      },
+      create: {
+        code: org.code,
+        icaoCode: org.icaoCode,
+        nameEn: org.nameEn,
+        nameFr: org.nameFr,
+        country: org.country,
+        region: org.region,
+        membershipStatus: "ACTIVE" as MembershipStatus,
       },
     });
 
     orgIdMap.set(org.code, created.id);
-    console.log(`   ✅ Created ${org.code} - ${org.nameEn}`);
+    console.log(`  ✅ ${org.code}: ${org.nameEn}`);
   }
 
+  console.log(`\n  Total: ${orgIdMap.size} organizations created`);
   return orgIdMap;
 }
 
 async function seedTeams(orgIdMap: Map<string, string>): Promise<void> {
-  console.log("\n🏢 Creating peer support teams...");
+  console.log("\n👥 Seeding Peer Support Teams...\n");
 
   for (const team of TEAMS) {
     const leadOrgId = orgIdMap.get(team.leadCode);
-
     if (!leadOrgId) {
-      console.error(`   ❌ Lead organization ${team.leadCode} not found for team ${team.code}`);
+      console.log(`  ❌ Team ${team.teamNumber}: Lead org ${team.leadCode} not found`);
       continue;
     }
 
-    const existing = await prisma.regionalTeam.findFirst({
+    // Create team
+    const created = await prisma.regionalTeam.upsert({
       where: { code: team.code },
-    });
-
-    if (existing) {
-      console.log(`   ⏭️  ${team.code} already exists, updating...`);
-      await prisma.regionalTeam.update({
-        where: { id: existing.id },
-        data: {
-          nameEn: team.nameEn,
-          nameFr: team.nameFr,
-          leadOrganizationId: leadOrgId,
-        },
-      });
-      continue;
-    }
-
-    const created = await prisma.regionalTeam.create({
-      data: {
+      update: {
         teamNumber: team.teamNumber,
+        nameEn: team.nameEn,
+        nameFr: team.nameFr,
+        leadOrganizationId: leadOrgId,
+        isActive: true,
+      },
+      create: {
         code: team.code,
+        teamNumber: team.teamNumber,
         nameEn: team.nameEn,
         nameFr: team.nameFr,
         leadOrganizationId: leadOrgId,
@@ -393,82 +359,102 @@ async function seedTeams(orgIdMap: Map<string, string>): Promise<void> {
       },
     });
 
-    console.log(`   ✅ Created ${team.code} - ${team.nameEn}`);
-
-    // Assign team members
-    const teamOrgs = ORGANIZATIONS.filter((o) => o.teamNumber === team.teamNumber);
-    for (const org of teamOrgs) {
-      const orgId = orgIdMap.get(org.code);
-      if (orgId) {
+    // Link member organizations to team
+    const memberOrgs = ORGANIZATIONS.filter((o) => o.teamNumber === team.teamNumber);
+    for (const memberOrg of memberOrgs) {
+      const memberId = orgIdMap.get(memberOrg.code);
+      if (memberId) {
         await prisma.organization.update({
-          where: { id: orgId },
+          where: { id: memberId },
           data: { regionalTeamId: created.id },
         });
       }
     }
-    console.log(`      → Assigned ${teamOrgs.length} organizations to team`);
+
+    const memberCodes = memberOrgs.map((o) => o.code).join(", ");
+    console.log(`  ✅ ${team.code}: ${team.nameEn}`);
+    console.log(`     Lead: ${team.leadCode} | Members: ${memberCodes}`);
   }
 }
 
-async function printSummary() {
-  console.log("\n📊 Summary:");
+async function cleanup(): Promise<void> {
+  console.log("\n🧹 Cleaning up teams and organizations...\n");
+
+  // Unlink organizations from teams
+  await prisma.organization.updateMany({
+    data: { regionalTeamId: null },
+  });
+  console.log("  ✅ Organizations unlinked from teams");
+
+  // Delete teams
+  const teamsDeleted = await prisma.regionalTeam.deleteMany({});
+  console.log(`  ✅ Teams deleted: ${teamsDeleted.count}`);
+
+  // Delete organizations
+  const orgsDeleted = await prisma.organization.deleteMany({});
+  console.log(`  ✅ Organizations deleted: ${orgsDeleted.count}`);
+}
+
+async function printSummary(): Promise<void> {
+  console.log("\n" + "═".repeat(60));
+  console.log("📊 SEED SUMMARY");
+  console.log("═".repeat(60));
 
   const teams = await prisma.regionalTeam.findMany({
     include: {
-      leadOrganization: { select: { icaoCode: true, nameEn: true } },
-      memberOrganizations: { select: { icaoCode: true, nameEn: true } },
+      leadOrganization: { select: { code: true } },
+      memberOrganizations: { select: { code: true } },
     },
     orderBy: { teamNumber: "asc" },
   });
 
+  console.log("\n┌──────┬──────────────────────────────────────┬──────┬───────────────────────────┐");
+  console.log("│ Team │                 Name                 │ Lead │          Members          │");
+  console.log("├──────┼──────────────────────────────────────┼──────┼───────────────────────────┤");
+
   for (const team of teams) {
-    console.log(`\n   ${team.code} - ${team.nameEn}`);
-    console.log(`   Lead: ${team.leadOrganization.icaoCode} (${team.leadOrganization.nameEn})`);
-    console.log(`   Members: ${team.memberOrganizations.length}`);
-    for (const member of team.memberOrganizations) {
-      const isLead = member.icaoCode === team.leadOrganization.icaoCode;
-      console.log(`      - ${member.icaoCode}: ${member.nameEn}${isLead ? " ★" : ""}`);
-    }
+    const members = team.memberOrganizations
+      .filter((m) => m.code !== team.leadOrganization.code)
+      .map((m) => m.code)
+      .join(", ");
+    const name = team.nameEn.replace("Team " + team.teamNumber + " - ", "");
+    console.log(
+      `│ ${team.teamNumber.toString().padEnd(4)} │ ${name.padEnd(36)} │ ${team.leadOrganization.code.padEnd(4)} │ ${members.padEnd(25)} │`
+    );
   }
 
-  const totalOrgs = await prisma.organization.count({
-    where: { regionalTeamId: { not: null } },
-  });
-  console.log(`\n   Total organizations in teams: ${totalOrgs}`);
+  console.log("└──────┴──────────────────────────────────────┴──────┴───────────────────────────┘");
+
+  const orgCount = await prisma.organization.count();
+  const teamCount = await prisma.regionalTeam.count();
+  console.log(`\nTotal: ${teamCount} teams, ${orgCount} organizations`);
 }
 
 // =============================================================================
 // MAIN
 // =============================================================================
 
-async function main() {
-  const args = process.argv.slice(2);
-  const shouldCleanup = args.includes("cleanup");
-
-  console.log("🌱 Seeding Teams and Organizations");
-  console.log("===================================\n");
+async function main(): Promise<void> {
+  const command = process.argv[2];
 
   try {
-    if (shouldCleanup) {
+    if (command === "cleanup") {
       await cleanup();
+      console.log("\n✅ Cleanup complete");
+    } else {
+      // Default: seed
+      const orgIdMap = await seedOrganizations();
+      await seedTeams(orgIdMap);
+      await printSummary();
+      console.log("\n✅ Seeding complete");
     }
-
-    const orgIdMap = await seedOrganizations();
-    await seedTeams(orgIdMap);
-    await printSummary();
-
-    console.log("\n✅ Seed completed successfully!\n");
   } catch (error) {
-    console.error("\n❌ Seed failed:", error);
-    throw error;
+    console.error("\n❌ Error:", error);
+    process.exit(1);
+  } finally {
+    await prisma.$disconnect();
+    await pool.end();
   }
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main();

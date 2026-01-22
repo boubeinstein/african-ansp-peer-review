@@ -7,7 +7,7 @@
  * Wraps the app with shortcuts context and renders necessary dialogs.
  */
 
-import { createContext, useContext, useState, useCallback, useEffect } from "react";
+import { createContext, useContext, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { useKeyboardShortcuts, useSequenceShortcuts, type SequenceShortcut } from "@/hooks/use-keyboard-shortcuts";

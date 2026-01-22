@@ -9,8 +9,6 @@
 import {
   BarChart,
   Bar,
-  LineChart,
-  Line,
   PieChart,
   Pie,
   Cell,
@@ -53,7 +51,7 @@ const COLORS = {
   rejected: "#ef4444",
 };
 
-const PIE_COLORS = [
+const _PIE_COLORS = [
   "#1e3a5f",
   "#3b82f6",
   "#22c55e",
@@ -74,7 +72,7 @@ interface ReviewStatusData {
 }
 
 export function ReviewStatusChart({ data }: { data: ReviewStatusData[] }) {
-  const t = useTranslations("analytics");
+  const _t = useTranslations("analytics");
 
   const chartData = data.map((item) => ({
     name: formatStatus(item.status),
@@ -319,7 +317,7 @@ export function ReviewerPerformanceChart({
         <XAxis type="number" allowDecimals={false} />
         <YAxis type="category" dataKey="name" width={80} tick={{ fontSize: 12 }} />
         <Tooltip
-          formatter={(value, name, props) => [value, name]}
+          formatter={(value, name, _props) => [value, name]}
           labelFormatter={(label, payload) => {
             if (payload && payload[0]) {
               return payload[0].payload.fullName;

@@ -23,7 +23,6 @@ import {
   Phone,
   CheckCircle2,
   Globe,
-  FileText,
   Users,
   AlertCircle,
 } from "lucide-react";
@@ -101,7 +100,6 @@ export function JoinProgrammeForm() {
     register,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors },
   } = useForm<JoinProgrammeFormData>({
     resolver: zodResolver(joinProgrammeSchema),

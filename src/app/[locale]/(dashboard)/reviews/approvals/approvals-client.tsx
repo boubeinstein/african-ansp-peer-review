@@ -21,13 +21,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   CheckCircle2,
   XCircle,
   Clock,
-  FileText,
-  Building2,
   ArrowRight,
   AlertTriangle,
   BarChart3,
@@ -289,7 +286,7 @@ function RecentDecisions() {
 // MAIN COMPONENT
 // =============================================================================
 
-export function ApprovalsPageClient({ userRole }: ApprovalsPageClientProps) {
+export function ApprovalsPageClient({ userRole: _userRole }: ApprovalsPageClientProps) {
   const t = useTranslations("reviews.approval");
   const router = useRouter();
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);

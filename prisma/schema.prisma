@@ -90,6 +90,7 @@ model User {
   createdCOIs              ReviewerCOI[]          @relation("COICreator")
   verifiedCOIs             ReviewerCOI[]          @relation("COIVerifier")
   reviewerProfile          ReviewerProfile?
+  reviewApprovals          ReviewApproval[]       @relation("ReviewApprovals")
   preferences              UserPreferences?
   organization             Organization?          @relation(fields: [organizationId], references: [id])
 
@@ -541,9 +542,28 @@ model Review {
   report                 ReviewReport?
   teamMembers            ReviewTeamMember[]
   blockedAvailability    ReviewerAvailability[]
+  approvals              ReviewApproval[]
   hostOrganization       Organization           @relation("HostANSP", fields: [hostOrganizationId], references: [id])
 
   @@map("reviews")
+}
+
+model ReviewApproval {
+  id           String         @id @default(cuid())
+  reviewId     String         @map("review_id")
+  status       ApprovalStatus @default(PENDING)
+  approvedById String?        @map("approved_by_id")
+  approvedAt   DateTime?      @map("approved_at")
+  commentsEn   String?        @map("comments_en") @db.Text
+  commentsFr   String?        @map("comments_fr") @db.Text
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+
+  review     Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  approvedBy User?  @relation("ReviewApprovals", fields: [approvedById], references: [id])
+
+  @@unique([reviewId])
+  @@map("review_approvals")
 }
 
 model ReviewTeamMember {
@@ -1187,6 +1207,13 @@ enum ReviewStatus {
   REPORT_REVIEW
   COMPLETED
   CANCELLED
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  DEFERRED
 }
 
 enum ReviewPhase {

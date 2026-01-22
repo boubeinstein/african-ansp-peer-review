@@ -2684,6 +2684,79 @@
       "success": "Status Updated",
       "successDescription": "Review status changed to {status}",
       "error": "Transition Failed"
+    },
+    "approval": {
+      "pageTitle": "Review Approvals",
+      "pageDescription": "Review and process peer review requests",
+      "title": "Approval Decision",
+      "description": "Review the request details and make your decision",
+      "backToReviews": "Back to Reviews",
+      "pendingRequests": "Pending Requests",
+      "recentDecisions": "Recent Decisions",
+      "recentDecisionsDescription": "Decisions made in the last 30 days",
+      "noRecentDecisions": "No recent decisions",
+      "requestedOn": "Requested on",
+      "requestedDate": "Requested Date",
+      "requestedPeriod": "Requested Period",
+      "objectives": "Objectives",
+      "history": "Decision History",
+      "by": "by",
+      "stats": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "deferred": "Deferred"
+      },
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "deferred": "Deferred"
+      },
+      "action": {
+        "approve": "Approve",
+        "reject": "Reject",
+        "defer": "Defer",
+        "cancel": "Cancel",
+        "continue": "Continue",
+        "confirm": "Confirm",
+        "processing": "Processing..."
+      },
+      "decision": {
+        "approved": {
+          "title": "Approve Request",
+          "description": "The review will be approved and the requesting organization will be notified.",
+          "success": "Review request approved successfully"
+        },
+        "rejected": {
+          "title": "Reject Request",
+          "description": "Please provide a reason for rejecting this request. This will be shared with the requesting organization.",
+          "success": "Review request rejected"
+        },
+        "deferred": {
+          "title": "Defer Request",
+          "description": "Please provide a reason for deferring this request. The organization can resubmit later.",
+          "success": "Review request deferred"
+        },
+        "error": "Failed to process decision"
+      },
+      "comments": {
+        "en": "Comments (English)",
+        "fr": "Comments (French)",
+        "placeholder": "Enter your comments in English...",
+        "placeholderFr": "Enter your comments in French...",
+        "required": "Comments are required for this decision"
+      },
+      "confirm": {
+        "title": "Confirm Decision",
+        "approved": "Are you sure you want to approve this review request? The requesting organization will be notified.",
+        "rejected": "Are you sure you want to reject this review request? This action cannot be undone.",
+        "deferred": "Are you sure you want to defer this review request? The organization can resubmit later."
+      },
+      "noPending": {
+        "title": "No Pending Requests",
+        "description": "All review requests have been processed"
+      }
     }
   },
   "finding": {

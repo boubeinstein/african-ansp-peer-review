@@ -24,6 +24,7 @@ import {
   UserRole,
   ReviewLocationType,
   LanguagePreference,
+  ApprovalStatus,
   Prisma,
 } from "@prisma/client";
 
@@ -943,6 +944,262 @@ export const reviewRouter = router({
    */
   getStatusFlow: protectedProcedure.query(() => {
     return getStatusFlow();
+  }),
+
+  // ==========================================================================
+  // REVIEW APPROVALS
+  // ==========================================================================
+
+  /**
+   * Get pending review approvals for Steering Committee / Coordinators
+   */
+  getPendingApprovals: protectedProcedure.query(async ({ ctx }) => {
+    // Only SC and Coordinators can view pending approvals
+    const allowedRoles: UserRole[] = [
+      "SUPER_ADMIN",
+      "SYSTEM_ADMIN",
+      "STEERING_COMMITTEE",
+      "PROGRAMME_COORDINATOR",
+    ];
+
+    if (!allowedRoles.includes(ctx.session.user.role as UserRole)) {
+      return [];
+    }
+
+    const pendingReviews = await ctx.db.review.findMany({
+      where: {
+        status: "REQUESTED",
+        approvals: {
+          none: {
+            status: { in: ["APPROVED", "REJECTED"] },
+          },
+        },
+      },
+      include: {
+        hostOrganization: {
+          select: {
+            id: true,
+            nameEn: true,
+            nameFr: true,
+            icaoCode: true,
+            country: true,
+          },
+        },
+        approvals: {
+          orderBy: { createdAt: "desc" },
+          take: 1,
+        },
+      },
+      orderBy: { requestedDate: "asc" },
+    });
+
+    return pendingReviews;
+  }),
+
+  /**
+   * Get approval history for a review
+   */
+  getApprovalHistory: protectedProcedure
+    .input(z.object({ reviewId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return ctx.db.reviewApproval.findMany({
+        where: { reviewId: input.reviewId },
+        include: {
+          approvedBy: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              role: true,
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+    }),
+
+  /**
+   * Submit approval decision
+   */
+  submitApprovalDecision: protectedProcedure
+    .input(
+      z.object({
+        reviewId: z.string(),
+        decision: z.nativeEnum(ApprovalStatus),
+        commentsEn: z.string().optional(),
+        commentsFr: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Only SC and Coordinators can approve
+      const allowedRoles: UserRole[] = [
+        "SUPER_ADMIN",
+        "SYSTEM_ADMIN",
+        "STEERING_COMMITTEE",
+        "PROGRAMME_COORDINATOR",
+      ];
+
+      if (!allowedRoles.includes(ctx.session.user.role as UserRole)) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to approve review requests",
+        });
+      }
+
+      // Validate review exists and is in REQUESTED status
+      const review = await ctx.db.review.findUnique({
+        where: { id: input.reviewId },
+        include: {
+          hostOrganization: {
+            select: { id: true, nameEn: true, nameFr: true },
+          },
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
+      if (review.status !== "REQUESTED") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Review is not in REQUESTED status",
+        });
+      }
+
+      // Require comments for rejection or deferral
+      if (
+        (input.decision === "REJECTED" || input.decision === "DEFERRED") &&
+        !input.commentsEn &&
+        !input.commentsFr
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Comments are required when rejecting or deferring a request",
+        });
+      }
+
+      // Create approval record
+      const approval = await ctx.db.reviewApproval.upsert({
+        where: { reviewId: input.reviewId },
+        create: {
+          reviewId: input.reviewId,
+          status: input.decision,
+          approvedById: ctx.session.user.id,
+          approvedAt: new Date(),
+          commentsEn: input.commentsEn,
+          commentsFr: input.commentsFr,
+        },
+        update: {
+          status: input.decision,
+          approvedById: ctx.session.user.id,
+          approvedAt: new Date(),
+          commentsEn: input.commentsEn,
+          commentsFr: input.commentsFr,
+        },
+      });
+
+      // Update review status based on decision
+      let newStatus: ReviewStatus = review.status;
+      if (input.decision === "APPROVED") {
+        newStatus = "APPROVED";
+      } else if (input.decision === "REJECTED") {
+        newStatus = "CANCELLED";
+      }
+      // DEFERRED keeps status as REQUESTED
+
+      if (newStatus !== review.status) {
+        await ctx.db.review.update({
+          where: { id: input.reviewId },
+          data: { status: newStatus },
+        });
+
+        // Send notification
+        if (input.decision === "APPROVED") {
+          try {
+            await notifyReviewApproved({
+              id: review.id,
+              referenceNumber: review.referenceNumber,
+              hostOrganization: {
+                id: review.hostOrganization.id,
+                nameEn: review.hostOrganization.nameEn,
+                nameFr: review.hostOrganization.nameFr ?? review.hostOrganization.nameEn,
+              },
+              plannedStartDate: review.plannedStartDate,
+              plannedEndDate: review.plannedEndDate,
+            });
+          } catch (error) {
+            console.error("Failed to send approval notification:", error);
+          }
+        }
+      }
+
+      return {
+        approval,
+        newStatus,
+      };
+    }),
+
+  /**
+   * Get approval statistics
+   */
+  getApprovalStats: protectedProcedure.query(async ({ ctx }) => {
+    const [pending, approved, rejected, deferred] = await Promise.all([
+      ctx.db.review.count({
+        where: {
+          status: "REQUESTED",
+          approvals: {
+            none: { status: { in: ["APPROVED", "REJECTED"] } },
+          },
+        },
+      }),
+      ctx.db.reviewApproval.count({
+        where: { status: "APPROVED" },
+      }),
+      ctx.db.reviewApproval.count({
+        where: { status: "REJECTED" },
+      }),
+      ctx.db.reviewApproval.count({
+        where: { status: "DEFERRED" },
+      }),
+    ]);
+
+    // Recent decisions (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const recentDecisions = await ctx.db.reviewApproval.findMany({
+      where: {
+        approvedAt: { gte: thirtyDaysAgo },
+        status: { in: ["APPROVED", "REJECTED"] },
+      },
+      include: {
+        review: {
+          select: {
+            referenceNumber: true,
+            hostOrganization: {
+              select: { nameEn: true, nameFr: true },
+            },
+          },
+        },
+        approvedBy: {
+          select: { firstName: true, lastName: true },
+        },
+      },
+      orderBy: { approvedAt: "desc" },
+      take: 10,
+    });
+
+    return {
+      pending,
+      approved,
+      rejected,
+      deferred,
+      recentDecisions,
+    };
   }),
 
   // ==========================================================================

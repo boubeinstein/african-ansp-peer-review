@@ -2684,6 +2684,79 @@
       "success": "Statut mis à jour",
       "successDescription": "Le statut de la revue a été changé en {status}",
       "error": "Échec de la transition"
+    },
+    "approval": {
+      "pageTitle": "Approbations des revues",
+      "pageDescription": "Examiner et traiter les demandes de revue par les pairs",
+      "title": "Décision d'approbation",
+      "description": "Examinez les détails de la demande et prenez votre décision",
+      "backToReviews": "Retour aux revues",
+      "pendingRequests": "Demandes en attente",
+      "recentDecisions": "Décisions récentes",
+      "recentDecisionsDescription": "Décisions prises au cours des 30 derniers jours",
+      "noRecentDecisions": "Aucune décision récente",
+      "requestedOn": "Demandé le",
+      "requestedDate": "Date de demande",
+      "requestedPeriod": "Période demandée",
+      "objectives": "Objectifs",
+      "history": "Historique des décisions",
+      "by": "par",
+      "stats": {
+        "pending": "En attente",
+        "approved": "Approuvées",
+        "rejected": "Rejetées",
+        "deferred": "Différées"
+      },
+      "status": {
+        "pending": "En attente",
+        "approved": "Approuvée",
+        "rejected": "Rejetée",
+        "deferred": "Différée"
+      },
+      "action": {
+        "approve": "Approuver",
+        "reject": "Rejeter",
+        "defer": "Différer",
+        "cancel": "Annuler",
+        "continue": "Continuer",
+        "confirm": "Confirmer",
+        "processing": "Traitement en cours..."
+      },
+      "decision": {
+        "approved": {
+          "title": "Approuver la demande",
+          "description": "La revue sera approuvée et l'organisation demandeuse sera notifiée.",
+          "success": "Demande de revue approuvée avec succès"
+        },
+        "rejected": {
+          "title": "Rejeter la demande",
+          "description": "Veuillez fournir une raison pour le rejet de cette demande. Cela sera partagé avec l'organisation demandeuse.",
+          "success": "Demande de revue rejetée"
+        },
+        "deferred": {
+          "title": "Différer la demande",
+          "description": "Veuillez fournir une raison pour le report de cette demande. L'organisation peut soumettre à nouveau plus tard.",
+          "success": "Demande de revue différée"
+        },
+        "error": "Échec du traitement de la décision"
+      },
+      "comments": {
+        "en": "Commentaires (Anglais)",
+        "fr": "Commentaires (Français)",
+        "placeholder": "Entrez vos commentaires en anglais...",
+        "placeholderFr": "Entrez vos commentaires en français...",
+        "required": "Les commentaires sont requis pour cette décision"
+      },
+      "confirm": {
+        "title": "Confirmer la décision",
+        "approved": "Êtes-vous sûr de vouloir approuver cette demande de revue ? L'organisation demandeuse sera notifiée.",
+        "rejected": "Êtes-vous sûr de vouloir rejeter cette demande de revue ? Cette action ne peut pas être annulée.",
+        "deferred": "Êtes-vous sûr de vouloir différer cette demande de revue ? L'organisation peut soumettre à nouveau plus tard."
+      },
+      "noPending": {
+        "title": "Aucune demande en attente",
+        "description": "Toutes les demandes de revue ont été traitées"
+      }
     }
   },
   "finding": {

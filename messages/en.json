@@ -16,6 +16,7 @@
       "confirm": "Confirm",
       "back": "Back",
       "next": "Next",
+      "previous": "Previous",
       "profile": "Profile",
       "settings": "Settings",
       "logout": "Log out",
@@ -27,6 +28,8 @@
       "loading": "Loading...",
       "retry": "Retry"
     },
+    "yes": "Yes",
+    "no": "No",
     "submitting": "Submitting...",
     "status": {
       "active": "Active",
@@ -3047,6 +3050,104 @@
       "statusUpdated": "Finding status updated successfully",
       "assigned": "Finding assigned successfully",
       "deleted": "Finding deleted successfully"
+    },
+    "severityHint": {
+      "NON_CONFORMITY": "Non-conformities typically require MAJOR or CRITICAL severity",
+      "OBSERVATION": "Observations are typically MINOR or OBSERVATION level",
+      "RECOMMENDATION": "Recommendations are typically OBSERVATION level",
+      "GOOD_PRACTICE": "Good practices are always OBSERVATION level",
+      "CONCERN": "Concerns are typically MINOR level"
+    },
+    "wizard": {
+      "title": "New Finding",
+      "subtitle": "Record a finding from the peer review using this structured wizard",
+      "saveDraft": "Save Draft",
+      "draftSavedAt": "Draft saved at {time}",
+      "steps": {
+        "classification": {
+          "title": "Classification",
+          "description": "Type & Severity",
+          "instructions": "Classify the finding by type, severity, and related audit area"
+        },
+        "description": {
+          "title": "Description",
+          "description": "Titles & Details",
+          "instructions": "Provide detailed description of the finding in English (French optional)"
+        },
+        "evidence": {
+          "title": "Evidence",
+          "description": "Documents & Links",
+          "instructions": "Upload supporting documents and link related interview notes"
+        },
+        "discussion": {
+          "title": "Discussion",
+          "description": "Host Response",
+          "instructions": "Record the host organization's response and agreement status"
+        },
+        "cap": {
+          "title": "CAP Requirement",
+          "description": "Action Plan",
+          "instructions": "Determine if a Corrective Action Plan is required and set timeline"
+        }
+      },
+      "fields": {
+        "auditArea": "Audit Area",
+        "selectAuditArea": "Select audit area",
+        "searchIcaoReference": "Search ICAO reference...",
+        "searchIcaoPlaceholder": "Type to search annexes, docs...",
+        "noIcaoFound": "No ICAO references found",
+        "commonReferences": "Common References",
+        "icaoReferenceHint": "Select the relevant ICAO document or standard",
+        "pqLinkHint": "Link this finding to a specific Protocol Question (PQ)",
+        "optional": "Optional",
+        "autoTranslateHint": "Leave empty to auto-translate from English",
+        "descriptionHint": "Provide a clear, detailed description of the finding",
+        "evidenceSummary": "Evidence Summary",
+        "evidenceSummaryPlaceholder": "Brief summary of the evidence supporting this finding...",
+        "evidenceSummaryHint": "Summarize the key evidence that supports this finding",
+        "supportingDocuments": "Supporting Documents",
+        "dragDropHint": "Drag and drop files here, or click to browse",
+        "browseFiles": "Browse Files",
+        "documentsHint": "Upload PDF, images, or other supporting documents",
+        "interviewNotes": "Interview Notes",
+        "interviewNotesPlaceholder": "Link to interview notes or reference...",
+        "interviewNotesHint": "Link related interview notes or transcripts",
+        "link": "Link",
+        "procedureReferences": "Procedure References",
+        "procedureReferencesPlaceholder": "Enter procedure document reference...",
+        "procedureReferencesHint": "Reference specific procedures or documents reviewed",
+        "add": "Add",
+        "hostResponse": "Host Organization Response",
+        "hostResponsePlaceholder": "Record the host organization's response to this finding...",
+        "hostResponseHint": "Document the host's initial response during the closing meeting",
+        "hostAgreement": "Agreement Status",
+        "agreed": "Agreed - Host accepts the finding",
+        "partiallyAgreed": "Partially Agreed - Host accepts with reservations",
+        "disagreed": "Disagreed - Host disputes the finding",
+        "additionalContext": "Additional Context",
+        "additionalContextPlaceholder": "Any additional context or clarifications...",
+        "discussionNotes": "Discussion Notes",
+        "discussionNotesPlaceholder": "Internal notes from the discussion (not shared with host)...",
+        "discussionNotesHint": "These notes are for the review team only",
+        "capAutoRequired": "Auto-required for Major/Critical non-conformities",
+        "suggestedTimeline": "Suggested Timeline",
+        "selectTimeline": "Select timeline",
+        "timelineHint": "Selecting a timeline will automatically set the target close date",
+        "pickDate": "Pick a date",
+        "responsibleParty": "Responsible Party",
+        "responsiblePartyPlaceholder": "Name of person responsible",
+        "responsiblePartyHint": "Contact person at the host organization for this CAP",
+        "responsibleDepartment": "Responsible Department",
+        "responsibleDepartmentPlaceholder": "Department or unit responsible",
+        "findingSummary": "Finding Summary"
+      },
+      "exitDialog": {
+        "title": "Unsaved Changes",
+        "description": "You have unsaved changes. Would you like to save them as a draft before leaving?",
+        "cancel": "Continue Editing",
+        "saveAndExit": "Save Draft & Exit",
+        "discard": "Discard Changes"
+      }
     }
   },
   "cap": {

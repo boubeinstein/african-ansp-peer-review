@@ -16,6 +16,7 @@
       "confirm": "Confirmer",
       "back": "Retour",
       "next": "Suivant",
+      "previous": "Précédent",
       "profile": "Profil",
       "settings": "Paramètres",
       "logout": "Déconnexion",
@@ -27,6 +28,8 @@
       "loading": "Chargement...",
       "retry": "Réessayer"
     },
+    "yes": "Oui",
+    "no": "Non",
     "submitting": "Soumission en cours...",
     "status": {
       "active": "Actif",
@@ -3047,6 +3050,104 @@
       "statusUpdated": "Statut de la constatation mis à jour avec succès",
       "assigned": "Constatation assignée avec succès",
       "deleted": "Constatation supprimée avec succès"
+    },
+    "severityHint": {
+      "NON_CONFORMITY": "Les non-conformités nécessitent généralement une sévérité MAJEURE ou CRITIQUE",
+      "OBSERVATION": "Les observations sont généralement de niveau MINEUR ou OBSERVATION",
+      "RECOMMENDATION": "Les recommandations sont généralement de niveau OBSERVATION",
+      "GOOD_PRACTICE": "Les bonnes pratiques sont toujours de niveau OBSERVATION",
+      "CONCERN": "Les préoccupations sont généralement de niveau MINEUR"
+    },
+    "wizard": {
+      "title": "Nouvelle Constatation",
+      "subtitle": "Enregistrez une constatation de l'évaluation par les pairs à l'aide de cet assistant structuré",
+      "saveDraft": "Enregistrer le brouillon",
+      "draftSavedAt": "Brouillon enregistré à {time}",
+      "steps": {
+        "classification": {
+          "title": "Classification",
+          "description": "Type et Sévérité",
+          "instructions": "Classifiez la constatation par type, sévérité et domaine d'audit associé"
+        },
+        "description": {
+          "title": "Description",
+          "description": "Titres et Détails",
+          "instructions": "Fournissez une description détaillée de la constatation en anglais (français optionnel)"
+        },
+        "evidence": {
+          "title": "Preuves",
+          "description": "Documents et Liens",
+          "instructions": "Téléchargez les documents justificatifs et liez les notes d'entretien associées"
+        },
+        "discussion": {
+          "title": "Discussion",
+          "description": "Réponse de l'Hôte",
+          "instructions": "Enregistrez la réponse de l'organisation hôte et le statut d'accord"
+        },
+        "cap": {
+          "title": "Exigence PAC",
+          "description": "Plan d'Action",
+          "instructions": "Déterminez si un Plan d'Action Corrective est requis et définissez le calendrier"
+        }
+      },
+      "fields": {
+        "auditArea": "Domaine d'Audit",
+        "selectAuditArea": "Sélectionner le domaine d'audit",
+        "searchIcaoReference": "Rechercher une référence OACI...",
+        "searchIcaoPlaceholder": "Tapez pour rechercher les annexes, docs...",
+        "noIcaoFound": "Aucune référence OACI trouvée",
+        "commonReferences": "Références Courantes",
+        "icaoReferenceHint": "Sélectionnez le document ou la norme OACI pertinent",
+        "pqLinkHint": "Liez cette constatation à une Question de Protocole (QP) spécifique",
+        "optional": "Optionnel",
+        "autoTranslateHint": "Laissez vide pour une traduction automatique de l'anglais",
+        "descriptionHint": "Fournissez une description claire et détaillée de la constatation",
+        "evidenceSummary": "Résumé des Preuves",
+        "evidenceSummaryPlaceholder": "Bref résumé des preuves étayant cette constatation...",
+        "evidenceSummaryHint": "Résumez les principales preuves qui soutiennent cette constatation",
+        "supportingDocuments": "Documents Justificatifs",
+        "dragDropHint": "Glissez-déposez les fichiers ici, ou cliquez pour parcourir",
+        "browseFiles": "Parcourir les Fichiers",
+        "documentsHint": "Téléchargez des PDF, images ou autres documents justificatifs",
+        "interviewNotes": "Notes d'Entretien",
+        "interviewNotesPlaceholder": "Lien vers les notes d'entretien ou référence...",
+        "interviewNotesHint": "Liez les notes d'entretien ou transcriptions associées",
+        "link": "Lier",
+        "procedureReferences": "Références de Procédures",
+        "procedureReferencesPlaceholder": "Entrez la référence du document de procédure...",
+        "procedureReferencesHint": "Référencez les procédures ou documents spécifiques examinés",
+        "add": "Ajouter",
+        "hostResponse": "Réponse de l'Organisation Hôte",
+        "hostResponsePlaceholder": "Enregistrez la réponse de l'organisation hôte à cette constatation...",
+        "hostResponseHint": "Documentez la réponse initiale de l'hôte lors de la réunion de clôture",
+        "hostAgreement": "Statut d'Accord",
+        "agreed": "D'accord - L'hôte accepte la constatation",
+        "partiallyAgreed": "Partiellement d'accord - L'hôte accepte avec des réserves",
+        "disagreed": "Pas d'accord - L'hôte conteste la constatation",
+        "additionalContext": "Contexte Supplémentaire",
+        "additionalContextPlaceholder": "Tout contexte ou clarification supplémentaire...",
+        "discussionNotes": "Notes de Discussion",
+        "discussionNotesPlaceholder": "Notes internes de la discussion (non partagées avec l'hôte)...",
+        "discussionNotesHint": "Ces notes sont réservées à l'équipe d'évaluation",
+        "capAutoRequired": "Requis automatiquement pour les non-conformités Majeures/Critiques",
+        "suggestedTimeline": "Calendrier Suggéré",
+        "selectTimeline": "Sélectionner le calendrier",
+        "timelineHint": "La sélection d'un calendrier définira automatiquement la date de clôture cible",
+        "pickDate": "Choisir une date",
+        "responsibleParty": "Partie Responsable",
+        "responsiblePartyPlaceholder": "Nom de la personne responsable",
+        "responsiblePartyHint": "Personne de contact à l'organisation hôte pour ce PAC",
+        "responsibleDepartment": "Département Responsable",
+        "responsibleDepartmentPlaceholder": "Département ou unité responsable",
+        "findingSummary": "Résumé de la Constatation"
+      },
+      "exitDialog": {
+        "title": "Modifications Non Enregistrées",
+        "description": "Vous avez des modifications non enregistrées. Souhaitez-vous les enregistrer comme brouillon avant de quitter ?",
+        "cancel": "Continuer l'Édition",
+        "saveAndExit": "Enregistrer le Brouillon et Quitter",
+        "discard": "Annuler les Modifications"
+      }
     }
   },
   "cap": {

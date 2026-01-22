@@ -418,8 +418,12 @@ async function printSummary(): Promise<void> {
 
   const teams = await prisma.regionalTeam.findMany({
     include: {
-      leadOrganization: { select: { code: true } },
-      memberOrganizations: { select: { code: true } },
+      leadOrganization: {
+        select: { id: true, icaoCode: true, nameEn: true }
+      },
+      memberOrganizations: {
+        select: { id: true, icaoCode: true }
+      },
     },
     orderBy: { teamNumber: "asc" },
   });
@@ -429,13 +433,14 @@ async function printSummary(): Promise<void> {
   console.log("├──────┼──────────────────────────────────────┼──────┼───────────────────────────┤");
 
   for (const team of teams) {
+    const leadCode = team.leadOrganization?.icaoCode || "N/A";
     const members = team.memberOrganizations
-      .filter((m) => m.code !== team.leadOrganization.code)
-      .map((m) => m.code)
+      .filter((m) => m.icaoCode !== team.leadOrganization?.icaoCode)
+      .map((m) => m.icaoCode)
       .join(", ");
     const name = team.nameEn.replace("Team " + team.teamNumber + " - ", "");
     console.log(
-      `│ ${team.teamNumber.toString().padEnd(4)} │ ${name.padEnd(36)} │ ${team.leadOrganization.code.padEnd(4)} │ ${members.padEnd(25)} │`
+      `│ ${team.teamNumber.toString().padEnd(4)} │ ${name.padEnd(36)} │ ${leadCode.padEnd(4)} │ ${members.padEnd(25)} │`
     );
   }
 

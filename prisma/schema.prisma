@@ -91,6 +91,7 @@ model User {
   verifiedCOIs             ReviewerCOI[]          @relation("COIVerifier")
   reviewerProfile          ReviewerProfile?
   reviewApprovals          ReviewApproval[]       @relation("ReviewApprovals")
+  fieldworkChecklists      FieldworkChecklist[]   @relation("FieldworkChecklists")
   preferences              UserPreferences?
   organization             Organization?          @relation(fields: [organizationId], references: [id])
 
@@ -543,6 +544,7 @@ model Review {
   teamMembers            ReviewTeamMember[]
   blockedAvailability    ReviewerAvailability[]
   approvals              ReviewApproval[]
+  fieldworkChecklist     FieldworkChecklist?
   hostOrganization       Organization           @relation("HostANSP", fields: [hostOrganizationId], references: [id])
 
   @@map("reviews")
@@ -590,6 +592,45 @@ model ReviewTeamMember {
 
   @@unique([reviewId, userId])
   @@map("review_team_members")
+}
+
+model FieldworkChecklist {
+  id       String @id @default(cuid())
+  reviewId String @unique @map("review_id")
+
+  // Pre-visit checklist
+  documentRequestSent Boolean @default(false) @map("document_request_sent")
+  documentsReceived   Boolean @default(false) @map("documents_received")
+  preVisitMeetingHeld Boolean @default(false) @map("pre_visit_meeting_held")
+  reviewPlanApproved  Boolean @default(false) @map("review_plan_approved")
+
+  // On-site checklist
+  openingMeetingHeld     Boolean @default(false) @map("opening_meeting_held")
+  interviewsCompleted    Boolean @default(false) @map("interviews_completed")
+  facilitiesInspected    Boolean @default(false) @map("facilities_inspected")
+  documentReviewComplete Boolean @default(false) @map("document_review_complete")
+  findingsDiscussed      Boolean @default(false) @map("findings_discussed")
+  closingMeetingHeld     Boolean @default(false) @map("closing_meeting_held")
+
+  // Post-visit checklist
+  findingsEntered      Boolean @default(false) @map("findings_entered")
+  evidenceUploaded     Boolean @default(false) @map("evidence_uploaded")
+  draftReportPrepared  Boolean @default(false) @map("draft_report_prepared")
+  hostFeedbackReceived Boolean @default(false) @map("host_feedback_received")
+
+  // Completion tracking
+  completedAt   DateTime? @map("completed_at")
+  completedById String?   @map("completed_by_id")
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  review      Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  completedBy User?  @relation("FieldworkChecklists", fields: [completedById], references: [id])
+
+  @@map("fieldwork_checklists")
 }
 
 model ReviewReport {

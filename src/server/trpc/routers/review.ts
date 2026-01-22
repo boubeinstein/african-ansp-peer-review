@@ -1211,6 +1211,246 @@ export const reviewRouter = router({
   }),
 
   // ==========================================================================
+  // FIELDWORK CHECKLIST
+  // ==========================================================================
+
+  /**
+   * Get fieldwork checklist for a review
+   */
+  getFieldworkChecklist: protectedProcedure
+    .input(z.object({ reviewId: z.string().cuid() }))
+    .query(async ({ ctx, input }) => {
+      const checklist = await ctx.db.fieldworkChecklist.findUnique({
+        where: { reviewId: input.reviewId },
+        include: {
+          completedBy: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+      });
+
+      return checklist;
+    }),
+
+  /**
+   * Create or initialize fieldwork checklist
+   */
+  initializeFieldworkChecklist: protectedProcedure
+    .input(z.object({ reviewId: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      // Verify user has access (must be team member or admin)
+      const review = await ctx.db.review.findUnique({
+        where: { id: input.reviewId },
+        include: {
+          teamMembers: {
+            select: { userId: true, role: true },
+          },
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
+      // Check if user is team member or admin
+      const isTeamMember = review.teamMembers.some(
+        (m) => m.userId === ctx.session.user.id
+      );
+      const isAdmin = ["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(
+        ctx.session.user.role as string
+      );
+
+      if (!isTeamMember && !isAdmin) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to manage this checklist",
+        });
+      }
+
+      // Check if checklist already exists
+      const existing = await ctx.db.fieldworkChecklist.findUnique({
+        where: { reviewId: input.reviewId },
+      });
+
+      if (existing) {
+        return existing;
+      }
+
+      // Create new checklist
+      return ctx.db.fieldworkChecklist.create({
+        data: {
+          reviewId: input.reviewId,
+        },
+      });
+    }),
+
+  /**
+   * Update fieldwork checklist item
+   */
+  updateFieldworkChecklistItem: protectedProcedure
+    .input(
+      z.object({
+        reviewId: z.string().cuid(),
+        field: z.enum([
+          "documentRequestSent",
+          "documentsReceived",
+          "preVisitMeetingHeld",
+          "reviewPlanApproved",
+          "openingMeetingHeld",
+          "interviewsCompleted",
+          "facilitiesInspected",
+          "documentReviewComplete",
+          "findingsDiscussed",
+          "closingMeetingHeld",
+          "findingsEntered",
+          "evidenceUploaded",
+          "draftReportPrepared",
+          "hostFeedbackReceived",
+        ]),
+        value: z.boolean(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Verify user has access
+      const review = await ctx.db.review.findUnique({
+        where: { id: input.reviewId },
+        include: {
+          teamMembers: {
+            select: { userId: true, role: true },
+          },
+          fieldworkChecklist: true,
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
+      // Check if user is team member or admin
+      const teamMember = review.teamMembers.find(
+        (m) => m.userId === ctx.session.user.id
+      );
+      const isAdmin = ["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(
+        ctx.session.user.role as string
+      );
+
+      if (!teamMember && !isAdmin) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to update this checklist",
+        });
+      }
+
+      // Create checklist if it doesn't exist
+      if (!review.fieldworkChecklist) {
+        await ctx.db.fieldworkChecklist.create({
+          data: {
+            reviewId: input.reviewId,
+          },
+        });
+      }
+
+      // Update the specific field
+      return ctx.db.fieldworkChecklist.update({
+        where: { reviewId: input.reviewId },
+        data: {
+          [input.field]: input.value,
+        },
+      });
+    }),
+
+  /**
+   * Mark fieldwork as complete
+   */
+  completeFieldwork: protectedProcedure
+    .input(z.object({ reviewId: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      // Verify user has access and is lead reviewer
+      const review = await ctx.db.review.findUnique({
+        where: { id: input.reviewId },
+        include: {
+          teamMembers: {
+            select: { userId: true, role: true },
+          },
+          fieldworkChecklist: true,
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
+      // Check if user is lead reviewer or admin
+      const isLeadReviewer = review.teamMembers.some(
+        (m) => m.userId === ctx.session.user.id && m.role === "LEAD_REVIEWER"
+      );
+      const isAdmin = ["SUPER_ADMIN", "SYSTEM_ADMIN"].includes(
+        ctx.session.user.role as string
+      );
+
+      if (!isLeadReviewer && !isAdmin) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only the Lead Reviewer can mark fieldwork as complete",
+        });
+      }
+
+      if (!review.fieldworkChecklist) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Fieldwork checklist not initialized",
+        });
+      }
+
+      // Verify all items are checked
+      const checklist = review.fieldworkChecklist;
+      const allChecked =
+        checklist.documentRequestSent &&
+        checklist.documentsReceived &&
+        checklist.preVisitMeetingHeld &&
+        checklist.reviewPlanApproved &&
+        checklist.openingMeetingHeld &&
+        checklist.interviewsCompleted &&
+        checklist.facilitiesInspected &&
+        checklist.documentReviewComplete &&
+        checklist.findingsDiscussed &&
+        checklist.closingMeetingHeld &&
+        checklist.findingsEntered &&
+        checklist.evidenceUploaded &&
+        checklist.draftReportPrepared &&
+        checklist.hostFeedbackReceived;
+
+      if (!allChecked) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "All checklist items must be completed before marking fieldwork as complete",
+        });
+      }
+
+      // Mark as complete
+      return ctx.db.fieldworkChecklist.update({
+        where: { reviewId: input.reviewId },
+        data: {
+          completedAt: new Date(),
+          completedById: ctx.session.user.id,
+        },
+      });
+    }),
+
+  // ==========================================================================
   // MUTATIONS - TEAM MANAGEMENT
   // ==========================================================================
 

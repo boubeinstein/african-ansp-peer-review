@@ -25,6 +25,7 @@ import { ReportActions } from "./report-actions";
 import { ReviewActionButton } from "./review-action-button";
 import { ReviewNextActions } from "./review-next-actions";
 import { ReviewTimeline } from "./review-timeline";
+import { FieldworkChecklist } from "./fieldwork-checklist";
 
 // UI Components
 import { Button } from "@/components/ui/button";
@@ -73,6 +74,7 @@ import {
 export interface ReviewDetailViewProps {
   reviewId: string;
   locale: string;
+  userId?: string;
   userRole?: string;
   userOrganizationId?: string;
 }
@@ -139,6 +141,7 @@ const STATUS_CONFIG: Record<
 export function ReviewDetailView({
   reviewId,
   locale,
+  userId,
   userRole,
   userOrganizationId,
 }: ReviewDetailViewProps) {
@@ -633,6 +636,22 @@ export function ReviewDetailView({
           )}
         </CardContent>
       </Card>
+
+      {/* Fieldwork Checklist - shown for team members on active reviews */}
+      {review.teamMembers.length > 0 &&
+        ["APPROVED", "PLANNING", "SCHEDULED", "IN_PROGRESS", "REPORT_DRAFTING"].includes(review.status) && (
+        <FieldworkChecklist
+          reviewId={reviewId}
+          isLeadReviewer={review.teamMembers.some(
+            (m) => m.user.id === userId && m.role === "LEAD_REVIEWER"
+          )}
+          isAdmin={["SUPER_ADMIN", "SYSTEM_ADMIN"].includes(userRole || "")}
+          isTeamMember={
+            review.teamMembers.some((m) => m.user.id === userId) ||
+            canManageTeams
+          }
+        />
+      )}
 
       {/* Report Actions */}
       <ReportActions

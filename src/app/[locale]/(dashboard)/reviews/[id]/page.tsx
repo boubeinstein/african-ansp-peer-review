@@ -33,6 +33,7 @@ export default async function ReviewDetailPage({ params }: ReviewDetailPageProps
       <ReviewDetailView
         reviewId={id}
         locale={locale}
+        userId={session.user.id}
         userRole={session.user.role}
         userOrganizationId={session.user.organizationId ?? undefined}
       />

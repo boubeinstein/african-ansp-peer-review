@@ -2782,6 +2782,55 @@
         "reportFinalized": "Report Finalized",
         "reviewClosed": "Review Closed"
       }
+    },
+    "fieldworkChecklist": {
+      "title": "Fieldwork Checklist",
+      "description": "Track progress through pre-visit, on-site, and post-visit activities",
+      "overallProgress": "Overall Progress",
+      "completed": "Completed",
+      "completedBy": "Completed by",
+      "completedOn": "Completed on",
+      "allItemsRequired": "All checklist items must be completed before marking fieldwork as complete",
+      "completeFieldwork": "Complete Fieldwork",
+      "completing": "Completing...",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "confirmComplete": {
+        "title": "Complete Fieldwork?",
+        "description": "This will mark all fieldwork activities as complete. This action signifies that all pre-visit, on-site, and post-visit activities have been performed."
+      },
+      "preVisit": {
+        "title": "Pre-Visit Preparation",
+        "documentRequestSent": "Document request sent to host organization",
+        "documentsReceived": "Pre-visit documents received and reviewed",
+        "preVisitMeetingHeld": "Pre-visit coordination meeting held with team",
+        "reviewPlanApproved": "Review plan approved by team"
+      },
+      "onSite": {
+        "title": "On-Site Activities",
+        "openingMeetingHeld": "Opening meeting conducted with host",
+        "interviewsCompleted": "Staff interviews completed",
+        "facilitiesInspected": "Facilities inspection completed",
+        "documentReviewComplete": "Document review completed",
+        "findingsDiscussed": "Preliminary findings discussed with host",
+        "closingMeetingHeld": "Closing meeting conducted"
+      },
+      "postVisit": {
+        "title": "Post-Visit Activities",
+        "findingsEntered": "All findings entered in system",
+        "evidenceUploaded": "Supporting evidence uploaded",
+        "draftReportPrepared": "Draft report prepared",
+        "hostFeedbackReceived": "Host feedback received on draft findings"
+      },
+      "success": {
+        "completed": "Fieldwork marked as complete"
+      },
+      "error": {
+        "load": "Failed to load checklist",
+        "initialize": "Failed to initialize checklist",
+        "update": "Failed to update checklist item",
+        "complete": "Failed to complete fieldwork"
+      }
     }
   },
   "finding": {

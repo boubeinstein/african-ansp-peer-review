@@ -2782,6 +2782,55 @@
         "reportFinalized": "Rapport finalisé",
         "reviewClosed": "Revue clôturée"
       }
+    },
+    "fieldworkChecklist": {
+      "title": "Liste de contrôle du travail de terrain",
+      "description": "Suivez la progression des activités pré-visite, sur site et post-visite",
+      "overallProgress": "Progression globale",
+      "completed": "Terminé",
+      "completedBy": "Complété par",
+      "completedOn": "Complété le",
+      "allItemsRequired": "Tous les éléments de la liste de contrôle doivent être complétés avant de marquer le travail de terrain comme terminé",
+      "completeFieldwork": "Terminer le travail de terrain",
+      "completing": "Finalisation...",
+      "cancel": "Annuler",
+      "confirm": "Confirmer",
+      "confirmComplete": {
+        "title": "Terminer le travail de terrain ?",
+        "description": "Ceci marquera toutes les activités de terrain comme terminées. Cette action signifie que toutes les activités pré-visite, sur site et post-visite ont été réalisées."
+      },
+      "preVisit": {
+        "title": "Préparation pré-visite",
+        "documentRequestSent": "Demande de documents envoyée à l'organisation hôte",
+        "documentsReceived": "Documents pré-visite reçus et examinés",
+        "preVisitMeetingHeld": "Réunion de coordination pré-visite tenue avec l'équipe",
+        "reviewPlanApproved": "Plan d'examen approuvé par l'équipe"
+      },
+      "onSite": {
+        "title": "Activités sur site",
+        "openingMeetingHeld": "Réunion d'ouverture tenue avec l'hôte",
+        "interviewsCompleted": "Entretiens du personnel complétés",
+        "facilitiesInspected": "Inspection des installations complétée",
+        "documentReviewComplete": "Revue documentaire complétée",
+        "findingsDiscussed": "Constatations préliminaires discutées avec l'hôte",
+        "closingMeetingHeld": "Réunion de clôture tenue"
+      },
+      "postVisit": {
+        "title": "Activités post-visite",
+        "findingsEntered": "Toutes les constatations saisies dans le système",
+        "evidenceUploaded": "Preuves justificatives téléchargées",
+        "draftReportPrepared": "Projet de rapport préparé",
+        "hostFeedbackReceived": "Retour de l'hôte reçu sur les constatations préliminaires"
+      },
+      "success": {
+        "completed": "Travail de terrain marqué comme terminé"
+      },
+      "error": {
+        "load": "Échec du chargement de la liste de contrôle",
+        "initialize": "Échec de l'initialisation de la liste de contrôle",
+        "update": "Échec de la mise à jour de l'élément",
+        "complete": "Échec de la finalisation du travail de terrain"
+      }
     }
   },
   "finding": {

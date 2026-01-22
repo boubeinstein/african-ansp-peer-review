@@ -46,8 +46,10 @@ import {
   Save,
   Send,
   AlertTriangle,
+  Languages,
 } from "lucide-react";
 import { format, addDays } from "date-fns";
+import { AutoTranslateButton } from "@/components/features/translation/auto-translate-button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -249,10 +251,22 @@ export function CAPForm({
                 name="rootCauseEn"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      {t("form.rootCauseEn")} *
-                      <Badge variant="outline" className="ml-2">EN</Badge>
-                    </FormLabel>
+                    <div className="flex items-center justify-between">
+                      <FormLabel>
+                        {t("form.rootCauseEn")} *
+                        <Badge variant="outline" className="ml-2">EN</Badge>
+                      </FormLabel>
+                      {form.watch("rootCauseFr") && (
+                        <AutoTranslateButton
+                          sourceText={form.watch("rootCauseFr")}
+                          targetValue={field.value}
+                          targetLanguage="en"
+                          onTranslate={(text) => form.setValue("rootCauseEn", text)}
+                          fieldName={t("form.rootCauseEn")}
+                          size="sm"
+                        />
+                      )}
+                    </div>
                     <FormControl>
                       <Textarea
                         placeholder={t("form.rootCausePlaceholder")}
@@ -270,10 +284,22 @@ export function CAPForm({
                 name="rootCauseFr"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      {t("form.rootCauseFr")} *
-                      <Badge variant="outline" className="ml-2">FR</Badge>
-                    </FormLabel>
+                    <div className="flex items-center justify-between">
+                      <FormLabel>
+                        {t("form.rootCauseFr")} *
+                        <Badge variant="outline" className="ml-2">FR</Badge>
+                      </FormLabel>
+                      {form.watch("rootCauseEn") && (
+                        <AutoTranslateButton
+                          sourceText={form.watch("rootCauseEn")}
+                          targetValue={field.value}
+                          targetLanguage="fr"
+                          onTranslate={(text) => form.setValue("rootCauseFr", text)}
+                          fieldName={t("form.rootCauseFr")}
+                          size="sm"
+                        />
+                      )}
+                    </div>
                     <FormControl>
                       <Textarea
                         placeholder={t("form.rootCausePlaceholder")}
@@ -302,10 +328,22 @@ export function CAPForm({
                 name="correctiveActionEn"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      {t("form.correctiveActionEn")} *
-                      <Badge variant="outline" className="ml-2">EN</Badge>
-                    </FormLabel>
+                    <div className="flex items-center justify-between">
+                      <FormLabel>
+                        {t("form.correctiveActionEn")} *
+                        <Badge variant="outline" className="ml-2">EN</Badge>
+                      </FormLabel>
+                      {form.watch("correctiveActionFr") && (
+                        <AutoTranslateButton
+                          sourceText={form.watch("correctiveActionFr")}
+                          targetValue={field.value}
+                          targetLanguage="en"
+                          onTranslate={(text) => form.setValue("correctiveActionEn", text)}
+                          fieldName={t("form.correctiveActionEn")}
+                          size="sm"
+                        />
+                      )}
+                    </div>
                     <FormControl>
                       <Textarea
                         placeholder={t("form.correctiveActionPlaceholder")}
@@ -323,10 +361,22 @@ export function CAPForm({
                 name="correctiveActionFr"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      {t("form.correctiveActionFr")} *
-                      <Badge variant="outline" className="ml-2">FR</Badge>
-                    </FormLabel>
+                    <div className="flex items-center justify-between">
+                      <FormLabel>
+                        {t("form.correctiveActionFr")} *
+                        <Badge variant="outline" className="ml-2">FR</Badge>
+                      </FormLabel>
+                      {form.watch("correctiveActionEn") && (
+                        <AutoTranslateButton
+                          sourceText={form.watch("correctiveActionEn")}
+                          targetValue={field.value}
+                          targetLanguage="fr"
+                          onTranslate={(text) => form.setValue("correctiveActionFr", text)}
+                          fieldName={t("form.correctiveActionFr")}
+                          size="sm"
+                        />
+                      )}
+                    </div>
                     <FormControl>
                       <Textarea
                         placeholder={t("form.correctiveActionPlaceholder")}
@@ -355,10 +405,22 @@ export function CAPForm({
                 name="preventiveActionEn"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      {t("form.preventiveActionEn")}
-                      <Badge variant="outline" className="ml-2">EN</Badge>
-                    </FormLabel>
+                    <div className="flex items-center justify-between">
+                      <FormLabel>
+                        {t("form.preventiveActionEn")}
+                        <Badge variant="outline" className="ml-2">EN</Badge>
+                      </FormLabel>
+                      {form.watch("preventiveActionFr") && (
+                        <AutoTranslateButton
+                          sourceText={form.watch("preventiveActionFr") || ""}
+                          targetValue={field.value}
+                          targetLanguage="en"
+                          onTranslate={(text) => form.setValue("preventiveActionEn", text)}
+                          fieldName={t("form.preventiveActionEn")}
+                          size="sm"
+                        />
+                      )}
+                    </div>
                     <FormControl>
                       <Textarea
                         placeholder={t("form.preventiveActionPlaceholder")}
@@ -377,10 +439,22 @@ export function CAPForm({
                 name="preventiveActionFr"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      {t("form.preventiveActionFr")}
-                      <Badge variant="outline" className="ml-2">FR</Badge>
-                    </FormLabel>
+                    <div className="flex items-center justify-between">
+                      <FormLabel>
+                        {t("form.preventiveActionFr")}
+                        <Badge variant="outline" className="ml-2">FR</Badge>
+                      </FormLabel>
+                      {form.watch("preventiveActionEn") && (
+                        <AutoTranslateButton
+                          sourceText={form.watch("preventiveActionEn") || ""}
+                          targetValue={field.value}
+                          targetLanguage="fr"
+                          onTranslate={(text) => form.setValue("preventiveActionFr", text)}
+                          fieldName={t("form.preventiveActionFr")}
+                          size="sm"
+                        />
+                      )}
+                    </div>
                     <FormControl>
                       <Textarea
                         placeholder={t("form.preventiveActionPlaceholder")}

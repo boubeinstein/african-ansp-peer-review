@@ -5320,5 +5320,23 @@
     "newValue": "New Value",
     "previousState": "Previous State",
     "newState": "New State"
+  },
+  "translation": {
+    "translateTo": "Translate to {language}",
+    "serviceUnavailable": "Translation service is not available",
+    "enterSourceText": "Enter source text first",
+    "clickToTranslate": "Click to translate to {language}",
+    "translationPreview": "Translation Preview",
+    "reviewTranslation": "Review the translation to {language} before applying",
+    "sourceText": "Source Text",
+    "translatedText": "Translated Text",
+    "cached": "Cached",
+    "edited": "Edited",
+    "editBeforeApplying": "You can edit the translation before applying it",
+    "existingContentWarning": "This field already has content. Applying the translation will replace it.",
+    "cancel": "Cancel",
+    "applyTranslation": "Apply Translation",
+    "autoTranslated": "Auto-translated",
+    "autoTranslatedTooltip": "This content was auto-translated. Review before publishing."
   }
 }

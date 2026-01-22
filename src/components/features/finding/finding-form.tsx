@@ -51,8 +51,10 @@ import {
   Check,
   CalendarIcon,
   X,
+  Languages,
 } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
+import { AutoTranslateButton } from "@/components/features/translation/auto-translate-button";
 import { format } from "date-fns";
 import type {
   FindingType,
@@ -537,7 +539,19 @@ export function FindingForm({
                     name="titleEn"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("form.titleEn")} *</FormLabel>
+                        <div className="flex items-center justify-between">
+                          <FormLabel>{t("form.titleEn")} *</FormLabel>
+                          {form.watch("titleFr") && (
+                            <AutoTranslateButton
+                              sourceText={form.watch("titleFr")}
+                              targetValue={field.value}
+                              targetLanguage="en"
+                              onTranslate={(text) => form.setValue("titleEn", text)}
+                              fieldName={t("form.titleEn")}
+                              size="sm"
+                            />
+                          )}
+                        </div>
                         <FormControl>
                           <Input
                             placeholder={t("form.titleEnPlaceholder")}
@@ -554,7 +568,19 @@ export function FindingForm({
                     name="titleFr"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("form.titleFr")} *</FormLabel>
+                        <div className="flex items-center justify-between">
+                          <FormLabel>{t("form.titleFr")} *</FormLabel>
+                          {form.watch("titleEn") && (
+                            <AutoTranslateButton
+                              sourceText={form.watch("titleEn")}
+                              targetValue={field.value}
+                              targetLanguage="fr"
+                              onTranslate={(text) => form.setValue("titleFr", text)}
+                              fieldName={t("form.titleFr")}
+                              size="sm"
+                            />
+                          )}
+                        </div>
                         <FormControl>
                           <Input
                             placeholder={t("form.titleFrPlaceholder")}
@@ -572,7 +598,19 @@ export function FindingForm({
                   name="descriptionEn"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("form.descriptionEn")} *</FormLabel>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>{t("form.descriptionEn")} *</FormLabel>
+                        {form.watch("descriptionFr") && (
+                          <AutoTranslateButton
+                            sourceText={form.watch("descriptionFr")}
+                            targetValue={field.value}
+                            targetLanguage="en"
+                            onTranslate={(text) => form.setValue("descriptionEn", text)}
+                            fieldName={t("form.descriptionEn")}
+                            size="sm"
+                          />
+                        )}
+                      </div>
                       <FormControl>
                         <Textarea
                           placeholder={t("form.descriptionEnPlaceholder")}
@@ -590,7 +628,19 @@ export function FindingForm({
                   name="descriptionFr"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("form.descriptionFr")} *</FormLabel>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>{t("form.descriptionFr")} *</FormLabel>
+                        {form.watch("descriptionEn") && (
+                          <AutoTranslateButton
+                            sourceText={form.watch("descriptionEn")}
+                            targetValue={field.value}
+                            targetLanguage="fr"
+                            onTranslate={(text) => form.setValue("descriptionFr", text)}
+                            fieldName={t("form.descriptionFr")}
+                            size="sm"
+                          />
+                        )}
+                      </div>
                       <FormControl>
                         <Textarea
                           placeholder={t("form.descriptionFrPlaceholder")}
@@ -622,7 +672,19 @@ export function FindingForm({
                     name="evidenceEn"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("form.evidenceEn")}</FormLabel>
+                        <div className="flex items-center justify-between">
+                          <FormLabel>{t("form.evidenceEn")}</FormLabel>
+                          {form.watch("evidenceFr") && (
+                            <AutoTranslateButton
+                              sourceText={form.watch("evidenceFr") || ""}
+                              targetValue={field.value}
+                              targetLanguage="en"
+                              onTranslate={(text) => form.setValue("evidenceEn", text)}
+                              fieldName={t("form.evidenceEn")}
+                              size="sm"
+                            />
+                          )}
+                        </div>
                         <FormControl>
                           <Textarea
                             placeholder={t("form.evidenceEnPlaceholder")}
@@ -640,7 +702,19 @@ export function FindingForm({
                     name="evidenceFr"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("form.evidenceFr")}</FormLabel>
+                        <div className="flex items-center justify-between">
+                          <FormLabel>{t("form.evidenceFr")}</FormLabel>
+                          {form.watch("evidenceEn") && (
+                            <AutoTranslateButton
+                              sourceText={form.watch("evidenceEn") || ""}
+                              targetValue={field.value}
+                              targetLanguage="fr"
+                              onTranslate={(text) => form.setValue("evidenceFr", text)}
+                              fieldName={t("form.evidenceFr")}
+                              size="sm"
+                            />
+                          )}
+                        </div>
                         <FormControl>
                           <Textarea
                             placeholder={t("form.evidenceFrPlaceholder")}

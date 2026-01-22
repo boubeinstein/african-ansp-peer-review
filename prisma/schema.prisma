@@ -1546,3 +1546,25 @@ enum AuditAction {
   EXPORT
   VIEW_SENSITIVE
 }
+
+// =============================================================================
+// TRANSLATION CACHE
+// =============================================================================
+
+model TranslationCache {
+  id              String   @id @default(cuid())
+  sourceHash      String   @map("source_hash")
+  sourceText      String   @map("source_text") @db.Text
+  translatedText  String   @map("translated_text") @db.Text
+  sourceLanguage  String   @map("source_language")
+  targetLanguage  String   @map("target_language")
+  entityType      String?  @map("entity_type")
+  entityId        String?  @map("entity_id")
+  fieldName       String?  @map("field_name")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@unique([sourceHash, sourceLanguage, targetLanguage])
+  @@index([entityType, entityId])
+  @@map("translation_cache")
+}

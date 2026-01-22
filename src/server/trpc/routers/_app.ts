@@ -22,6 +22,7 @@ import { dashboardRouter } from "./dashboard";
 import { notificationRouter } from "./notification";
 import { analyticsRouter } from "./analytics";
 import { auditRouter } from "./audit";
+import { translationRouter } from "./translation";
 
 /**
  * Main app router combining all sub-routers
@@ -50,6 +51,7 @@ export const appRouter = router({
   notification: notificationRouter,
   analytics: analyticsRouter,
   audit: auditRouter,
+  translation: translationRouter,
 });
 
 /**

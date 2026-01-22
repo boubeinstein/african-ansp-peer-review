@@ -5320,5 +5320,23 @@
     "newValue": "Nouvelle Valeur",
     "previousState": "État Précédent",
     "newState": "Nouvel État"
+  },
+  "translation": {
+    "translateTo": "Traduire en {language}",
+    "serviceUnavailable": "Le service de traduction n'est pas disponible",
+    "enterSourceText": "Entrez d'abord le texte source",
+    "clickToTranslate": "Cliquez pour traduire en {language}",
+    "translationPreview": "Aperçu de la Traduction",
+    "reviewTranslation": "Vérifiez la traduction en {language} avant de l'appliquer",
+    "sourceText": "Texte Source",
+    "translatedText": "Texte Traduit",
+    "cached": "En cache",
+    "edited": "Modifié",
+    "editBeforeApplying": "Vous pouvez modifier la traduction avant de l'appliquer",
+    "existingContentWarning": "Ce champ contient déjà du contenu. L'application de la traduction le remplacera.",
+    "cancel": "Annuler",
+    "applyTranslation": "Appliquer la Traduction",
+    "autoTranslated": "Traduit automatiquement",
+    "autoTranslatedTooltip": "Ce contenu a été traduit automatiquement. Vérifiez avant de publier."
   }
 }

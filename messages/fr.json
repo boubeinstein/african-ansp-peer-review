@@ -2052,16 +2052,28 @@
     },
     "availability": {
       "title": "Calendrier de disponibilité",
+      "calendar": "Disponibilité",
+      "calendarTitle": "Disponibilité de {name}",
       "set": "Définir la disponibilité",
       "addSlot": "Ajouter une disponibilité",
       "editSlot": "Modifier la disponibilité",
       "more": "autres",
+      "available": "disponible",
+      "reviewPeriodCoverage": "Couverture de la période de revue",
+      "daysAvailable": "{available} sur {total} jours disponibles",
       "type": {
         "AVAILABLE": "Disponible",
         "TENTATIVE": "Provisoire",
         "UNAVAILABLE": "Indisponible",
         "ON_ASSIGNMENT": "En mission",
         "unspecified": "Non spécifié"
+      },
+      "types": {
+        "AVAILABLE": "Disponible",
+        "TENTATIVE": "Provisoire",
+        "UNAVAILABLE": "Indisponible",
+        "ON_ASSIGNMENT": "En mission",
+        "UNKNOWN": "Non spécifié"
       },
       "typeLabel": "Type de disponibilité",
       "dateRange": "Période",

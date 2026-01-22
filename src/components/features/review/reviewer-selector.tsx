@@ -56,10 +56,12 @@ import {
   Loader2,
   Briefcase,
   Globe,
+  Calendar,
 } from "lucide-react";
 
 // Feature Components
 import { TeamMemberRoleSelect } from "./team-member-role-select";
+import { AvailabilityIndicator } from "./reviewer-availability-calendar";
 
 // Labels
 import {
@@ -189,6 +191,8 @@ export function ReviewerSelector({
 
   const allReviewers = (data?.reviewers ?? []) as EligibleReviewer[];
   const excludedOrg = data?.review?.hostOrganization;
+  const reviewStartDate = data?.review?.plannedStartDate;
+  const reviewEndDate = data?.review?.plannedEndDate;
 
   // Filter reviewers based on team eligibility
   // Only show reviewers who are in the team eligibility list and are eligible
@@ -578,6 +582,14 @@ export function ReviewerSelector({
                                 <Badge variant="outline" className="text-xs">
                                   +{reviewer.matchReasons.length - 3}
                                 </Badge>
+                              )}
+                              {/* Availability Indicator */}
+                              {reviewStartDate && reviewEndDate && (
+                                <AvailabilityIndicator
+                                  reviewerProfileId={reviewer.id}
+                                  reviewStartDate={reviewStartDate}
+                                  reviewEndDate={reviewEndDate}
+                                />
                               )}
                             </div>
                           </div>

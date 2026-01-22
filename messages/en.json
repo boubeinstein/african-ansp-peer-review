@@ -2052,16 +2052,28 @@
     },
     "availability": {
       "title": "Availability Calendar",
+      "calendar": "Availability",
+      "calendarTitle": "{name}'s Availability",
       "set": "Set Availability",
       "addSlot": "Add Availability",
       "editSlot": "Edit Availability",
       "more": "more",
+      "available": "available",
+      "reviewPeriodCoverage": "Review period coverage",
+      "daysAvailable": "{available} of {total} days available",
       "type": {
         "AVAILABLE": "Available",
         "TENTATIVE": "Tentative",
         "UNAVAILABLE": "Unavailable",
         "ON_ASSIGNMENT": "On Assignment",
         "unspecified": "Not specified"
+      },
+      "types": {
+        "AVAILABLE": "Available",
+        "TENTATIVE": "Tentative",
+        "UNAVAILABLE": "Unavailable",
+        "ON_ASSIGNMENT": "On Assignment",
+        "UNKNOWN": "Not specified"
       },
       "typeLabel": "Availability Type",
       "dateRange": "Date Range",

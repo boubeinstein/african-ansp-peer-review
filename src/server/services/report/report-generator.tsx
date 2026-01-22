@@ -7,7 +7,7 @@
 import React from "react";
 import { Document, Page, View, Text, renderToBuffer } from "@react-pdf/renderer";
 import { prisma } from "@/lib/db";
-import { styles, labels, colors } from "./styles";
+import { styles, labels } from "./styles";
 import type { ReviewReportData, FindingsSummary as FindingsSummaryType, CAPSummary } from "./types";
 import {
   CoverPage,
@@ -160,7 +160,6 @@ function ReportDocument({ review, locale }: ReportDocumentProps) {
 // =============================================================================
 
 async function getReviewWithAllDetails(reviewId: string): Promise<ReviewReportData> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const review = await prisma.review.findUnique({
     where: { id: reviewId },
     include: {
@@ -185,7 +184,7 @@ async function getReviewWithAllDetails(reviewId: string): Promise<ReviewReportDa
         },
       },
     },
-  }) as any;
+  }) as ReviewReportData["review"] | null;
 
   if (!review) {
     throw new Error(`Review not found: ${reviewId}`);

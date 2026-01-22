@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import { View, Text, Page } from "@react-pdf/renderer";
+import { View, Text } from "@react-pdf/renderer";
 import { styles, labels, colors } from "../styles";
 import type { ReportPageProps } from "../types";
 import { format } from "date-fns";
@@ -192,7 +192,7 @@ export function AnnexAcronyms({ review, locale }: ReportPageProps) {
 // COMBINED ANNEXES
 // =============================================================================
 
-export function AnnexesSection({ review, locale }: ReportPageProps) {
+export function AnnexesSection({ review: _review, locale }: ReportPageProps) {
   const t = labels[locale];
 
   return (

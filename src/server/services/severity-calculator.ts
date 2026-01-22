@@ -19,7 +19,6 @@ import {
   FindingType,
   USOAPAuditArea,
   CriticalElement,
-  ICAOReferenceType,
 } from "@prisma/client";
 
 // =============================================================================

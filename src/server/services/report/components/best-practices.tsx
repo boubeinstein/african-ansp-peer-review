@@ -69,7 +69,7 @@ interface BestPracticeCardProps {
   locale: "en" | "fr";
 }
 
-function BestPracticeCard({ practice, index, locale }: BestPracticeCardProps) {
+function BestPracticeCard({ practice, index: _index, locale }: BestPracticeCardProps) {
   return (
     <View style={bpStyles.practiceCard} wrap={false}>
       {/* Header */}

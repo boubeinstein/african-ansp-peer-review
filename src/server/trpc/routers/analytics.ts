@@ -10,7 +10,6 @@
 
 import { z } from "zod";
 import { router, adminProcedure } from "../trpc";
-import { TRPCError } from "@trpc/server";
 import { FindingSeverity, ReviewStatus, CAPStatus, FindingType } from "@prisma/client";
 import { subMonths, startOfMonth, endOfMonth, differenceInDays } from "date-fns";
 
@@ -139,7 +138,7 @@ export const analyticsRouter = router({
     .query(async ({ ctx, input }): Promise<ReviewStatistics> => {
       const { db } = ctx;
       const monthsToFetch = input?.months ?? 12;
-      const startDate = subMonths(new Date(), monthsToFetch);
+      const _startDate = subMonths(new Date(), monthsToFetch);
 
       // Get total reviews
       const total = await db.review.count();

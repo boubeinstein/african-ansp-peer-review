@@ -25,7 +25,6 @@ import {
   ReviewLocationType,
   LanguagePreference,
   ApprovalStatus,
-  InvitationStatus,
   Prisma,
 } from "@prisma/client";
 
@@ -57,12 +56,8 @@ import {
 // Audit logging
 import {
   logCreate,
-  logUpdate,
   logStatusChange,
   logAssignment,
-  logApproval,
-  logRejection,
-  logSubmission,
 } from "@/server/services/audit";
 
 // =============================================================================
@@ -208,12 +203,6 @@ const teamMemberAssignmentSchema = z.object({
   reviewerProfileId: z.string().optional(),
   role: z.nativeEnum(TeamRole),
   assignedAreas: z.array(z.string()).optional(),
-});
-
-const teamMemberResponseSchema = z.object({
-  reviewId: z.string(),
-  confirmed: z.boolean(),
-  declineReason: z.string().optional(),
 });
 
 const findingCreateSchema = z.object({

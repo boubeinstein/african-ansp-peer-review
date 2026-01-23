@@ -2,8 +2,7 @@
  * Document Upload API Route
  *
  * Handles multipart form data file uploads for evidence documents.
- * For MVP, stores files locally in the /uploads directory.
- * Prepared for future cloud storage integration (S3, Supabase Storage).
+ * Supports both Supabase Storage (production) and local filesystem (development).
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -12,6 +11,11 @@ import { existsSync } from "fs";
 import path from "path";
 import crypto from "crypto";
 import { auth } from "@/lib/auth";
+import {
+  uploadFile,
+  generateFilePath,
+  isStorageConfigured,
+} from "@/server/services/storage.service";
 
 // =============================================================================
 // CONSTANTS
@@ -36,7 +40,7 @@ const ALLOWED_MIME_TYPES = [
   "application/vnd.openxmlformats-officedocument.presentationml.presentation",
 ];
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
 const UPLOAD_DIR = path.join(process.cwd(), "uploads");
 
@@ -72,10 +76,12 @@ function sanitizeFilename(filename: string): string {
     .substring(0, 100);
 }
 
-async function ensureUploadDir(): Promise<void> {
-  if (!existsSync(UPLOAD_DIR)) {
-    await mkdir(UPLOAD_DIR, { recursive: true });
+async function ensureUploadDir(subDir?: string): Promise<string> {
+  const targetDir = subDir ? path.join(UPLOAD_DIR, subDir) : UPLOAD_DIR;
+  if (!existsSync(targetDir)) {
+    await mkdir(targetDir, { recursive: true });
   }
+  return targetDir;
 }
 
 // =============================================================================
@@ -93,6 +99,8 @@ export async function POST(request: NextRequest) {
     // Parse multipart form data
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
+    const reviewId = formData.get("reviewId") as string | null;
+    const category = formData.get("category") as string | null;
 
     if (!file) {
       return NextResponse.json(
@@ -124,38 +132,68 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate unique filename
+    // Convert file to buffer
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    // If reviewId and category provided, upload to Supabase Storage
+    if (reviewId && category && isStorageConfigured()) {
+      const storagePath = generateFilePath(reviewId, category, file.name);
+      const result = await uploadFile(buffer, storagePath, file.type);
+
+      if (!result.success) {
+        console.error("[Upload API] Supabase upload failed:", result.error);
+        // Fall through to local upload as fallback
+      } else {
+        return NextResponse.json({
+          success: true,
+          path: result.path,
+          url: result.url,
+          storage: "supabase",
+        });
+      }
+    }
+
+    // Fallback: Local file storage
     const fileId = crypto.randomUUID();
     const extension = getFileExtension(file.type);
     const sanitizedOriginal = sanitizeFilename(file.name);
     const filename = `${fileId}${extension}`;
 
-    // Ensure upload directory exists
-    await ensureUploadDir();
+    // Create subdirectory for review documents if reviewId provided
+    let targetDir = UPLOAD_DIR;
+    let relativePath = filename;
+
+    if (reviewId && category) {
+      const subDir = `reviews/${reviewId}/${category}`;
+      targetDir = await ensureUploadDir(subDir);
+      relativePath = `${subDir}/${filename}`;
+    } else {
+      await ensureUploadDir();
+    }
 
     // Write file to disk
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const filePath = path.join(UPLOAD_DIR, filename);
+    const filePath = path.join(targetDir, filename);
     await writeFile(filePath, buffer);
 
     // Generate URL for the uploaded file
-    // In production, this would be a CDN URL or signed URL
-    const fileUrl = `/api/upload/${filename}`;
+    const fileUrl = `/uploads/${relativePath}`;
 
     return NextResponse.json({
       success: true,
+      path: relativePath,
+      url: fileUrl,
+      storage: "local",
       file: {
         id: fileId,
         filename,
         originalName: sanitizedOriginal,
         mimeType: file.type,
         size: file.size,
-        url: fileUrl,
       },
     });
   } catch (error) {
-    console.error("Upload error:", error);
+    console.error("[Upload API] Error:", error);
     return NextResponse.json(
       { error: "Failed to upload file" },
       { status: 500 }
@@ -164,13 +202,16 @@ export async function POST(request: NextRequest) {
 }
 
 // =============================================================================
-// GET HANDLER - File Download (Placeholder for serving files)
+// GET HANDLER - Upload Info
 // =============================================================================
 
 export async function GET() {
+  const storageConfigured = isStorageConfigured();
+
   return NextResponse.json(
     {
-      message: "Use /api/upload/[filename] to download files",
+      message: "Use POST to upload files",
+      storage: storageConfigured ? "supabase" : "local",
       allowedTypes: ALLOWED_MIME_TYPES,
       maxFileSize: MAX_FILE_SIZE,
       maxFileSizeMB: MAX_FILE_SIZE / 1024 / 1024,

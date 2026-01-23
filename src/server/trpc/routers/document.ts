@@ -11,6 +11,11 @@ import { router, protectedProcedure } from "../trpc";
 import { documentService } from "@/server/services/document.service";
 import { prisma } from "@/lib/db";
 import { DocumentCategory } from "@prisma/client";
+import {
+  getSignedDownloadUrl,
+  deleteFile,
+  extractPathFromUrl,
+} from "@/server/services/storage.service";
 
 // All document categories as zod enum
 const AllDocumentCategories = z.nativeEnum(DocumentCategory);
@@ -780,6 +785,7 @@ export const documentRouter = router({
 
   /**
    * Delete a review document
+   * Performs soft delete in database and deletes file from storage
    */
   deleteReviewDocument: protectedProcedure
     .input(DeleteDocumentInput)
@@ -813,7 +819,19 @@ export const documentRouter = router({
         });
       }
 
-      // Soft delete
+      // Delete from storage if it's a Supabase Storage URL
+      const storagePath = extractPathFromUrl(document.fileUrl);
+      if (storagePath) {
+        const deleted = await deleteFile(storagePath);
+        if (!deleted) {
+          console.warn(
+            `[deleteReviewDocument] Failed to delete file from storage: ${storagePath}`
+          );
+          // Continue with soft delete even if storage delete fails
+        }
+      }
+
+      // Soft delete in database
       await prisma.document.update({
         where: { id: input.documentId },
         data: {
@@ -870,6 +888,100 @@ export const documentRouter = router({
       return {
         storagePath,
         bucket: "review-documents",
+      };
+    }),
+
+  /**
+   * Get signed download URL for a document
+   * Returns a time-limited signed URL for secure file access
+   */
+  getDownloadUrl: protectedProcedure
+    .input(
+      z.object({
+        documentId: z.string().cuid(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const document = await prisma.document.findUnique({
+        where: { id: input.documentId },
+        include: {
+          review: {
+            include: {
+              teamMembers: { select: { userId: true } },
+              hostOrganization: { select: { id: true } },
+            },
+          },
+        },
+      });
+
+      if (!document) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Document not found",
+        });
+      }
+
+      // Check access permissions
+      const userId = ctx.user.id;
+      const userOrgId = ctx.user.organizationId;
+      const isTeamMember = document.review?.teamMembers.some(
+        (m) => m.userId === userId
+      );
+      const isHostOrg = document.review?.hostOrganizationId === userOrgId;
+      const isAdmin = [
+        "SUPER_ADMIN",
+        "SYSTEM_ADMIN",
+        "PROGRAMME_COORDINATOR",
+      ].includes(ctx.user.role as string);
+
+      if (!isTeamMember && !isHostOrg && !isAdmin) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Access denied",
+        });
+      }
+
+      // Handle confidential documents
+      if (document.isConfidential && !isTeamMember && !isAdmin) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Document is confidential",
+        });
+      }
+
+      // Extract storage path and generate signed URL
+      const storagePath = extractPathFromUrl(document.fileUrl);
+
+      if (!storagePath) {
+        // Return original URL for legacy/placeholder URLs (local storage)
+        return {
+          url: document.fileUrl,
+          isSignedUrl: false,
+          expiresIn: null,
+        };
+      }
+
+      // Generate signed URL with 1 hour expiry
+      const result = await getSignedDownloadUrl(
+        storagePath,
+        document.originalName || document.name,
+        3600
+      );
+
+      if (!result.success || !result.signedUrl) {
+        // Fallback to original URL if signed URL generation fails
+        console.error("[getDownloadUrl] Failed to generate signed URL:", result.error);
+        return {
+          url: document.fileUrl,
+          isSignedUrl: false,
+          expiresIn: null,
+        };
+      }
+
+      return {
+        url: result.signedUrl,
+        isSignedUrl: true,
+        expiresIn: 3600,
       };
     }),
 

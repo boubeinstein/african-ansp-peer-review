@@ -222,22 +222,38 @@ function UploadDialog({
     if (!selectedFile) return;
 
     setIsUploading(true);
-    setUploadProgress(20);
+    setUploadProgress(10);
 
     try {
-      // For now, create a placeholder URL - in production this would upload to Supabase Storage
-      // This allows the schema and UI to work while storage integration is completed separately
-      const placeholderUrl = `/uploads/reviews/${reviewId}/${category}/${Date.now()}_${selectedFile.name}`;
+      // Create form data for upload API
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      formData.append("reviewId", reviewId);
+      formData.append("category", category);
 
-      setUploadProgress(60);
+      setUploadProgress(30);
 
-      // Create document record
+      // Upload file to storage via API route
+      const uploadResponse = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!uploadResponse.ok) {
+        const errorData = await uploadResponse.json();
+        throw new Error(errorData.error || "Upload failed");
+      }
+
+      const uploadResult = await uploadResponse.json();
+      setUploadProgress(70);
+
+      // Create document record in database
       await createDocument.mutateAsync({
         reviewId,
         name: selectedFile.name,
         originalName: selectedFile.name,
         description: description || undefined,
-        fileUrl: placeholderUrl,
+        fileUrl: uploadResult.url,
         fileType: selectedFile.type,
         fileSize: selectedFile.size,
         category,
@@ -251,6 +267,7 @@ function UploadDialog({
       onSuccess();
       handleClose();
     } catch (error) {
+      console.error("[Upload] Error:", error);
       toast.error(t("error.upload"), {
         description: error instanceof Error ? error.message : "Upload failed",
       });
@@ -437,16 +454,20 @@ interface DocumentListProps {
     };
   }>;
   isLoading: boolean;
+  isDownloading?: boolean;
   canDelete: (docUploaderId: string) => boolean;
-  onView: (fileUrl: string) => void;
+  onView: (documentId: string, fallbackUrl: string) => void;
+  onDownload: (documentId: string, fileName: string, fallbackUrl: string) => void;
   onDelete: (docId: string, docName: string) => void;
 }
 
 function DocumentList({
   documents,
   isLoading,
+  isDownloading,
   canDelete,
   onView,
+  onDownload,
   onDelete,
 }: DocumentListProps) {
   const t = useTranslations("reviews.documents");
@@ -530,15 +551,25 @@ function DocumentList({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => onView(doc.fileUrl)}>
+                <DropdownMenuItem
+                  onClick={() => onView(doc.id, doc.fileUrl)}
+                  disabled={isDownloading}
+                >
                   <Eye className="h-4 w-4 mr-2" />
                   {t("view")}
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <a href={doc.fileUrl} download={doc.originalName || doc.name}>
+                <DropdownMenuItem
+                  onClick={() =>
+                    onDownload(doc.id, doc.originalName || doc.name, doc.fileUrl)
+                  }
+                  disabled={isDownloading}
+                >
+                  {isDownloading ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
                     <Download className="h-4 w-4 mr-2" />
-                    {t("download")}
-                  </a>
+                  )}
+                  {t("download")}
                 </DropdownMenuItem>
                 {canDelete(doc.uploadedBy.id) && (
                   <DropdownMenuItem
@@ -605,6 +636,9 @@ export function DocumentManager({
     },
   });
 
+  // Get download URL mutation (for signed URLs)
+  const getDownloadUrl = trpc.document.getDownloadUrl.useMutation();
+
   // Check if user can delete a document
   const canDelete = useCallback(
     (docUploaderId: string) => {
@@ -614,9 +648,41 @@ export function DocumentManager({
     [isAdmin, userId]
   );
 
-  // Handle view document
-  const handleView = (fileUrl: string) => {
-    window.open(fileUrl, "_blank");
+  // Handle view/download document with signed URL
+  const handleView = async (documentId: string, fallbackUrl: string) => {
+    try {
+      const result = await getDownloadUrl.mutateAsync({ documentId });
+      window.open(result.url, "_blank");
+    } catch (error) {
+      console.error("[handleView] Error getting signed URL:", error);
+      // Fallback to original URL
+      window.open(fallbackUrl, "_blank");
+    }
+  };
+
+  // Handle download document
+  const handleDownload = async (
+    documentId: string,
+    fileName: string,
+    fallbackUrl: string
+  ) => {
+    try {
+      const result = await getDownloadUrl.mutateAsync({ documentId });
+
+      // Create a temporary link to trigger download
+      const link = document.createElement("a");
+      link.href = result.url;
+      link.download = fileName;
+      link.target = "_blank";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("[handleDownload] Error getting signed URL:", error);
+      toast.error(t("error.download"));
+      // Fallback to original URL
+      window.open(fallbackUrl, "_blank");
+    }
   };
 
   // Handle delete confirmation
@@ -695,8 +761,10 @@ export function DocumentManager({
         <DocumentList
           documents={documents || []}
           isLoading={isLoading}
+          isDownloading={getDownloadUrl.isPending}
           canDelete={canDelete}
           onView={handleView}
+          onDownload={handleDownload}
           onDelete={(id, name) => setDeleteState({ id, name })}
         />
       </CardContent>

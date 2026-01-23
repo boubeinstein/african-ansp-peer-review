@@ -42,7 +42,8 @@ const ALLOWED_MIME_TYPES = [
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
-const UPLOAD_DIR = path.join(process.cwd(), "uploads");
+// Use public/uploads for local development so files are served statically
+const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 
 // =============================================================================
 // HELPERS

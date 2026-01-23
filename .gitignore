@@ -41,6 +41,7 @@ coverage
 codebase.md
 codebase-*.md
 uploads/
+public/uploads/
 tsconfig.tsbuildinfo
 tsconfig.tsbuildinfo
 tsconfig.tsbuildinfo

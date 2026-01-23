@@ -203,6 +203,7 @@ export const analyticsRouter = router({
       }
 
       // Get reviews by month (trend)
+      const monthsToFetch = 12;
       const reviewsByMonth: ReviewsByMonth[] = [];
       for (let i = 0; i < monthsToFetch; i++) {
         const monthDate = subMonths(new Date(), monthsToFetch - 1 - i);

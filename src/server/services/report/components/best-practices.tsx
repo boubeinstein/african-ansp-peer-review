@@ -65,11 +65,10 @@ const bpStyles = StyleSheet.create({
 
 interface BestPracticeCardProps {
   practice: BestPracticeInfo;
-  index: number;
   locale: "en" | "fr";
 }
 
-function BestPracticeCard({ practice, index: _index, locale }: BestPracticeCardProps) {
+function BestPracticeCard({ practice, locale }: BestPracticeCardProps) {
   return (
     <View style={bpStyles.practiceCard} wrap={false}>
       {/* Header */}
@@ -159,11 +158,10 @@ export function BestPracticesSection({ review, locale }: ReportPageProps) {
       </View>
 
       {/* Best Practice Cards */}
-      {bestPractices.map((practice, index) => (
+      {bestPractices.map((practice) => (
         <BestPracticeCard
           key={practice.id}
           practice={practice}
-          index={index}
           locale={locale}
         />
       ))}

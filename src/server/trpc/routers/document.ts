@@ -878,7 +878,7 @@ export const documentRouter = router({
    */
   getReviewDocumentStats: protectedProcedure
     .input(z.object({ reviewId: z.string().cuid() }))
-    .query(async ({ input, ctx: _ctx }) => {
+    .query(async ({ input }) => {
       const review = await prisma.review.findUnique({
         where: { id: input.reviewId },
         include: {

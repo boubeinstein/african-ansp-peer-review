@@ -135,7 +135,6 @@ export const capEvidenceRouter = router({
 
       // Check if user can upload (organization member or admin)
       const isOrgMember = user.organizationId === cap.finding.organizationId;
-      const _isAdmin = EVIDENCE_UPLOAD_ROLES.includes(user.role);
 
       if (!isOrgMember && user.role !== "SUPER_ADMIN") {
         throw new TRPCError({

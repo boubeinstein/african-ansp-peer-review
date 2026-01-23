@@ -340,8 +340,6 @@ export function BilingualFieldGroup({
   errors,
   required,
 }: BilingualFieldGroupProps) {
-  const _t = useTranslations("translation");
-
   const handleEnglishTranslate = (text: string) => {
     onEnglishChange(text);
     onAutoTranslateChange?.("en", true);
@@ -365,8 +363,6 @@ export function BilingualFieldGroup({
       onAutoTranslateChange?.("fr", false);
     }
   };
-
-  const _InputComponent = multiline ? Textarea : "input";
 
   return (
     <div className="space-y-4">

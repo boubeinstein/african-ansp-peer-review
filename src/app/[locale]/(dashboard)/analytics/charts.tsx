@@ -21,7 +21,6 @@ import {
   Area,
   AreaChart,
 } from "recharts";
-import { useTranslations } from "next-intl";
 
 // =============================================================================
 // COLORS
@@ -51,17 +50,6 @@ const COLORS = {
   rejected: "#ef4444",
 };
 
-const _PIE_COLORS = [
-  "#1e3a5f",
-  "#3b82f6",
-  "#22c55e",
-  "#f59e0b",
-  "#ef4444",
-  "#8b5cf6",
-  "#ec4899",
-  "#06b6d4",
-];
-
 // =============================================================================
 // REVIEW STATUS CHART
 // =============================================================================
@@ -72,8 +60,6 @@ interface ReviewStatusData {
 }
 
 export function ReviewStatusChart({ data }: { data: ReviewStatusData[] }) {
-  const _t = useTranslations("analytics");
-
   const chartData = data.map((item) => ({
     name: formatStatus(item.status),
     value: item.count,
@@ -317,7 +303,7 @@ export function ReviewerPerformanceChart({
         <XAxis type="number" allowDecimals={false} />
         <YAxis type="category" dataKey="name" width={80} tick={{ fontSize: 12 }} />
         <Tooltip
-          formatter={(value, name, _props) => [value, name]}
+          formatter={(value, name) => [value, name]}
           labelFormatter={(label, payload) => {
             if (payload && payload[0]) {
               return payload[0].payload.fullName;

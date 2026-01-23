@@ -286,7 +286,7 @@ function RecentDecisions() {
 // MAIN COMPONENT
 // =============================================================================
 
-export function ApprovalsPageClient({ userRole: _userRole }: ApprovalsPageClientProps) {
+export function ApprovalsPageClient({}: ApprovalsPageClientProps) {
   const t = useTranslations("reviews.approval");
   const router = useRouter();
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);

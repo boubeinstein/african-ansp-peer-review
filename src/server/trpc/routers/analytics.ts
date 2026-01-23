@@ -135,10 +135,8 @@ export const analyticsRouter = router({
         months: z.number().min(1).max(24).default(12),
       }).optional()
     )
-    .query(async ({ ctx, input }): Promise<ReviewStatistics> => {
+    .query(async ({ ctx }): Promise<ReviewStatistics> => {
       const { db } = ctx;
-      const monthsToFetch = input?.months ?? 12;
-      const _startDate = subMonths(new Date(), monthsToFetch);
 
       // Get total reviews
       const total = await db.review.count();

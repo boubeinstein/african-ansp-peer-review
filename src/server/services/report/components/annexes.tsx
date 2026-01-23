@@ -192,7 +192,7 @@ export function AnnexAcronyms({ review, locale }: ReportPageProps) {
 // COMBINED ANNEXES
 // =============================================================================
 
-export function AnnexesSection({ review: _review, locale }: ReportPageProps) {
+export function AnnexesSection({ locale }: ReportPageProps) {
   const t = labels[locale];
 
   return (

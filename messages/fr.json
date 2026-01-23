@@ -440,6 +440,35 @@
       "activityComingSoon": "Chronologie d'activité à venir",
       "openFindingsCount": "constats ouverts",
       "overdueCAPsCount": "PAC en retard"
+    },
+    "activity": {
+      "title": "Activité récente",
+      "noActivity": "Aucune activité récente",
+      "noActivityDescription": "Aucune activité n'a été enregistrée au cours des 30 derniers jours.",
+      "refresh": "Actualiser",
+      "allTeams": "Toutes les équipes",
+      "allTypes": "Tous les types d'activité",
+      "showingActivities": "Affichage de {count} activités des 30 derniers jours",
+      "types": {
+        "reviewCreated": "Examens créés",
+        "reviewStarted": "Examens démarrés",
+        "reviewCompleted": "Examens terminés",
+        "findingRaised": "Constatations émises",
+        "findingClosed": "Constatations fermées",
+        "capSubmitted": "PAC soumis",
+        "capApproved": "PAC approuvés",
+        "capOverdue": "PAC en retard"
+      },
+      "messages": {
+        "reviewCreated": "Nouvel examen par les pairs programmé pour {org}",
+        "reviewStarted": "Examen par les pairs démarré à {org}",
+        "reviewCompleted": "Examen par les pairs terminé à {org}",
+        "findingRaised": "Constatation {severity} émise pour {org}",
+        "findingClosed": "Constatation fermée pour {org}",
+        "capSubmitted": "Plan d'action corrective soumis par {org}",
+        "capApproved": "Plan d'action corrective approuvé pour {org}",
+        "capOverdue": "Plan d'action corrective en retard pour {org}"
+      }
     }
   },
   "teams": {

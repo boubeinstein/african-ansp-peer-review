@@ -41,6 +41,7 @@ import {
   Download,
   RefreshCw,
 } from "lucide-react";
+import { TeamActivityTimeline } from "./team-activity-timeline";
 
 // =============================================================================
 // TYPES
@@ -470,9 +471,7 @@ export function TeamPerformanceOverview({
           </TabsContent>
 
           <TabsContent value="activity">
-            <div className="text-center py-8 text-muted-foreground">
-              {t("activityComingSoon")}
-            </div>
+            <TeamActivityTimeline maxHeight="500px" />
           </TabsContent>
 
           <TabsContent value="issues">

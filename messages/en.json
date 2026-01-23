@@ -440,6 +440,35 @@
       "activityComingSoon": "Activity timeline coming soon",
       "openFindingsCount": "open findings",
       "overdueCAPsCount": "overdue CAPs"
+    },
+    "activity": {
+      "title": "Recent Activity",
+      "noActivity": "No Recent Activity",
+      "noActivityDescription": "No activity has been recorded in the past 30 days.",
+      "refresh": "Refresh",
+      "allTeams": "All Teams",
+      "allTypes": "All Activity Types",
+      "showingActivities": "Showing {count} activities from the past 30 days",
+      "types": {
+        "reviewCreated": "Reviews Created",
+        "reviewStarted": "Reviews Started",
+        "reviewCompleted": "Reviews Completed",
+        "findingRaised": "Findings Raised",
+        "findingClosed": "Findings Closed",
+        "capSubmitted": "CAPs Submitted",
+        "capApproved": "CAPs Approved",
+        "capOverdue": "CAPs Overdue"
+      },
+      "messages": {
+        "reviewCreated": "New peer review scheduled for {org}",
+        "reviewStarted": "Peer review started at {org}",
+        "reviewCompleted": "Peer review completed at {org}",
+        "findingRaised": "{severity} finding raised for {org}",
+        "findingClosed": "Finding closed for {org}",
+        "capSubmitted": "Corrective action plan submitted by {org}",
+        "capApproved": "Corrective action plan approved for {org}",
+        "capOverdue": "Corrective action plan overdue for {org}"
+      }
     }
   },
   "teams": {

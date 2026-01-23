@@ -5602,6 +5602,26 @@
       "actions": "Quick Actions",
       "utilities": "Utilities"
     },
+    "navigation": {
+      "dashboard": "Go to Dashboard",
+      "reviews": "Go to Peer Reviews",
+      "findings": "Go to Findings",
+      "caps": "Go to CAPs",
+      "assessments": "Go to Assessments",
+      "reviewers": "Go to Reviewers",
+      "organizations": "Go to Organizations",
+      "settings": "Go to Settings"
+    },
+    "actions": {
+      "newReview": "Create New Review",
+      "newFinding": "Create New Finding",
+      "newAssessment": "Start New Assessment"
+    },
+    "utilities": {
+      "showShortcuts": "Show Keyboard Shortcuts",
+      "lightMode": "Switch to Light Mode",
+      "darkMode": "Switch to Dark Mode"
+    },
     "commands": {
       "dashboard": "Go to Dashboard",
       "reviews": "Go to Reviews",

@@ -5602,6 +5602,26 @@
       "actions": "Actions rapides",
       "utilities": "Utilitaires"
     },
+    "navigation": {
+      "dashboard": "Aller au tableau de bord",
+      "reviews": "Aller aux examens",
+      "findings": "Aller aux constatations",
+      "caps": "Aller aux PAC",
+      "assessments": "Aller aux évaluations",
+      "reviewers": "Aller aux examinateurs",
+      "organizations": "Aller aux organisations",
+      "settings": "Aller aux paramètres"
+    },
+    "actions": {
+      "newReview": "Créer un nouvel examen",
+      "newFinding": "Créer une constatation",
+      "newAssessment": "Démarrer une évaluation"
+    },
+    "utilities": {
+      "showShortcuts": "Afficher les raccourcis clavier",
+      "lightMode": "Mode clair",
+      "darkMode": "Mode sombre"
+    },
     "commands": {
       "dashboard": "Aller au tableau de bord",
       "reviews": "Aller aux examens",

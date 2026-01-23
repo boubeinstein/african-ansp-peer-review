@@ -5601,35 +5601,32 @@
     }
   },
   "commandPalette": {
-    "placeholder": "Search commands and pages...",
+    "searchPlaceholder": "Search commands and pages...",
     "noResults": "No results found",
-    "categories": {
-      "actions": "Actions",
-      "navigation": "Navigation"
+    "groups": {
+      "navigation": "Navigation",
+      "actions": "Quick Actions",
+      "utilities": "Utilities"
     },
-    "commands": {
-      "dashboard": "Dashboard",
-      "reviews": "Reviews",
-      "findings": "Findings",
-      "caps": "CAPs",
-      "organizations": "Organizations",
-      "reviewers": "Reviewers",
-      "analytics": "Analytics",
-      "settings": "Settings",
-      "newReview": "New Review Request",
-      "showShortcuts": "Keyboard Shortcuts"
+    "navigation": {
+      "dashboard": "Go to Dashboard",
+      "reviews": "Go to Reviews",
+      "findings": "Go to Findings",
+      "caps": "Go to CAPs",
+      "assessments": "Go to Assessments",
+      "reviewers": "Go to Reviewers",
+      "organizations": "Go to Organizations",
+      "settings": "Go to Settings"
     },
-    "descriptions": {
-      "dashboard": "Go to main dashboard",
-      "reviews": "Manage peer review requests",
-      "findings": "View and manage findings",
-      "caps": "Corrective action plans",
-      "organizations": "ANSPs and CAAs",
-      "reviewers": "Expert reviewers pool",
-      "analytics": "Statistics and reports",
-      "settings": "Application settings",
-      "newReview": "Create a new review request",
-      "showShortcuts": "View all keyboard shortcuts"
+    "actions": {
+      "newReview": "Create New Review",
+      "newFinding": "Create New Finding",
+      "newAssessment": "Create New Assessment"
+    },
+    "utilities": {
+      "showShortcuts": "Show Keyboard Shortcuts",
+      "lightMode": "Switch to Light Mode",
+      "darkMode": "Switch to Dark Mode"
     },
     "footer": {
       "navigate": "to navigate",

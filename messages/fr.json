@@ -5601,35 +5601,32 @@
     }
   },
   "commandPalette": {
-    "placeholder": "Rechercher des commandes et des pages...",
+    "searchPlaceholder": "Rechercher des commandes et des pages...",
     "noResults": "Aucun résultat trouvé",
-    "categories": {
-      "actions": "Actions",
-      "navigation": "Navigation"
+    "groups": {
+      "navigation": "Navigation",
+      "actions": "Actions Rapides",
+      "utilities": "Utilitaires"
     },
-    "commands": {
-      "dashboard": "Tableau de Bord",
-      "reviews": "Revues",
-      "findings": "Constats",
-      "caps": "PAC",
-      "organizations": "Organisations",
-      "reviewers": "Examinateurs",
-      "analytics": "Analytiques",
-      "settings": "Paramètres",
-      "newReview": "Nouvelle Demande de Revue",
-      "showShortcuts": "Raccourcis Clavier"
+    "navigation": {
+      "dashboard": "Aller au Tableau de Bord",
+      "reviews": "Aller aux Revues",
+      "findings": "Aller aux Constats",
+      "caps": "Aller aux PAC",
+      "assessments": "Aller aux Évaluations",
+      "reviewers": "Aller aux Examinateurs",
+      "organizations": "Aller aux Organisations",
+      "settings": "Aller aux Paramètres"
     },
-    "descriptions": {
-      "dashboard": "Aller au tableau de bord principal",
-      "reviews": "Gérer les demandes de revue par les pairs",
-      "findings": "Voir et gérer les constats",
-      "caps": "Plans d'actions correctives",
-      "organizations": "ANSP et CAA",
-      "reviewers": "Pool d'examinateurs experts",
-      "analytics": "Statistiques et rapports",
-      "settings": "Paramètres de l'application",
-      "newReview": "Créer une nouvelle demande de revue",
-      "showShortcuts": "Voir tous les raccourcis clavier"
+    "actions": {
+      "newReview": "Créer une Nouvelle Revue",
+      "newFinding": "Créer un Nouveau Constat",
+      "newAssessment": "Créer une Nouvelle Évaluation"
+    },
+    "utilities": {
+      "showShortcuts": "Afficher les Raccourcis Clavier",
+      "lightMode": "Passer en Mode Clair",
+      "darkMode": "Passer en Mode Sombre"
     },
     "footer": {
       "navigate": "pour naviguer",

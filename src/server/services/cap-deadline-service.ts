@@ -407,6 +407,7 @@ export async function getOverdueMilestones(): Promise<
  */
 export async function detectEscalationEvents(): Promise<EscalationEvent[]> {
   const events: EscalationEvent[] = [];
+  const today = startOfDay(new Date());
 
   // Get all trackable CAPs with their findings and assigned users
   const caps = await db.correctiveActionPlan.findMany({

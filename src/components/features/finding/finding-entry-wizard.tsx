@@ -106,7 +106,6 @@ import { WizardStepper, type WizardStep } from "../assessment/wizard-steps/wizar
 import {
   USOAP_AUDIT_AREAS,
   CRITICAL_ELEMENTS,
-  ICAO_REFERENCE_TYPES,
 } from "@/lib/questionnaire/constants";
 import {
   calculateSeveritySuggestion,
@@ -320,10 +319,7 @@ const COMMON_ICAO_REFERENCES = [
 // =============================================================================
 
 export function FindingEntryWizard({
-  reviewId,
-  organizationId,
   questionnaireId,
-  draftId,
   initialData,
   onSubmit,
   onCancel,
@@ -357,6 +353,7 @@ export function FindingEntryWizard({
 
   // Form setup
   const form = useForm<FindingWizardValues>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(findingWizardSchema) as any,
     defaultValues: {
       findingType: initialData?.findingType || "OBSERVATION",
@@ -476,7 +473,7 @@ export function FindingEntryWizard({
         clearTimeout(autoSaveTimerRef.current);
       }
     };
-  }, [formValues, onSaveDraft]);
+  }, [formValues, onSaveDraft, handleSaveDraft]);
 
   // Query for questions (PQ search)
   const questionsQuery = trpc.questionnaire.getQuestions.useQuery(
@@ -526,6 +523,7 @@ export function FindingEntryWizard({
   const handleNextStep = async () => {
     // Validate current step before proceeding
     const fieldsToValidate = getFieldsForStep(currentStep);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const isValid = await form.trigger(fieldsToValidate as any);
 
     if (isValid && currentStep < 5) {

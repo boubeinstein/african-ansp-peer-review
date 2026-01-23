@@ -13,7 +13,6 @@ import { format, formatDistanceStrict, differenceInDays } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import {
   CheckCircle2,
-  Circle,
   Clock,
   XCircle,
   Loader2,

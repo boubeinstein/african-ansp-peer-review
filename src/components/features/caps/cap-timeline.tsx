@@ -13,7 +13,7 @@
 
 import { useMemo } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { format, differenceInDays, isPast, isToday, isFuture, startOfDay } from "date-fns";
+import { format, differenceInDays, isPast, isToday, startOfDay } from "date-fns";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
@@ -217,7 +217,6 @@ function getDeadlineStatus(dueDate: Date): {
   isDueSoon: boolean;
 } {
   const daysRemaining = getDaysRemaining(dueDate);
-  const today = startOfDay(new Date());
   const due = startOfDay(dueDate);
 
   if (isPast(due) && !isToday(due)) {
@@ -286,8 +285,6 @@ interface DaysRemainingBadgeProps {
 }
 
 function DaysRemainingBadge({ dueDate, status, className }: DaysRemainingBadgeProps) {
-  const t = useTranslations("cap.timeline");
-
   // Don't show for closed/verified CAPs
   if (status === "CLOSED" || status === "VERIFIED") {
     return null;

@@ -25,16 +25,6 @@ import { EvidenceCategory, EvidenceStatus, UserRole, MilestoneStatus, AuditActio
 // =============================================================================
 
 /**
- * Roles that can upload evidence (organization members)
- */
-const EVIDENCE_UPLOAD_ROLES: UserRole[] = [
-  "SUPER_ADMIN",
-  "ANSP_ADMIN",
-  "SAFETY_MANAGER",
-  "QUALITY_MANAGER",
-];
-
-/**
  * Roles that can review evidence (reviewers and management)
  */
 const EVIDENCE_REVIEW_ROLES: UserRole[] = [

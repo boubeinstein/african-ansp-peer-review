@@ -23,6 +23,7 @@ import { notificationRouter } from "./notification";
 import { analyticsRouter } from "./analytics";
 import { auditRouter } from "./audit";
 import { translationRouter } from "./translation";
+import { teamStatisticsRouter } from "./team-statistics";
 
 /**
  * Main app router combining all sub-routers
@@ -52,6 +53,7 @@ export const appRouter = router({
   analytics: analyticsRouter,
   audit: auditRouter,
   translation: translationRouter,
+  teamStatistics: teamStatisticsRouter,
 });
 
 /**

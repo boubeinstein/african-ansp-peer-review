@@ -281,7 +281,59 @@ export function TeamPerformanceOverview({
     data: teamsStats,
     isLoading,
     refetch,
+    isFetching,
   } = trpc.teamStatistics.getAll.useQuery();
+
+  const handleExportReport = () => {
+    if (!teamsStats || teamsStats.length === 0) return;
+
+    // Prepare CSV data
+    const headers = [
+      "Team",
+      "Team Name",
+      "Organizations",
+      "Reviewers",
+      "Reviews Completed",
+      "Reviews In Progress",
+      "Open Findings",
+      "Overdue CAPs",
+      "CAP Closure Rate",
+      "Performance Score",
+    ];
+
+    const rows = teamsStats.map((team) => [
+      `Team ${team.teamNumber}`,
+      team.teamName,
+      team.organizationCount,
+      team.reviewerCount,
+      team.reviewsCompleted,
+      team.reviewsInProgress,
+      team.openFindings,
+      team.overdueCAPs,
+      `${team.capClosureRate}%`,
+      team.participationScore,
+    ]);
+
+    // Create CSV content
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+    ].join("\n");
+
+    // Create and trigger download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute(
+      "download",
+      `team-performance-report-${new Date().toISOString().split("T")[0]}.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   if (isLoading) {
     return <TeamPerformanceOverviewSkeleton />;
@@ -340,11 +392,23 @@ export function TeamPerformanceOverview({
             <CardDescription>{t("description")}</CardDescription>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => refetch()}>
-              <RefreshCw className="h-4 w-4 mr-2" />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => refetch()}
+              disabled={isFetching}
+            >
+              <RefreshCw
+                className={`h-4 w-4 mr-2 ${isFetching ? "animate-spin" : ""}`}
+              />
               {t("refresh")}
             </Button>
-            <Button variant="outline" size="sm">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportReport}
+              disabled={!teamsStats || teamsStats.length === 0}
+            >
               <Download className="h-4 w-4 mr-2" />
               {t("exportReport")}
             </Button>

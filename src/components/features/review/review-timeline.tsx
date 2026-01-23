@@ -319,20 +319,6 @@ function TimelineItem({
     });
   }, [phase.date, previousDate, showDuration, dateLocale, t]);
 
-  // Status icon override
-  const StatusIcon = useMemo(() => {
-    switch (phase.status) {
-      case "complete":
-        return CheckCircle2;
-      case "current":
-        return Loader2;
-      case "blocked":
-        return XCircle;
-      default:
-        return Circle;
-    }
-  }, [phase.status]);
-
   return (
     <div className={cn("relative flex gap-4", compact ? "pb-4" : "pb-6")}>
       {/* Vertical line */}

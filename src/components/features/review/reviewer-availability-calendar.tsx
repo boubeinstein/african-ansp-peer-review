@@ -20,7 +20,6 @@ import {
   endOfMonth,
   eachDayOfInterval,
   isSameMonth,
-  isSameDay,
   startOfWeek,
   endOfWeek,
   isWithinInterval,
@@ -122,14 +121,6 @@ const AVAILABILITY_BG_COLORS: Record<AvailabilityType | "UNKNOWN", string> = {
   TENTATIVE: "bg-yellow-100 text-yellow-800 hover:bg-yellow-200",
   ON_ASSIGNMENT: "bg-blue-100 text-blue-800 hover:bg-blue-200",
   UNKNOWN: "bg-gray-100 text-gray-600 hover:bg-gray-200",
-};
-
-const AVAILABILITY_ICONS: Record<AvailabilityType | "UNKNOWN", typeof CheckCircle2> = {
-  AVAILABLE: CheckCircle2,
-  UNAVAILABLE: XCircle,
-  TENTATIVE: AlertCircle,
-  ON_ASSIGNMENT: Clock,
-  UNKNOWN: Info,
 };
 
 // =============================================================================
@@ -464,7 +455,6 @@ export function AvailabilityIndicator({
   className,
 }: AvailabilityIndicatorProps) {
   const t = useTranslations("reviewer.availability");
-  const locale = useLocale() as "en" | "fr";
 
   // Fetch availability if not preloaded
   const { data: fetchedSlots, isLoading } = trpc.reviewer.getAvailability.useQuery(

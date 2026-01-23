@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -74,7 +73,6 @@ import {
   Eye,
   Loader2,
   FolderOpen,
-  AlertTriangle,
   X,
   CheckCircle2,
 } from "lucide-react";
@@ -158,13 +156,6 @@ function formatFileSize(bytes: number): string {
   const sizes = ["B", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
-}
-
-function getFileIcon(mimeType: string) {
-  if (mimeType.startsWith("image/")) return FileImage;
-  if (mimeType.includes("spreadsheet") || mimeType.includes("excel"))
-    return FileSpreadsheet;
-  return FileText;
 }
 
 function isReviewCategory(category: string): category is ReviewDocumentCategory {

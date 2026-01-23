@@ -60,9 +60,7 @@ import {
   Check,
   X,
   Clock,
-  AlertTriangle,
   CheckCircle2,
-  XCircle,
   Send,
   RefreshCw,
   UserMinus,
@@ -399,7 +397,6 @@ export function CoordinatorInvitationsPanel({
 }: CoordinatorInvitationsPanelProps) {
   const t = useTranslations("review.invitations.coordinator");
   const locale = useLocale() as "en" | "fr";
-  const dateLocale = locale === "fr" ? fr : enUS;
 
   const [withdrawDialogOpen, setWithdrawDialogOpen] = useState(false);
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
@@ -407,7 +404,7 @@ export function CoordinatorInvitationsPanel({
   const utils = trpc.useUtils();
 
   // Fetch team with invitation status
-  const { data, isLoading, refetch } = trpc.review.getTeamWithInvitations.useQuery({
+  const { data, isLoading } = trpc.review.getTeamWithInvitations.useQuery({
     reviewId,
   });
 

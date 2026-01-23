@@ -24,7 +24,6 @@ import {
   FileText,
   Loader2,
   X,
-  Check,
   AlertCircle,
   MoreHorizontal,
   Eye,
@@ -78,12 +77,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 

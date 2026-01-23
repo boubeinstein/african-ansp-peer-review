@@ -56,7 +56,6 @@ import {
   Loader2,
   Briefcase,
   Globe,
-  Calendar,
 } from "lucide-react";
 
 // Feature Components

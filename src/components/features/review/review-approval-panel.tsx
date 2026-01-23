@@ -46,7 +46,6 @@ import {
   CheckCircle2,
   XCircle,
   Clock,
-  Building2,
   Calendar,
   FileText,
   Loader2,
@@ -106,7 +105,7 @@ export function ReviewApprovalPanel({
 
   // Submit decision mutation
   const submitDecision = trpc.review.submitApprovalDecision.useMutation({
-    onSuccess: (data) => {
+    onSuccess: () => {
       const decisionKey = selectedDecision?.toLowerCase() ?? "unknown";
       toast.success(t(`decision.${decisionKey}.success`));
       utils.review.getPendingApprovals.invalidate();

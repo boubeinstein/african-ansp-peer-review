@@ -16,7 +16,6 @@ import { trpc } from "@/lib/trpc/client";
 import { formatDistanceToNow } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import { NotificationType, NotificationPriority } from "@prisma/client";
 
 const priorityColors: Record<NotificationPriority, string> = {

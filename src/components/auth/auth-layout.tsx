@@ -28,14 +28,14 @@ export function AuthLayout({ children }: AuthLayoutProps) {
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
       {/* Hero Panel - Left Side */}
-      <div className="relative lg:w-1/2 bg-aviation-gradient text-white overflow-hidden">
+      <div className="relative lg:w-1/2 lg:min-h-screen bg-aviation-gradient text-white overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10 bg-aviation-pattern" />
 
         {/* Content */}
-        <div className="relative z-10 grid grid-rows-[1fr_auto] h-full p-8 lg:p-12 min-h-[400px] lg:min-h-screen">
+        <div className="relative z-10 flex flex-col h-full p-8 lg:p-12 min-h-[400px] lg:min-h-screen">
           {/* Main Content - Vertically Centered */}
-          <div className="flex flex-col justify-center max-w-lg">
+          <div className="flex-1 flex flex-col justify-center max-w-lg">
             {/* Partner Logos */}
             <div className="flex items-center gap-4 lg:gap-6 mb-8 flex-wrap">
               <div className="bg-white shadow-md rounded-lg p-2 lg:p-3">
@@ -111,8 +111,8 @@ export function AuthLayout({ children }: AuthLayoutProps) {
             </div>
           </div>
 
-          {/* Footer */}
-          <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/20 flex-wrap gap-4">
+          {/* Footer - Always at bottom */}
+          <div className="flex items-center justify-between pt-6 border-t border-white/20 flex-wrap gap-4 mt-auto">
             {/* Language Switcher */}
             <Link
               href={`/${otherLocale}/${currentPage}`}
@@ -129,7 +129,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
       </div>
 
       {/* Form Panel - Right Side */}
-      <div className="flex-1 flex flex-col bg-slate-50">
+      <div className="flex-1 flex flex-col bg-slate-50 lg:h-screen lg:overflow-y-auto">
         {/* Mobile Logo Bar */}
         <div className="lg:hidden flex items-center justify-center gap-4 p-4 bg-white border-b">
           <Image
@@ -150,12 +150,12 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         </div>
 
         {/* Form Container */}
-        <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
-          <div className="w-full max-w-md">{children}</div>
+        <div className="flex-1 flex items-start justify-center p-6 lg:p-12 overflow-y-auto">
+          <div className="w-full max-w-md py-8">{children}</div>
         </div>
 
         {/* Footer */}
-        <div className="p-4 lg:p-6 text-center text-xs text-slate-500 border-t bg-white">
+        <div className="p-4 lg:p-6 text-center text-xs text-slate-500 border-t bg-white flex-shrink-0">
           <p>&copy; 2026 {t("footer.copyright")}</p>
           <p className="mt-1 font-medium">ICAO &bull; CANSO &bull; AFCAC</p>
         </div>

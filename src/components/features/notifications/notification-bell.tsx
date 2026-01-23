@@ -64,14 +64,25 @@ export function NotificationBell({ locale }: NotificationBellProps) {
   const [isOpen, setIsOpen] = useState(false);
   const utils = trpc.useUtils();
 
-  const { data: recentData, isLoading } = trpc.notification.getRecent.useQuery(
+  const { data: recentData, isLoading, error } = trpc.notification.getRecent.useQuery(
     { limit: 10 },
     {
       staleTime: 30 * 1000,       // Data is fresh for 30 seconds
       refetchInterval: 60 * 1000, // Poll every 60 seconds
       refetchOnWindowFocus: false, // Don't refetch on tab focus
+      retry: 2,                   // Retry twice on failure
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
     }
   );
+
+  // Handle connection errors silently - show bell without count
+  if (error) {
+    return (
+      <Button variant="ghost" size="icon" className="relative" disabled>
+        <Bell className="h-4 w-4 text-muted-foreground" />
+      </Button>
+    );
+  }
 
   const markAsReadMutation = trpc.notification.markAsRead.useMutation({
     onSuccess: () => {

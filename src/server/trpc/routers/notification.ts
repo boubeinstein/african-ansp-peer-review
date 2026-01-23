@@ -81,6 +81,7 @@ export const notificationRouter = router({
   /**
    * Get recent notifications (for dropdown)
    * Optimized: parallel queries, selected fields only
+   * Handles network errors gracefully
    */
   getRecent: protectedProcedure
     .input(
@@ -91,37 +92,49 @@ export const notificationRouter = router({
     .query(async ({ ctx, input }) => {
       const { user } = ctx.session;
 
-      // Run both queries in parallel for better performance
-      const [notifications, unreadCount] = await Promise.all([
-        ctx.db.notification.findMany({
-          where: { userId: user.id },
-          select: {
-            id: true,
-            type: true,
-            titleEn: true,
-            titleFr: true,
-            messageEn: true,
-            messageFr: true,
-            priority: true,
-            actionUrl: true,
-            readAt: true,
-            createdAt: true,
-          },
-          orderBy: { createdAt: "desc" },
-          take: input.limit,
-        }),
-        ctx.db.notification.count({
-          where: {
-            userId: user.id,
-            readAt: null,
-          },
-        }),
-      ]);
+      try {
+        // Run both queries in parallel for better performance
+        const [notifications, unreadCount] = await Promise.all([
+          ctx.db.notification.findMany({
+            where: { userId: user.id },
+            select: {
+              id: true,
+              type: true,
+              titleEn: true,
+              titleFr: true,
+              messageEn: true,
+              messageFr: true,
+              priority: true,
+              actionUrl: true,
+              readAt: true,
+              createdAt: true,
+            },
+            orderBy: { createdAt: "desc" },
+            take: input.limit,
+          }),
+          ctx.db.notification.count({
+            where: {
+              userId: user.id,
+              readAt: null,
+            },
+          }),
+        ]);
 
-      return {
-        notifications,
-        unreadCount,
-      };
+        return {
+          notifications,
+          unreadCount,
+        };
+      } catch (error) {
+        // Handle network/DNS errors gracefully
+        if (error instanceof Error &&
+            (error.message.includes('EAI_AGAIN') ||
+             error.message.includes('ECONNREFUSED') ||
+             error.message.includes('ETIMEDOUT'))) {
+          console.warn('[Notification] Database connection failed:', error.message);
+          return { notifications: [], unreadCount: 0 };
+        }
+        throw error;
+      }
     }),
 
   /**

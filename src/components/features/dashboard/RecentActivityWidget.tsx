@@ -144,7 +144,7 @@ export function RecentActivityWidget({
   className,
   isLoading = false,
 }: RecentActivityWidgetProps) {
-  const t = useTranslations("dashboard");
+  const t = useTranslations("dashboard.activity");
   const displayActivities = activities.slice(0, maxItems);
 
   if (isLoading) {
@@ -157,11 +157,11 @@ export function RecentActivityWidget({
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
             <Activity className="h-5 w-5" />
-            {t("activity.title")}
+            {t("title")}
           </CardTitle>
           {showViewAll && activities.length > 0 && onViewAll && (
             <Button variant="ghost" size="sm" onClick={onViewAll}>
-              {t("activity.viewAll")}
+              {t("viewAll")}
               <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
           )}
@@ -172,7 +172,7 @@ export function RecentActivityWidget({
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <Activity className="h-8 w-8 text-muted-foreground mb-2" />
             <p className="text-sm text-muted-foreground">
-              {t("activity.empty")}
+              {t("empty")}
             </p>
           </div>
         ) : (

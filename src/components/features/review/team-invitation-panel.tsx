@@ -750,5 +750,3 @@ export function CoordinatorInvitationsPanel({
     </>
   );
 }
-
-export { ReviewerInvitationsPanel, CoordinatorInvitationsPanel };

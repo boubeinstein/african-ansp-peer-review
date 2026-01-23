@@ -5563,24 +5563,24 @@
   },
   "shortcuts": {
     "title": "Keyboard Shortcuts",
-    "description": "Use keyboard shortcuts to navigate quickly and perform common actions.",
-    "footer": "Press {key} to open command palette for more actions",
+    "description": "Master these shortcuts to navigate quickly.",
+    "footer": "Tip: Press {key} to open the command palette",
     "groups": {
       "essential": "Essential",
       "navigation": "Navigation",
-      "create": "Create"
+      "create": "Create New"
     },
     "essential": {
       "commandPalette": "Command Palette",
-      "commandPaletteDesc": "Search commands and pages",
-      "showShortcuts": "Show Shortcuts",
+      "commandPaletteDesc": "Search commands, navigate, create",
+      "showShortcuts": "Show This Dialog",
       "closeCancel": "Close / Cancel"
     },
     "navigation": {
       "dashboard": "Dashboard",
-      "reviews": "Reviews",
+      "reviews": "Peer Reviews",
       "findings": "Findings",
-      "caps": "CAPs",
+      "caps": "Corrective Actions",
       "assessments": "Assessments",
       "settings": "Settings"
     },
@@ -5590,13 +5590,13 @@
       "newAssessment": "New Assessment"
     },
     "indicator": {
-      "waiting": "Waiting for {key}...",
-      "pressNext": "Press next key in sequence"
+      "waiting": "Shortcut: {key} + ?",
+      "pressNext": "Press next key..."
     }
   },
   "commandPalette": {
-    "searchPlaceholder": "Search commands and pages...",
-    "noResults": "No results found",
+    "searchPlaceholder": "Type a command or search...",
+    "noResults": "No results found.",
     "groups": {
       "navigation": "Navigation",
       "actions": "Quick Actions",
@@ -5604,7 +5604,7 @@
     },
     "navigation": {
       "dashboard": "Go to Dashboard",
-      "reviews": "Go to Reviews",
+      "reviews": "Go to Peer Reviews",
       "findings": "Go to Findings",
       "caps": "Go to CAPs",
       "assessments": "Go to Assessments",
@@ -5615,7 +5615,7 @@
     "actions": {
       "newReview": "Create New Review",
       "newFinding": "Create New Finding",
-      "newAssessment": "Create New Assessment"
+      "newAssessment": "Start New Assessment"
     },
     "utilities": {
       "showShortcuts": "Show Keyboard Shortcuts",

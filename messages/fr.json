@@ -5562,65 +5562,65 @@
     "autoTranslatedTooltip": "Ce contenu a été traduit automatiquement. Vérifiez avant de publier."
   },
   "shortcuts": {
-    "title": "Raccourcis Clavier",
-    "description": "Utilisez les raccourcis clavier pour naviguer rapidement et effectuer des actions courantes.",
-    "footer": "Appuyez sur {key} pour ouvrir la palette de commandes",
+    "title": "Raccourcis clavier",
+    "description": "Maîtrisez ces raccourcis pour naviguer rapidement.",
+    "footer": "Astuce: Appuyez sur {key} pour ouvrir la palette",
     "groups": {
       "essential": "Essentiels",
       "navigation": "Navigation",
       "create": "Créer"
     },
     "essential": {
-      "commandPalette": "Palette de Commandes",
-      "commandPaletteDesc": "Rechercher commandes et pages",
-      "showShortcuts": "Afficher les Raccourcis",
+      "commandPalette": "Palette de commandes",
+      "commandPaletteDesc": "Rechercher, naviguer, créer",
+      "showShortcuts": "Afficher ce dialogue",
       "closeCancel": "Fermer / Annuler"
     },
     "navigation": {
-      "dashboard": "Tableau de Bord",
-      "reviews": "Revues",
-      "findings": "Constats",
-      "caps": "PAC",
+      "dashboard": "Tableau de bord",
+      "reviews": "Examens",
+      "findings": "Constatations",
+      "caps": "Actions correctives",
       "assessments": "Évaluations",
       "settings": "Paramètres"
     },
     "create": {
-      "newReview": "Nouvelle Revue",
-      "newFinding": "Nouveau Constat",
-      "newAssessment": "Nouvelle Évaluation"
+      "newReview": "Nouvel examen",
+      "newFinding": "Nouvelle constatation",
+      "newAssessment": "Nouvelle évaluation"
     },
     "indicator": {
-      "waiting": "En attente de {key}...",
-      "pressNext": "Appuyez sur la touche suivante"
+      "waiting": "Raccourci: {key} + ?",
+      "pressNext": "Appuyez sur la touche suivante..."
     }
   },
   "commandPalette": {
-    "searchPlaceholder": "Rechercher des commandes et des pages...",
-    "noResults": "Aucun résultat trouvé",
+    "searchPlaceholder": "Tapez une commande ou recherchez...",
+    "noResults": "Aucun résultat trouvé.",
     "groups": {
       "navigation": "Navigation",
-      "actions": "Actions Rapides",
+      "actions": "Actions rapides",
       "utilities": "Utilitaires"
     },
     "navigation": {
-      "dashboard": "Aller au Tableau de Bord",
-      "reviews": "Aller aux Revues",
-      "findings": "Aller aux Constats",
+      "dashboard": "Aller au tableau de bord",
+      "reviews": "Aller aux examens",
+      "findings": "Aller aux constatations",
       "caps": "Aller aux PAC",
-      "assessments": "Aller aux Évaluations",
-      "reviewers": "Aller aux Examinateurs",
-      "organizations": "Aller aux Organisations",
-      "settings": "Aller aux Paramètres"
+      "assessments": "Aller aux évaluations",
+      "reviewers": "Aller aux examinateurs",
+      "organizations": "Aller aux organisations",
+      "settings": "Aller aux paramètres"
     },
     "actions": {
-      "newReview": "Créer une Nouvelle Revue",
-      "newFinding": "Créer un Nouveau Constat",
-      "newAssessment": "Créer une Nouvelle Évaluation"
+      "newReview": "Créer un nouvel examen",
+      "newFinding": "Créer une constatation",
+      "newAssessment": "Démarrer une évaluation"
     },
     "utilities": {
-      "showShortcuts": "Afficher les Raccourcis Clavier",
-      "lightMode": "Passer en Mode Clair",
-      "darkMode": "Passer en Mode Sombre"
+      "showShortcuts": "Afficher les raccourcis",
+      "lightMode": "Mode clair",
+      "darkMode": "Mode sombre"
     },
     "footer": {
       "navigate": "pour naviguer",

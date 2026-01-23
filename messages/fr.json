@@ -52,7 +52,9 @@
       "light": "Clair",
       "dark": "Sombre",
       "system": "Système"
-    }
+    },
+    "commandPalette": "Palette de Commandes",
+    "keyboardShortcuts": "Raccourcis Clavier"
   },
   "navigation": {
     "dashboard": "Tableau de bord",

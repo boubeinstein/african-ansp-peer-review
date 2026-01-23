@@ -52,7 +52,9 @@
       "light": "Light",
       "dark": "Dark",
       "system": "System"
-    }
+    },
+    "commandPalette": "Command Palette",
+    "keyboardShortcuts": "Keyboard Shortcuts"
   },
   "navigation": {
     "dashboard": "Dashboard",

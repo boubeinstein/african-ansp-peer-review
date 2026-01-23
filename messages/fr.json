@@ -5602,25 +5602,29 @@
       "actions": "Actions rapides",
       "utilities": "Utilitaires"
     },
-    "navigation": {
+    "commands": {
       "dashboard": "Aller au tableau de bord",
       "reviews": "Aller aux examens",
       "findings": "Aller aux constatations",
       "caps": "Aller aux PAC",
-      "assessments": "Aller aux évaluations",
-      "reviewers": "Aller aux examinateurs",
       "organizations": "Aller aux organisations",
-      "settings": "Aller aux paramètres"
-    },
-    "actions": {
+      "reviewers": "Aller aux examinateurs",
+      "analytics": "Aller aux analyses",
+      "settings": "Aller aux paramètres",
       "newReview": "Créer un nouvel examen",
-      "newFinding": "Créer une constatation",
-      "newAssessment": "Démarrer une évaluation"
+      "showShortcuts": "Afficher les raccourcis clavier"
     },
-    "utilities": {
-      "showShortcuts": "Afficher les raccourcis",
-      "lightMode": "Mode clair",
-      "darkMode": "Mode sombre"
+    "descriptions": {
+      "dashboard": "Voir l'aperçu de votre tableau de bord",
+      "reviews": "Gérer les examens par les pairs",
+      "findings": "Voir et gérer les constatations",
+      "caps": "Voir les plans d'action corrective",
+      "organizations": "Parcourir les organisations",
+      "reviewers": "Parcourir les profils d'examinateurs",
+      "analytics": "Voir les analyses et rapports",
+      "settings": "Gérer vos paramètres",
+      "newReview": "Démarrer un nouvel examen",
+      "showShortcuts": "Voir tous les raccourcis clavier"
     },
     "footer": {
       "navigate": "pour naviguer",

@@ -5602,25 +5602,29 @@
       "actions": "Quick Actions",
       "utilities": "Utilities"
     },
-    "navigation": {
+    "commands": {
       "dashboard": "Go to Dashboard",
-      "reviews": "Go to Peer Reviews",
+      "reviews": "Go to Reviews",
       "findings": "Go to Findings",
       "caps": "Go to CAPs",
-      "assessments": "Go to Assessments",
-      "reviewers": "Go to Reviewers",
       "organizations": "Go to Organizations",
-      "settings": "Go to Settings"
-    },
-    "actions": {
+      "reviewers": "Go to Reviewers",
+      "analytics": "Go to Analytics",
+      "settings": "Go to Settings",
       "newReview": "Create New Review",
-      "newFinding": "Create New Finding",
-      "newAssessment": "Start New Assessment"
+      "showShortcuts": "Show Keyboard Shortcuts"
     },
-    "utilities": {
-      "showShortcuts": "Show Keyboard Shortcuts",
-      "lightMode": "Switch to Light Mode",
-      "darkMode": "Switch to Dark Mode"
+    "descriptions": {
+      "dashboard": "View your dashboard overview",
+      "reviews": "Manage peer reviews",
+      "findings": "View and manage findings",
+      "caps": "View corrective action plans",
+      "organizations": "Browse organizations",
+      "reviewers": "Browse reviewer profiles",
+      "analytics": "View analytics and reports",
+      "settings": "Manage your settings",
+      "newReview": "Start a new peer review",
+      "showShortcuts": "View all keyboard shortcuts"
     },
     "footer": {
       "navigate": "to navigate",

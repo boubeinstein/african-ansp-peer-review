@@ -309,11 +309,6 @@
       "active": "active",
       "viewAll": "View All"
     },
-    "activity": {
-      "title": "Recent Activity",
-      "empty": "No recent activity",
-      "viewAll": "View All"
-    },
     "attention": {
       "title": "Needs Attention",
       "allOnTrack": "All assessments are on track!",
@@ -443,6 +438,8 @@
     },
     "activity": {
       "title": "Recent Activity",
+      "viewAll": "View All",
+      "empty": "No recent activity",
       "noActivity": "No Recent Activity",
       "noActivityDescription": "No activity has been recorded in the past 30 days.",
       "refresh": "Refresh",

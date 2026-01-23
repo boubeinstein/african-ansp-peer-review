@@ -309,11 +309,6 @@
       "active": "actives",
       "viewAll": "Voir tout"
     },
-    "activity": {
-      "title": "Activité récente",
-      "empty": "Aucune activité récente",
-      "viewAll": "Voir tout"
-    },
     "attention": {
       "title": "Nécessite une attention",
       "allOnTrack": "Toutes les évaluations sont en bonne voie!",
@@ -443,6 +438,8 @@
     },
     "activity": {
       "title": "Activité récente",
+      "viewAll": "Voir tout",
+      "empty": "Aucune activité récente",
       "noActivity": "Aucune activité récente",
       "noActivityDescription": "Aucune activité n'a été enregistrée au cours des 30 derniers jours.",
       "refresh": "Actualiser",

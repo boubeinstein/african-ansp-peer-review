@@ -751,4 +751,4 @@ export function CoordinatorInvitationsPanel({
   );
 }
 
-export default { ReviewerInvitationsPanel, CoordinatorInvitationsPanel };
+export { ReviewerInvitationsPanel, CoordinatorInvitationsPanel };

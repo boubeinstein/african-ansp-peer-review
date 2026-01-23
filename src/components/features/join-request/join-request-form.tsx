@@ -107,6 +107,7 @@ export function JoinRequestForm() {
     mode: "onChange", // Validate on change to see errors immediately
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- React Hook Form watch() is not memoizable
   const motivationLength = watch("motivationStatement")?.length || 0;
 
   // Debug: Log form errors when they change

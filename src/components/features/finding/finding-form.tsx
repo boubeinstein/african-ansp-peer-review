@@ -51,7 +51,6 @@ import {
   Check,
   CalendarIcon,
   X,
-  Languages,
 } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
 import { AutoTranslateButton } from "@/components/features/translation/auto-translate-button";
@@ -232,7 +231,6 @@ export function FindingForm({
   });
 
   // Watch finding type to auto-suggest severity
-  // eslint-disable-next-line react-hooks/incompatible-library
   const watchFindingType = form.watch("findingType");
 
   // Query for questions (PQ search)
@@ -541,6 +539,7 @@ export function FindingForm({
                       <FormItem>
                         <div className="flex items-center justify-between">
                           <FormLabel>{t("form.titleEn")} *</FormLabel>
+                          {/* eslint-disable-next-line react-hooks/incompatible-library -- React Hook Form watch() is not memoizable */}
                           {form.watch("titleFr") && (
                             <AutoTranslateButton
                               sourceText={form.watch("titleFr")}

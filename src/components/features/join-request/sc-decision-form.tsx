@@ -110,6 +110,7 @@ export function SCDecisionForm({
     },
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- React Hook Form watch() is not memoizable
   const decision = watch("scDecision");
 
   const mutation = trpc.joinRequest.scDecision.useMutation({

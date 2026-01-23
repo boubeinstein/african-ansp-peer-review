@@ -571,6 +571,7 @@ function ReviewDialog({ evidence, onSuccess }: ReviewDialogProps) {
     },
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- React Hook Form watch() is not memoizable
   const selectedStatus = form.watch("status");
 
   const handleSubmit = (data: ReviewFormData) => {

@@ -114,6 +114,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
     defaultValues: { password: "", confirmPassword: "" },
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- React Hook Form watch() is not memoizable
   const watchPassword = watch("password", "");
 
   // Password requirements

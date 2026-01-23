@@ -66,6 +66,7 @@ export function CoordinatorReviewForm({
     resolver: zodResolver(reviewSchema),
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- React Hook Form watch() is not memoizable
   const recommendation = watch("coordinatorRecommendation");
 
   const mutation = trpc.joinRequest.coordinatorReview.useMutation({

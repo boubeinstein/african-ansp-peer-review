@@ -412,6 +412,7 @@ export function NewReviewClient({ locale }: NewReviewClientProps) {
               />
 
               {/* Focus Areas (for FOCUSED reviews) */}
+              {/* eslint-disable-next-line react-hooks/incompatible-library -- React Hook Form watch() is not memoizable */}
               {form.watch("reviewType") === "FOCUSED" && (
                 <FormField
                   control={form.control}

@@ -81,6 +81,7 @@ export function RequestAccessForm() {
     resolver: zodResolver(accessRequestSchema),
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- React Hook Form watch() is not memoizable
   const selectedOrgId = watch("organizationId");
   const selectedOrg = organizations?.find((org) => org.id === selectedOrgId);
 

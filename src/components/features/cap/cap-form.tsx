@@ -255,6 +255,7 @@ export function CAPForm({
                         {t("form.rootCauseEn")} *
                         <Badge variant="outline" className="ml-2">EN</Badge>
                       </FormLabel>
+                      {/* eslint-disable-next-line react-hooks/incompatible-library -- React Hook Form watch() is not memoizable */}
                       {form.watch("rootCauseFr") && (
                         <AutoTranslateButton
                           sourceText={form.watch("rootCauseFr")}

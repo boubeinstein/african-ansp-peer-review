@@ -184,7 +184,7 @@ async function getReviewWithAllDetails(reviewId: string): Promise<ReviewReportDa
         },
       },
     },
-  }) as ReviewReportData["review"] | null;
+  });
 
   if (!review) {
     throw new Error(`Review not found: ${reviewId}`);
@@ -200,12 +200,12 @@ async function getReviewWithAllDetails(reviewId: string): Promise<ReviewReportDa
 
   // Transform team members
   const teamMembers = review.teamMembers
-    .filter((m: { role: string }) => m.role !== "LEAD_REVIEWER")
-    .map((m: { id: string; user: { firstName: string | null; lastName: string | null }; reviewerProfile: { homeOrganization: { name: string } | null; expertiseAreas: string[] } | null; role: string }) => ({
+    .filter((m) => m.role !== "LEAD_REVIEWER")
+    .map((m) => ({
       id: m.id,
       firstName: m.user.firstName || "",
       lastName: m.user.lastName || "",
-      organization: m.reviewerProfile?.homeOrganization?.name || "",
+      organization: m.reviewerProfile?.homeOrganization?.nameEn || "",
       role: m.role,
       expertise: m.reviewerProfile?.expertiseAreas || [],
     }));
@@ -260,29 +260,22 @@ async function getReviewWithAllDetails(reviewId: string): Promise<ReviewReportDa
 
   // Transform CAPs
   const caps = review.findings
-    .filter((f: { capRequired: boolean; correctiveActionPlan: unknown }) => f.capRequired && f.correctiveActionPlan)
-    .map((f: {
-      referenceNumber: string;
-      titleEn: string;
-      correctiveActionPlan: {
-        id: string;
-        status: string;
-        targetDate: Date | null;
-        progress: number;
-        descriptionEn: string | null;
-      } | null;
-    }) => {
+    .filter((f) => f.capRequired && f.correctiveActionPlan)
+    .map((f) => {
       const cap = f.correctiveActionPlan!;
-      const isOverdue = cap.targetDate && new Date(cap.targetDate) < new Date() && cap.status !== "VERIFIED";
+      const isOverdue = cap.dueDate && new Date(cap.dueDate) < new Date() && cap.status !== "VERIFIED";
+      // Calculate progress from milestones
+      const completedMilestones = cap.milestones.filter((m) => m.status === "COMPLETED").length;
+      const progress = cap.milestones.length > 0 ? Math.round((completedMilestones / cap.milestones.length) * 100) : 0;
       return {
         id: cap.id,
         reference: `CAP-${cap.id.slice(-6).toUpperCase()}`,
         findingReference: f.referenceNumber,
         findingTitle: f.titleEn,
         status: (isOverdue ? "OVERDUE" : cap.status) as "PENDING" | "IN_PROGRESS" | "SUBMITTED" | "ACCEPTED" | "VERIFIED" | "OVERDUE",
-        dueDate: cap.targetDate || new Date(),
-        progress: cap.progress || 0,
-        description: cap.descriptionEn || undefined,
+        dueDate: cap.dueDate || new Date(),
+        progress,
+        description: cap.correctiveActionEn || undefined,
       };
     });
 
@@ -318,10 +311,10 @@ async function getReviewWithAllDetails(reviewId: string): Promise<ReviewReportDa
     reference: review.referenceNumber,
     hostOrganization: {
       id: review.hostOrganization.id,
-      name: review.hostOrganization.name,
-      shortName: review.hostOrganization.shortName || "",
+      name: review.hostOrganization.nameEn,
+      shortName: review.hostOrganization.icaoCode || "",
       country: review.hostOrganization.country || "",
-      type: review.hostOrganization.type || "",
+      type: review.hostOrganization.membershipStatus || "",
     },
     status: review.status,
     classification: undefined,
@@ -332,7 +325,7 @@ async function getReviewWithAllDetails(reviewId: string): Promise<ReviewReportDa
       id: leadMember.id,
       firstName: leadMember.user.firstName || "",
       lastName: leadMember.user.lastName || "",
-      organization: leadMember.reviewerProfile?.homeOrganization?.name || "",
+      organization: leadMember.reviewerProfile?.homeOrganization?.nameEn || "",
       role: "LEAD_REVIEWER",
       expertise: leadMember.reviewerProfile?.expertiseAreas || [],
     },

@@ -33,34 +33,33 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         <div className="absolute inset-0 opacity-10 bg-aviation-pattern" />
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col h-full p-8 lg:p-12 min-h-[400px] lg:min-h-screen">
-          {/* Partner Logos */}
-          <div className="flex items-center gap-4 lg:gap-6 mb-8 flex-wrap">
-            <div className="bg-white shadow-md rounded-lg p-2 lg:p-3">
-              <Image
-                src="/images/logos/International_Civil_Aviation_Organization_logo.svg"
-                alt="ICAO - International Civil Aviation Organization"
-                width={120}
-                height={48}
-                className="h-8 lg:h-10 w-auto"
-                priority
-              />
+        <div className="relative z-10 grid grid-rows-[1fr_auto] h-full p-8 lg:p-12 min-h-[400px] lg:min-h-screen">
+          {/* Main Content - Vertically Centered */}
+          <div className="flex flex-col justify-center max-w-lg">
+            {/* Partner Logos */}
+            <div className="flex items-center gap-4 lg:gap-6 mb-8 flex-wrap">
+              <div className="bg-white shadow-md rounded-lg p-2 lg:p-3">
+                <Image
+                  src="/images/logos/International_Civil_Aviation_Organization_logo.svg"
+                  alt="ICAO - International Civil Aviation Organization"
+                  width={120}
+                  height={48}
+                  className="h-8 lg:h-10 w-auto"
+                  priority
+                />
+              </div>
+              <div className="h-8 w-px bg-white/30 hidden sm:block" />
+              <div className="bg-white shadow-md rounded-lg p-2 lg:p-3">
+                <Image
+                  src="/images/logos/CANSO.svg"
+                  alt="CANSO - Civil Air Navigation Services Organisation"
+                  width={120}
+                  height={48}
+                  className="h-8 lg:h-10 w-auto"
+                  priority
+                />
+              </div>
             </div>
-            <div className="h-8 w-px bg-white/30 hidden sm:block" />
-            <div className="bg-white shadow-md rounded-lg p-2 lg:p-3">
-              <Image
-                src="/images/logos/CANSO.svg"
-                alt="CANSO - Civil Air Navigation Services Organisation"
-                width={120}
-                height={48}
-                className="h-8 lg:h-10 w-auto"
-                priority
-              />
-            </div>
-          </div>
-
-          {/* Main Title */}
-          <div className="flex-grow flex flex-col justify-center max-w-lg">
             <div className="mb-3">
               <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-african-gold-light text-african-gold border border-african-gold/30">
                 <Shield className="w-3 h-3 mr-1.5" />

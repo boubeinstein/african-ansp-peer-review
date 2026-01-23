@@ -233,11 +233,13 @@ function UploadDialog({
 
       setUploadProgress(30);
 
-      // Upload file to storage via API route
+      // Upload file via API
       const uploadResponse = await fetch("/api/upload", {
         method: "POST",
         body: formData,
       });
+
+      setUploadProgress(50);
 
       if (!uploadResponse.ok) {
         const errorData = await uploadResponse.json();
@@ -262,8 +264,11 @@ function UploadDialog({
 
       setUploadProgress(100);
       toast.success(t("success.uploaded"));
+
+      // Invalidate queries to refresh document list
       utils.document.getByReview.invalidate({ reviewId });
       utils.document.getReviewDocumentStats.invalidate({ reviewId });
+
       onSuccess();
       handleClose();
     } catch (error) {

@@ -18,6 +18,7 @@ import { RoleStatCards, RoleStatCardsSkeleton } from "@/components/features/dash
 import { ProgrammeOverview } from "@/components/features/dashboard/programme-overview";
 import { MyOrganizationSummary } from "@/components/features/dashboard/my-organization-summary";
 import { MyTeamWidget } from "@/components/features/dashboard/my-team-widget";
+import { TeamPerformanceOverview } from "@/components/features/dashboard/team-performance-overview";
 import { RoleQuickActions } from "@/components/features/dashboard/role-quick-actions";
 import { RecentActivityWidget } from "@/components/features/dashboard/RecentActivityWidget";
 import type { UserRole } from "@prisma/client";
@@ -254,6 +255,11 @@ export function DashboardContent({
         stats={statValues}
         isLoading={statsLoading}
       />
+
+      {/* Team Performance Overview for Coordinators and Steering Committee */}
+      {(roleCategory === "PROGRAMME_ADMIN" || roleCategory === "COORDINATOR") && (
+        <TeamPerformanceOverview locale={locale} />
+      )}
 
       {/* Main Content Grid */}
       <div className="grid gap-6 md:grid-cols-2">

@@ -172,7 +172,7 @@ export function KeyboardShortcutsHelp({
                         className="flex items-center justify-between py-1.5"
                       >
                         <span className="text-sm text-muted-foreground">
-                          {t(`shortcuts.${category.id}.${shortcut.keys.toLowerCase().replace(/[+\s]/g, "_")}`, {
+                          {t(`shortcuts.${category.id}.${shortcut.keys.toLowerCase().replace(/[+\s/]/g, "_")}`, {
                             defaultValue: shortcut.description,
                           })}
                         </span>

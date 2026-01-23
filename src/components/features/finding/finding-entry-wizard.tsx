@@ -456,6 +456,21 @@ export function FindingEntryWizard({
     }
   }, [watchSuggestedTimeline, form]);
 
+  // Handlers - declare before useEffect that uses them
+  const handleSaveDraft = useCallback(async () => {
+    if (!onSaveDraft || isSavingDraft) return;
+
+    setIsSavingDraft(true);
+    try {
+      await onSaveDraft(form.getValues());
+      setLastSavedAt(new Date());
+    } catch (error) {
+      console.error("Failed to save draft:", error);
+    } finally {
+      setIsSavingDraft(false);
+    }
+  }, [onSaveDraft, form, isSavingDraft]);
+
   // Auto-save draft every 30 seconds if changes detected
   useEffect(() => {
     if (!onSaveDraft) return;
@@ -486,21 +501,6 @@ export function FindingEntryWizard({
       enabled: !!questionnaireId && questionSearch.length >= 2,
     }
   );
-
-  // Handlers
-  const handleSaveDraft = useCallback(async () => {
-    if (!onSaveDraft || isSavingDraft) return;
-
-    setIsSavingDraft(true);
-    try {
-      await onSaveDraft(form.getValues());
-      setLastSavedAt(new Date());
-    } catch (error) {
-      console.error("Failed to save draft:", error);
-    } finally {
-      setIsSavingDraft(false);
-    }
-  }, [onSaveDraft, form, isSavingDraft]);
 
   const handleSelectQuestion = (question: Question) => {
     setSelectedQuestion(question);

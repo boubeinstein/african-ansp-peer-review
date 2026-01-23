@@ -5,6 +5,7 @@ import {
   ClipboardList,
   FileCheck,
   Users,
+  UsersRound,
   Search,
   AlertTriangle,
   CheckSquare,
@@ -78,6 +79,12 @@ const allNavItems: NavItem[] = [
     href: "/reviewers",
     icon: Users,
     feature: "reviewers",
+  },
+  {
+    name: "teams",
+    href: "/teams",
+    icon: UsersRound,
+    feature: "teams",
   },
   {
     name: "organizations",

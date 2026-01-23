@@ -34,6 +34,8 @@ export type Feature =
   | "reviewers.edit"
   | "reviewers.editAny"
   | "reviewers.approve"
+  | "teams"
+  | "teams.all"
   | "organizations"
   | "organizations.all"
   | "organizations.details"
@@ -85,6 +87,8 @@ const permissions: Record<UserRole, Feature[]> = {
     "reviewers.edit",
     "reviewers.editAny",
     "reviewers.approve",
+    "teams",
+    "teams.all",
     "organizations",
     "organizations.all",
     "organizations.details",
@@ -132,6 +136,8 @@ const permissions: Record<UserRole, Feature[]> = {
     "reviewers.edit",
     "reviewers.editAny",
     "reviewers.approve",
+    "teams",
+    "teams.all",
     "organizations",
     "organizations.all",
     "organizations.details",
@@ -178,6 +184,8 @@ const permissions: Record<UserRole, Feature[]> = {
     "reviewers.edit",
     "reviewers.editAny",
     "reviewers.approve",
+    "teams",
+    "teams.all",
     "organizations",
     "organizations.all",
     "organizations.details",
@@ -208,6 +216,8 @@ const permissions: Record<UserRole, Feature[]> = {
     "reviewers",
     "reviewers.all",
     "reviewers.approve",
+    "teams",
+    "teams.all",
     "organizations",
     "organizations.all",
     "organizations.details",
@@ -234,6 +244,7 @@ const permissions: Record<UserRole, Feature[]> = {
     "reviewers.all",
     "reviewers.own",
     "reviewers.edit",
+    "teams",
     "training",
     "settings",
   ],
@@ -252,6 +263,7 @@ const permissions: Record<UserRole, Feature[]> = {
     "caps.assigned",
     "reviewers",
     "reviewers.all",
+    "teams",
     "training",
     "settings",
   ],
@@ -272,6 +284,7 @@ const permissions: Record<UserRole, Feature[]> = {
     "reviewers.all",
     "reviewers.own",
     "reviewers.edit",
+    "teams",
     "organizations",
     "organizations.all",
     "organizations.editOwn",
@@ -290,6 +303,7 @@ const permissions: Record<UserRole, Feature[]> = {
     "caps",
     "caps.own",
     "caps.create",
+    "teams",
     "training",
     "settings",
   ],
@@ -304,6 +318,7 @@ const permissions: Record<UserRole, Feature[]> = {
     "caps",
     "caps.own",
     "caps.create",
+    "teams",
     "training",
     "settings",
   ],
@@ -321,6 +336,8 @@ const permissions: Record<UserRole, Feature[]> = {
     "caps.all",
     "reviewers",
     "reviewers.all",
+    "teams",
+    "teams.all",
     "settings",
   ],
 
@@ -329,6 +346,7 @@ const permissions: Record<UserRole, Feature[]> = {
     "questionnaires",
     "assessments",
     "assessments.own",
+    "teams",
     "training",
     "settings",
   ],

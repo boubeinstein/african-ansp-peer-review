@@ -156,8 +156,15 @@
     },
     "joinProgramme": {
       "description": "Inscrivez votre organisation au Programme Africain d'Examen par les Pairs des ANSP. Ceci est destiné aux organisations qui ne participent pas encore.",
-      "organization": "Organisation",
-      "selectOrganization": "Sélectionnez votre organisation...",
+      "organizationName": "Nom de l'organisation",
+      "organizationNamePlaceholder": "ex: Autorité de l'Aviation Civile du Kenya",
+      "organizationNameHelp": "Entrez le nom officiel complet de votre fournisseur de services de navigation aérienne",
+      "country": "Pays",
+      "countryPlaceholder": "ex: Kenya",
+      "icaoCode": "Indicateur d'emplacement OACI",
+      "icaoCodePlaceholder": "ex: HKJK",
+      "icaoCodeHelp": "Le code OACI à 4 lettres de votre aéroport principal (si connu)",
+      "optional": "optionnel",
       "contactName": "Nom de la Personne de Contact",
       "contactNamePlaceholder": "Nom complet du contact principal",
       "email": "Email de Contact",
@@ -187,9 +194,7 @@
       "successTitle": "Candidature Soumise !",
       "successMessage": "Votre candidature a été soumise pour examen. Le Coordinateur du Programme examinera votre candidature et vous recevrez des mises à jour par email.",
       "nextSteps": "Prochaines étapes : Le Coordinateur examinera et transmettra au Comité de Pilotage pour approbation.",
-      "backToLogin": "Retour à la Connexion",
-      "noOrganizations": "Toutes les organisations enregistrées sont déjà membres du programme.",
-      "contactCoordinator": "Si votre organisation n'est pas listée, veuillez contacter le Coordinateur du Programme pour l'enregistrer d'abord."
+      "backToLogin": "Retour à la Connexion"
     },
     "fields": {
       "email": "Email",

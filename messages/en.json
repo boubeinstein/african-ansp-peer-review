@@ -156,8 +156,15 @@
     },
     "joinProgramme": {
       "description": "Register your organization to join the African ANSP Peer Review Programme. This is for organizations not yet participating.",
-      "organization": "Organization",
-      "selectOrganization": "Select your organization...",
+      "organizationName": "Organization Name",
+      "organizationNamePlaceholder": "e.g., Kenya Civil Aviation Authority",
+      "organizationNameHelp": "Enter the full official name of your Air Navigation Service Provider",
+      "country": "Country",
+      "countryPlaceholder": "e.g., Kenya",
+      "icaoCode": "ICAO Location Indicator",
+      "icaoCodePlaceholder": "e.g., HKJK",
+      "icaoCodeHelp": "The 4-letter ICAO code for your primary airport (if known)",
+      "optional": "optional",
       "contactName": "Contact Person Name",
       "contactNamePlaceholder": "Full name of the primary contact",
       "email": "Contact Email",
@@ -187,9 +194,7 @@
       "successTitle": "Application Submitted!",
       "successMessage": "Your application has been submitted for review. The Programme Coordinator will review your application and you'll receive updates via email.",
       "nextSteps": "Next steps: The Coordinator will review and forward to the Steering Committee for approval.",
-      "backToLogin": "Back to Sign In",
-      "noOrganizations": "All registered organizations are already programme members.",
-      "contactCoordinator": "If your organization is not listed, please contact the Programme Coordinator to register it first."
+      "backToLogin": "Back to Sign In"
     },
     "fields": {
       "email": "Email",

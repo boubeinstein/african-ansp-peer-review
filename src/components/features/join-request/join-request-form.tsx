@@ -4,7 +4,7 @@
  * JoinRequestForm Component
  *
  * Public form for organizations to apply for programme participation.
- * Includes organization selection, contact details, and motivation statement.
+ * Uses free-text entry for organization details (new organizations).
  */
 
 import { useState } from "react";
@@ -23,6 +23,8 @@ import {
   Building2,
   CheckCircle,
   ArrowLeft,
+  Globe,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,11 +49,18 @@ import { trpc } from "@/lib/trpc/client";
 import { FileUpload } from "@/components/ui/file-upload";
 
 const joinRequestSchema = z.object({
-  organizationId: z.string().min(1, "Organization is required"),
+  // Organization details (free-text entry)
+  organizationName: z.string().min(2, "Organization name is required"),
+  organizationCountry: z.string().min(2, "Country is required"),
+  organizationIcaoCode: z.string().optional(),
+
+  // Contact details
   contactName: z.string().min(2, "Name must be at least 2 characters"),
   contactEmail: z.string().email("Invalid email address"),
   contactPhone: z.string().optional(),
   contactJobTitle: z.string().min(2, "Job title is required"),
+
+  // Application details
   currentSmsMaturity: z.enum(["A", "B", "C", "D", "E"]).optional(),
   motivationStatement: z
     .string()
@@ -71,10 +80,6 @@ export function JoinRequestForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [referenceId, setReferenceId] = useState<string | null>(null);
-
-  // Fetch eligible organizations
-  const { data: organizations, isLoading: orgsLoading } =
-    trpc.joinRequest.getEligibleOrganizations.useQuery();
 
   const createMutation = trpc.joinRequest.create.useMutation({
     onSuccess: (data) => {
@@ -104,32 +109,25 @@ export function JoinRequestForm() {
       proposedReviewerCount: 2,
       preferredLanguage: locale as "en" | "fr",
     },
-    mode: "onChange", // Validate on change to see errors immediately
+    mode: "onChange",
   });
 
   // eslint-disable-next-line react-hooks/incompatible-library -- React Hook Form watch() is not memoizable
   const motivationLength = watch("motivationStatement")?.length || 0;
 
-  // Debug: Log form errors when they change
-  if (Object.keys(errors).length > 0) {
-    console.log("📋 Form validation errors:", errors);
-  }
-
   async function onSubmit(data: JoinRequestFormData) {
     console.log("📤 Submitting application:", data);
     setIsLoading(true);
-    createMutation.mutate(data);
+    createMutation.mutate({
+      ...data,
+      requestType: "PROGRAMME_JOIN",
+    });
   }
 
   function onInvalid(errors: Record<string, unknown>) {
     console.error("❌ Form validation failed:", errors);
     toast.error("Please fill in all required fields correctly");
   }
-
-  // Get organization name based on locale
-  const getOrgName = (org: { nameEn: string; nameFr: string }) => {
-    return locale === "fr" ? org.nameFr : org.nameEn;
-  };
 
   // Success state
   if (submitted) {
@@ -262,43 +260,63 @@ export function JoinRequestForm() {
                 </h3>
 
                 <div className="space-y-2">
-                  <Label>{t("form.organization")}</Label>
+                  <Label>{t("form.organizationName")}</Label>
                   <div className="relative">
-                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10 pointer-events-none" />
-                    <Select
-                      onValueChange={(value) => {
-                        console.log("🏢 Organization selected:", value);
-                        setValue("organizationId", value, { shouldValidate: true });
-                      }}
-                      disabled={orgsLoading}
-                    >
-                      <SelectTrigger
-                        className={cn(
-                          "w-full pl-10",
-                          errors.organizationId && "border-red-500"
-                        )}
-                      >
-                        <SelectValue
-                          placeholder={t("form.organizationPlaceholder")}
-                        />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-60">
-                        {organizations?.map((org) => (
-                          <SelectItem key={org.id} value={org.id}>
-                            {getOrgName(org)} ({org.icaoCode || org.country})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Input
+                      placeholder={t("form.organizationNamePlaceholder")}
+                      className={cn(
+                        "pl-10",
+                        errors.organizationName && "border-red-500"
+                      )}
+                      {...register("organizationName")}
+                    />
                   </div>
                   <p className="text-xs text-slate-500">
-                    {t("form.organizationHelp")}
+                    {t("form.organizationNameHelp")}
                   </p>
-                  {errors.organizationId && (
+                  {errors.organizationName && (
                     <p className="text-xs text-red-500">
-                      {errors.organizationId.message}
+                      {errors.organizationName.message}
                     </p>
                   )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>{t("form.country")}</Label>
+                    <div className="relative">
+                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <Input
+                        placeholder={t("form.countryPlaceholder")}
+                        className={cn(
+                          "pl-10",
+                          errors.organizationCountry && "border-red-500"
+                        )}
+                        {...register("organizationCountry")}
+                      />
+                    </div>
+                    {errors.organizationCountry && (
+                      <p className="text-xs text-red-500">
+                        {errors.organizationCountry.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>{t("form.icaoCode")} <span className="text-slate-400">({t("form.optional")})</span></Label>
+                    <div className="relative">
+                      <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <Input
+                        placeholder="e.g., HKJK"
+                        className="pl-10"
+                        {...register("organizationIcaoCode")}
+                      />
+                    </div>
+                    <p className="text-xs text-slate-500">
+                      {t("form.icaoCodeHelp")}
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -373,7 +391,7 @@ export function JoinRequestForm() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>{t("form.contactPhone")}</Label>
+                    <Label>{t("form.contactPhone")} <span className="text-slate-400">({t("form.optional")})</span></Label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <Input
@@ -516,7 +534,7 @@ export function JoinRequestForm() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>{t("form.additionalNotes")}</Label>
+                  <Label>{t("form.additionalNotes")} <span className="text-slate-400">({t("form.optional")})</span></Label>
                   <Textarea
                     placeholder={t("form.additionalNotesPlaceholder")}
                     className="min-h-[80px]"

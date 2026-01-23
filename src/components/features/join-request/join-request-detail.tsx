@@ -69,9 +69,12 @@ export function JoinRequestDetail({
 
   const canSCDecide = isSC && request?.status === JoinRequestStatus.SC_REVIEW;
 
-  // Get organization name based on locale
-  const getOrgName = (org: { nameEn: string; nameFr: string }) => {
-    return locale === "fr" ? org.nameFr : org.nameEn;
+  // Get organization name based on locale (supports both linked org and free-text)
+  const getOrgName = (org: { nameEn: string; nameFr: string } | null, request?: { organizationName?: string | null }) => {
+    if (org) {
+      return locale === "fr" ? org.nameFr : org.nameEn;
+    }
+    return request?.organizationName || "Unknown Organization";
   };
 
   // Get user full name
@@ -106,10 +109,10 @@ export function JoinRequestDetail({
         </Button>
         <div className="flex-1">
           <h1 className="text-2xl font-bold">
-            {getOrgName(request.organization)}
+            {getOrgName(request.organization, request)}
           </h1>
           <p className="text-slate-600">
-            {request.organization.icaoCode} • Submitted{" "}
+            {request.organization?.icaoCode || request.organizationIcaoCode || "N/A"} • Submitted{" "}
             {format(new Date(request.createdAt), "MMMM d, yyyy")}
           </p>
         </div>
@@ -143,18 +146,18 @@ export function JoinRequestDetail({
                 <div>
                   <p className="text-sm text-slate-500">Organization</p>
                   <p className="font-medium">
-                    {getOrgName(request.organization)}
+                    {getOrgName(request.organization, request)}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-slate-500">ICAO Code</p>
                   <p className="font-medium">
-                    {request.organization.icaoCode || "N/A"}
+                    {request.organization?.icaoCode || request.organizationIcaoCode || "N/A"}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-slate-500">Country</p>
-                  <p className="font-medium">{request.organization.country}</p>
+                  <p className="font-medium">{request.organization?.country || request.organizationCountry || "N/A"}</p>
                 </div>
               </div>
             </CardContent>

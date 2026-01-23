@@ -3,8 +3,7 @@
 /**
  * JoinProgrammeForm Component
  *
- * Form for organizations not yet in the programme to submit join requests.
- * Shows only organizations that are NOT programme members (not in any team).
+ * Form for organizations to submit join requests with free-text organization entry.
  */
 
 import { useState } from "react";
@@ -24,7 +23,6 @@ import {
   CheckCircle2,
   Globe,
   Users,
-  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,13 +35,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc/client";
 
 const joinProgrammeSchema = z.object({
-  organizationId: z.string().min(1, "Please select an organization"),
+  // Organization details (free-text entry)
+  organizationName: z.string().min(2, "Organization name is required"),
+  organizationCountry: z.string().min(2, "Country is required"),
+  organizationIcaoCode: z.string().optional(),
+  // Contact details
   contactName: z.string().min(2, "Name must be at least 2 characters"),
   contactEmail: z.string().email("Invalid email address"),
   contactPhone: z.string().optional(),
@@ -76,14 +77,9 @@ const TEAM_OPTIONS = [
 
 export function JoinProgrammeForm() {
   const t = useTranslations("auth.joinProgramme");
-  const tCommon = useTranslations("common");
   const locale = useLocale();
   const router = useRouter();
   const [isSubmitted, setIsSubmitted] = useState(false);
-
-  // Fetch non-member organizations
-  const { data: organizations, isLoading: orgsLoading } =
-    trpc.joinRequest.getOrganizationsForProgrammeJoin.useQuery();
 
   // Submit join request
   const submitMutation = trpc.joinRequest.create.useMutation({
@@ -112,7 +108,9 @@ export function JoinProgrammeForm() {
   async function onSubmit(data: JoinProgrammeFormData) {
     submitMutation.mutate({
       requestType: "PROGRAMME_JOIN" as const,
-      organizationId: data.organizationId,
+      organizationName: data.organizationName,
+      organizationCountry: data.organizationCountry,
+      organizationIcaoCode: data.organizationIcaoCode,
       contactName: data.contactName,
       contactEmail: data.contactEmail,
       contactPhone: data.contactPhone,
@@ -149,28 +147,6 @@ export function JoinProgrammeForm() {
     );
   }
 
-  // No eligible organizations
-  if (!orgsLoading && (!organizations || organizations.length === 0)) {
-    return (
-      <div className="text-center py-8 space-y-4">
-        <Alert className="bg-amber-50 border-amber-200">
-          <AlertCircle className="h-4 w-4 text-amber-600" />
-          <AlertDescription className="text-amber-800">
-            {t("noOrganizations")}
-          </AlertDescription>
-        </Alert>
-        <p className="text-sm text-slate-600">{t("contactCoordinator")}</p>
-        <Button
-          variant="outline"
-          onClick={() => router.push(`/${locale}/login`)}
-          className="mt-4"
-        >
-          {t("backToLogin")}
-        </Button>
-      </div>
-    );
-  }
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {/* Description */}
@@ -178,42 +154,66 @@ export function JoinProgrammeForm() {
         <p className="text-sm text-green-800">{t("description")}</p>
       </div>
 
-      {/* Organization Selection */}
+      {/* Organization Name */}
       <div className="space-y-2">
-        <Label htmlFor="organization" className="text-sm font-medium text-slate-700">
-          {t("organization")} <span className="text-red-500">*</span>
+        <Label htmlFor="organizationName" className="text-sm font-medium text-slate-700">
+          {t("organizationName")} <span className="text-red-500">*</span>
         </Label>
         <div className="relative">
-          <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10 pointer-events-none" />
-          <Select
-            onValueChange={(value) => setValue("organizationId", value)}
-            disabled={orgsLoading || submitMutation.isPending}
-          >
-            <SelectTrigger
-              className={cn(
-                "w-full pl-10 h-10 bg-slate-50 border-slate-200 focus:bg-white text-left",
-                errors.organizationId && "border-red-500"
-              )}
-            >
-              <SelectValue placeholder={orgsLoading ? tCommon("actions.loading") : t("selectOrganization")} />
-            </SelectTrigger>
-            <SelectContent className="max-h-60 overflow-y-auto">
-              {organizations?.map((org) => (
-                <SelectItem key={org.id} value={org.id}>
-                  <div className="flex items-center gap-2">
-                    <span>{locale === "fr" ? org.nameFr : org.nameEn}</span>
-                    {org.icaoCode && (
-                      <span className="text-xs text-muted-foreground">({org.icaoCode})</span>
-                    )}
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Input
+            id="organizationName"
+            placeholder={t("organizationNamePlaceholder")}
+            className={cn(
+              "pl-10 h-10 bg-slate-50 border-slate-200 focus:bg-white transition-colors",
+              errors.organizationName && "border-red-500"
+            )}
+            {...register("organizationName")}
+            disabled={submitMutation.isPending}
+          />
         </div>
-        {errors.organizationId && (
-          <p className="text-xs text-red-500">{errors.organizationId.message}</p>
+        <p className="text-xs text-slate-500">{t("organizationNameHelp")}</p>
+        {errors.organizationName && (
+          <p className="text-xs text-red-500">{errors.organizationName.message}</p>
         )}
+      </div>
+
+      {/* Country and ICAO Code - Side by Side */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="organizationCountry" className="text-sm font-medium text-slate-700">
+            {t("country")} <span className="text-red-500">*</span>
+          </Label>
+          <div className="relative">
+            <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Input
+              id="organizationCountry"
+              placeholder={t("countryPlaceholder")}
+              className={cn(
+                "pl-10 h-10 bg-slate-50 border-slate-200 focus:bg-white transition-colors",
+                errors.organizationCountry && "border-red-500"
+              )}
+              {...register("organizationCountry")}
+              disabled={submitMutation.isPending}
+            />
+          </div>
+          {errors.organizationCountry && (
+            <p className="text-xs text-red-500">{errors.organizationCountry.message}</p>
+          )}
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="organizationIcaoCode" className="text-sm font-medium text-slate-700">
+            {t("icaoCode")} <span className="text-xs text-slate-500">({t("optional")})</span>
+          </Label>
+          <Input
+            id="organizationIcaoCode"
+            placeholder="e.g., HKJK"
+            className="h-10 bg-slate-50 border-slate-200 focus:bg-white transition-colors"
+            {...register("organizationIcaoCode")}
+            disabled={submitMutation.isPending}
+          />
+          <p className="text-xs text-slate-500">{t("icaoCodeHelp")}</p>
+        </div>
       </div>
 
       {/* Contact Name */}
@@ -434,7 +434,7 @@ export function JoinProgrammeForm() {
       <Button
         type="submit"
         className="w-full h-11 bg-aviation-button hover:opacity-90 text-white font-medium shadow-aviation transition-all duration-200 mt-6"
-        disabled={submitMutation.isPending || orgsLoading}
+        disabled={submitMutation.isPending}
       >
         {submitMutation.isPending ? (
           <>

@@ -115,9 +115,12 @@ export function JoinRequestList({ userRole, userId }: JoinRequestListProps) {
     }
   });
 
-  // Get organization name based on locale
-  const getOrgName = (org: { nameEn: string; nameFr: string }) => {
-    return locale === "fr" ? org.nameFr : org.nameEn;
+  // Get organization name based on locale (supports both linked org and free-text)
+  const getOrgName = (org: { nameEn: string; nameFr: string } | null, request?: { organizationName?: string | null }) => {
+    if (org) {
+      return locale === "fr" ? org.nameFr : org.nameEn;
+    }
+    return request?.organizationName || "Unknown Organization";
   };
 
   const renderStatusBadge = (status: JoinRequestStatus) => {
@@ -228,11 +231,11 @@ export function JoinRequestList({ userRole, userId }: JoinRequestListProps) {
                   <TableRow key={request.id}>
                     <TableCell>
                       <div className="font-medium">
-                        {getOrgName(request.organization)}
+                        {getOrgName(request.organization, request)}
                       </div>
                       <div className="text-sm text-slate-500">
-                        {request.organization.icaoCode} •{" "}
-                        {request.organization.country}
+                        {request.organization?.icaoCode || request.organizationIcaoCode || "N/A"} •{" "}
+                        {request.organization?.country || request.organizationCountry || "N/A"}
                       </div>
                     </TableCell>
                     <TableCell>

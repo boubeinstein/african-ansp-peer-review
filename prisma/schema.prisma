@@ -983,36 +983,55 @@ model UserPreferences {
 
 model JoinRequest {
   id                         String            @id @default(cuid())
-  organizationId             String            @map("organization_id")
   requestType                JoinRequestType   @default(PROGRAMME_JOIN) @map("request_type")
+
+  // For existing organizations (USER_ACCESS requests)
+  organizationId             String?           @map("organization_id")
+
+  // For new organizations (PROGRAMME_JOIN with free-text entry)
+  organizationName           String?           @map("organization_name")
+  organizationCountry        String?           @map("organization_country")
+  organizationIcaoCode       String?           @map("organization_icao_code")
+
+  // Contact details
   contactName                String            @map("contact_name")
   contactEmail               String            @map("contact_email")
   contactPhone               String?           @map("contact_phone")
   contactJobTitle            String            @map("contact_job_title")
+
+  // Application details
   currentSmsMaturity         String?           @map("current_sms_maturity")
   commitmentLetterUrl        String?           @map("commitment_letter_url")
   motivationStatement        String            @map("motivation_statement")
   preferredTeam              Int?              @map("preferred_team")
   preferredLanguage          String            @default("en") @map("preferred_language")
+  proposedReviewerCount      Int               @default(2) @map("proposed_reviewer_count")
+  additionalNotes            String?           @map("additional_notes")
+
+  // Status and workflow
   status                     JoinRequestStatus @default(PENDING)
   coordinatorNotes           String?           @map("coordinator_notes")
   coordinatorReviewedAt      DateTime?         @map("coordinator_reviewed_at")
-  scDecision                 String?           @map("sc_decision")
-  scDecisionNotes            String?           @map("sc_decision_notes")
-  scDecisionAt               DateTime?         @map("sc_decision_at")
-  rejectionReason            String?           @map("rejection_reason")
-  createdAt                  DateTime          @default(now()) @map("created_at")
-  updatedAt                  DateTime          @updatedAt @map("updated_at")
-  additionalInfoRequest      String?           @map("additional_info_request")
-  additionalNotes            String?           @map("additional_notes")
   coordinatorRecommendation  String?           @map("coordinator_recommendation")
   coordinatorRecommendedTeam Int?              @map("coordinator_recommended_team")
   coordinatorReviewedById    String?           @map("coordinator_reviewed_by_id")
-  proposedReviewerCount      Int               @default(2) @map("proposed_reviewer_count")
-  scAssignedTeam             Int?              @map("sc_assigned_team")
+
+  // SC decision
+  scDecision                 String?           @map("sc_decision")
+  scDecisionNotes            String?           @map("sc_decision_notes")
+  scDecisionAt               DateTime?         @map("sc_decision_at")
   scDecisionById             String?           @map("sc_decision_by_id")
+  scAssignedTeam             Int?              @map("sc_assigned_team")
+  rejectionReason            String?           @map("rejection_reason")
+  additionalInfoRequest      String?           @map("additional_info_request")
+
+  // Timestamps
+  createdAt                  DateTime          @default(now()) @map("created_at")
+  updatedAt                  DateTime          @updatedAt @map("updated_at")
+
+  // Relations
   coordinatorReviewedBy      User?             @relation("CoordinatorReview", fields: [coordinatorReviewedById], references: [id])
-  organization               Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization               Organization?     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   scDecisionBy               User?             @relation("SCDecision", fields: [scDecisionById], references: [id])
 
   @@index([organizationId])

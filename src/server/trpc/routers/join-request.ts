@@ -31,14 +31,19 @@ import {
 // INPUT SCHEMAS
 // =============================================================================
 
-// Schema for programme join requests (non-member organizations)
+// Schema for programme join requests (new organizations with free-text entry)
 const createProgrammeJoinSchema = z.object({
-  organizationId: z.string().min(1, "Organization is required"),
   requestType: z.literal(JoinRequestType.PROGRAMME_JOIN).default(JoinRequestType.PROGRAMME_JOIN),
+  // Organization details (free-text entry for new organizations)
+  organizationName: z.string().min(2, "Organization name is required"),
+  organizationCountry: z.string().min(2, "Country is required"),
+  organizationIcaoCode: z.string().optional(),
+  // Contact details
   contactName: z.string().min(2, "Name must be at least 2 characters"),
   contactEmail: z.string().email("Invalid email address"),
   contactPhone: z.string().optional(),
   contactJobTitle: z.string().min(2, "Job title is required"),
+  // Application details
   currentSmsMaturity: z.enum(["A", "B", "C", "D", "E"]).optional(),
   motivationStatement: z.string().min(100, "Motivation must be at least 100 characters"),
   proposedReviewerCount: z.number().min(2).max(10).default(2),
@@ -61,27 +66,11 @@ const createAccessRequestSchema = z.object({
   additionalNotes: z.string().optional(),
 });
 
-// Combined schema for backward compatibility
+// Combined schema for both request types
 const createJoinRequestSchema = z.discriminatedUnion("requestType", [
   createProgrammeJoinSchema,
   createAccessRequestSchema,
-]).or(
-  // Fallback for existing code without requestType - defaults to PROGRAMME_JOIN
-  z.object({
-    organizationId: z.string().min(1, "Organization is required"),
-    contactName: z.string().min(2, "Name must be at least 2 characters"),
-    contactEmail: z.string().email("Invalid email address"),
-    contactPhone: z.string().optional(),
-    contactJobTitle: z.string().min(2, "Job title is required"),
-    currentSmsMaturity: z.enum(["A", "B", "C", "D", "E"]).optional(),
-    motivationStatement: z.string().min(100, "Motivation must be at least 100 characters"),
-    proposedReviewerCount: z.number().min(2).max(10).default(2),
-    preferredTeam: z.number().min(1).max(5).optional(),
-    preferredLanguage: z.enum(["en", "fr", "both"]).default("en"),
-    commitmentLetterUrl: z.string().optional(),
-    additionalNotes: z.string().optional(),
-  }).transform((data) => ({ ...data, requestType: JoinRequestType.PROGRAMME_JOIN }))
-);
+]);
 
 const coordinatorReviewSchema = z.object({
   id: z.string(),
@@ -134,37 +123,36 @@ export const joinRequestRouter = router({
   create: publicProcedure
     .input(createJoinRequestSchema)
     .mutation(async ({ input }) => {
-      const requestType = input.requestType || JoinRequestType.PROGRAMME_JOIN;
+      const requestType = input.requestType;
       const isAccessRequest = requestType === JoinRequestType.USER_ACCESS;
+      const isProgrammeJoin = requestType === JoinRequestType.PROGRAMME_JOIN;
 
-      // Check if organization exists
-      const organization = await prisma.organization.findUnique({
-        where: { id: input.organizationId },
-        include: {
-          joinRequests: {
-            where: {
-              status: { not: JoinRequestStatus.WITHDRAWN },
-              // For access requests, check by email too
-              ...(isAccessRequest ? { contactEmail: input.contactEmail } : {}),
-            },
-          },
-          users: {
-            where: { role: UserRole.ANSP_ADMIN },
-            select: { id: true, email: true, firstName: true, lastName: true },
-          },
-          regionalTeam: true,
-        },
-      });
-
-      if (!organization) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Organization not found",
-        });
-      }
-
-      // Validation differs based on request type
+      // For access requests, organization must exist and be a member
       if (isAccessRequest) {
+        const organization = await prisma.organization.findUnique({
+          where: { id: input.organizationId },
+          include: {
+            joinRequests: {
+              where: {
+                status: { not: JoinRequestStatus.WITHDRAWN },
+                contactEmail: input.contactEmail,
+              },
+            },
+            users: {
+              where: { role: UserRole.ANSP_ADMIN },
+              select: { id: true, email: true, firstName: true, lastName: true },
+            },
+            regionalTeam: true,
+          },
+        });
+
+        if (!organization) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Organization not found",
+          });
+        }
+
         // USER_ACCESS: Organization must be a member (in a team)
         if (!organization.regionalTeamId) {
           throw new TRPCError({
@@ -191,24 +179,42 @@ export const joinRequestRouter = router({
             message: "You already have a pending access request for this organization",
           });
         }
-      } else {
-        // PROGRAMME_JOIN: Organization must NOT be a member yet
-        if (organization.regionalTeamId) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "This organization is already a programme member. Please use 'Request Access' instead.",
-          });
-        }
 
-        // Check if already an active participant
-        if (organization.participationStatus === ParticipationStatus.ACTIVE) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Organization is already an active programme participant",
-          });
-        }
+        // Create access request with organization reference
+        const joinRequest = await prisma.joinRequest.create({
+          data: {
+            organizationId: input.organizationId,
+            requestType: JoinRequestType.USER_ACCESS,
+            contactName: input.contactName,
+            contactEmail: input.contactEmail,
+            contactPhone: input.contactPhone,
+            contactJobTitle: input.contactJobTitle,
+            motivationStatement: input.motivationStatement,
+            preferredLanguage: input.preferredLanguage,
+            additionalNotes: input.additionalNotes,
+            status: JoinRequestStatus.PENDING,
+          },
+          include: {
+            organization: true,
+          },
+        });
 
-        // Check for existing pending programme applications
+        // Send confirmation email
+        await sendApplicationReceivedEmail({
+          applicantEmail: input.contactEmail,
+          applicantName: input.contactName,
+          organizationName: joinRequest.organization!.nameEn,
+          referenceId: joinRequest.id,
+          isAccessRequest: true,
+          orgAdminEmail: organization.users[0]?.email,
+        });
+
+        return joinRequest;
+      }
+
+      // For programme join requests, use free-text organization details
+      if (isProgrammeJoin) {
+        // Check for existing pending application with same email
         const pendingStatuses: JoinRequestStatus[] = [
           JoinRequestStatus.PENDING,
           JoinRequestStatus.COORDINATOR_REVIEW,
@@ -216,68 +222,62 @@ export const joinRequestRouter = router({
           JoinRequestStatus.MORE_INFO,
         ];
 
-        const existingRequest = organization.joinRequests.find((req) =>
-          req.requestType === JoinRequestType.PROGRAMME_JOIN && pendingStatuses.includes(req.status)
-        );
+        const existingRequest = await prisma.joinRequest.findFirst({
+          where: {
+            contactEmail: input.contactEmail,
+            requestType: JoinRequestType.PROGRAMME_JOIN,
+            status: { in: pendingStatuses },
+          },
+        });
 
         if (existingRequest) {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: "Organization already has a pending application",
+            message: "You already have a pending programme application",
           });
         }
-      }
 
-      // Prepare data for creation (filter out undefined fields for access requests)
-      const createData: Record<string, unknown> = {
-        organizationId: input.organizationId,
-        requestType,
-        contactName: input.contactName,
-        contactEmail: input.contactEmail,
-        contactPhone: input.contactPhone,
-        contactJobTitle: input.contactJobTitle,
-        motivationStatement: input.motivationStatement,
-        preferredLanguage: input.preferredLanguage,
-        additionalNotes: input.additionalNotes,
-        status: JoinRequestStatus.PENDING,
-      };
-
-      // Add programme-specific fields if applicable
-      if (!isAccessRequest && "currentSmsMaturity" in input) {
-        createData.currentSmsMaturity = input.currentSmsMaturity;
-        createData.proposedReviewerCount = input.proposedReviewerCount;
-        createData.preferredTeam = input.preferredTeam;
-        createData.commitmentLetterUrl = input.commitmentLetterUrl;
-      }
-
-      // Create the join request
-      const joinRequest = await prisma.joinRequest.create({
-        data: createData as Parameters<typeof prisma.joinRequest.create>[0]["data"],
-        include: {
-          organization: true,
-        },
-      });
-
-      // For programme join, update organization status to APPLIED
-      if (!isAccessRequest) {
-        await prisma.organization.update({
-          where: { id: input.organizationId },
-          data: { participationStatus: ParticipationStatus.APPLIED },
+        // Create programme join request with free-text org details
+        const joinRequest = await prisma.joinRequest.create({
+          data: {
+            requestType: JoinRequestType.PROGRAMME_JOIN,
+            // Free-text organization details
+            organizationName: input.organizationName,
+            organizationCountry: input.organizationCountry,
+            organizationIcaoCode: input.organizationIcaoCode,
+            // Contact details
+            contactName: input.contactName,
+            contactEmail: input.contactEmail,
+            contactPhone: input.contactPhone,
+            contactJobTitle: input.contactJobTitle,
+            // Application details
+            currentSmsMaturity: input.currentSmsMaturity,
+            motivationStatement: input.motivationStatement,
+            proposedReviewerCount: input.proposedReviewerCount,
+            preferredTeam: input.preferredTeam,
+            preferredLanguage: input.preferredLanguage,
+            commitmentLetterUrl: input.commitmentLetterUrl,
+            additionalNotes: input.additionalNotes,
+            status: JoinRequestStatus.PENDING,
+          },
         });
+
+        // Send confirmation email
+        await sendApplicationReceivedEmail({
+          applicantEmail: input.contactEmail,
+          applicantName: input.contactName,
+          organizationName: input.organizationName,
+          referenceId: joinRequest.id,
+          isAccessRequest: false,
+        });
+
+        return joinRequest;
       }
 
-      // Send confirmation email to applicant
-      // For access requests, also notify org admin if exists
-      await sendApplicationReceivedEmail({
-        applicantEmail: input.contactEmail,
-        applicantName: input.contactName,
-        organizationName: joinRequest.organization.nameEn,
-        referenceId: joinRequest.id,
-        isAccessRequest,
-        orgAdminEmail: isAccessRequest ? organization.users[0]?.email : undefined,
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Invalid request type",
       });
-
-      return joinRequest;
     }),
 
   /**
@@ -447,17 +447,22 @@ export const joinRequestRouter = router({
         include: { organization: true },
       });
 
-      // Update organization status
-      await prisma.organization.update({
-        where: { id: updated.organizationId },
-        data: { participationStatus: ParticipationStatus.UNDER_REVIEW },
-      });
+      // Update organization status if organization exists
+      if (updated.organizationId) {
+        await prisma.organization.update({
+          where: { id: updated.organizationId },
+          data: { participationStatus: ParticipationStatus.UNDER_REVIEW },
+        });
+      }
+
+      // Get organization name (from linked org or free-text field)
+      const orgName = updated.organization?.nameEn || updated.organizationName || "Unknown Organization";
 
       // Send notification email to applicant
       await sendForwardedToSCEmail({
         applicantEmail: updated.contactEmail,
         applicantName: updated.contactName,
-        organizationName: updated.organization.nameEn,
+        organizationName: orgName,
         recommendation: input.coordinatorRecommendation,
       });
 
@@ -541,17 +546,54 @@ export const joinRequestRouter = router({
         include: { organization: true },
       });
 
+      // Get organization name (from linked org or free-text field)
+      const orgName = updated.organization?.nameEn || updated.organizationName || "Unknown Organization";
+      let organizationId = updated.organizationId;
+
       // Update organization based on decision
       if (input.scDecision === "APPROVED") {
-        await prisma.organization.update({
-          where: { id: updated.organizationId },
-          data: {
-            participationStatus: ParticipationStatus.ACTIVE,
-            peerReviewTeam: input.scAssignedTeam,
-            joinedProgrammeAt: new Date(),
-          },
-        });
-      } else if (input.scDecision === "REJECTED") {
+        // For free-text programme join requests, create the organization first
+        if (!updated.organizationId && updated.organizationName) {
+          // Derive region from assigned team
+          const teamToRegion: Record<number, "WACAF" | "ESAF" | "NORTHERN"> = {
+            1: "ESAF",     // Central/Southern Africa
+            2: "ESAF",     // East Africa
+            3: "WACAF",    // West Africa
+            4: "ESAF",     // Southern Africa
+            5: "NORTHERN", // North Africa
+          };
+          const region = input.scAssignedTeam ? teamToRegion[input.scAssignedTeam] ?? "WACAF" : "WACAF";
+
+          const newOrg = await prisma.organization.create({
+            data: {
+              nameEn: updated.organizationName,
+              nameFr: updated.organizationName, // Use same name for now
+              country: updated.organizationCountry || "Unknown",
+              region,
+              icaoCode: updated.organizationIcaoCode,
+              participationStatus: ParticipationStatus.ACTIVE,
+              peerReviewTeam: input.scAssignedTeam,
+              joinedProgrammeAt: new Date(),
+            },
+          });
+          organizationId = newOrg.id;
+
+          // Link the join request to the new organization
+          await prisma.joinRequest.update({
+            where: { id: input.id },
+            data: { organizationId: newOrg.id },
+          });
+        } else if (updated.organizationId) {
+          await prisma.organization.update({
+            where: { id: updated.organizationId },
+            data: {
+              participationStatus: ParticipationStatus.ACTIVE,
+              peerReviewTeam: input.scAssignedTeam,
+              joinedProgrammeAt: new Date(),
+            },
+          });
+        }
+      } else if (input.scDecision === "REJECTED" && updated.organizationId) {
         await prisma.organization.update({
           where: { id: updated.organizationId },
           data: {
@@ -566,54 +608,56 @@ export const joinRequestRouter = router({
         await sendApprovalEmail({
           applicantEmail: updated.contactEmail,
           applicantName: updated.contactName,
-          organizationName: updated.organization.nameEn,
+          organizationName: orgName,
           assignedTeam: input.scAssignedTeam!,
         });
 
         // Create user account for the applicant
-        try {
-          // Parse contact name into first/last name
-          const nameParts = updated.contactName.trim().split(/\s+/);
-          const firstName = nameParts[0] || "User";
-          const lastName = nameParts.slice(1).join(" ") || updated.contactName;
+        if (organizationId) {
+          try {
+            // Parse contact name into first/last name
+            const nameParts = updated.contactName.trim().split(/\s+/);
+            const firstName = nameParts[0] || "User";
+            const lastName = nameParts.slice(1).join(" ") || updated.contactName;
 
-          const { temporaryPassword } = await createUserFromJoinRequest({
-            email: updated.contactEmail,
-            firstName,
-            lastName,
-            organizationId: updated.organizationId,
-            jobTitle: updated.contactJobTitle,
-          });
+            const { temporaryPassword } = await createUserFromJoinRequest({
+              email: updated.contactEmail,
+              firstName,
+              lastName,
+              organizationId,
+              jobTitle: updated.contactJobTitle,
+            });
 
-          // Send credentials email
-          const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/login`;
-          await sendCredentialsEmail({
-            applicantEmail: updated.contactEmail,
-            applicantName: updated.contactName,
-            organizationName: updated.organization.nameEn,
-            temporaryPassword,
-            loginUrl,
-          });
+            // Send credentials email
+            const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/login`;
+            await sendCredentialsEmail({
+              applicantEmail: updated.contactEmail,
+              applicantName: updated.contactName,
+              organizationName: orgName,
+              temporaryPassword,
+              loginUrl,
+            });
 
-          console.log(
-            `✅ User account created and credentials sent to ${updated.contactEmail}`
-          );
-        } catch (error) {
-          // Log error but don't fail the approval - admin can manually create account
-          console.error("Failed to create user account:", error);
+            console.log(
+              `✅ User account created and credentials sent to ${updated.contactEmail}`
+            );
+          } catch (error) {
+            // Log error but don't fail the approval - admin can manually create account
+            console.error("Failed to create user account:", error);
+          }
         }
       } else if (input.scDecision === "REJECTED") {
         await sendRejectionEmail({
           applicantEmail: updated.contactEmail,
           applicantName: updated.contactName,
-          organizationName: updated.organization.nameEn,
+          organizationName: orgName,
           reason: input.rejectionReason!,
         });
       } else if (input.scDecision === "MORE_INFO") {
         await sendMoreInfoRequestEmail({
           applicantEmail: updated.contactEmail,
           applicantName: updated.contactName,
-          organizationName: updated.organization.nameEn,
+          organizationName: orgName,
           infoRequested: input.additionalInfoRequest!,
         });
       }

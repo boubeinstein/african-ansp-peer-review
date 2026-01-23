@@ -267,6 +267,8 @@
       "completed": "Completed",
       "documents": "Documents",
       "thisWeek": "this week",
+      "thisMonth": "this month",
+      "thisYear": "this year",
       "overdue": "Overdue",
       "totalAnsps": "Total ANSPs",
       "acrossAfrica": "across Africa",

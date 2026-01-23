@@ -53,8 +53,6 @@ import {
   CheckCircle2,
   XCircle,
   AlertCircle,
-  Clock,
-  Info,
 } from "lucide-react";
 
 import type { AvailabilityType } from "@prisma/client";
@@ -313,7 +311,10 @@ export function ReviewerAvailabilityCalendar({
     }
   );
 
-  const slots = preloadedSlots ?? fetchedSlots ?? [];
+  const slots = useMemo(
+    () => preloadedSlots ?? fetchedSlots ?? [],
+    [preloadedSlots, fetchedSlots]
+  );
 
   // Calculate coverage for review period
   const coverage = useMemo(() => {
@@ -468,7 +469,10 @@ export function AvailabilityIndicator({
     }
   );
 
-  const slots = preloadedSlots ?? fetchedSlots ?? [];
+  const slots = useMemo(
+    () => preloadedSlots ?? fetchedSlots ?? [],
+    [preloadedSlots, fetchedSlots]
+  );
 
   // Calculate coverage
   const coverage = useMemo(() => {

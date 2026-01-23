@@ -275,11 +275,10 @@ export function TeamActivityTimeline({
                 {/* Vertical line */}
                 <div className="absolute left-[19px] top-2 bottom-2 w-px bg-border" />
 
-                {items.map((activity, index) => (
+                {items.map((activity) => (
                   <ActivityTimelineItem
                     key={activity.id}
                     activity={activity}
-                    isLast={index === items.length - 1}
                     locale={locale}
                     dateLocale={dateLocale}
                   />
@@ -302,12 +301,10 @@ export function TeamActivityTimeline({
 
 function ActivityTimelineItem({
   activity,
-  isLast,
   locale,
   dateLocale,
 }: {
   activity: ActivityItem;
-  isLast: boolean;
   locale: string;
   dateLocale: Locale;
 }) {

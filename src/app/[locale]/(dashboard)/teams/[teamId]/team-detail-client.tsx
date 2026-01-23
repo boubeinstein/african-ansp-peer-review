@@ -42,7 +42,6 @@ import {
   TrendingUp,
   Globe,
   Award,
-  CheckCircle,
 } from "lucide-react";
 
 // =============================================================================

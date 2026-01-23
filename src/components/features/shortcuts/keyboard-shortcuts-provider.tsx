@@ -10,7 +10,7 @@
 import { createContext, useContext, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
-import { useKeyboardShortcuts, useSequenceShortcuts, type SequenceShortcut } from "@/hooks/use-keyboard-shortcuts";
+import { useLegacyKeyboardShortcuts, useSequenceShortcuts, type SequenceShortcut } from "@/hooks/use-keyboard-shortcuts";
 import { KeyboardShortcutsHelp } from "./keyboard-shortcuts-help";
 import { CommandPalette } from "./command-palette";
 
@@ -74,7 +74,7 @@ export function KeyboardShortcutsProvider({
   }, []);
 
   // Register modifier shortcuts (Ctrl+K, Ctrl+/, etc.)
-  useKeyboardShortcuts([
+  useLegacyKeyboardShortcuts([
     {
       key: "k",
       ctrlKey: true,

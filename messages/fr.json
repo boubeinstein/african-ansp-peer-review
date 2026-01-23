@@ -5586,6 +5586,10 @@
       "newReview": "Nouvelle Revue",
       "newFinding": "Nouveau Constat",
       "newAssessment": "Nouvelle Évaluation"
+    },
+    "indicator": {
+      "waiting": "En attente de {key}...",
+      "pressNext": "Appuyez sur la touche suivante"
     }
   },
   "commandPalette": {

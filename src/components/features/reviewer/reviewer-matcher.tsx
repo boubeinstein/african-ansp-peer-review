@@ -57,7 +57,7 @@ import { MatchScoreCard } from "./match-score-card";
 import { TeamCoverageReport } from "./team-coverage-report";
 import { MatchingEmptyState, ShortcutsHelpDialog } from "@/components/features/matching";
 import { InfoTooltip } from "@/components/ui/info-tooltip";
-import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
+import { useLegacyKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import {
   findMatchingReviewers,
   buildOptimalTeam,
@@ -539,7 +539,7 @@ export function ReviewerMatcher({
   const ineligibleResults = filteredResults.filter((r) => !r.isEligible);
 
   // Keyboard shortcuts
-  useKeyboardShortcuts([
+  useLegacyKeyboardShortcuts([
     {
       key: "f",
       action: handleSearch,

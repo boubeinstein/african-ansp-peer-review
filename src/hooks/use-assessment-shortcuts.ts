@@ -8,7 +8,7 @@
  */
 
 import { useMemo } from "react";
-import { useKeyboardShortcuts, ShortcutConfig } from "./use-keyboard-shortcuts";
+import { useLegacyKeyboardShortcuts, ShortcutConfig } from "./use-keyboard-shortcuts";
 
 // =============================================================================
 // TYPES
@@ -316,7 +316,7 @@ export function useAssessmentShortcuts({
 
   // Use the base keyboard shortcuts hook
   // Disable when modal is open (except for escape which is handled separately)
-  useKeyboardShortcuts(shortcuts, enabled && !isModalOpen);
+  useLegacyKeyboardShortcuts(shortcuts, enabled && !isModalOpen);
 
   // Return the shortcuts for documentation/help dialogs
   return {

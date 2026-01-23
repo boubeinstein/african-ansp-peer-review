@@ -4,9 +4,12 @@
 
 export {
   useKeyboardShortcuts,
+  useLegacyKeyboardShortcuts,
+  useSequenceShortcuts,
   formatShortcut,
   getShortcutKeys,
   type ShortcutConfig,
+  type SequenceShortcut,
 } from "./use-keyboard-shortcuts";
 
 export {

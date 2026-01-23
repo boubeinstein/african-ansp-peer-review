@@ -5586,6 +5586,10 @@
       "newReview": "New Review",
       "newFinding": "New Finding",
       "newAssessment": "New Assessment"
+    },
+    "indicator": {
+      "waiting": "Waiting for {key}...",
+      "pressNext": "Press next key in sequence"
     }
   },
   "commandPalette": {

@@ -211,7 +211,7 @@ export function LoginForm() {
           <p className="text-xs text-slate-500">
             {t("notParticipant")}{" "}
             <Link
-              href={`/${locale}/join`}
+              href={`/${locale}/request-access?tab=join`}
               className="font-medium text-icao hover:text-canso transition-colors"
             >
               {t("requestToJoin")}

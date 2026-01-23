@@ -22,9 +22,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RequestAccessForm } from "./request-access-form";
 import { JoinProgrammeForm } from "./join-programme-form";
 
-export function RegisterForm() {
+interface RegisterFormProps {
+  initialTab?: "access" | "join";
+}
+
+export function RegisterForm({ initialTab = "access" }: RegisterFormProps) {
   const t = useTranslations("auth.register");
-  const [activeTab, setActiveTab] = useState<"access" | "join">("access");
+  const [activeTab, setActiveTab] = useState<"access" | "join">(initialTab);
 
   return (
     <Card className="border-0 shadow-xl bg-white">

@@ -2819,7 +2819,12 @@
     "empty": {
       "title": "No reviewers found",
       "description": "Try adjusting your search or filters to find reviewers."
-    }
+    },
+    "myProfile": "My Reviewer Profile",
+    "myProfileDescription": "View and manage your reviewer profile",
+    "noProfileTitle": "No Reviewer Profile",
+    "noProfileDescription": "You don't have a reviewer profile yet. Reviewer profiles are created by Programme Coordinators for qualified peer reviewers.",
+    "noProfileHelp": "If you believe you should have a reviewer profile, please contact your Organization Administrator or the Programme Coordinator."
   },
   "reviews": {
     "title": "Peer Reviews",

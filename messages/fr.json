@@ -2819,7 +2819,12 @@
     "empty": {
       "title": "Aucun évaluateur trouvé",
       "description": "Essayez d'ajuster votre recherche ou vos filtres pour trouver des évaluateurs."
-    }
+    },
+    "myProfile": "Mon profil d'examinateur",
+    "myProfileDescription": "Voir et gérer votre profil d'examinateur",
+    "noProfileTitle": "Pas de profil d'examinateur",
+    "noProfileDescription": "Vous n'avez pas encore de profil d'examinateur. Les profils d'examinateurs sont créés par les coordinateurs du programme pour les examinateurs pairs qualifiés.",
+    "noProfileHelp": "Si vous pensez devoir avoir un profil d'examinateur, veuillez contacter l'administrateur de votre organisation ou le coordinateur du programme."
   },
   "reviews": {
     "title": "Revues par les pairs",

@@ -5562,42 +5562,30 @@
   "shortcuts": {
     "title": "Raccourcis Clavier",
     "description": "Utilisez les raccourcis clavier pour naviguer rapidement et effectuer des actions courantes.",
-    "tip": "Appuyez sur ? n'importe où pour afficher cette aide",
-    "categories": {
-      "global": "Global",
+    "footer": "Appuyez sur {key} pour ouvrir la palette de commandes",
+    "groups": {
+      "essential": "Essentiels",
       "navigation": "Navigation",
+      "create": "Créer"
+    },
+    "essential": {
+      "commandPalette": "Palette de Commandes",
+      "commandPaletteDesc": "Rechercher commandes et pages",
+      "showShortcuts": "Afficher les Raccourcis",
+      "closeCancel": "Fermer / Annuler"
+    },
+    "navigation": {
+      "dashboard": "Tableau de Bord",
       "reviews": "Revues",
       "findings": "Constats",
-      "caps": "PAC"
+      "caps": "PAC",
+      "assessments": "Évaluations",
+      "settings": "Paramètres"
     },
-    "shortcuts": {
-      "global": {
-        "ctrl_k": "Ouvrir la recherche rapide",
-        "ctrl_n": "Nouveau (contextuel)",
-        "ctrl__": "Afficher les raccourcis clavier",
-        "?": "Afficher les raccourcis clavier",
-        "escape": "Fermer la boîte de dialogue / Annuler"
-      },
-      "navigation": {
-        "g_d": "Aller au Tableau de Bord",
-        "g_r": "Aller aux Revues",
-        "g_f": "Aller aux Constats",
-        "g_c": "Aller aux PAC",
-        "g_o": "Aller aux Organisations",
-        "g_e": "Aller aux Examinateurs",
-        "g_a": "Aller aux Analytiques",
-        "g_s": "Aller aux Paramètres"
-      },
-      "reviews": {
-        "r_n": "Nouvelle demande de revue",
-        "r_l": "Liste des revues"
-      },
-      "findings": {
-        "f_l": "Liste des constats"
-      },
-      "caps": {
-        "c_l": "Liste des PAC"
-      }
+    "create": {
+      "newReview": "Nouvelle Revue",
+      "newFinding": "Nouveau Constat",
+      "newAssessment": "Nouvelle Évaluation"
     }
   },
   "commandPalette": {

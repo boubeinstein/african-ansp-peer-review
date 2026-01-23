@@ -5595,12 +5595,17 @@
     }
   },
   "commandPalette": {
+    "placeholder": "Rechercher une commande...",
     "searchPlaceholder": "Tapez une commande ou recherchez...",
     "noResults": "Aucun résultat trouvé.",
     "groups": {
       "navigation": "Navigation",
       "actions": "Actions rapides",
       "utilities": "Utilitaires"
+    },
+    "categories": {
+      "navigation": "Navigation",
+      "actions": "Actions"
     },
     "navigation": {
       "dashboard": "Aller au tableau de bord",

@@ -5595,12 +5595,17 @@
     }
   },
   "commandPalette": {
+    "placeholder": "Search for a command...",
     "searchPlaceholder": "Type a command or search...",
     "noResults": "No results found.",
     "groups": {
       "navigation": "Navigation",
       "actions": "Quick Actions",
       "utilities": "Utilities"
+    },
+    "categories": {
+      "navigation": "Navigation",
+      "actions": "Actions"
     },
     "navigation": {
       "dashboard": "Go to Dashboard",

@@ -17,6 +17,7 @@ import { getRoleCategory, type RoleCategory } from "@/lib/dashboard-config";
 import { RoleStatCards, RoleStatCardsSkeleton } from "@/components/features/dashboard/role-stat-cards";
 import { ProgrammeOverview } from "@/components/features/dashboard/programme-overview";
 import { MyOrganizationSummary } from "@/components/features/dashboard/my-organization-summary";
+import { MyTeamWidget } from "@/components/features/dashboard/my-team-widget";
 import { RoleQuickActions } from "@/components/features/dashboard/role-quick-actions";
 import { RecentActivityWidget } from "@/components/features/dashboard/RecentActivityWidget";
 import type { UserRole } from "@prisma/client";
@@ -275,6 +276,11 @@ export function DashboardContent({
                 isLoading={statsLoading}
               />
             )}
+
+          {/* My Team Widget for ANSP and REVIEWER roles */}
+          {(roleCategory === "ANSP" || roleCategory === "REVIEWER") && (
+            <MyTeamWidget locale={locale} />
+          )}
 
           {/* Quick Actions for all roles */}
           <RoleQuickActions

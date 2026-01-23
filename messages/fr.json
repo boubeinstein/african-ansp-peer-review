@@ -389,6 +389,25 @@
       "viewProfile": "Voir le profil",
       "viewAssessments": "Voir les évaluations",
       "manageCAPs": "Gérer les PAC"
+    },
+    "myTeam": {
+      "title": "Mon Équipe",
+      "teamNumber": "Équipe {number}",
+      "teamLead": "Chef d'équipe",
+      "memberOrganizations": "Organisations membres",
+      "reviewers": "examinateurs",
+      "you": "Vous",
+      "reviewsCompleted": "Revues terminées",
+      "totalReviewers": "Total examinateurs",
+      "capClosureRate": "Taux de clôture PAC",
+      "performanceScore": "Performance",
+      "openFindingsAlert": "{count} constats ouverts",
+      "overdueCAPs": "{count} PAC en retard",
+      "viewTeamDetails": "Voir les détails de l'équipe",
+      "noTeam": "Vous n'êtes pas affecté à une équipe régionale",
+      "contactAdmin": "Contactez votre administrateur pour l'affectation à une équipe",
+      "errorLoading": "Échec du chargement des statistiques de l'équipe",
+      "andMore": "+{count} autres organisations"
     }
   },
   "progress": {

@@ -389,6 +389,25 @@
       "viewProfile": "View Profile",
       "viewAssessments": "View Assessments",
       "manageCAPs": "Manage CAPs"
+    },
+    "myTeam": {
+      "title": "My Team",
+      "teamNumber": "Team {number}",
+      "teamLead": "Team Lead",
+      "memberOrganizations": "Member Organizations",
+      "reviewers": "reviewers",
+      "you": "You",
+      "reviewsCompleted": "Reviews Completed",
+      "totalReviewers": "Total Reviewers",
+      "capClosureRate": "CAP Closure Rate",
+      "performanceScore": "Performance",
+      "openFindingsAlert": "{count} open findings",
+      "overdueCAPs": "{count} overdue CAPs",
+      "viewTeamDetails": "View Team Details",
+      "noTeam": "You are not assigned to a regional team",
+      "contactAdmin": "Contact your administrator for team assignment",
+      "errorLoading": "Failed to load team statistics",
+      "andMore": "+{count} more organizations"
     }
   },
   "progress": {

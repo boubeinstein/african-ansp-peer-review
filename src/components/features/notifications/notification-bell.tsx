@@ -66,7 +66,11 @@ export function NotificationBell({ locale }: NotificationBellProps) {
 
   const { data: recentData, isLoading } = trpc.notification.getRecent.useQuery(
     { limit: 10 },
-    { refetchInterval: 30000 } // Refetch every 30 seconds
+    {
+      staleTime: 30 * 1000,       // Data is fresh for 30 seconds
+      refetchInterval: 60 * 1000, // Poll every 60 seconds
+      refetchOnWindowFocus: false, // Don't refetch on tab focus
+    }
   );
 
   const markAsReadMutation = trpc.notification.markAsRead.useMutation({

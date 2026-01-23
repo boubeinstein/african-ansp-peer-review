@@ -935,6 +935,7 @@ model Notification {
 
   @@index([userId, readAt])
   @@index([userId, type])
+  @@index([userId, createdAt(sort: Desc)])
   @@index([entityType, entityId])
   @@map("notifications")
 }

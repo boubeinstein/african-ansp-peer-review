@@ -80,6 +80,7 @@ export const notificationRouter = router({
 
   /**
    * Get recent notifications (for dropdown)
+   * Optimized: parallel queries, selected fields only
    */
   getRecent: protectedProcedure
     .input(
@@ -90,18 +91,32 @@ export const notificationRouter = router({
     .query(async ({ ctx, input }) => {
       const { user } = ctx.session;
 
-      const notifications = await ctx.db.notification.findMany({
-        where: { userId: user.id },
-        orderBy: { createdAt: "desc" },
-        take: input.limit,
-      });
-
-      const unreadCount = await ctx.db.notification.count({
-        where: {
-          userId: user.id,
-          readAt: null,
-        },
-      });
+      // Run both queries in parallel for better performance
+      const [notifications, unreadCount] = await Promise.all([
+        ctx.db.notification.findMany({
+          where: { userId: user.id },
+          select: {
+            id: true,
+            type: true,
+            titleEn: true,
+            titleFr: true,
+            messageEn: true,
+            messageFr: true,
+            priority: true,
+            actionUrl: true,
+            readAt: true,
+            createdAt: true,
+          },
+          orderBy: { createdAt: "desc" },
+          take: input.limit,
+        }),
+        ctx.db.notification.count({
+          where: {
+            userId: user.id,
+            readAt: null,
+          },
+        }),
+      ]);
 
       return {
         notifications,

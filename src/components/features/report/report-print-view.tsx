@@ -55,7 +55,7 @@ interface ReviewData {
     id: string;
     nameEn: string;
     nameFr: string;
-    icaoCode: string | null;
+    organizationCode: string | null;
     country: string;
   };
 }
@@ -349,7 +349,7 @@ export const ReportPrintView = forwardRef<HTMLDivElement, ReportPrintViewProps>(
           <p className="subtitle">African ANSP Peer Review Programme</p>
           <p className="organization">{orgName}</p>
           <p className="details">
-            {review.hostOrganization.icaoCode && `${review.hostOrganization.icaoCode} • `}
+            {review.hostOrganization.organizationCode && `${review.hostOrganization.organizationCode} • `}
             {review.hostOrganization.country}
           </p>
           <p className="details">

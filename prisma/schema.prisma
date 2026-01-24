@@ -10,7 +10,7 @@ model Organization {
   id                  String              @id @default(cuid())
   nameEn              String              @map("name_en")
   nameFr              String              @map("name_fr")
-  icaoCode            String?             @unique @map("icao_code")
+  organizationCode    String?             @unique @map("organization_code")
   country             String
   region              AfricanRegion
   city                String?
@@ -991,7 +991,7 @@ model JoinRequest {
   // For new organizations (PROGRAMME_JOIN with free-text entry)
   organizationName           String?           @map("organization_name")
   organizationCountry        String?           @map("organization_country")
-  organizationIcaoCode       String?           @map("organization_icao_code")
+  organizationCode           String?           @map("organization_code")
 
   // Contact details
   contactName                String            @map("contact_name")

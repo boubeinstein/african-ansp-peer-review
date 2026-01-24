@@ -83,13 +83,13 @@ function buildOrganizationWhereClause(
 ): Prisma.OrganizationWhereInput {
   const where: Prisma.OrganizationWhereInput = {};
 
-  // Text search across name, icaoCode, country
+  // Text search across name, organizationCode, country
   if (filters.search) {
     const searchTerm = filters.search.trim();
     where.OR = [
       { nameEn: { contains: searchTerm, mode: "insensitive" } },
       { nameFr: { contains: searchTerm, mode: "insensitive" } },
-      { icaoCode: { contains: searchTerm, mode: "insensitive" } },
+      { organizationCode: { contains: searchTerm, mode: "insensitive" } },
       { country: { contains: searchTerm, mode: "insensitive" } },
       { city: { contains: searchTerm, mode: "insensitive" } },
     ];
@@ -127,7 +127,7 @@ function buildOrganizationOrderBy(
     region: { region: sortOrder },
     membershipStatus: { membershipStatus: sortOrder },
     createdAt: { createdAt: sortOrder },
-    icaoCode: { icaoCode: sortOrder },
+    organizationCode: { organizationCode: sortOrder },
   };
 
   return orderMap[sortBy] || { nameEn: sortOrder };
@@ -152,7 +152,7 @@ export const organizationRouter = router({
         id: true,
         nameEn: true,
         nameFr: true,
-        icaoCode: true,
+        organizationCode: true,
         country: true,
         region: true,
       },
@@ -358,7 +358,7 @@ export const organizationRouter = router({
           id: true,
           nameEn: true,
           nameFr: true,
-          icaoCode: true,
+          organizationCode: true,
           country: true,
         },
         orderBy: { nameEn: "asc" },
@@ -376,15 +376,15 @@ export const organizationRouter = router({
     .input(organizationCreateSchema)
     .mutation(async ({ ctx, input }) => {
       // Check if ICAO code is unique (if provided)
-      if (input.icaoCode) {
+      if (input.organizationCode) {
         const existing = await prisma.organization.findUnique({
-          where: { icaoCode: input.icaoCode },
+          where: { organizationCode: input.organizationCode },
         });
 
         if (existing) {
           throw new TRPCError({
             code: "CONFLICT",
-            message: `Organization with ICAO code ${input.icaoCode} already exists`,
+            message: `Organization with ICAO code ${input.organizationCode} already exists`,
           });
         }
       }
@@ -394,7 +394,7 @@ export const organizationRouter = router({
         data: {
           nameEn: input.nameEn,
           nameFr: input.nameFr,
-          icaoCode: input.icaoCode || null,
+          organizationCode: input.organizationCode || null,
           country: input.country,
           city: input.city || null,
           region: input.region as AfricanRegion,
@@ -406,7 +406,7 @@ export const organizationRouter = router({
 
       await logAuditEntry(ctx.user.id, AuditAction.CREATE, organization.id, {
         nameEn: input.nameEn,
-        icaoCode: input.icaoCode,
+        organizationCode: input.organizationCode,
         region: input.region,
       });
 
@@ -442,15 +442,15 @@ export const organizationRouter = router({
       }
 
       // If updating ICAO code, check uniqueness
-      if (data.icaoCode && data.icaoCode !== existing.icaoCode) {
+      if (data.organizationCode && data.organizationCode !== existing.organizationCode) {
         const duplicate = await prisma.organization.findUnique({
-          where: { icaoCode: data.icaoCode },
+          where: { organizationCode: data.organizationCode },
         });
 
         if (duplicate) {
           throw new TRPCError({
             code: "CONFLICT",
-            message: `Organization with ICAO code ${data.icaoCode} already exists`,
+            message: `Organization with ICAO code ${data.organizationCode} already exists`,
           });
         }
       }
@@ -460,7 +460,7 @@ export const organizationRouter = router({
 
       if (data.nameEn !== undefined) updateData.nameEn = data.nameEn;
       if (data.nameFr !== undefined) updateData.nameFr = data.nameFr;
-      if (data.icaoCode !== undefined) updateData.icaoCode = data.icaoCode;
+      if (data.organizationCode !== undefined) updateData.organizationCode = data.organizationCode;
       if (data.country !== undefined) updateData.country = data.country;
       if (data.city !== undefined) updateData.city = data.city;
       if (data.region !== undefined) updateData.region = data.region as AfricanRegion;
@@ -599,7 +599,7 @@ export const organizationRouter = router({
 
       await logAuditEntry(ctx.user.id, AuditAction.DELETE, input.id, {
         deletedOrganization: organization.nameEn,
-        icaoCode: organization.icaoCode,
+        organizationCode: organization.organizationCode,
       });
 
       console.log(
@@ -629,7 +629,7 @@ export const organizationRouter = router({
         OR: [
           { nameEn: { contains: input.query, mode: "insensitive" } },
           { nameFr: { contains: input.query, mode: "insensitive" } },
-          { icaoCode: { contains: input.query, mode: "insensitive" } },
+          { organizationCode: { contains: input.query, mode: "insensitive" } },
           { country: { contains: input.query, mode: "insensitive" } },
         ],
       };
@@ -644,7 +644,7 @@ export const organizationRouter = router({
           id: true,
           nameEn: true,
           nameFr: true,
-          icaoCode: true,
+          organizationCode: true,
           country: true,
           region: true,
           membershipStatus: true,
@@ -660,13 +660,13 @@ export const organizationRouter = router({
   checkIcaoCode: protectedProcedure
     .input(
       z.object({
-        icaoCode: z.string().length(4),
+        organizationCode: z.string().length(4),
         excludeId: z.string().cuid().optional(),
       })
     )
     .query(async ({ input }) => {
       const where: Prisma.OrganizationWhereInput = {
-        icaoCode: input.icaoCode.toUpperCase(),
+        organizationCode: input.organizationCode.toUpperCase(),
       };
 
       if (input.excludeId) {

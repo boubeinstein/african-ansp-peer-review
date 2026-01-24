@@ -68,7 +68,7 @@ async function migrateAssessmentReferences() {
       OR: [{ referenceNumber: null }, { referenceNumber: "" }],
     },
     include: {
-      organization: { select: { icaoCode: true, nameEn: true } },
+      organization: { select: { organizationCode: true, nameEn: true } },
       questionnaire: { select: { type: true } },
     },
     orderBy: { createdAt: "asc" },
@@ -119,7 +119,7 @@ async function migrateAssessmentReferences() {
   for (const assessment of assessments) {
     try {
       const orgCode = normalizeOrgCode(
-        assessment.organization.icaoCode || assessment.organization.nameEn.substring(0, 6)
+        assessment.organization.organizationCode || assessment.organization.nameEn.substring(0, 6)
       );
       const typeCode = getAssessmentTypeCode(assessment.questionnaire.type);
       const year = assessment.createdAt.getFullYear();

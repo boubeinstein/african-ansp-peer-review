@@ -53,7 +53,7 @@ export function transformReviewerForExport(reviewer: {
   homeOrganization?: {
     nameEn: string;
     nameFr: string;
-    icaoCode?: string | null;
+    organizationCode?: string | null;
     country: string;
   };
   currentPosition?: string;
@@ -89,7 +89,7 @@ export function transformReviewerForExport(reviewer: {
     name,
     email,
     organization: reviewer.homeOrganization?.nameEn || "N/A",
-    organizationCode: reviewer.homeOrganization?.icaoCode || undefined,
+    organizationCode: reviewer.homeOrganization?.organizationCode || undefined,
     country: reviewer.homeOrganization?.country || "N/A",
     position: reviewer.currentPosition || "N/A",
     expertise,

@@ -59,7 +59,7 @@ const organizationFormSchema = z.object({
     .max(200, "French name must be less than 200 characters"),
 
   // ICAO Code
-  icaoCode: z
+  organizationCode: z
     .string()
     .length(4, "ICAO code must be exactly 4 characters")
     .regex(/^[A-Z]{4}$/, "ICAO code must be 4 uppercase letters"),
@@ -127,7 +127,7 @@ export function OrganizationForm({
     defaultValues: {
       nameEn: organization?.nameEn || "",
       nameFr: organization?.nameFr || "",
-      icaoCode: organization?.icaoCode || "",
+      organizationCode: organization?.organizationCode || "",
       country: organization?.country || "",
       city: organization?.city || "",
       region: organization?.region || "WACAF",
@@ -135,23 +135,23 @@ export function OrganizationForm({
     },
   });
 
-  const icaoCodeValue = useWatch({ control: form.control, name: "icaoCode" });
+  const organizationCodeValue = useWatch({ control: form.control, name: "organizationCode" });
 
   // Check ICAO code availability
   const { data: icaoCheck, isFetching: icaoChecking } = trpc.organization.checkIcaoCode.useQuery(
     {
-      icaoCode: icaoCodeValue?.toUpperCase() || "",
+      organizationCode: organizationCodeValue?.toUpperCase() || "",
       excludeId: organization?.id,
     },
     {
-      enabled: icaoCodeValue?.length === 4 && /^[A-Za-z]{4}$/.test(icaoCodeValue),
+      enabled: organizationCodeValue?.length === 4 && /^[A-Za-z]{4}$/.test(organizationCodeValue),
     }
   );
 
   // Derive ICAO code error from query result
-  const icaoCodeError = useMemo(() => {
+  const organizationCodeError = useMemo(() => {
     if (icaoCheck && !icaoCheck.available) {
-      return t("form.icaoCodeTaken", { name: icaoCheck.existingOrganization?.name || "" });
+      return t("form.organizationCodeTaken", { name: icaoCheck.existingOrganization?.name || "" });
     }
     return null;
   }, [icaoCheck, t]);
@@ -159,18 +159,18 @@ export function OrganizationForm({
   // Handle ICAO code input - auto uppercase
   const handleIcaoCodeChange = useCallback((value: string) => {
     const upperValue = value.toUpperCase().slice(0, 4);
-    form.setValue("icaoCode", upperValue, { shouldValidate: true });
+    form.setValue("organizationCode", upperValue, { shouldValidate: true });
   }, [form]);
 
   async function handleSubmit(data: OrganizationFormValues) {
     // Check if ICAO code is taken
-    if (icaoCodeError) {
+    if (organizationCodeError) {
       return;
     }
 
     const cleanedData = {
       ...data,
-      icaoCode: data.icaoCode.toUpperCase(),
+      organizationCode: data.organizationCode.toUpperCase(),
     };
 
     await onSubmit(cleanedData);
@@ -226,14 +226,14 @@ export function OrganizationForm({
 
             <FormField
               control={form.control}
-              name="icaoCode"
+              name="organizationCode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("form.icaoCode")} *</FormLabel>
+                  <FormLabel>{t("form.organizationCode")} *</FormLabel>
                   <div className="relative">
                     <FormControl>
                       <Input
-                        placeholder={t("form.icaoCodePlaceholder")}
+                        placeholder={t("form.organizationCodePlaceholder")}
                         className="uppercase font-mono"
                         maxLength={4}
                         {...field}
@@ -245,15 +245,15 @@ export function OrganizationForm({
                         <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                       </div>
                     )}
-                    {!icaoChecking && icaoCodeValue?.length === 4 && icaoCheck?.available && (
+                    {!icaoChecking && organizationCodeValue?.length === 4 && icaoCheck?.available && (
                       <div className="absolute right-3 top-1/2 -translate-y-1/2">
                         <Check className="h-4 w-4 text-green-500" />
                       </div>
                     )}
                   </div>
-                  <FormDescription>{t("form.icaoCodeDescription")}</FormDescription>
-                  {icaoCodeError && (
-                    <p className="text-sm font-medium text-destructive">{icaoCodeError}</p>
+                  <FormDescription>{t("form.organizationCodeDescription")}</FormDescription>
+                  {organizationCodeError && (
+                    <p className="text-sm font-medium text-destructive">{organizationCodeError}</p>
                   )}
                   <FormMessage />
                 </FormItem>
@@ -380,7 +380,7 @@ export function OrganizationForm({
           <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
             {tCommon("actions.cancel")}
           </Button>
-          <Button type="submit" disabled={isLoading || !!icaoCodeError}>
+          <Button type="submit" disabled={isLoading || !!organizationCodeError}>
             {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
             {isEdit ? tCommon("actions.save") : t("form.createOrganization")}
           </Button>

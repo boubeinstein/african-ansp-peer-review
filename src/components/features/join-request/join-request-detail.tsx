@@ -112,7 +112,7 @@ export function JoinRequestDetail({
             {getOrgName(request.organization, request)}
           </h1>
           <p className="text-slate-600">
-            {request.organization?.icaoCode || request.organizationIcaoCode || "N/A"} • Submitted{" "}
+            {request.organization?.organizationCode || request.organizationCode || "N/A"} • Submitted{" "}
             {format(new Date(request.createdAt), "MMMM d, yyyy")}
           </p>
         </div>
@@ -152,7 +152,7 @@ export function JoinRequestDetail({
                 <div>
                   <p className="text-sm text-slate-500">ICAO Code</p>
                   <p className="font-medium">
-                    {request.organization?.icaoCode || request.organizationIcaoCode || "N/A"}
+                    {request.organization?.organizationCode || request.organizationCode || "N/A"}
                   </p>
                 </div>
                 <div>

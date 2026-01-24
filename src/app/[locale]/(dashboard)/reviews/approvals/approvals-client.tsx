@@ -189,7 +189,7 @@ function PendingApprovalsList({
                   {review.hostOrganization.nameEn}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  {review.hostOrganization.icaoCode}
+                  {review.hostOrganization.organizationCode}
                   {review.hostOrganization.country &&
                     ` • ${review.hostOrganization.country}`}
                 </p>

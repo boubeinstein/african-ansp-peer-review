@@ -274,7 +274,7 @@ async function seedOrganizations() {
   const organizations: Array<{
     nameEn: string;
     nameFr: string;
-    icaoCode: string;
+    organizationCode: string;
     country: string;
     region: AfricanRegion;
   }> = [];
@@ -312,7 +312,7 @@ async function seedOrganizations() {
     organizations.push({
       nameEn: `${country} Air Navigation Services`,
       nameFr: `Services de Navigation Aérienne du ${country}`,
-      icaoCode: code,
+      organizationCode: code,
       country,
       region: regionByCountry[country] || "WACAF",
     });
@@ -322,12 +322,12 @@ async function seedOrganizations() {
 
   for (const org of organizations) {
     const created = await prisma.organization.upsert({
-      where: { icaoCode: org.icaoCode },
+      where: { organizationCode: org.organizationCode },
       update: {},
       create: {
         nameEn: org.nameEn,
         nameFr: org.nameFr,
-        icaoCode: org.icaoCode,
+        organizationCode: org.organizationCode,
         country: org.country,
         region: org.region,
         membershipStatus: "ACTIVE",

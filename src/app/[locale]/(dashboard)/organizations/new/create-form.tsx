@@ -44,7 +44,7 @@ export function OrganizationCreateForm({ locale }: OrganizationCreateFormProps) 
     await createMutation.mutateAsync({
       nameEn: data.nameEn,
       nameFr: data.nameFr,
-      icaoCode: data.icaoCode,
+      organizationCode: data.organizationCode,
       country: data.country,
       city: data.city,
       region: data.region,

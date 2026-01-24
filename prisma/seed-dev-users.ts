@@ -149,7 +149,7 @@ const DEV_PASSWORD = "DevPassword123!"; // ONLY for development!
 const ORGANIZATIONS: Array<{
   nameEn: string;
   nameFr: string;
-  icaoCode: string;
+  organizationCode: string;
   country: string;
   city: string;
   region: AfricanRegion;
@@ -162,7 +162,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "CANSO Africa Secretariat",
     nameFr: "Secrétariat CANSO Afrique",
-    icaoCode: "CANSO",
+    organizationCode: "CANSO",
     country: "South Africa",
     city: "Johannesburg",
     region: "ESAF",
@@ -176,7 +176,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "ASECNA - Agency for Aerial Navigation Safety in Africa and Madagascar",
     nameFr: "ASECNA - Agence pour la Sécurité de la Navigation Aérienne en Afrique et à Madagascar",
-    icaoCode: "ASEC",
+    organizationCode: "ASEC",
     country: "Senegal",
     city: "Dakar",
     region: "WACAF", // HQ in WACAF but serves multiple regions
@@ -186,7 +186,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "ATNS - Air Traffic and Navigation Services",
     nameFr: "ATNS - Services de Circulation Aérienne et de Navigation",
-    icaoCode: "FAJA",
+    organizationCode: "FAJA",
     country: "South Africa",
     city: "Johannesburg",
     region: "ESAF",
@@ -196,7 +196,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "Civil Aviation Authority of Botswana",
     nameFr: "Autorité de l'Aviation Civile du Botswana",
-    icaoCode: "FBSK",
+    organizationCode: "FBSK",
     country: "Botswana",
     city: "Gaborone",
     region: "ESAF",
@@ -206,7 +206,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "Eswatini Civil Aviation Authority",
     nameFr: "Autorité de l'Aviation Civile d'Eswatini",
-    icaoCode: "FDSK",
+    organizationCode: "FDSK",
     country: "Eswatini",
     city: "Mbabane",
     region: "ESAF",
@@ -220,7 +220,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "Uganda Civil Aviation Authority",
     nameFr: "Autorité de l'Aviation Civile de l'Ouganda",
-    icaoCode: "HUEN",
+    organizationCode: "HUEN",
     country: "Uganda",
     city: "Kampala",
     region: "ESAF",
@@ -230,7 +230,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "Tanzania Civil Aviation Authority",
     nameFr: "Autorité de l'Aviation Civile de la Tanzanie",
-    icaoCode: "HTDA",
+    organizationCode: "HTDA",
     country: "Tanzania",
     city: "Dar es Salaam",
     region: "ESAF",
@@ -240,7 +240,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "Burundi Civil Aviation Authority",
     nameFr: "Autorité de l'Aviation Civile du Burundi",
-    icaoCode: "HBBA",
+    organizationCode: "HBBA",
     country: "Burundi",
     city: "Bujumbura",
     region: "ESAF",
@@ -250,7 +250,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "Rwanda Civil Aviation Authority",
     nameFr: "Autorité de l'Aviation Civile du Rwanda",
-    icaoCode: "HRYR",
+    organizationCode: "HRYR",
     country: "Rwanda",
     city: "Kigali",
     region: "ESAF",
@@ -260,7 +260,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "Kenya Civil Aviation Authority",
     nameFr: "Autorité de l'Aviation Civile du Kenya",
-    icaoCode: "HKJK",
+    organizationCode: "HKJK",
     country: "Kenya",
     city: "Nairobi",
     region: "ESAF",
@@ -274,7 +274,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "Nigerian Airspace Management Agency",
     nameFr: "Agence Nigériane de Gestion de l'Espace Aérien",
-    icaoCode: "NAMA",
+    organizationCode: "NAMA",
     country: "Nigeria",
     city: "Lagos",
     region: "WACAF",
@@ -284,7 +284,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "Ghana Civil Aviation Authority",
     nameFr: "Autorité de l'Aviation Civile du Ghana",
-    icaoCode: "DGAA",
+    organizationCode: "DGAA",
     country: "Ghana",
     city: "Accra",
     region: "WACAF",
@@ -294,7 +294,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "Roberts FIR",
     nameFr: "FIR Roberts",
-    icaoCode: "GLRB",
+    organizationCode: "GLRB",
     country: "Liberia",
     city: "Robertsfield",
     region: "WACAF",
@@ -308,7 +308,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "Aeroportos de Moçambique",
     nameFr: "Aéroports du Mozambique",
-    icaoCode: "FQMA",
+    organizationCode: "FQMA",
     country: "Mozambique",
     city: "Maputo",
     region: "ESAF",
@@ -318,7 +318,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "Department of Civil Aviation - Malawi",
     nameFr: "Département de l'Aviation Civile - Malawi",
-    icaoCode: "FWLI",
+    organizationCode: "FWLI",
     country: "Malawi",
     city: "Lilongwe",
     region: "ESAF",
@@ -328,7 +328,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "ADEMA - Aéroports de Madagascar",
     nameFr: "ADEMA - Aéroports de Madagascar",
-    icaoCode: "FMMI",
+    organizationCode: "FMMI",
     country: "Madagascar",
     city: "Antananarivo",
     region: "ESAF",
@@ -338,7 +338,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "Civil Aviation Authority of Zimbabwe",
     nameFr: "Autorité de l'Aviation Civile du Zimbabwe",
-    icaoCode: "FVHA",
+    organizationCode: "FVHA",
     country: "Zimbabwe",
     city: "Harare",
     region: "ESAF",
@@ -348,7 +348,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "Zambia Airports Corporation Limited",
     nameFr: "Société des Aéroports de Zambie",
-    icaoCode: "FLLS",
+    organizationCode: "FLLS",
     country: "Zambia",
     city: "Lusaka",
     region: "ESAF",
@@ -362,7 +362,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "ONDA - Office National des Aéroports",
     nameFr: "ONDA - Office National des Aéroports",
-    icaoCode: "GMMN",
+    organizationCode: "GMMN",
     country: "Morocco",
     city: "Casablanca",
     region: "NORTHERN",
@@ -372,7 +372,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "OACA - Office de l'Aviation Civile et des Aéroports",
     nameFr: "OACA - Office de l'Aviation Civile et des Aéroports",
-    icaoCode: "DTTA",
+    organizationCode: "DTTA",
     country: "Tunisia",
     city: "Tunis",
     region: "NORTHERN",
@@ -382,7 +382,7 @@ const ORGANIZATIONS: Array<{
   {
     nameEn: "ENNA - Établissement National de la Navigation Aérienne",
     nameFr: "ENNA - Établissement National de la Navigation Aérienne",
-    icaoCode: "DAAG",
+    organizationCode: "DAAG",
     country: "Algeria",
     city: "Algiers",
     region: "NORTHERN",
@@ -794,7 +794,7 @@ const USERS: Array<{
 async function seedOrganizations() {
   console.log("\n🏢 Seeding organizations (22 ANSPs + CANSO Secretariat)...\n");
 
-  const results: { id: string; icaoCode: string | null }[] = [];
+  const results: { id: string; organizationCode: string | null }[] = [];
 
   // Group by team for display
   const teams = new Map<number | null, typeof ORGANIZATIONS>();
@@ -820,7 +820,7 @@ async function seedOrganizations() {
 
     for (const org of orgs) {
       const created = await prisma.organization.upsert({
-        where: { icaoCode: org.icaoCode },
+        where: { organizationCode: org.organizationCode },
         update: {
           nameEn: org.nameEn,
           nameFr: org.nameFr,
@@ -833,7 +833,7 @@ async function seedOrganizations() {
         create: {
           nameEn: org.nameEn,
           nameFr: org.nameFr,
-          icaoCode: org.icaoCode,
+          organizationCode: org.organizationCode,
           country: org.country,
           city: org.city,
           region: org.region,
@@ -842,8 +842,8 @@ async function seedOrganizations() {
         },
       });
 
-      results.push({ id: created.id, icaoCode: created.icaoCode });
-      console.log(`      ✓ ${org.icaoCode.padEnd(6)} - ${org.nameEn.substring(0, 50)}${org.nameEn.length > 50 ? "..." : ""}`);
+      results.push({ id: created.id, organizationCode: created.organizationCode });
+      console.log(`      ✓ ${org.organizationCode.padEnd(6)} - ${org.nameEn.substring(0, 50)}${org.nameEn.length > 50 ? "..." : ""}`);
     }
   }
 
@@ -851,12 +851,12 @@ async function seedOrganizations() {
 }
 
 async function seedUsers(
-  organizations: { id: string; icaoCode: string | null }[]
+  organizations: { id: string; organizationCode: string | null }[]
 ) {
   console.log("\n👥 Seeding users...\n");
 
   const hashedPassword = await hash(DEV_PASSWORD, 12);
-  const orgMap = new Map(organizations.map((o) => [o.icaoCode, o.id]));
+  const orgMap = new Map(organizations.map((o) => [o.organizationCode, o.id]));
 
   const roleOrder: UserRole[] = [
     UserRole.SUPER_ADMIN,

@@ -91,7 +91,7 @@ function createMockReviewerProfile(
       id: homeOrgId,
       nameEn: overrides.organizationName ?? "Home Organization",
       nameFr: overrides.organizationName ?? "Organisation d'origine",
-      icaoCode: overrides.organizationCode ?? "HOME",
+      organizationCode: overrides.organizationCode ?? "HOME",
       country: "Test Country",
     },
     expertiseRecords: (overrides.expertise ?? []).map((exp, idx) => ({
@@ -164,7 +164,7 @@ function createMockReviewerProfile(
         id: coi.organizationId,
         nameEn: "Conflict Organization",
         nameFr: "Organisation en conflit",
-        icaoCode: "COI",
+        organizationCode: "COI",
       },
     })),
   };

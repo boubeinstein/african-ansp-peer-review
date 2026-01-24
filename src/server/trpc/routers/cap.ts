@@ -334,7 +334,7 @@ export const capRouter = router({
                       id: true,
                       nameEn: true,
                       nameFr: true,
-                      icaoCode: true,
+                      organizationCode: true,
                     },
                   },
                   teamMembers: {
@@ -347,7 +347,7 @@ export const capRouter = router({
                   id: true,
                   nameEn: true,
                   nameFr: true,
-                  icaoCode: true,
+                  organizationCode: true,
                 },
               },
               question: {
@@ -1178,7 +1178,7 @@ export const capRouter = router({
                   select: { id: true, referenceNumber: true },
                 },
                 organization: {
-                  select: { id: true, nameEn: true, nameFr: true, icaoCode: true },
+                  select: { id: true, nameEn: true, nameFr: true, organizationCode: true },
                 },
               },
             },

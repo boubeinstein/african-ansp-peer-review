@@ -272,7 +272,7 @@ interface Finding {
     id: string;
     nameEn: string;
     nameFr: string;
-    icaoCode: string | null;
+    organizationCode: string | null;
   } | null;
   assignedTo: {
     id: string;

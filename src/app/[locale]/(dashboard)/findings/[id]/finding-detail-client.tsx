@@ -434,7 +434,7 @@ export function FindingDetailClient({ findingId }: FindingDetailClientProps) {
               </div>
               <div>
                 <span className="text-muted-foreground">ICAO Code</span>
-                <p className="font-medium">{finding.organization.icaoCode}</p>
+                <p className="font-medium">{finding.organization.organizationCode}</p>
               </div>
             </CardContent>
           </Card>

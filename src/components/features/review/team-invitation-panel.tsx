@@ -255,9 +255,9 @@ export function ReviewerInvitationsPanel({ className }: ReviewerInvitationsPanel
                         {locale === "fr" && invitation.review.hostOrganization.nameFr
                           ? invitation.review.hostOrganization.nameFr
                           : invitation.review.hostOrganization.nameEn}
-                        {invitation.review.hostOrganization.icaoCode && (
+                        {invitation.review.hostOrganization.organizationCode && (
                           <span className="ml-1 text-xs">
-                            ({invitation.review.hostOrganization.icaoCode})
+                            ({invitation.review.hostOrganization.organizationCode})
                           </span>
                         )}
                       </span>

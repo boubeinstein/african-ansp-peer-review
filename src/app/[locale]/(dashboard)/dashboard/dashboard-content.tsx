@@ -31,7 +31,7 @@ interface Organization {
   id: string;
   nameEn: string;
   nameFr?: string | null;
-  icaoCode: string | null;
+  organizationCode: string | null;
 }
 
 interface DashboardContentProps {

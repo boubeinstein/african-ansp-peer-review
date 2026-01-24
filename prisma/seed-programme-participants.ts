@@ -20,34 +20,34 @@ const prisma = new PrismaClient({ adapter });
 // Using ICAO codes or specific names to avoid duplicates
 const programmeParticipants = [
   // Team 1 (4 members)
-  { icaoCode: "ASEC", team: 1 }, // ASECNA
-  { icaoCode: "FAJA", team: 1 }, // ATNS - South Africa
-  { icaoCode: "FBSK", team: 1 }, // Civil Aviation Authority of Botswana
-  { icaoCode: "FDSK", team: 1 }, // Eswatini Civil Aviation Authority
+  { organizationCode: "ASEC", team: 1 }, // ASECNA
+  { organizationCode: "FAJA", team: 1 }, // ATNS - South Africa
+  { organizationCode: "FBSK", team: 1 }, // Civil Aviation Authority of Botswana
+  { organizationCode: "FDSK", team: 1 }, // Eswatini Civil Aviation Authority
 
   // Team 2 (5 members)
-  { icaoCode: "HBBA", team: 2 }, // Burundi Civil Aviation Authority
-  { icaoCode: "HKJK", team: 2 }, // Kenya Civil Aviation Authority
-  { icaoCode: "HRYR", team: 2 }, // Rwanda Civil Aviation Authority
-  { icaoCode: "HTDA", team: 2 }, // Tanzania Civil Aviation Authority
-  { icaoCode: "HUEN", team: 2 }, // Uganda Civil Aviation Authority
+  { organizationCode: "HBBA", team: 2 }, // Burundi Civil Aviation Authority
+  { organizationCode: "HKJK", team: 2 }, // Kenya Civil Aviation Authority
+  { organizationCode: "HRYR", team: 2 }, // Rwanda Civil Aviation Authority
+  { organizationCode: "HTDA", team: 2 }, // Tanzania Civil Aviation Authority
+  { organizationCode: "HUEN", team: 2 }, // Uganda Civil Aviation Authority
 
   // Team 3 (3 members)
-  { icaoCode: "NAMA", team: 3 }, // Nigerian Airspace Management Agency
-  { icaoCode: "DGAA", team: 3 }, // Ghana Civil Aviation Authority
-  { icaoCode: "GLRB", team: 3 }, // Roberts FIR
+  { organizationCode: "NAMA", team: 3 }, // Nigerian Airspace Management Agency
+  { organizationCode: "DGAA", team: 3 }, // Ghana Civil Aviation Authority
+  { organizationCode: "GLRB", team: 3 }, // Roberts FIR
 
   // Team 4 (5 members)
-  { icaoCode: "FMMI", team: 4 }, // ADEMA - Madagascar
-  { icaoCode: "FWLI", team: 4 }, // Department of Civil Aviation - Malawi
-  { icaoCode: "FQMA", team: 4 }, // Aeroportos de Moçambique
-  { icaoCode: "FLLS", team: 4 }, // Zambia Airports Corporation Limited
-  { icaoCode: "FVHA", team: 4 }, // Civil Aviation Authority of Zimbabwe
+  { organizationCode: "FMMI", team: 4 }, // ADEMA - Madagascar
+  { organizationCode: "FWLI", team: 4 }, // Department of Civil Aviation - Malawi
+  { organizationCode: "FQMA", team: 4 }, // Aeroportos de Moçambique
+  { organizationCode: "FLLS", team: 4 }, // Zambia Airports Corporation Limited
+  { organizationCode: "FVHA", team: 4 }, // Civil Aviation Authority of Zimbabwe
 
   // Team 5 (3 members)
-  { icaoCode: "DAAG", team: 5 }, // ENNA - Algeria
-  { icaoCode: "GMMN", team: 5 }, // ONDA - Morocco
-  { icaoCode: "DTTA", team: 5 }, // OACA - Tunisia
+  { organizationCode: "DAAG", team: 5 }, // ENNA - Algeria
+  { organizationCode: "GMMN", team: 5 }, // ONDA - Morocco
+  { organizationCode: "DTTA", team: 5 }, // OACA - Tunisia
 ];
 
 async function seedProgrammeParticipants() {
@@ -73,7 +73,7 @@ async function seedProgrammeParticipants() {
   for (const participant of programmeParticipants) {
     const updated = await prisma.organization.updateMany({
       where: {
-        icaoCode: participant.icaoCode,
+        organizationCode: participant.organizationCode,
       },
       data: {
         peerReviewTeam: participant.team,
@@ -83,11 +83,11 @@ async function seedProgrammeParticipants() {
     });
 
     if (updated.count > 0) {
-      console.log(`   ✓ Team ${participant.team}: ${participant.icaoCode}`);
+      console.log(`   ✓ Team ${participant.team}: ${participant.organizationCode}`);
       successCount += updated.count;
     } else {
-      console.warn(`   ⚠ NOT FOUND: ${participant.icaoCode}`);
-      notFound.push(participant.icaoCode);
+      console.warn(`   ⚠ NOT FOUND: ${participant.organizationCode}`);
+      notFound.push(participant.organizationCode);
     }
   }
 
@@ -103,7 +103,7 @@ async function seedProgrammeParticipants() {
   const participants = await prisma.organization.findMany({
     where: { peerReviewTeam: { not: null } },
     orderBy: [{ peerReviewTeam: "asc" }, { nameEn: "asc" }],
-    select: { nameEn: true, icaoCode: true, peerReviewTeam: true, country: true },
+    select: { nameEn: true, organizationCode: true, peerReviewTeam: true, country: true },
   });
 
   console.log("\n📋 Participants by team:");
@@ -111,7 +111,7 @@ async function seedProgrammeParticipants() {
     const teamMembers = participants.filter((p) => p.peerReviewTeam === team);
     console.log(`\n   Team ${team} (${teamMembers.length}):`);
     teamMembers.forEach((m) =>
-      console.log(`      - ${m.nameEn} (${m.icaoCode || m.country})`)
+      console.log(`      - ${m.nameEn} (${m.organizationCode || m.country})`)
     );
   }
 

@@ -171,14 +171,14 @@ async function generateReferenceNumber(
   const [org, count] = await Promise.all([
     db.organization.findUnique({
       where: { id: organizationId },
-      select: { icaoCode: true },
+      select: { organizationCode: true },
     }),
     db.finding.count({
       where: { reviewId },
     }),
   ]);
 
-  const orgCode = org?.icaoCode || "UNK";
+  const orgCode = org?.organizationCode || "UNK";
   const year = new Date().getFullYear();
   const sequence = String(count + 1).padStart(3, "0");
 
@@ -291,7 +291,7 @@ export const findingRouter = router({
               id: true,
               nameEn: true,
               nameFr: true,
-              icaoCode: true,
+              organizationCode: true,
             },
           },
           question: {
@@ -374,7 +374,7 @@ export const findingRouter = router({
               id: true,
               nameEn: true,
               nameFr: true,
-              icaoCode: true,
+              organizationCode: true,
             },
           },
           question: {
@@ -503,7 +503,7 @@ export const findingRouter = router({
                 id: true,
                 nameEn: true,
                 nameFr: true,
-                icaoCode: true,
+                organizationCode: true,
               },
             },
             assignedTo: {
@@ -599,7 +599,7 @@ export const findingRouter = router({
               id: true,
               nameEn: true,
               nameFr: true,
-              icaoCode: true,
+              organizationCode: true,
             },
           },
           question: {
@@ -733,7 +733,7 @@ export const findingRouter = router({
               id: true,
               nameEn: true,
               nameFr: true,
-              icaoCode: true,
+              organizationCode: true,
             },
           },
         },
@@ -862,7 +862,7 @@ export const findingRouter = router({
               id: true,
               nameEn: true,
               nameFr: true,
-              icaoCode: true,
+              organizationCode: true,
             },
           },
           question: {

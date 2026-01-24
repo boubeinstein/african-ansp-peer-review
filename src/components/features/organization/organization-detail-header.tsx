@@ -92,8 +92,8 @@ export function OrganizationDetailHeader({
   const locale = useLocale() as "en" | "fr";
 
   // Generate initials from ICAO code or name
-  const initials = organization.icaoCode
-    ? organization.icaoCode.slice(0, 2)
+  const initials = organization.organizationCode
+    ? organization.organizationCode.slice(0, 2)
     : organization.nameEn
         .split(" ")
         .map((n) => n[0])
@@ -127,9 +127,9 @@ export function OrganizationDetailHeader({
           {/* Name and ICAO Code */}
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-2xl md:text-3xl font-bold">{orgName}</h1>
-            {organization.icaoCode && (
+            {organization.organizationCode && (
               <Badge variant="secondary" className="text-sm font-mono">
-                {organization.icaoCode}
+                {organization.organizationCode}
               </Badge>
             )}
           </div>

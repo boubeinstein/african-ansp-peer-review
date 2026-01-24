@@ -86,7 +86,7 @@ export function OrganizationEditForm({ locale, organizationId }: OrganizationEdi
       id: organizationId,
       nameEn: data.nameEn,
       nameFr: data.nameFr,
-      icaoCode: data.icaoCode,
+      organizationCode: data.organizationCode,
       country: data.country,
       city: data.city,
       region: data.region,

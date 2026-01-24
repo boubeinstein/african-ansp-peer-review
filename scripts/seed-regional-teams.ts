@@ -63,7 +63,7 @@ const REGIONAL_TEAMS: {
 // Northern Africa organizations that may not exist in the database yet
 const NORTHERN_AFRICA_ORGS = [
   {
-    icaoCode: "DGAC",
+    organizationCode: "DGAC",
     nameEn: "Direction Générale de l'Aviation Civile",
     nameFr: "Direction Générale de l'Aviation Civile",
     country: "Morocco",
@@ -71,7 +71,7 @@ const NORTHERN_AFRICA_ORGS = [
     membershipStatus: "ACTIVE" as const,
   },
   {
-    icaoCode: "OACA",
+    organizationCode: "OACA",
     nameEn: "Office de l'Aviation Civile et des Aéroports",
     nameFr: "Office de l'Aviation Civile et des Aéroports",
     country: "Tunisia",
@@ -79,7 +79,7 @@ const NORTHERN_AFRICA_ORGS = [
     membershipStatus: "ACTIVE" as const,
   },
   {
-    icaoCode: "DACM",
+    organizationCode: "DACM",
     nameEn: "Direction de l'Aviation Civile et de la Météorologie",
     nameFr: "Direction de l'Aviation Civile et de la Météorologie",
     country: "Algeria",
@@ -95,16 +95,16 @@ async function seedRegionalTeams() {
   console.log("📍 Ensuring Northern Africa organizations exist...\n");
   for (const org of NORTHERN_AFRICA_ORGS) {
     const existing = await prisma.organization.findFirst({
-      where: { icaoCode: org.icaoCode },
+      where: { organizationCode: org.organizationCode },
     });
 
     if (!existing) {
       await prisma.organization.create({
         data: org,
       });
-      console.log(`  ✅ Created: ${org.icaoCode} - ${org.nameEn}`);
+      console.log(`  ✅ Created: ${org.organizationCode} - ${org.nameEn}`);
     } else {
-      console.log(`  ℹ️ Exists: ${org.icaoCode} - ${existing.nameEn}`);
+      console.log(`  ℹ️ Exists: ${org.organizationCode} - ${existing.nameEn}`);
     }
   }
   console.log("");
@@ -115,7 +115,7 @@ async function seedRegionalTeams() {
 
     // Find lead organization by ICAO code
     const leadOrg = await prisma.organization.findFirst({
-      where: { icaoCode: team.leadCode },
+      where: { organizationCode: team.leadCode },
     });
 
     if (!leadOrg) {
@@ -148,7 +148,7 @@ async function seedRegionalTeams() {
     let linkedCount = 0;
     for (const memberCode of team.memberCodes) {
       const memberOrg = await prisma.organization.findFirst({
-        where: { icaoCode: memberCode },
+        where: { organizationCode: memberCode },
       });
 
       if (memberOrg) {
@@ -170,7 +170,7 @@ async function seedRegionalTeams() {
   const teamCounts = await prisma.regionalTeam.findMany({
     include: {
       _count: { select: { memberOrganizations: true } },
-      leadOrganization: { select: { nameEn: true, icaoCode: true } },
+      leadOrganization: { select: { nameEn: true, organizationCode: true } },
     },
     orderBy: { teamNumber: "asc" },
   });
@@ -187,7 +187,7 @@ async function seedRegionalTeams() {
   console.log("\n📊 Database Results:");
   for (const team of teamCounts) {
     console.log(
-      `${team.code}: ${team._count.memberOrganizations} members | Lead: ${team.leadOrganization.nameEn} (${team.leadOrganization.icaoCode})`
+      `${team.code}: ${team._count.memberOrganizations} members | Lead: ${team.leadOrganization.nameEn} (${team.leadOrganization.organizationCode})`
     );
   }
   console.log("─".repeat(70));

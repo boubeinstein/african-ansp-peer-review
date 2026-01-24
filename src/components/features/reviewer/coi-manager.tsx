@@ -86,7 +86,7 @@ export interface ConflictOfInterest {
     id: string;
     nameEn: string;
     nameFr: string;
-    icaoCode?: string | null;
+    organizationCode?: string | null;
   };
 }
 
@@ -94,7 +94,7 @@ interface OrganizationOption {
   id: string;
   nameEn: string;
   nameFr: string;
-  icaoCode?: string | null;
+  organizationCode?: string | null;
 }
 
 interface COIManagerProps {
@@ -229,7 +229,7 @@ function AddCOIDialog({
                 {availableOrgs.map((org) => (
                   <SelectItem key={org.id} value={org.id}>
                     {locale === "fr" ? org.nameFr : org.nameEn}
-                    {org.icaoCode && ` (${org.icaoCode})`}
+                    {org.organizationCode && ` (${org.organizationCode})`}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -421,9 +421,9 @@ export function COIManager({
                         <div className="flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
                             <p className="font-medium">{getOrgName(coi)}</p>
-                            {coi.organization.icaoCode && (
+                            {coi.organization.organizationCode && (
                               <Badge variant="outline" className="text-xs">
-                                {coi.organization.icaoCode}
+                                {coi.organization.organizationCode}
                               </Badge>
                             )}
                             <COIBadge

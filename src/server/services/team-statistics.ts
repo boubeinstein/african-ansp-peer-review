@@ -21,7 +21,7 @@ import {
 export interface OrganizationStats {
   id: string;
   name: string;
-  icaoCode: string | null;
+  organizationCode: string | null;
   country: string;
   isLead: boolean;
   reviewerCount: number;
@@ -373,7 +373,7 @@ export async function getTeamStatistics(
       return {
         id: org.id,
         name: org.nameEn,
-        icaoCode: org.icaoCode,
+        organizationCode: org.organizationCode,
         country: org.country,
         isLead: org.id === team.leadOrganizationId,
         reviewerCount: orgReviewerCount,

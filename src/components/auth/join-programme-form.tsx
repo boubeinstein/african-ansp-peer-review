@@ -43,7 +43,7 @@ const joinProgrammeSchema = z.object({
   // Organization details (free-text entry)
   organizationName: z.string().min(2, "Organization name is required"),
   organizationCountry: z.string().min(2, "Country is required"),
-  organizationIcaoCode: z.string().optional(),
+  organizationCode: z.string().optional(),
   // Contact details
   contactName: z.string().min(2, "Name must be at least 2 characters"),
   contactEmail: z.string().email("Invalid email address"),
@@ -110,7 +110,7 @@ export function JoinProgrammeForm() {
       requestType: "PROGRAMME_JOIN" as const,
       organizationName: data.organizationName,
       organizationCountry: data.organizationCountry,
-      organizationIcaoCode: data.organizationIcaoCode,
+      organizationCode: data.organizationCode,
       contactName: data.contactName,
       contactEmail: data.contactEmail,
       contactPhone: data.contactPhone,
@@ -202,17 +202,17 @@ export function JoinProgrammeForm() {
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="organizationIcaoCode" className="text-sm font-medium text-slate-700">
-            {t("icaoCode")} <span className="text-xs text-slate-500">({t("optional")})</span>
+          <Label htmlFor="organizationCode" className="text-sm font-medium text-slate-700">
+            {t("organizationCode")} <span className="text-xs text-slate-500">({t("optional")})</span>
           </Label>
           <Input
-            id="organizationIcaoCode"
+            id="organizationCode"
             placeholder="e.g., HKJK"
             className="h-10 bg-slate-50 border-slate-200 focus:bg-white transition-colors"
-            {...register("organizationIcaoCode")}
+            {...register("organizationCode")}
             disabled={submitMutation.isPending}
           />
-          <p className="text-xs text-slate-500">{t("icaoCodeHelp")}</p>
+          <p className="text-xs text-slate-500">{t("organizationCodeHelp")}</p>
         </div>
       </div>
 

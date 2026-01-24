@@ -154,7 +154,7 @@ async function fixTeamAssignments() {
           matches = org.nameEn.includes(mapping.pattern) || org.nameFr.includes(mapping.pattern);
           break;
         case "code":
-          matches = org.icaoCode === mapping.pattern || org.icaoCode?.startsWith(mapping.pattern) || false;
+          matches = org.organizationCode === mapping.pattern || org.organizationCode?.startsWith(mapping.pattern) || false;
           break;
         case "country":
           // Special case: "Guinea" should not match "Equatorial Guinea" or "Guinea-Bissau"
@@ -189,7 +189,7 @@ async function fixTeamAssignments() {
         console.log(`ℹ️ ${org.nameEn} already in Team ${matchedTeam}`);
       }
     } else {
-      unmatched.push(`${org.icaoCode || "N/A"} - ${org.nameEn} (${org.country})`);
+      unmatched.push(`${org.organizationCode || "N/A"} - ${org.nameEn} (${org.country})`);
     }
   }
 

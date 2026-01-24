@@ -21,34 +21,34 @@ const prisma = new PrismaClient({ adapter });
 // Using ICAO codes for precise matching
 const activeParticipants = [
   // Team 1 (4 members)
-  { icaoCode: "ASEC", team: 1, name: "ASECNA" },
-  { icaoCode: "FAJA", team: 1, name: "ATNS (South Africa)" },
-  { icaoCode: "FBSK", team: 1, name: "Botswana CAA" },
-  { icaoCode: "FDSK", team: 1, name: "Eswatini CAA" },
+  { organizationCode: "ASEC", team: 1, name: "ASECNA" },
+  { organizationCode: "FAJA", team: 1, name: "ATNS (South Africa)" },
+  { organizationCode: "FBSK", team: 1, name: "Botswana CAA" },
+  { organizationCode: "FDSK", team: 1, name: "Eswatini CAA" },
 
   // Team 2 (5 members)
-  { icaoCode: "HBBA", team: 2, name: "Burundi CAA" },
-  { icaoCode: "HKJK", team: 2, name: "Kenya CAA" },
-  { icaoCode: "HRYR", team: 2, name: "Rwanda CAA" },
-  { icaoCode: "HTDA", team: 2, name: "Tanzania CAA" },
-  { icaoCode: "HUEN", team: 2, name: "Uganda CAA" },
+  { organizationCode: "HBBA", team: 2, name: "Burundi CAA" },
+  { organizationCode: "HKJK", team: 2, name: "Kenya CAA" },
+  { organizationCode: "HRYR", team: 2, name: "Rwanda CAA" },
+  { organizationCode: "HTDA", team: 2, name: "Tanzania CAA" },
+  { organizationCode: "HUEN", team: 2, name: "Uganda CAA" },
 
   // Team 3 (3 members)
-  { icaoCode: "NAMA", team: 3, name: "NAMA (Nigeria)" },
-  { icaoCode: "DGAA", team: 3, name: "GCAA (Ghana)" },
-  { icaoCode: "GLRB", team: 3, name: "Roberts FIR" },
+  { organizationCode: "NAMA", team: 3, name: "NAMA (Nigeria)" },
+  { organizationCode: "DGAA", team: 3, name: "GCAA (Ghana)" },
+  { organizationCode: "GLRB", team: 3, name: "Roberts FIR" },
 
   // Team 4 (5 members)
-  { icaoCode: "FMMI", team: 4, name: "Madagascar" },
-  { icaoCode: "FWLI", team: 4, name: "Malawi" },
-  { icaoCode: "FQMA", team: 4, name: "Mozambique" },
-  { icaoCode: "FLLS", team: 4, name: "Zambia" },
-  { icaoCode: "FVHA", team: 4, name: "Zimbabwe" },
+  { organizationCode: "FMMI", team: 4, name: "Madagascar" },
+  { organizationCode: "FWLI", team: 4, name: "Malawi" },
+  { organizationCode: "FQMA", team: 4, name: "Mozambique" },
+  { organizationCode: "FLLS", team: 4, name: "Zambia" },
+  { organizationCode: "FVHA", team: 4, name: "Zimbabwe" },
 
   // Team 5 (3 members)
-  { icaoCode: "DAAG", team: 5, name: "Algeria (ENNA)" },
-  { icaoCode: "GMMN", team: 5, name: "Morocco (ONDA)" },
-  { icaoCode: "DTTA", team: 5, name: "Tunisia (OACA)" },
+  { organizationCode: "DAAG", team: 5, name: "Algeria (ENNA)" },
+  { organizationCode: "GMMN", team: 5, name: "Morocco (ONDA)" },
+  { organizationCode: "DTTA", team: 5, name: "Tunisia (OACA)" },
 ];
 
 async function seedParticipationStatus() {
@@ -73,7 +73,7 @@ async function seedParticipationStatus() {
   for (const participant of activeParticipants) {
     const updated = await prisma.organization.updateMany({
       where: {
-        icaoCode: participant.icaoCode,
+        organizationCode: participant.organizationCode,
       },
       data: {
         participationStatus: ParticipationStatus.ACTIVE,
@@ -86,7 +86,7 @@ async function seedParticipationStatus() {
       console.log(`   ✓ Team ${participant.team}: ${participant.name}`);
       successCount++;
     } else {
-      console.warn(`   ⚠ NOT FOUND: ${participant.name} (${participant.icaoCode})`);
+      console.warn(`   ⚠ NOT FOUND: ${participant.name} (${participant.organizationCode})`);
       notFound.push(participant.name);
     }
   }
@@ -115,11 +115,11 @@ async function seedParticipationStatus() {
   for (let team = 1; team <= 5; team++) {
     const members = await prisma.organization.findMany({
       where: { peerReviewTeam: team },
-      select: { nameEn: true, icaoCode: true },
+      select: { nameEn: true, organizationCode: true },
       orderBy: { nameEn: "asc" },
     });
     console.log(`\n   Team ${team} (${members.length}):`);
-    members.forEach((m) => console.log(`      - ${m.nameEn} (${m.icaoCode})`));
+    members.forEach((m) => console.log(`      - ${m.nameEn} (${m.organizationCode})`));
   }
 
   console.log("\n✅ Done!\n");

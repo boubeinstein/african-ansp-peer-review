@@ -184,7 +184,7 @@ export interface PeerReviewSummary {
     id: string;
     nameEn: string;
     nameFr: string;
-    icaoCode: string | null;
+    organizationCode: string | null;
   };
   scheduledStartDate: Date | null;
   scheduledEndDate: Date | null;

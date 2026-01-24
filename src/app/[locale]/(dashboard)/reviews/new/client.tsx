@@ -248,9 +248,9 @@ export function NewReviewClient({ locale }: NewReviewClientProps) {
                             {locale === "fr" && org.nameFr
                               ? org.nameFr
                               : org.nameEn}
-                            {org.icaoCode && (
+                            {org.organizationCode && (
                               <span className="text-muted-foreground ml-2">
-                                ({org.icaoCode})
+                                ({org.organizationCode})
                               </span>
                             )}
                           </SelectItem>

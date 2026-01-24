@@ -116,7 +116,7 @@ interface User {
     id: string;
     nameEn: string;
     nameFr: string | null;
-    icaoCode: string | null;
+    organizationCode: string | null;
   } | null;
 }
 
@@ -235,7 +235,7 @@ interface FiltersProps {
   onOrganizationChange: (value: string) => void;
   status: string;
   onStatusChange: (value: string) => void;
-  organizations: Array<{ id: string; nameEn: string; nameFr: string | null; icaoCode: string | null }> | undefined;
+  organizations: Array<{ id: string; nameEn: string; nameFr: string | null; organizationCode: string | null }> | undefined;
   locale: string;
   showOrgFilter: boolean;
 }
@@ -288,7 +288,7 @@ function Filters({
             <SelectItem value="all">{t("allOrganizations")}</SelectItem>
             {organizations?.map((org) => (
               <SelectItem key={org.id} value={org.id}>
-                {org.icaoCode ? `${org.icaoCode} - ` : ""}{locale === "fr" && org.nameFr ? org.nameFr : org.nameEn}
+                {org.organizationCode ? `${org.organizationCode} - ` : ""}{locale === "fr" && org.nameFr ? org.nameFr : org.nameEn}
               </SelectItem>
             ))}
           </SelectContent>
@@ -432,9 +432,9 @@ function UsersTable({
                         ? user.organization.nameFr
                         : user.organization.nameEn}
                     </p>
-                    {user.organization.icaoCode && (
+                    {user.organization.organizationCode && (
                       <p className="text-xs text-muted-foreground">
-                        {user.organization.icaoCode}
+                        {user.organization.organizationCode}
                       </p>
                     )}
                   </div>

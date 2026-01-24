@@ -122,7 +122,7 @@ export async function getEligibleReviewers(
           lastName: reviewer.user.lastName,
           organization: {
             id: reviewer.user.organization?.id ?? "",
-            code: reviewer.user.organization?.icaoCode ?? "",
+            code: reviewer.user.organization?.organizationCode ?? "",
             nameEn: reviewer.user.organization?.nameEn ?? "",
             regionalTeamId: reviewer.user.organization?.regionalTeamId ?? null,
           },

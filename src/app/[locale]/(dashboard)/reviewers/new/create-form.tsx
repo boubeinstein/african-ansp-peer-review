@@ -320,7 +320,7 @@ export function ReviewerCreateForm({ locale }: ReviewerCreateFormProps) {
                         <ScrollArea className="h-[200px]">
                           {organizations?.map((org) => (
                             <SelectItem key={org.id} value={org.id}>
-                              {currentLocale === "fr" ? org.nameFr : org.nameEn} ({org.icaoCode})
+                              {currentLocale === "fr" ? org.nameFr : org.nameEn} ({org.organizationCode})
                             </SelectItem>
                           ))}
                         </ScrollArea>

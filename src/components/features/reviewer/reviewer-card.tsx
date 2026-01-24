@@ -182,9 +182,9 @@ export function ReviewerCard({
           <div className="flex-1 min-w-0">
             <p className="truncate">{orgName}</p>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              {reviewer.homeOrganization.icaoCode && (
+              {reviewer.homeOrganization.organizationCode && (
                 <Badge variant="secondary" className="text-xs px-1.5 py-0">
-                  {reviewer.homeOrganization.icaoCode}
+                  {reviewer.homeOrganization.organizationCode}
                 </Badge>
               )}
               <span>{reviewer.homeOrganization.country}</span>

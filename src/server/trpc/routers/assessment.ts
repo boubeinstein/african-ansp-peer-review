@@ -470,7 +470,7 @@ export const assessmentRouter = router({
       // Get organization for reference number generation
       const organization = await prisma.organization.findUnique({
         where: { id: user.organizationId! },
-        select: { icaoCode: true, nameEn: true },
+        select: { organizationCode: true, nameEn: true },
       });
 
       if (!organization) {
@@ -484,7 +484,7 @@ export const assessmentRouter = router({
       const assessmentTypeCode = getAssessmentTypeCode(questionnaire.type);
 
       // Generate unique reference number
-      const orgCode = organization.icaoCode || organization.nameEn.substring(0, 6);
+      const orgCode = organization.organizationCode || organization.nameEn.substring(0, 6);
       const referenceNumber = await generateAssessmentReferenceNumber({
         organizationCode: orgCode,
         assessmentType: assessmentTypeCode,
@@ -601,7 +601,7 @@ export const assessmentRouter = router({
         where: { id: input.id },
         include: {
           organization: {
-            select: { id: true, nameEn: true, nameFr: true, icaoCode: true },
+            select: { id: true, nameEn: true, nameFr: true, organizationCode: true },
           },
           questionnaire: {
             select: {
@@ -815,7 +815,7 @@ export const assessmentRouter = router({
         where,
         include: {
           organization: {
-            select: { id: true, nameEn: true, nameFr: true, icaoCode: true },
+            select: { id: true, nameEn: true, nameFr: true, organizationCode: true },
           },
           questionnaire: {
             select: {

@@ -589,7 +589,7 @@ export const dashboardRouter = router({
           orderBy: { submittedAt: "desc" },
           take: 5,
           include: {
-            organization: { select: { nameEn: true, icaoCode: true } },
+            organization: { select: { nameEn: true, organizationCode: true } },
           },
         });
 
@@ -598,7 +598,7 @@ export const dashboardRouter = router({
             id: `assessment-${a.id}`,
             type: "assessment_submitted",
             title: `Assessment submitted`,
-            description: `${a.organization.nameEn} (${a.organization.icaoCode || "N/A"})`,
+            description: `${a.organization.nameEn} (${a.organization.organizationCode || "N/A"})`,
             timestamp: a.submittedAt || a.updatedAt,
             entityId: a.id,
             entityType: "assessment",
@@ -610,7 +610,7 @@ export const dashboardRouter = router({
           orderBy: { createdAt: "desc" },
           take: 5,
           include: {
-            hostOrganization: { select: { nameEn: true, icaoCode: true } },
+            hostOrganization: { select: { nameEn: true, organizationCode: true } },
           },
         });
 

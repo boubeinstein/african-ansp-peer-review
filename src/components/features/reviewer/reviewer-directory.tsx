@@ -108,7 +108,7 @@ function transformToListItem(profile: {
   reviewsCompleted: number;
   yearsExperience: number;
   user: { id: string; firstName: string; lastName: string; email: string } | null;
-  homeOrganization: { id: string; nameEn: string; nameFr: string; icaoCode: string | null; country: string } | null;
+  homeOrganization: { id: string; nameEn: string; nameFr: string; organizationCode: string | null; country: string } | null;
   expertiseRecords: { area: string; proficiencyLevel: string }[];
   languages: { language: string; proficiency: string }[];
 }): ReviewerListItem {
@@ -126,14 +126,14 @@ function transformToListItem(profile: {
           id: profile.homeOrganization.id,
           nameEn: profile.homeOrganization.nameEn,
           nameFr: profile.homeOrganization.nameFr,
-          icaoCode: profile.homeOrganization.icaoCode,
+          organizationCode: profile.homeOrganization.organizationCode,
           country: profile.homeOrganization.country,
         }
       : {
           id: "",
           nameEn: "Unknown Organization",
           nameFr: "Organisation inconnue",
-          icaoCode: null,
+          organizationCode: null,
           country: "",
         },
     reviewerType: profile.reviewerType as ReviewerListItem["reviewerType"],

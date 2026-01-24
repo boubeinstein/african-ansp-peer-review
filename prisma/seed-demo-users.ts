@@ -830,9 +830,9 @@ async function seedUsers(): Promise<void> {
 
   // Seed Reviewers
   for (const userData of ALL_REVIEWERS) {
-    // Find organization by icaoCode
+    // Find organization by organizationCode
     const org = await prisma.organization.findFirst({
-      where: { icaoCode: userData.orgIcaoCode },
+      where: { organizationCode: userData.orgIcaoCode },
     });
 
     if (!org) {
@@ -950,7 +950,7 @@ async function seedUsers(): Promise<void> {
   console.log("\n📋 Seeding System Users...\n");
   for (const userData of SYSTEM_USERS) {
     const org = await prisma.organization.findFirst({
-      where: { icaoCode: userData.orgIcaoCode },
+      where: { organizationCode: userData.orgIcaoCode },
     });
 
     if (!org) {
@@ -1029,7 +1029,7 @@ async function printSummary(): Promise<void> {
       },
       include: {
         user: { select: { firstName: true, lastName: true } },
-        homeOrganization: { select: { icaoCode: true } },
+        homeOrganization: { select: { organizationCode: true } },
       },
     });
 
@@ -1037,7 +1037,7 @@ async function printSummary(): Promise<void> {
     console.log("─".repeat(50));
     for (const p of profiles) {
       const status = p.isLeadQualified ? "LEAD" : "CERT";
-      console.log(`  ${p.user.firstName} ${p.user.lastName} (${p.homeOrganization.icaoCode}) - ${status}`);
+      console.log(`  ${p.user.firstName} ${p.user.lastName} (${p.homeOrganization.organizationCode}) - ${status}`);
     }
   }
 

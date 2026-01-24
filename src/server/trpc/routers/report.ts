@@ -532,7 +532,7 @@ export const reportRouter = router({
         where: { id: input.reviewId },
         include: {
           hostOrganization: {
-            select: { nameEn: true, nameFr: true, icaoCode: true },
+            select: { nameEn: true, nameFr: true, organizationCode: true },
           },
         },
       });
@@ -555,8 +555,8 @@ export const reportRouter = router({
 
       // Generate title
       const year = new Date().getFullYear();
-      const titleEn = `Peer Review Report - ${review.hostOrganization.nameEn} (${review.hostOrganization.icaoCode}) - ${year}`;
-      const titleFr = `Rapport de Revue par les Pairs - ${review.hostOrganization.nameFr} (${review.hostOrganization.icaoCode}) - ${year}`;
+      const titleEn = `Peer Review Report - ${review.hostOrganization.nameEn} (${review.hostOrganization.organizationCode}) - ${year}`;
+      const titleFr = `Rapport de Revue par les Pairs - ${review.hostOrganization.nameFr} (${review.hostOrganization.organizationCode}) - ${year}`;
 
       // Get assessment scores
       const ansAssessment = await ctx.db.assessment.findFirst({
@@ -649,7 +649,7 @@ export const reportRouter = router({
               id: true,
               nameEn: true,
               nameFr: true,
-              icaoCode: true,
+              organizationCode: true,
               country: true,
             },
           },
@@ -1029,7 +1029,7 @@ export const reportRouter = router({
           review: {
             include: {
               hostOrganization: {
-                select: { nameEn: true, nameFr: true, icaoCode: true },
+                select: { nameEn: true, nameFr: true, organizationCode: true },
               },
             },
           },

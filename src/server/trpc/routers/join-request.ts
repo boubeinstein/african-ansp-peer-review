@@ -37,7 +37,7 @@ const createProgrammeJoinSchema = z.object({
   // Organization details (free-text entry for new organizations)
   organizationName: z.string().min(2, "Organization name is required"),
   organizationCountry: z.string().min(2, "Country is required"),
-  organizationIcaoCode: z.string().optional(),
+  organizationCode: z.string().optional(),
   // Contact details
   contactName: z.string().min(2, "Name must be at least 2 characters"),
   contactEmail: z.string().email("Invalid email address"),
@@ -244,7 +244,7 @@ export const joinRequestRouter = router({
             // Free-text organization details
             organizationName: input.organizationName,
             organizationCountry: input.organizationCountry,
-            organizationIcaoCode: input.organizationIcaoCode,
+            organizationCode: input.organizationCode,
             // Contact details
             contactName: input.contactName,
             contactEmail: input.contactEmail,
@@ -342,7 +342,7 @@ export const joinRequestRouter = router({
               id: true,
               nameEn: true,
               nameFr: true,
-              icaoCode: true,
+              organizationCode: true,
               country: true,
             },
           },
@@ -570,7 +570,7 @@ export const joinRequestRouter = router({
               nameFr: updated.organizationName, // Use same name for now
               country: updated.organizationCountry || "Unknown",
               region,
-              icaoCode: updated.organizationIcaoCode,
+              organizationCode: updated.organizationCode,
               participationStatus: ParticipationStatus.ACTIVE,
               peerReviewTeam: input.scAssignedTeam,
               joinedProgrammeAt: new Date(),
@@ -724,7 +724,7 @@ export const joinRequestRouter = router({
         id: true,
         nameEn: true,
         nameFr: true,
-        icaoCode: true,
+        organizationCode: true,
         country: true,
         participationStatus: true,
       },
@@ -749,7 +749,7 @@ export const joinRequestRouter = router({
         id: true,
         nameEn: true,
         nameFr: true,
-        icaoCode: true,
+        organizationCode: true,
         country: true,
         regionalTeam: {
           select: {
@@ -780,7 +780,7 @@ export const joinRequestRouter = router({
         id: true,
         nameEn: true,
         nameFr: true,
-        icaoCode: true,
+        organizationCode: true,
         country: true,
       },
       orderBy: { nameEn: "asc" },

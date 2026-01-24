@@ -16,7 +16,7 @@ The Reviewer Profile Module manages peer reviewers for the African ANSP Peer Rev
 │  ─────────────── │     │ ──────────────────── │
 │  id              │◄────│ id                   │
 │  email           │     │ nameEn / nameFr      │
-│  firstName       │     │ icaoCode             │
+│  firstName       │     │ organizationCode             │
 │  lastName        │     │ country              │
 │  role            │     │ region               │
 └────────┬─────────┘     └──────────┬───────────┘

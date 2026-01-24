@@ -88,8 +88,8 @@ export function OrganizationCard({
   const locale = useLocale() as "en" | "fr";
 
   // Generate initials from ICAO code or name
-  const initials = organization.icaoCode
-    ? organization.icaoCode.slice(0, 2)
+  const initials = organization.organizationCode
+    ? organization.organizationCode.slice(0, 2)
     : organization.nameEn
         .split(" ")
         .map((n) => n[0])
@@ -125,12 +125,12 @@ export function OrganizationCard({
             <h3 className="font-semibold truncate group-hover:text-primary transition-colors">
               {orgName}
             </h3>
-            {organization.icaoCode && (
+            {organization.organizationCode && (
               <Badge
                 variant="secondary"
                 className="text-xs font-mono mt-1 px-2"
               >
-                {organization.icaoCode}
+                {organization.organizationCode}
               </Badge>
             )}
           </div>

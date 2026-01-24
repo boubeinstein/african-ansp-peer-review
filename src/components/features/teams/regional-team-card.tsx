@@ -32,7 +32,7 @@ interface OrganizationSummary {
   id: string;
   nameEn: string;
   nameFr: string;
-  icaoCode: string | null;
+  organizationCode: string | null;
   country: string;
 }
 
@@ -188,9 +188,9 @@ export function RegionalTeamCard({ team, locale, className }: RegionalTeamCardPr
               {isFrench ? "Organisation Leader" : "Lead Organization"}
             </p>
             <p className="text-sm font-medium truncate">{leadOrgName}</p>
-            {team.leadOrganization.icaoCode && (
+            {team.leadOrganization.organizationCode && (
               <p className="text-xs text-muted-foreground">
-                {team.leadOrganization.icaoCode} - {team.leadOrganization.country}
+                {team.leadOrganization.organizationCode} - {team.leadOrganization.country}
               </p>
             )}
           </div>
@@ -221,7 +221,7 @@ export function RegionalTeamCard({ team, locale, className }: RegionalTeamCardPr
                   title={memberName}
                 >
                   <AvatarFallback className={cn("text-xs text-white", getAvatarColor(member.id))}>
-                    {member.icaoCode?.substring(0, 2) || getInitials(memberName)}
+                    {member.organizationCode?.substring(0, 2) || getInitials(memberName)}
                   </AvatarFallback>
                 </Avatar>
               );
@@ -238,7 +238,7 @@ export function RegionalTeamCard({ team, locale, className }: RegionalTeamCardPr
         <div className="text-xs text-muted-foreground space-y-0.5">
           {team.memberOrganizations.slice(0, 3).map((member) => (
             <div key={member.id} className="truncate">
-              {member.icaoCode && <span className="font-mono mr-1">{member.icaoCode}</span>}
+              {member.organizationCode && <span className="font-mono mr-1">{member.organizationCode}</span>}
               {isFrench ? member.nameFr : member.nameEn}
             </div>
           ))}

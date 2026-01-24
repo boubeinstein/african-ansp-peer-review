@@ -564,7 +564,7 @@ export async function executeTransition(
         select: {
           id: true,
           nameEn: true,
-          icaoCode: true,
+          organizationCode: true,
         },
       },
       teamMembers: {

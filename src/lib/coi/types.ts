@@ -210,7 +210,7 @@ export interface ReviewerCOIWithRelations extends PrismaReviewerCOI {
     id: string;
     nameEn: string;
     nameFr: string;
-    icaoCode: string | null;
+    organizationCode: string | null;
   };
   createdBy?: {
     id: string;
@@ -241,7 +241,7 @@ export interface COIOverrideWithRelations extends PrismaCOIOverride {
     id: string;
     nameEn: string;
     nameFr: string;
-    icaoCode: string | null;
+    organizationCode: string | null;
   };
   approvedBy?: {
     id: string;

@@ -57,14 +57,14 @@ export type ReviewerCOI = PrismaReviewerCOI;
  */
 export interface ReviewerProfileFull extends PrismaReviewerProfile {
   user: Pick<User, "id" | "firstName" | "lastName" | "email">;
-  homeOrganization: Pick<Organization, "id" | "nameEn" | "nameFr" | "icaoCode" | "country">;
+  homeOrganization: Pick<Organization, "id" | "nameEn" | "nameFr" | "organizationCode" | "country">;
   expertiseRecords: PrismaReviewerExpertise[];
   languages: PrismaReviewerLanguage[];
   certifications: PrismaReviewerCertification[];
   trainingRecords: PrismaReviewerTraining[];
   availabilityPeriods: PrismaReviewerAvailability[];
   conflictsOfInterest: (PrismaReviewerCOI & {
-    organization: Pick<Organization, "id" | "nameEn" | "nameFr" | "icaoCode">;
+    organization: Pick<Organization, "id" | "nameEn" | "nameFr" | "organizationCode">;
   })[];
 }
 
@@ -82,7 +82,7 @@ export interface ReviewerListItem {
     id: string;
     nameEn: string;
     nameFr: string;
-    icaoCode: string | null;
+    organizationCode: string | null;
     country: string;
   };
   reviewerType: PrismaReviewerProfile["reviewerType"];

@@ -55,7 +55,7 @@ interface UserFormModalProps {
       id: string;
       nameEn: string;
       nameFr: string | null;
-      icaoCode: string | null;
+      organizationCode: string | null;
     } | null;
   } | null;
   onSuccess?: () => void;
@@ -320,7 +320,7 @@ export function UserFormModal({
                       </SelectItem>
                       {orgsData?.map((org) => (
                         <SelectItem key={org.id} value={org.id}>
-                          {org.icaoCode ? `${org.icaoCode} - ` : ""}{org.nameEn}
+                          {org.organizationCode ? `${org.organizationCode} - ` : ""}{org.nameEn}
                         </SelectItem>
                       ))}
                     </SelectContent>

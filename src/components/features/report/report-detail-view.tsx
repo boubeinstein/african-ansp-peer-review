@@ -95,7 +95,7 @@ interface ReviewData {
     id: string;
     nameEn: string;
     nameFr: string;
-    icaoCode: string | null;
+    organizationCode: string | null;
     country: string;
   };
 }

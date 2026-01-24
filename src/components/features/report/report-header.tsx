@@ -65,7 +65,7 @@ interface ReviewData {
     id: string;
     nameEn: string;
     nameFr: string;
-    icaoCode: string | null;
+    organizationCode: string | null;
     country: string;
   };
 }
@@ -210,9 +210,9 @@ export function ReportHeader({
                     {t("hostOrganization")}
                   </p>
                   <p className="font-medium text-sm">{orgName}</p>
-                  {review.hostOrganization.icaoCode && (
+                  {review.hostOrganization.organizationCode && (
                     <p className="text-xs text-muted-foreground">
-                      {review.hostOrganization.icaoCode}
+                      {review.hostOrganization.organizationCode}
                     </p>
                   )}
                 </div>

@@ -59,7 +59,7 @@ interface CAPCardProps {
         id: string;
         nameEn: string;
         nameFr: string;
-        icaoCode: string;
+        organizationCode: string;
       };
     };
     assignedTo?: {

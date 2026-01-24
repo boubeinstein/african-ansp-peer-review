@@ -358,10 +358,10 @@ export function ReviewDetailView({
             <div className="space-y-2">
               <p className="font-semibold text-lg">{orgName}</p>
               <div className="flex items-center gap-2 text-muted-foreground">
-                {review.hostOrganization.icaoCode && (
+                {review.hostOrganization.organizationCode && (
                   <>
                     <Badge variant="outline">
-                      {review.hostOrganization.icaoCode}
+                      {review.hostOrganization.organizationCode}
                     </Badge>
                     <span>•</span>
                   </>

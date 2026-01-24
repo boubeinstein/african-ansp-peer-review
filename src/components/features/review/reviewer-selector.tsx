@@ -116,7 +116,7 @@ interface EligibleReviewer {
     id: string;
     nameEn: string;
     nameFr: string | null;
-    icaoCode: string | null;
+    organizationCode: string | null;
     country: string | null;
   } | null;
   expertiseAreas: ExpertiseArea[];
@@ -555,12 +555,12 @@ export function ReviewerSelector({
                                     ? reviewer.organization.nameFr
                                     : reviewer.organization.nameEn}
                                 </span>
-                                {reviewer.organization.icaoCode && (
+                                {reviewer.organization.organizationCode && (
                                   <Badge
                                     variant="outline"
                                     className="text-xs ml-1"
                                   >
-                                    {reviewer.organization.icaoCode}
+                                    {reviewer.organization.organizationCode}
                                   </Badge>
                                 )}
                               </div>

@@ -82,7 +82,7 @@ interface FindingInfo {
       id: string;
       nameEn: string;
       nameFr: string;
-      icaoCode: string | null;
+      organizationCode: string | null;
     };
     teamMembers?: Array<{ userId: string }>;
   };
@@ -90,7 +90,7 @@ interface FindingInfo {
     id: string;
     nameEn: string;
     nameFr: string;
-    icaoCode: string | null;
+    organizationCode: string | null;
   };
   question?: {
     id: string;
@@ -536,7 +536,7 @@ export function CAPDetailView({ cap, userRole, onStatusChange }: CAPDetailViewPr
             />
             <InfoRow
               label="ICAO Code"
-              value={cap.finding.organization.icaoCode}
+              value={cap.finding.organization.organizationCode}
             />
             <InfoRow
               label={tFinding("form.review") || "Review"}

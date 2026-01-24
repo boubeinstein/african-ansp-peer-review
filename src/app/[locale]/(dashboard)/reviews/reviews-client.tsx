@@ -163,7 +163,7 @@ export function ReviewsPageClient({
       return (
         review.referenceNumber.toLowerCase().includes(query) ||
         review.hostOrganization.nameEn.toLowerCase().includes(query) ||
-        (review.hostOrganization.icaoCode?.toLowerCase().includes(query) ?? false)
+        (review.hostOrganization.organizationCode?.toLowerCase().includes(query) ?? false)
       );
     }) || [];
 
@@ -451,7 +451,7 @@ interface ReviewCardProps {
       id: string;
       nameEn: string;
       nameFr: string;
-      icaoCode: string | null;
+      organizationCode: string | null;
       country: string | null;
     };
     plannedStartDate: Date | null;
@@ -529,7 +529,7 @@ function ReviewCard({
                 {review.hostOrganization.nameEn}
               </h3>
               <p className="text-sm text-muted-foreground">
-                {review.hostOrganization.icaoCode} •{" "}
+                {review.hostOrganization.organizationCode} •{" "}
                 {review.hostOrganization.country}
               </p>
             </div>
@@ -600,7 +600,7 @@ function ReviewCard({
               {review.hostOrganization.nameEn}
             </CardTitle>
             <CardDescription>
-              {review.hostOrganization.icaoCode} •{" "}
+              {review.hostOrganization.organizationCode} •{" "}
               {review.hostOrganization.country}
             </CardDescription>
           </div>

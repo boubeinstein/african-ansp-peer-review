@@ -130,9 +130,9 @@ export default function AssessmentDetailPage({ params }: PageProps) {
           </CardHeader>
           <CardContent>
             <p className="font-medium">{orgName}</p>
-            {assessment.organization.icaoCode && (
+            {assessment.organization.organizationCode && (
               <p className="text-sm text-muted-foreground">
-                ICAO: {assessment.organization.icaoCode}
+                ICAO: {assessment.organization.organizationCode}
               </p>
             )}
           </CardContent>

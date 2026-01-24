@@ -166,7 +166,7 @@ interface OrganizationsTableProps {
   organizations: Array<{
     id: string;
     name: string;
-    icaoCode: string | null;
+    organizationCode: string | null;
     country: string;
     isLead: boolean;
     reviewerCount: number;
@@ -217,9 +217,9 @@ function OrganizationsTable({ organizations, locale }: OrganizationsTableProps) 
                       )}
                       <div>
                         <p className="font-medium">{org.name}</p>
-                        {org.icaoCode && (
+                        {org.organizationCode && (
                           <p className="text-xs text-muted-foreground">
-                            {org.icaoCode}
+                            {org.organizationCode}
                           </p>
                         )}
                       </div>

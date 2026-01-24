@@ -43,7 +43,7 @@ import type { OrganizationListItem } from "@/types/organization";
 export type OrganizationSortField =
   | "nameEn"
   | "nameFr"
-  | "icaoCode"
+  | "organizationCode"
   | "country"
   | "region"
   | "membershipStatus"
@@ -179,12 +179,12 @@ export function OrganizationTable({
             {/* ICAO Code */}
             <TableHead className="w-[100px]">
               <SortableHeader
-                field="icaoCode"
+                field="organizationCode"
                 currentSort={sortBy}
                 currentOrder={sortOrder}
                 onSort={onSort}
               >
-                {t("table.icaoCode")}
+                {t("table.organizationCode")}
               </SortableHeader>
             </TableHead>
 
@@ -244,8 +244,8 @@ export function OrganizationTable({
         <TableBody>
           {organizations.map((organization) => {
             // Generate initials from ICAO code or name
-            const initials = organization.icaoCode
-              ? organization.icaoCode.slice(0, 2)
+            const initials = organization.organizationCode
+              ? organization.organizationCode.slice(0, 2)
               : organization.nameEn
                   .split(" ")
                   .map((n) => n[0])
@@ -299,12 +299,12 @@ export function OrganizationTable({
 
                 {/* ICAO Code */}
                 <TableCell>
-                  {organization.icaoCode ? (
+                  {organization.organizationCode ? (
                     <Badge
                       variant="secondary"
                       className="font-mono text-xs px-2"
                     >
-                      {organization.icaoCode}
+                      {organization.organizationCode}
                     </Badge>
                   ) : (
                     <span className="text-muted-foreground">-</span>

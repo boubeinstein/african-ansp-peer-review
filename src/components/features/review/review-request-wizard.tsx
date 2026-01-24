@@ -952,7 +952,7 @@ interface ReviewSummaryStepProps {
     id: string;
     nameEn: string;
     nameFr: string;
-    icaoCode: string | null;
+    organizationCode: string | null;
   } | null | undefined;
   assessments: SubmittedAssessment[];
 }
@@ -1018,8 +1018,8 @@ function ReviewSummaryStep({ form, organization, assessments }: ReviewSummarySte
         <div className="flex items-center gap-2">
           <Building2 className="h-5 w-5 text-muted-foreground" />
           <span className="font-medium">{organization?.nameEn}</span>
-          {organization?.icaoCode && (
-            <Badge variant="secondary">{organization.icaoCode}</Badge>
+          {organization?.organizationCode && (
+            <Badge variant="secondary">{organization.organizationCode}</Badge>
           )}
         </div>
       </div>
@@ -1406,7 +1406,7 @@ export function ReviewRequestWizard(props: ReviewRequestWizardProps) {
           <Badge variant="secondary" className="mt-2">
             <Building2 className="mr-1 h-3 w-3" />
             {organization.nameEn}
-            {organization.icaoCode && ` (${organization.icaoCode})`}
+            {organization.organizationCode && ` (${organization.organizationCode})`}
           </Badge>
         )}
       </div>

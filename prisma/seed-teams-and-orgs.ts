@@ -24,7 +24,7 @@ const prisma = new PrismaClient({ adapter });
 
 interface OrgData {
   code: string;
-  icaoCode: string;
+  organizationCode: string;
   nameEn: string;
   nameFr: string;
   country: string;
@@ -44,10 +44,10 @@ interface TeamData {
 const ORGANIZATIONS: OrgData[] = [
   // Team 1: ASECNA & Southern Africa Partnership (4)
   {
-    code: "ASEC",
-    icaoCode: "ASEC",
-    nameEn: "ASECNA - Agency for Aerial Navigation Safety in Africa",
-    nameFr: "ASECNA - Agence pour la Sécurité de la Navigation Aérienne en Afrique",
+    code: "ASECNA",
+    organizationCode: "ASECNA",
+    nameEn: "Agency for Aerial Navigation Safety in Africa and Madagascar",
+    nameFr: "Agence pour la Sécurité de la Navigation Aérienne en Afrique et à Madagascar",
     country: "Senegal (HQ)",
     region: "WACAF",
     teamNumber: 1,
@@ -55,9 +55,9 @@ const ORGANIZATIONS: OrgData[] = [
   },
   {
     code: "ATNS",
-    icaoCode: "ATNS",
-    nameEn: "Air Traffic and Navigation Services (South Africa)",
-    nameFr: "Services de la circulation aérienne et de la navigation (Afrique du Sud)",
+    organizationCode: "ATNS",
+    nameEn: "Air Traffic and Navigation Services",
+    nameFr: "Services de la Circulation Aérienne et de la Navigation",
     country: "South Africa",
     region: "ESAF",
     teamNumber: 1,
@@ -65,7 +65,7 @@ const ORGANIZATIONS: OrgData[] = [
   },
   {
     code: "CAAB",
-    icaoCode: "FBSK",
+    organizationCode: "CAAB",
     nameEn: "Civil Aviation Authority of Botswana",
     nameFr: "Autorité de l'Aviation Civile du Botswana",
     country: "Botswana",
@@ -75,7 +75,7 @@ const ORGANIZATIONS: OrgData[] = [
   },
   {
     code: "ESWACAA",
-    icaoCode: "FDMS",
+    organizationCode: "ESWACAA",
     nameEn: "Eswatini Civil Aviation Authority",
     nameFr: "Autorité de l'Aviation Civile d'Eswatini",
     country: "Eswatini",
@@ -87,7 +87,7 @@ const ORGANIZATIONS: OrgData[] = [
   // Team 2: East African Community (5)
   {
     code: "KCAA",
-    icaoCode: "HKJK",
+    organizationCode: "KCAA",
     nameEn: "Kenya Civil Aviation Authority",
     nameFr: "Autorité de l'Aviation Civile du Kenya",
     country: "Kenya",
@@ -97,7 +97,7 @@ const ORGANIZATIONS: OrgData[] = [
   },
   {
     code: "TCAA",
-    icaoCode: "HTDA",
+    organizationCode: "TCAA",
     nameEn: "Tanzania Civil Aviation Authority",
     nameFr: "Autorité de l'Aviation Civile de Tanzanie",
     country: "Tanzania",
@@ -107,7 +107,7 @@ const ORGANIZATIONS: OrgData[] = [
   },
   {
     code: "UCAA",
-    icaoCode: "HUEN",
+    organizationCode: "UCAA",
     nameEn: "Uganda Civil Aviation Authority",
     nameFr: "Autorité de l'Aviation Civile de l'Ouganda",
     country: "Uganda",
@@ -117,7 +117,7 @@ const ORGANIZATIONS: OrgData[] = [
   },
   {
     code: "RCAA",
-    icaoCode: "HRYR",
+    organizationCode: "RCAA",
     nameEn: "Rwanda Civil Aviation Authority",
     nameFr: "Autorité de l'Aviation Civile du Rwanda",
     country: "Rwanda",
@@ -127,7 +127,7 @@ const ORGANIZATIONS: OrgData[] = [
   },
   {
     code: "BCAA",
-    icaoCode: "HBBA",
+    organizationCode: "BCAA",
     nameEn: "Burundi Civil Aviation Authority",
     nameFr: "Autorité de l'Aviation Civile du Burundi",
     country: "Burundi",
@@ -139,9 +139,9 @@ const ORGANIZATIONS: OrgData[] = [
   // Team 3: West African Anglophone (3)
   {
     code: "NAMA",
-    icaoCode: "DNAA",
+    organizationCode: "NAMA",
     nameEn: "Nigerian Airspace Management Agency",
-    nameFr: "Agence de Gestion de l'Espace Aérien du Nigeria",
+    nameFr: "Agence de Gestion de l'Espace Aérien du Nigéria",
     country: "Nigeria",
     region: "WACAF",
     teamNumber: 3,
@@ -149,7 +149,7 @@ const ORGANIZATIONS: OrgData[] = [
   },
   {
     code: "GCAA",
-    icaoCode: "DGAA",
+    organizationCode: "GCAA",
     nameEn: "Ghana Civil Aviation Authority",
     nameFr: "Autorité de l'Aviation Civile du Ghana",
     country: "Ghana",
@@ -159,7 +159,7 @@ const ORGANIZATIONS: OrgData[] = [
   },
   {
     code: "RFIR",
-    icaoCode: "GLRB",
+    organizationCode: "RFIR",
     nameEn: "Roberts Flight Information Region",
     nameFr: "Région d'Information de Vol Roberts",
     country: "Liberia",
@@ -171,7 +171,7 @@ const ORGANIZATIONS: OrgData[] = [
   // Team 4: Southern & Eastern Africa (5)
   {
     code: "ADM",
-    icaoCode: "FQMA",
+    organizationCode: "ADM",
     nameEn: "Aeroportos de Moçambique",
     nameFr: "Aéroports du Mozambique",
     country: "Mozambique",
@@ -180,20 +180,20 @@ const ORGANIZATIONS: OrgData[] = [
     isTeamLead: true,
   },
   {
-    code: "DCA-MW",
-    icaoCode: "FWKI",
-    nameEn: "Department of Civil Aviation Malawi",
-    nameFr: "Département de l'Aviation Civile du Malawi",
+    code: "MCAA",
+    organizationCode: "MCAA",
+    nameEn: "Malawi Civil Aviation Authority",
+    nameFr: "Autorité de l'Aviation Civile du Malawi",
     country: "Malawi",
     region: "ESAF",
     teamNumber: 4,
     isTeamLead: false,
   },
   {
-    code: "ADEMA",
-    icaoCode: "FMMI",
-    nameEn: "ADEMA - Aéroports de Madagascar",
-    nameFr: "ADEMA - Aéroports de Madagascar",
+    code: "ACM",
+    organizationCode: "ACM",
+    nameEn: "Aviation Civile de Madagascar",
+    nameFr: "Aviation Civile de Madagascar",
     country: "Madagascar",
     region: "ESAF",
     teamNumber: 4,
@@ -201,7 +201,7 @@ const ORGANIZATIONS: OrgData[] = [
   },
   {
     code: "CAAZ",
-    icaoCode: "FVHA",
+    organizationCode: "CAAZ",
     nameEn: "Civil Aviation Authority of Zimbabwe",
     nameFr: "Autorité de l'Aviation Civile du Zimbabwe",
     country: "Zimbabwe",
@@ -211,7 +211,7 @@ const ORGANIZATIONS: OrgData[] = [
   },
   {
     code: "ZACL",
-    icaoCode: "FLKK",
+    organizationCode: "ZACL",
     nameEn: "Zambia Airports Corporation Limited",
     nameFr: "Société des Aéroports de Zambie",
     country: "Zambia",
@@ -222,10 +222,10 @@ const ORGANIZATIONS: OrgData[] = [
 
   // Team 5: Northern Africa (3)
   {
-    code: "ONDA",
-    icaoCode: "GMMN",
-    nameEn: "ONDA - Office National Des Aéroports (Morocco)",
-    nameFr: "ONDA - Office National Des Aéroports (Maroc)",
+    code: "DGAC",
+    organizationCode: "DGAC",
+    nameEn: "Directorate General of Civil Aviation",
+    nameFr: "Direction Générale de l'Aviation Civile",
     country: "Morocco",
     region: "NORTHERN",
     teamNumber: 5,
@@ -233,19 +233,19 @@ const ORGANIZATIONS: OrgData[] = [
   },
   {
     code: "OACA",
-    icaoCode: "DTTA",
-    nameEn: "OACA - Office de l'Aviation Civile et des Aéroports (Tunisia)",
-    nameFr: "OACA - Office de l'Aviation Civile et des Aéroports (Tunisie)",
+    organizationCode: "OACA",
+    nameEn: "Office of Civil Aviation and Airports",
+    nameFr: "Office de l'aviation civile et des aéroports",
     country: "Tunisia",
     region: "NORTHERN",
     teamNumber: 5,
     isTeamLead: false,
   },
   {
-    code: "ENNA",
-    icaoCode: "DAAG",
-    nameEn: "ENNA - Etablissement National de la Navigation Aérienne (Algeria)",
-    nameFr: "ENNA - Etablissement National de la Navigation Aérienne (Algérie)",
+    code: "ANAC",
+    organizationCode: "ANAC",
+    nameEn: "National Civil Aviation Agency",
+    nameFr: "Agence Nationale de l'Aviation Civile",
     country: "Algeria",
     region: "NORTHERN",
     teamNumber: 5,
@@ -259,7 +259,7 @@ const TEAMS: TeamData[] = [
     code: "TEAM-1",
     nameEn: "Team 1 - ASECNA & Southern Africa Partnership",
     nameFr: "Équipe 1 - Partenariat ASECNA & Afrique Australe",
-    leadCode: "ASEC",
+    leadCode: "ASECNA",
   },
   {
     teamNumber: 2,
@@ -287,7 +287,7 @@ const TEAMS: TeamData[] = [
     code: "TEAM-5",
     nameEn: "Team 5 - Northern Africa",
     nameFr: "Équipe 5 - Afrique du Nord",
-    leadCode: "ONDA",
+    leadCode: "DGAC",
   },
 ];
 
@@ -300,11 +300,11 @@ async function seedOrganizations(): Promise<Map<string, string>> {
   const orgIdMap = new Map<string, string>();
 
   for (const org of ORGANIZATIONS) {
-    // Find existing org by code or icaoCode
+    // Find existing org by code or organizationCode
     const existing = await prisma.organization.findFirst({
       where: {
         OR: [
-          { icaoCode: org.icaoCode },
+          { organizationCode: org.organizationCode },
         ],
       },
     });
@@ -315,7 +315,7 @@ async function seedOrganizations(): Promise<Map<string, string>> {
       created = await prisma.organization.update({
         where: { id: existing.id },
         data: {
-          icaoCode: org.icaoCode,
+          organizationCode: org.organizationCode,
           nameEn: org.nameEn,
           nameFr: org.nameFr,
           country: org.country,
@@ -327,7 +327,7 @@ async function seedOrganizations(): Promise<Map<string, string>> {
       // Create new
       created = await prisma.organization.create({
         data: {
-          icaoCode: org.icaoCode,
+          organizationCode: org.organizationCode,
           nameEn: org.nameEn,
           nameFr: org.nameFr,
           country: org.country,
@@ -419,10 +419,10 @@ async function printSummary(): Promise<void> {
   const teams = await prisma.regionalTeam.findMany({
     include: {
       leadOrganization: {
-        select: { id: true, icaoCode: true, nameEn: true }
+        select: { id: true, organizationCode: true, nameEn: true }
       },
       memberOrganizations: {
-        select: { id: true, icaoCode: true }
+        select: { id: true, organizationCode: true }
       },
     },
     orderBy: { teamNumber: "asc" },
@@ -433,10 +433,10 @@ async function printSummary(): Promise<void> {
   console.log("├──────┼──────────────────────────────────────┼──────┼───────────────────────────┤");
 
   for (const team of teams) {
-    const leadCode = team.leadOrganization?.icaoCode || "N/A";
+    const leadCode = team.leadOrganization?.organizationCode || "N/A";
     const members = team.memberOrganizations
-      .filter((m) => m.icaoCode !== team.leadOrganization?.icaoCode)
-      .map((m) => m.icaoCode)
+      .filter((m) => m.organizationCode !== team.leadOrganization?.organizationCode)
+      .map((m) => m.organizationCode)
       .join(", ");
     const name = team.nameEn.replace("Team " + team.teamNumber + " - ", "");
     console.log(

@@ -148,8 +148,8 @@ export function RequestAccessForm() {
                 <SelectItem key={org.id} value={org.id}>
                   <div className="flex items-center gap-2">
                     <span>{locale === "fr" ? org.nameFr : org.nameEn}</span>
-                    {org.icaoCode && (
-                      <span className="text-xs text-muted-foreground">({org.icaoCode})</span>
+                    {org.organizationCode && (
+                      <span className="text-xs text-muted-foreground">({org.organizationCode})</span>
                     )}
                   </div>
                 </SelectItem>

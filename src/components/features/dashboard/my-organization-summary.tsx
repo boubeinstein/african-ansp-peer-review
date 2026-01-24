@@ -45,7 +45,7 @@ interface MyOrganizationSummaryProps {
     id: string;
     nameEn: string;
     nameFr?: string | null;
-    icaoCode: string | null;
+    organizationCode: string | null;
   };
   stats: {
     assessments: {
@@ -330,7 +330,7 @@ export function MyOrganizationSummary({
               {t("myOrganization")}
             </CardTitle>
             <CardDescription>
-              {orgName}{organization.icaoCode ? ` (${organization.icaoCode})` : ""}
+              {orgName}{organization.organizationCode ? ` (${organization.organizationCode})` : ""}
             </CardDescription>
           </div>
           <Button variant="outline" size="sm" asChild>

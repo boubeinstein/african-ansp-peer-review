@@ -234,7 +234,7 @@ export function JoinRequestList({ userRole, userId }: JoinRequestListProps) {
                         {getOrgName(request.organization, request)}
                       </div>
                       <div className="text-sm text-slate-500">
-                        {request.organization?.icaoCode || request.organizationIcaoCode || "N/A"} •{" "}
+                        {request.organization?.organizationCode || request.organizationCode || "N/A"} •{" "}
                         {request.organization?.country || request.organizationCountry || "N/A"}
                       </div>
                     </TableCell>

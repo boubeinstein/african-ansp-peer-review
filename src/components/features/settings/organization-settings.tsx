@@ -115,9 +115,9 @@ export function OrganizationSettings({}: OrganizationSettingsProps) {
             </div>
             <div>
               <h3 className="text-xl font-semibold">{name}</h3>
-              {organization.icaoCode && (
+              {organization.organizationCode && (
                 <Badge variant="outline" className="mt-1 font-mono">
-                  {organization.icaoCode}
+                  {organization.organizationCode}
                 </Badge>
               )}
             </div>

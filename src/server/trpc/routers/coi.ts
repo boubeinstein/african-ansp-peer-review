@@ -167,7 +167,7 @@ export const coiRouter = router({
               id: true,
               nameEn: true,
               nameFr: true,
-              icaoCode: true,
+              organizationCode: true,
             },
           },
           createdBy: {
@@ -271,7 +271,7 @@ export const coiRouter = router({
               id: true,
               nameEn: true,
               nameFr: true,
-              icaoCode: true,
+              organizationCode: true,
             },
           },
           createdBy: {

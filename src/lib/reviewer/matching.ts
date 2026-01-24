@@ -271,8 +271,8 @@ export function calculateMatchScore(
 
   // Get display name and organization
   const fullName = `${reviewer.user.firstName} ${reviewer.user.lastName}`;
-  const organization = reviewer.homeOrganization.icaoCode
-    ? `${reviewer.homeOrganization.nameEn} (${reviewer.homeOrganization.icaoCode})`
+  const organization = reviewer.homeOrganization.organizationCode
+    ? `${reviewer.homeOrganization.nameEn} (${reviewer.homeOrganization.organizationCode})`
     : reviewer.homeOrganization.nameEn;
 
   return {

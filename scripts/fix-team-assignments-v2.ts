@@ -18,11 +18,11 @@ const prisma = new PrismaClient({ adapter });
 interface TeamDefinition {
   teamNumber: number;
   nameEn: string;
-  // Match by nameEn CONTAINS or code/icaoCode EQUALS
+  // Match by nameEn CONTAINS or code/organizationCode EQUALS
   members: {
     nameContains?: string;
     codeEquals?: string;
-    icaoCodeEquals?: string;
+    organizationCodeEquals?: string;
   }[];
 }
 
@@ -138,10 +138,10 @@ async function fixTeamAssignments() {
         });
       }
       if (member.codeEquals) {
-        whereConditions.push({ icaoCode: member.codeEquals });
+        whereConditions.push({ organizationCode: member.codeEquals });
       }
-      if (member.icaoCodeEquals) {
-        whereConditions.push({ icaoCode: member.icaoCodeEquals });
+      if (member.organizationCodeEquals) {
+        whereConditions.push({ organizationCode: member.organizationCodeEquals });
       }
 
       if (whereConditions.length === 0) continue;
@@ -161,7 +161,7 @@ async function fixTeamAssignments() {
         });
 
         results.push({ team: teamDef.teamNumber, org: org.nameEn });
-        console.log(`  ✅ ${org.nameEn} (${org.icaoCode || "no code"})`);
+        console.log(`  ✅ ${org.nameEn} (${org.organizationCode || "no code"})`);
       }
     }
   }
@@ -183,7 +183,7 @@ async function fixTeamAssignments() {
   // Step 5: Show unassigned organizations
   const unassigned = await prisma.organization.findMany({
     where: { regionalTeamId: null },
-    select: { nameEn: true, icaoCode: true },
+    select: { nameEn: true, organizationCode: true },
   });
 
   console.log("\n" + "═".repeat(60));
@@ -191,7 +191,7 @@ async function fixTeamAssignments() {
   console.log("═".repeat(60));
   console.log("These organizations are not part of the 5 peer support teams:");
   unassigned.forEach((org) => {
-    console.log(`  - ${org.nameEn} (${org.icaoCode || "no code"})`);
+    console.log(`  - ${org.nameEn} (${org.organizationCode || "no code"})`);
   });
 
   console.log("\n✅ Team assignments corrected successfully!");

@@ -125,7 +125,7 @@ export function MatchingPageClient({ locale }: MatchingPageClientProps) {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `review-team-${selectedOrg?.icaoCode ?? "export"}-${new Date().toISOString().split("T")[0]}.csv`;
+    a.download = `review-team-${selectedOrg?.organizationCode ?? "export"}-${new Date().toISOString().split("T")[0]}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -178,7 +178,7 @@ export function MatchingPageClient({ locale }: MatchingPageClientProps) {
                     {organizations?.map((org) => (
                       <SelectItem key={org.id} value={org.id}>
                         {org.nameEn}
-                        {org.icaoCode && ` (${org.icaoCode})`}
+                        {org.organizationCode && ` (${org.organizationCode})`}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -231,7 +231,7 @@ export function MatchingPageClient({ locale }: MatchingPageClientProps) {
               <span>Reviewing:</span>
               <span className="font-medium text-foreground">
                 {selectedOrg.nameEn}
-                {selectedOrg.icaoCode && ` (${selectedOrg.icaoCode})`}
+                {selectedOrg.organizationCode && ` (${selectedOrg.organizationCode})`}
               </span>
             </div>
             <Button
@@ -263,7 +263,7 @@ export function MatchingPageClient({ locale }: MatchingPageClientProps) {
               targetOrganizationId={selectedOrgId}
               targetOrganizationName={
                 selectedOrg.nameEn +
-                (selectedOrg.icaoCode ? ` (${selectedOrg.icaoCode})` : "")
+                (selectedOrg.organizationCode ? ` (${selectedOrg.organizationCode})` : "")
               }
               availableReviewers={availableReviewers}
               onTeamSelected={handleTeamSelected}

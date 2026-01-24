@@ -209,9 +209,9 @@ export function ReviewTeamWizard({
                           <div>
                             <p className="text-sm text-muted-foreground">{t("hostOrganization")}</p>
                             <p className="font-medium">{getOrgName(review.hostOrganization)}</p>
-                            {review.hostOrganization?.icaoCode && (
+                            {review.hostOrganization?.organizationCode && (
                               <Badge variant="outline" className="mt-1">
-                                {review.hostOrganization.icaoCode}
+                                {review.hostOrganization.organizationCode}
                               </Badge>
                             )}
                           </div>

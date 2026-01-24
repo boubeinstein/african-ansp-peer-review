@@ -64,7 +64,7 @@ interface ReviewApprovalPanelProps {
   hostOrganization: {
     nameEn: string;
     nameFr?: string | null;
-    icaoCode?: string | null;
+    organizationCode?: string | null;
     country?: string | null;
   };
   requestedDate: Date;
@@ -172,9 +172,9 @@ export function ReviewApprovalPanel({
               <h3 className="font-semibold text-lg mt-1">
                 {hostOrganization.nameEn}
               </h3>
-              {hostOrganization.icaoCode && (
+              {hostOrganization.organizationCode && (
                 <p className="text-sm text-muted-foreground">
-                  {hostOrganization.icaoCode}
+                  {hostOrganization.organizationCode}
                   {hostOrganization.country && ` • ${hostOrganization.country}`}
                 </p>
               )}

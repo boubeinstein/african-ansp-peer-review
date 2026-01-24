@@ -119,7 +119,7 @@ function ParticipationScoreBadge({ score }: ScoreBadgeProps) {
 
 interface OrgListItemProps {
   name: string;
-  icaoCode: string | null;
+  organizationCode: string | null;
   isLead: boolean;
   reviewerCount: number;
   isCurrentOrg?: boolean;
@@ -127,7 +127,7 @@ interface OrgListItemProps {
 
 function OrgListItem({
   name,
-  icaoCode,
+  organizationCode,
   isLead,
   reviewerCount,
   isCurrentOrg,
@@ -149,8 +149,8 @@ function OrgListItem({
         )}
         <span className={cn("text-sm", isCurrentOrg && "font-medium")}>
           {name}
-          {icaoCode && (
-            <span className="text-muted-foreground ml-1">({icaoCode})</span>
+          {organizationCode && (
+            <span className="text-muted-foreground ml-1">({organizationCode})</span>
           )}
         </span>
         {isCurrentOrg && (
@@ -346,7 +346,7 @@ export function MyTeamWidget({ locale, className }: MyTeamWidgetProps) {
                 <OrgListItem
                   key={org.id}
                   name={org.name}
-                  icaoCode={org.icaoCode}
+                  organizationCode={org.organizationCode}
                   isLead={org.isLead}
                   reviewerCount={org.reviewerCount}
                 />

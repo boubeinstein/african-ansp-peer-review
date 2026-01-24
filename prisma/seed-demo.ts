@@ -89,7 +89,7 @@ function translateToFrench(text: string): string {
 interface AvailableOrg {
   id: string;
   nameEn: string;
-  icaoCode: string | null;
+  organizationCode: string | null;
 }
 
 interface AvailableReviewer {
@@ -554,7 +554,7 @@ async function getAvailableOrganizations(): Promise<AvailableOrg[]> {
     select: {
       id: true,
       nameEn: true,
-      icaoCode: true,
+      organizationCode: true,
     },
     orderBy: { nameEn: "asc" },
   });
@@ -601,7 +601,7 @@ async function seedReviews(): Promise<Map<string, string>> {
 
   console.log(`   Found ${availableOrgs.length} ANSP organization(s):`);
   availableOrgs.forEach((org) => {
-    console.log(`      - ${org.icaoCode || "N/A"}: ${org.nameEn}`);
+    console.log(`      - ${org.organizationCode || "N/A"}: ${org.nameEn}`);
   });
 
   // Get available reviewers
@@ -683,7 +683,7 @@ async function seedReviews(): Promise<Map<string, string>> {
       }
     }
 
-    console.log(`   ✓ ${reference} - ${hostOrg.icaoCode || hostOrg.nameEn} (${config.status})`);
+    console.log(`   ✓ ${reference} - ${hostOrg.organizationCode || hostOrg.nameEn} (${config.status})`);
   }
 
   return reviewMap;
@@ -1082,7 +1082,7 @@ async function debugExistingData() {
     select: {
       id: true,
       nameEn: true,
-      icaoCode: true,
+      organizationCode: true,
       region: true,
     },
     orderBy: { nameEn: "asc" },
@@ -1090,14 +1090,14 @@ async function debugExistingData() {
 
   console.log(`\n📋 Organizations (${orgs.length}):`);
   orgs.forEach((org) => {
-    console.log(`   ${(org.icaoCode || "N/A").padEnd(8)} - ${org.nameEn} (${org.region || "No region"})`);
+    console.log(`   ${(org.organizationCode || "N/A").padEnd(8)} - ${org.nameEn} (${org.region || "No region"})`);
   });
 
   // 2. List all users with roles
   const userCount = await prisma.user.count();
   const users = await prisma.user.findMany({
     include: {
-      organization: { select: { nameEn: true, icaoCode: true } },
+      organization: { select: { nameEn: true, organizationCode: true } },
       reviewerProfile: { select: { id: true, status: true } },
     },
     take: 20,
@@ -1107,7 +1107,7 @@ async function debugExistingData() {
   users.forEach((u) => {
     const hasProfile = u.reviewerProfile ? "✓ Reviewer" : "";
     const userName = u.firstName ? `${u.firstName} ${u.lastName || ""}`.trim() : u.email;
-    console.log(`   ${userName.padEnd(20)} - ${u.role.padEnd(15)} - ${u.organization?.icaoCode || "No org"} ${hasProfile}`);
+    console.log(`   ${userName.padEnd(20)} - ${u.role.padEnd(15)} - ${u.organization?.organizationCode || "No org"} ${hasProfile}`);
   });
 
   // 3. List questionnaires
@@ -1134,7 +1134,7 @@ async function debugExistingData() {
   // 5. Check existing reviews
   const existingReviews = await prisma.review.findMany({
     include: {
-      hostOrganization: { select: { nameEn: true, icaoCode: true } },
+      hostOrganization: { select: { nameEn: true, organizationCode: true } },
       _count: { select: { findings: true, teamMembers: true, assessments: true } },
     },
     orderBy: { createdAt: "desc" },
@@ -1147,7 +1147,7 @@ async function debugExistingData() {
   } else {
     existingReviews.forEach((r) => {
       const isDemo = r.referenceNumber.startsWith(DEMO_PREFIX) ? "🎭 " : "";
-      console.log(`   ${isDemo}${r.referenceNumber} - ${r.hostOrganization.icaoCode || r.hostOrganization.nameEn} - ${r.status}`);
+      console.log(`   ${isDemo}${r.referenceNumber} - ${r.hostOrganization.organizationCode || r.hostOrganization.nameEn} - ${r.status}`);
       console.log(`      Team: ${r._count.teamMembers}, Findings: ${r._count.findings}, Assessments: ${r._count.assessments}`);
     });
   }
@@ -1163,7 +1163,7 @@ async function debugExistingData() {
   // 7. Show available ANSPs for demo seeding (all orgs are ANSPs in this system)
   console.log(`\n🏢 Available ANSPs for Demo Seeding (${orgs.length}):`);
   orgs.forEach((org) => {
-    console.log(`   ${(org.icaoCode || "N/A").padEnd(8)} - ${org.nameEn}`);
+    console.log(`   ${(org.organizationCode || "N/A").padEnd(8)} - ${org.nameEn}`);
   });
 
   console.log("\n" + "═".repeat(55));

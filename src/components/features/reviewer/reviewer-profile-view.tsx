@@ -159,9 +159,9 @@ export function ReviewerProfileView({
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Building2 className="h-4 w-4" />
                   <span>{orgName}</span>
-                  {profile.homeOrganization.icaoCode && (
+                  {profile.homeOrganization.organizationCode && (
                     <Badge variant="secondary" className="text-xs">
-                      {profile.homeOrganization.icaoCode}
+                      {profile.homeOrganization.organizationCode}
                     </Badge>
                   )}
                 </div>

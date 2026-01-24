@@ -255,9 +255,9 @@ export function ReviewerTable({
                       {orgName}
                     </span>
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      {reviewer.homeOrganization.icaoCode && (
+                      {reviewer.homeOrganization.organizationCode && (
                         <Badge variant="secondary" className="text-[10px] px-1 py-0">
-                          {reviewer.homeOrganization.icaoCode}
+                          {reviewer.homeOrganization.organizationCode}
                         </Badge>
                       )}
                       <span>{reviewer.homeOrganization.country}</span>

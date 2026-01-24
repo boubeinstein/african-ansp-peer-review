@@ -81,7 +81,7 @@ export default async function ReviewFindingsPage({
       locale={locale}
       referenceNumber={review.referenceNumber}
       organizationName={orgName}
-      organizationCode={review.hostOrganization.icaoCode}
+      organizationCode={review.hostOrganization.organizationCode}
     />
   );
 }

@@ -52,7 +52,7 @@ const joinRequestSchema = z.object({
   // Organization details (free-text entry)
   organizationName: z.string().min(2, "Organization name is required"),
   organizationCountry: z.string().min(2, "Country is required"),
-  organizationIcaoCode: z.string().optional(),
+  organizationCode: z.string().optional(),
 
   // Contact details
   contactName: z.string().min(2, "Name must be at least 2 characters"),
@@ -304,17 +304,17 @@ export function JoinRequestForm() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>{t("form.icaoCode")} <span className="text-slate-400">({t("form.optional")})</span></Label>
+                    <Label>{t("form.organizationCode")} <span className="text-slate-400">({t("form.optional")})</span></Label>
                     <div className="relative">
                       <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <Input
                         placeholder="e.g., HKJK"
                         className="pl-10"
-                        {...register("organizationIcaoCode")}
+                        {...register("organizationCode")}
                       />
                     </div>
                     <p className="text-xs text-slate-500">
-                      {t("form.icaoCodeHelp")}
+                      {t("form.organizationCodeHelp")}
                     </p>
                   </div>
                 </div>

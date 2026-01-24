@@ -36,7 +36,7 @@ export const organizationCreateSchema = z.object({
     .string()
     .min(2, "French name must be at least 2 characters")
     .max(200, "French name must be less than 200 characters"),
-  icaoCode: z
+  organizationCode: z
     .string()
     .length(4, "ICAO code must be exactly 4 characters")
     .regex(/^[A-Z]{4}$/, "ICAO code must be 4 uppercase letters")
@@ -118,7 +118,7 @@ export const organizationFiltersSchema = z.object({
       "region",
       "membershipStatus",
       "createdAt",
-      "icaoCode",
+      "organizationCode",
     ])
     .default("nameEn"),
   sortOrder: z.enum(["asc", "desc"]).default("asc"),
@@ -168,7 +168,7 @@ export interface OrganizationListItem {
   id: string;
   nameEn: string;
   nameFr: string;
-  icaoCode: string | null;
+  organizationCode: string | null;
   country: string;
   city: string | null;
   region: AfricanRegion;
@@ -202,7 +202,7 @@ export interface OrganizationCard {
   id: string;
   nameEn: string;
   nameFr: string;
-  icaoCode: string | null;
+  organizationCode: string | null;
   country: string;
   city: string | null;
   region: AfricanRegion;
@@ -218,7 +218,7 @@ export interface OrganizationOption {
   id: string;
   nameEn: string;
   nameFr: string;
-  icaoCode: string | null;
+  organizationCode: string | null;
   country: string;
 }
 

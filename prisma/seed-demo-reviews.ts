@@ -142,7 +142,7 @@ async function seedReviews(): Promise<void> {
   for (const reviewConfig of DEMO_REVIEWS) {
     // Find host organization
     const hostOrg = await prisma.organization.findFirst({
-      where: { icaoCode: reviewConfig.hostOrgIcaoCode },
+      where: { organizationCode: reviewConfig.hostOrgIcaoCode },
     });
 
     if (!hostOrg) {
@@ -192,7 +192,7 @@ async function seedReviews(): Promise<void> {
     // Assign team members
     for (const member of reviewConfig.teamMembers) {
       const memberOrg = await prisma.organization.findFirst({
-        where: { icaoCode: member.orgIcaoCode },
+        where: { organizationCode: member.orgIcaoCode },
       });
 
       if (!memberOrg) {
@@ -326,7 +326,7 @@ async function printSummary(): Promise<void> {
       console.log("    (No team assigned yet)");
     } else {
       for (const member of review.teamMembers) {
-        const orgCode = member.reviewerProfile?.homeOrganization?.icaoCode || "N/A";
+        const orgCode = member.reviewerProfile?.homeOrganization?.organizationCode || "N/A";
         const sameTeam =
           member.reviewerProfile?.homeOrganization?.regionalTeamId ===
           review.hostOrganization.regionalTeamId;

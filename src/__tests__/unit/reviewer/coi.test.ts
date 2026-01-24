@@ -75,7 +75,7 @@ function createMockReviewerWithCOI(
       id: homeOrganizationId,
       nameEn: "Home Organization",
       nameFr: "Organisation d'origine",
-      icaoCode: "HOME",
+      organizationCode: "HOME",
       country: "Test Country",
     },
     expertiseRecords: [
@@ -154,7 +154,7 @@ function createMockReviewerWithCOI(
         id: coi.organizationId,
         nameEn: `Organization ${coi.organizationId}`,
         nameFr: `Organisation ${coi.organizationId}`,
-        icaoCode: coi.organizationId.slice(0, 4).toUpperCase(),
+        organizationCode: coi.organizationId.slice(0, 4).toUpperCase(),
       },
     })),
   };

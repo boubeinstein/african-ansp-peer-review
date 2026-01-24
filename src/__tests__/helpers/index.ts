@@ -69,7 +69,7 @@ export function createMockOrganization(): Partial<Organization> {
     id,
     nameEn: `Test Organization ${id}`,
     nameFr: `Organisation Test ${id}`,
-    icaoCode: `TST${id.slice(-3).toUpperCase()}`,
+    organizationCode: `TST${id.slice(-3).toUpperCase()}`,
     country: "Test Country",
     region: "WACAF",
     membershipStatus: "ACTIVE",

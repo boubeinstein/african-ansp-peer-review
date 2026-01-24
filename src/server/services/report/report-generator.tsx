@@ -312,7 +312,7 @@ async function getReviewWithAllDetails(reviewId: string): Promise<ReviewReportDa
     hostOrganization: {
       id: review.hostOrganization.id,
       name: review.hostOrganization.nameEn,
-      shortName: review.hostOrganization.icaoCode || "",
+      shortName: review.hostOrganization.organizationCode || "",
       country: review.hostOrganization.country || "",
       type: review.hostOrganization.membershipStatus || "",
     },

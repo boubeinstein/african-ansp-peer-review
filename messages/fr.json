@@ -89,24 +89,28 @@
       "partnership": "En partenariat avec l'OACI, CANSO & CAFAC"
     },
     "showcase": {
-      "tagline": "Renforcer la Sécurité Aérienne en Afrique par l'Excellence Collaborative",
       "stats": {
+        "title": "Le Programme en Bref",
         "ansps": "ANSP/CAA",
-        "experts": "Experts Évaluateurs",
+        "reviewers": "Experts Évaluateurs",
         "teams": "Équipes Régionales",
-        "reviews": "Revues"
+        "reviews": "Revues Complétées",
+        "coverage": "Couvrant les 5 régions OACI AFI avec une expertise panafricaine",
+        "nextMilestone": "Prochaine Étape"
       },
-      "nextMilestone": "Prochaine Étape",
-      "regionalTeams": "Équipes Régionales",
-      "orgs": "orgs",
-      "reviewers": "évaluateurs",
-      "teamsDescription": "Les équipes régionales facilitent les revues par les pairs en regroupant les ANSP ayant des contextes opérationnels similaires, permettant un partage efficace des connaissances et une amélioration collaborative.",
-      "partnerOrganizations": "Organisations Partenaires",
-      "partnershipBenefits": "Avantages du Partenariat",
-      "benefits": {
-        "standards": "Normes Mondiales",
-        "network": "Réseau Africain",
-        "safety": "Excellence en Sécurité"
+      "teams": {
+        "title": "Équipes Régionales",
+        "footer": "Les équipes permettent l'apprentissage entre ANSP ayant des contextes opérationnels similaires"
+      },
+      "partners": {
+        "title": "Organisations Partenaires",
+        "icaoDesc": "Agence de l'ONU pour l'Aviation",
+        "cansoDesc": "Voix Mondiale de l'ATM",
+        "afcacDesc": "Commission Africaine de l'Aviation",
+        "usoap": "OACI USOAP-CMA",
+        "usoapDesc": "Programme universel d'audit de supervision de la sécurité - Cadre d'évaluation aligné",
+        "cansoSoe": "Standard d'Excellence CANSO",
+        "cansoSoeDesc": "Meilleures pratiques de l'industrie pour la mesure des performances ANS"
       }
     },
     "login": {

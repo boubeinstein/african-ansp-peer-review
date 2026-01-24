@@ -85,9 +85,9 @@ export function LoginShowcase() {
   };
 
   const slides = [
-    <SlideStats key="stats" stats={stats} locale={locale} />,
-    <SlideTeams key="teams" stats={stats} locale={locale} />,
-    <SlidePartners key="partners" locale={locale} />,
+    <SlideStats key="stats" stats={stats} />,
+    <SlideTeams key="teams" teams={stats?.teams} locale={locale} />,
+    <SlidePartners key="partners" />,
   ];
 
   return (

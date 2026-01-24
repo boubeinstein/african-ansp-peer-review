@@ -89,24 +89,28 @@
       "partnership": "In partnership with ICAO, CANSO & AFCAC"
     },
     "showcase": {
-      "tagline": "Enhancing Aviation Safety Across Africa Through Collaborative Excellence",
       "stats": {
+        "title": "Programme at a Glance",
         "ansps": "ANSPs/CAAs",
-        "experts": "Expert Reviewers",
+        "reviewers": "Expert Reviewers",
         "teams": "Regional Teams",
-        "reviews": "Reviews"
+        "reviews": "Completed Reviews",
+        "coverage": "Covering all 5 ICAO AFI regions with pan-African expertise",
+        "nextMilestone": "Next Milestone"
       },
-      "nextMilestone": "Next Milestone",
-      "regionalTeams": "Regional Teams",
-      "orgs": "orgs",
-      "reviewers": "reviewers",
-      "teamsDescription": "Regional teams facilitate peer reviews by grouping ANSPs with similar operational contexts, enabling effective knowledge sharing and collaborative improvement.",
-      "partnerOrganizations": "Partner Organizations",
-      "partnershipBenefits": "Partnership Benefits",
-      "benefits": {
-        "standards": "Global Standards",
-        "network": "African Network",
-        "safety": "Safety Excellence"
+      "teams": {
+        "title": "Regional Teams",
+        "footer": "Teams enable peer learning between ANSPs with similar operational contexts"
+      },
+      "partners": {
+        "title": "Partner Organizations",
+        "icaoDesc": "UN Aviation Agency",
+        "cansoDesc": "Global ATM Voice",
+        "afcacDesc": "African Aviation Commission",
+        "usoap": "ICAO USOAP-CMA",
+        "usoapDesc": "Universal Safety Oversight Audit Programme aligned assessment framework",
+        "cansoSoe": "CANSO Standard of Excellence",
+        "cansoSoeDesc": "Industry best practices for ANS performance measurement"
       }
     },
     "login": {

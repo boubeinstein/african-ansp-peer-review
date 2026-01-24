@@ -582,6 +582,57 @@ export const reviewerRouter = router({
       return updated;
     }),
 
+  /**
+   * Update reviewer profile availability (status + date range)
+   * Used by the availability dialog for reviewers to set their availability
+   */
+  updateProfileAvailability: protectedProcedure
+    .input(
+      z.object({
+        reviewerProfileId: z.string().cuid(),
+        isAvailable: z.boolean(),
+        availableFrom: z.date().nullable(),
+        availableTo: z.date().nullable(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const profile = await prisma.reviewerProfile.findUnique({
+        where: { id: input.reviewerProfileId },
+        select: { id: true, userId: true },
+      });
+
+      if (!profile) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Reviewer profile not found",
+        });
+      }
+
+      // User can update their own availability, or admin can do it
+      if (profile.userId !== ctx.user.id) {
+        const isAdmin = ["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(
+          ctx.session.user.role
+        );
+        if (!isAdmin) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You can only update your own availability",
+          });
+        }
+      }
+
+      const updated = await prisma.reviewerProfile.update({
+        where: { id: input.reviewerProfileId },
+        data: {
+          isAvailable: input.isAvailable,
+          availableFrom: input.availableFrom,
+          availableTo: input.availableTo,
+        },
+      });
+
+      return updated;
+    }),
+
   // ============================================
   // COI (CONFLICT OF INTEREST) OPERATIONS
   // ============================================

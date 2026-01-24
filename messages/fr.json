@@ -2852,7 +2852,31 @@
     "myProfileDescription": "Voir et gérer votre profil d'examinateur",
     "noProfileTitle": "Pas de profil d'examinateur",
     "noProfileDescription": "Vous n'avez pas encore de profil d'examinateur. Les profils d'examinateurs sont créés par les coordinateurs du programme pour les examinateurs pairs qualifiés.",
-    "noProfileHelp": "Si vous pensez devoir avoir un profil d'examinateur, veuillez contacter l'administrateur de votre organisation ou le coordinateur du programme."
+    "noProfileHelp": "Si vous pensez devoir avoir un profil d'examinateur, veuillez contacter l'administrateur de votre organisation ou le coordinateur du programme.",
+    "availability": {
+      "title": "Paramètres de Disponibilité",
+      "description": "Définissez votre disponibilité pour les missions de revue par les pairs",
+      "currentStatus": "Actuellement Disponible",
+      "statusDescription": "Désactivez si vous ne pouvez pas accepter de missions",
+      "statusAvailable": "Disponible pour les Revues",
+      "statusAvailableDesc": "Vous pouvez être affecté aux équipes de revue",
+      "statusUnavailable": "Non Disponible",
+      "statusUnavailableDesc": "Vous ne serez pas considéré pour de nouvelles affectations",
+      "window": "Période de Disponibilité",
+      "windowDescription": "Spécifiez quand vous êtes disponible",
+      "from": "Disponible à partir du",
+      "to": "Disponible jusqu'au",
+      "selectDate": "Sélectionner une date",
+      "next30Days": "30 Prochains Jours",
+      "next90Days": "90 Prochains Jours",
+      "blockedPeriods": "Périodes Bloquées",
+      "blockedDescription": "Ajoutez les dates d'indisponibilité (congés, formation, etc.)",
+      "addBlock": "Ajouter",
+      "noBlocks": "Aucune période bloquée",
+      "updated": "Disponibilité mise à jour avec succès",
+      "save": "Enregistrer",
+      "cancel": "Annuler"
+    }
   },
   "reviews": {
     "title": "Revues par les pairs",

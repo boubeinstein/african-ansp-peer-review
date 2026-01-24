@@ -2852,7 +2852,31 @@
     "myProfileDescription": "View and manage your reviewer profile",
     "noProfileTitle": "No Reviewer Profile",
     "noProfileDescription": "You don't have a reviewer profile yet. Reviewer profiles are created by Programme Coordinators for qualified peer reviewers.",
-    "noProfileHelp": "If you believe you should have a reviewer profile, please contact your Organization Administrator or the Programme Coordinator."
+    "noProfileHelp": "If you believe you should have a reviewer profile, please contact your Organization Administrator or the Programme Coordinator.",
+    "availability": {
+      "title": "Availability Settings",
+      "description": "Set your availability for peer review assignments",
+      "currentStatus": "Currently Available",
+      "statusDescription": "Toggle off if you cannot accept review assignments",
+      "statusAvailable": "Available for Reviews",
+      "statusAvailableDesc": "You can be assigned to peer review teams",
+      "statusUnavailable": "Not Available",
+      "statusUnavailableDesc": "You will not be considered for new assignments",
+      "window": "Availability Window",
+      "windowDescription": "Specify when you are available for reviews",
+      "from": "Available From",
+      "to": "Available Until",
+      "selectDate": "Select date",
+      "next30Days": "Next 30 Days",
+      "next90Days": "Next 90 Days",
+      "blockedPeriods": "Blocked Periods",
+      "blockedDescription": "Add dates when you are not available (leave, training, etc.)",
+      "addBlock": "Add Block",
+      "noBlocks": "No blocked periods",
+      "updated": "Availability updated successfully",
+      "save": "Save Changes",
+      "cancel": "Cancel"
+    }
   },
   "reviews": {
     "title": "Peer Reviews",

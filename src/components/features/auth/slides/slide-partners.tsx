@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { FileCheck, BarChart3 } from "lucide-react";
-import Image from "next/image";
+import { PartnerLogos } from "../partner-logos";
 
 export function SlidePartners() {
   const t = useTranslations("auth.showcase.partners");
@@ -11,23 +11,31 @@ export function SlidePartners() {
     <div className="h-full flex flex-col">
       <h2 className="text-xl font-semibold text-white mb-6">{t("title")}</h2>
 
-      {/* Partner Logos */}
-      <div className="flex flex-wrap items-center justify-center gap-8 mb-8 py-6">
-        <PartnerLogo
-          src="/images/logos/International_Civil_Aviation_Organization_logo.svg"
-          name="ICAO"
-          desc={t("icaoDesc")}
-        />
-        <PartnerLogo
-          src="/images/logos/CANSO.svg"
-          name="CANSO"
-          desc={t("cansoDesc")}
-        />
-        <PartnerLogo
-          src="/images/logos/AFCAC.svg"
-          name="AFCAC"
-          desc={t("afcacDesc")}
-        />
+      {/* Partner Logos - Centered */}
+      <div className="flex justify-center py-6 mb-4">
+        <PartnerLogos variant="dark" size="lg" />
+      </div>
+
+      {/* Partner Descriptions */}
+      <div className="grid grid-cols-3 gap-4 mb-6 text-center">
+        <div>
+          <p className="text-cyan-400 font-semibold text-sm">ICAO</p>
+          <p className="text-slate-400 text-xs mt-1 leading-relaxed">
+            {t("icaoDesc")}
+          </p>
+        </div>
+        <div>
+          <p className="text-cyan-400 font-semibold text-sm">CANSO</p>
+          <p className="text-slate-400 text-xs mt-1 leading-relaxed">
+            {t("cansoDesc")}
+          </p>
+        </div>
+        <div>
+          <p className="text-cyan-400 font-semibold text-sm">AFCAC</p>
+          <p className="text-slate-400 text-xs mt-1 leading-relaxed">
+            {t("afcacDesc")}
+          </p>
+        </div>
       </div>
 
       {/* Framework Cards */}
@@ -47,23 +55,6 @@ export function SlidePartners() {
           <p className="text-slate-400 text-sm">{t("cansoSoeDesc")}</p>
         </div>
       </div>
-    </div>
-  );
-}
-
-function PartnerLogo({ src, name, desc }: { src: string; name: string; desc: string }) {
-  return (
-    <div className="flex flex-col items-center gap-2 group">
-      <div className="bg-white rounded-xl p-4 border border-slate-700/50 group-hover:border-cyan-500/30 transition-colors">
-        <Image
-          src={src}
-          alt={name}
-          width={100}
-          height={64}
-          className="h-12 w-auto"
-        />
-      </div>
-      <span className="text-slate-400 text-xs text-center max-w-[100px]">{desc}</span>
     </div>
   );
 }

@@ -16,7 +16,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,6 +24,7 @@ import { toast } from "sonner";
 import { Loader2, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LanguageSelector } from "./language-selector";
+import { PartnerLogos } from "./partner-logos";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -94,28 +94,13 @@ export function LoginForm() {
         <LanguageSelector variant="light" size="sm" />
       </div>
 
-      {/* Header with logos (desktop only - hidden on mobile since MobileHeader handles it) */}
+      {/* Header */}
       <div className="space-y-2 text-center">
-        <div className="flex justify-center gap-4 mb-6">
-          <div className="hidden lg:block bg-slate-50 rounded-lg p-2">
-            <Image
-              src="/images/logos/International_Civil_Aviation_Organization_logo.svg"
-              alt="ICAO"
-              width={100}
-              height={40}
-              className="h-10 w-auto"
-            />
-          </div>
-          <div className="hidden lg:block bg-slate-50 rounded-lg p-2">
-            <Image
-              src="/images/logos/CANSO.svg"
-              alt="CANSO"
-              width={100}
-              height={40}
-              className="h-10 w-auto"
-            />
-          </div>
+        {/* Logos - Desktop only */}
+        <div className="hidden lg:flex justify-center mb-6">
+          <PartnerLogos variant="light" size="md" showDividers={false} />
         </div>
+
         <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
         <p className="text-sm text-muted-foreground">{t("description")}</p>
       </div>

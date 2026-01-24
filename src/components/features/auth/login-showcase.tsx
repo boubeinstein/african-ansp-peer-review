@@ -9,7 +9,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Shield } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
@@ -17,6 +16,7 @@ import { SlideStats } from "./slides/slide-stats";
 import { SlideTeams } from "./slides/slide-teams";
 import { SlidePartners } from "./slides/slide-partners";
 import { LanguageSelector } from "./language-selector";
+import { PartnerLogos } from "./partner-logos";
 
 const SLIDE_INTERVAL = 6000; // 6 seconds
 const TOTAL_SLIDES = 3;
@@ -99,30 +99,8 @@ export function LoginShowcase() {
     >
       {/* Header with Logos and Language Selector */}
       <div className="flex items-center justify-between mb-6">
-        {/* Partner Logos */}
-        <div className="flex items-center gap-4 lg:gap-6 flex-wrap">
-          <div className="bg-white shadow-md rounded-lg p-2 lg:p-3">
-            <Image
-              src="/images/logos/International_Civil_Aviation_Organization_logo.svg"
-              alt="ICAO - International Civil Aviation Organization"
-              width={120}
-              height={48}
-              className="h-8 lg:h-10 w-auto"
-              priority
-            />
-          </div>
-          <div className="h-8 w-px bg-white/30 hidden sm:block" />
-          <div className="bg-white shadow-md rounded-lg p-2 lg:p-3">
-            <Image
-              src="/images/logos/CANSO.svg"
-              alt="CANSO - Civil Air Navigation Services Organisation"
-              width={120}
-              height={48}
-              className="h-8 lg:h-10 w-auto"
-              priority
-            />
-          </div>
-        </div>
+        {/* Partner Logos - Visually Proportioned */}
+        <PartnerLogos variant="dark" size="lg" />
 
         {/* Language Selector */}
         <LanguageSelector variant="dark" />

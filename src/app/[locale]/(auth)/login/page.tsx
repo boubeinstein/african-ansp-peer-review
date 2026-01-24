@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import Image from "next/image";
 import { auth } from "@/lib/auth";
 import { LoginShowcase } from "@/components/features/auth/login-showcase";
-import { LoginForm } from "@/components/auth";
+import { LoginForm } from "@/components/features/auth/login-form";
 import { LoginFormSkeleton } from "@/components/features/auth/login-form-skeleton";
 
 interface LoginPageProps {

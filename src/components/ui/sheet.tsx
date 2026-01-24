@@ -5,6 +5,7 @@ import * as SheetPrimitive from "@radix-ui/react-dialog"
 import { XIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { VisuallyHidden } from "@/components/ui/visually-hidden"
 
 function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />
@@ -127,11 +128,38 @@ function SheetDescription({
   )
 }
 
+/**
+ * Wrapper for sheets that don't need a visible title.
+ * Provides an accessible title for screen readers.
+ */
+function SheetContentWithHiddenTitle({
+  title,
+  description,
+  children,
+  ...props
+}: React.ComponentProps<typeof SheetContent> & {
+  title: string
+  description?: string
+}) {
+  return (
+    <SheetContent {...props}>
+      <VisuallyHidden>
+        <SheetPrimitive.Title>{title}</SheetPrimitive.Title>
+        {description && (
+          <SheetPrimitive.Description>{description}</SheetPrimitive.Description>
+        )}
+      </VisuallyHidden>
+      {children}
+    </SheetContent>
+  )
+}
+
 export {
   Sheet,
   SheetTrigger,
   SheetClose,
   SheetContent,
+  SheetContentWithHiddenTitle,
   SheetHeader,
   SheetFooter,
   SheetTitle,

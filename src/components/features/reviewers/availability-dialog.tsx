@@ -77,6 +77,10 @@ function AvailabilityForm({
   const t = useTranslations("reviewers.availability");
   const tCommon = useTranslations("common");
 
+  // Today at start of day for date comparisons
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   const [isAvailable, setIsAvailable] = useState(
     currentAvailability?.isAvailable ?? true
   );
@@ -112,27 +116,58 @@ function AvailabilityForm({
     });
   };
 
+  // Check which preset buttons should be visible (not expired)
+  const q1End = new Date(2026, 2, 31);
+  const q2End = new Date(2026, 5, 30);
+  const isQ1Valid = q1End >= today;
+  const isQ2Valid = q2End >= today;
+
   const setPreset = (preset: string) => {
-    const today = new Date();
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
     switch (preset) {
       case "next30":
-        setAvailableFrom(today);
-        setAvailableTo(addDays(today, 30));
+        setAvailableFrom(now);
+        setAvailableTo(addDays(now, 30));
         break;
       case "next90":
-        setAvailableFrom(today);
-        setAvailableTo(addDays(today, 90));
+        setAvailableFrom(now);
+        setAvailableTo(addDays(now, 90));
         break;
-      case "q1":
-        setAvailableFrom(new Date(2026, 0, 1));
+      case "q1": {
+        // Q1 2026: Jan 1 - Mar 31
+        const q1Start = new Date(2026, 0, 1);
+        // If Q1 start is in past, use today instead
+        setAvailableFrom(q1Start < now ? now : q1Start);
         setAvailableTo(new Date(2026, 2, 31));
         break;
-      case "q2":
-        setAvailableFrom(new Date(2026, 3, 1));
+      }
+      case "q2": {
+        // Q2 2026: Apr 1 - Jun 30
+        const q2Start = new Date(2026, 3, 1);
+        setAvailableFrom(q2Start < now ? now : q2Start);
         setAvailableTo(new Date(2026, 5, 30));
         break;
+      }
     }
     setIsAvailable(true);
+  };
+
+  // Helper to check if a date is in the past
+  const isDateDisabled = (date: Date) => {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d < today;
+  };
+
+  // Helper to check if "To" date should be disabled
+  const isToDateDisabled = (date: Date) => {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    // Disable dates before today AND before availableFrom
+    const minDate = availableFrom && availableFrom > today ? availableFrom : today;
+    return d < minDate;
   };
 
   return (
@@ -196,7 +231,14 @@ function AvailabilityForm({
                     <Calendar
                       mode="single"
                       selected={availableFrom}
-                      onSelect={setAvailableFrom}
+                      onSelect={(date) => {
+                        setAvailableFrom(date);
+                        // If "to" date is before new "from" date, clear it
+                        if (date && availableTo && date > availableTo) {
+                          setAvailableTo(undefined);
+                        }
+                      }}
+                      disabled={isDateDisabled}
                       initialFocus
                     />
                   </PopoverContent>
@@ -226,9 +268,7 @@ function AvailabilityForm({
                       mode="single"
                       selected={availableTo}
                       onSelect={setAvailableTo}
-                      disabled={(date) =>
-                        availableFrom ? date < availableFrom : false
-                      }
+                      disabled={isToDateDisabled}
                       initialFocus
                     />
                   </PopoverContent>
@@ -252,20 +292,24 @@ function AvailabilityForm({
               >
                 {t("next90Days")}
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPreset("q1")}
-              >
-                Q1 2026
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPreset("q2")}
-              >
-                Q2 2026
-              </Button>
+              {isQ1Valid && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPreset("q1")}
+                >
+                  Q1 2026
+                </Button>
+              )}
+              {isQ2Valid && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPreset("q2")}
+                >
+                  Q2 2026
+                </Button>
+              )}
             </div>
           </div>
         )}

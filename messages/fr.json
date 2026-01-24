@@ -2875,7 +2875,17 @@
       "noBlocks": "Aucune période bloquée",
       "updated": "Disponibilité mise à jour avec succès",
       "save": "Enregistrer",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "available": "Disponible",
+      "unavailable": "Indisponible",
+      "upcoming": "À venir",
+      "availableAnytime": "Disponible à tout moment",
+      "availableUntil": "Disponible jusqu'au {date}",
+      "availableFrom": "Disponible à partir du {date}",
+      "notAccepting": "N'accepte pas de missions",
+      "windowExpired": "Période de disponibilité expirée",
+      "pastDateError": "Impossible de sélectionner des dates passées",
+      "endBeforeStart": "La date de fin doit être après la date de début"
     }
   },
   "reviews": {

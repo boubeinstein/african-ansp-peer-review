@@ -621,6 +621,44 @@ export const reviewerRouter = router({
         }
       }
 
+      // Date validation
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // Validate: availableFrom cannot be in the past
+      if (input.availableFrom) {
+        const fromDate = new Date(input.availableFrom);
+        fromDate.setHours(0, 0, 0, 0);
+        if (fromDate < today) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Start date cannot be in the past",
+          });
+        }
+      }
+
+      // Validate: availableTo cannot be before availableFrom
+      if (input.availableFrom && input.availableTo) {
+        if (input.availableTo < input.availableFrom) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "End date must be after start date",
+          });
+        }
+      }
+
+      // Validate: availableTo cannot be in the past
+      if (input.availableTo) {
+        const toDate = new Date(input.availableTo);
+        toDate.setHours(23, 59, 59, 999);
+        if (toDate < today) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "End date cannot be in the past",
+          });
+        }
+      }
+
       const updated = await prisma.reviewerProfile.update({
         where: { id: input.reviewerProfileId },
         data: {

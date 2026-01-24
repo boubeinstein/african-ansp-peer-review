@@ -41,6 +41,7 @@ import {
   SELECTION_STATUS_COLOR,
 } from "@/lib/reviewer/labels";
 import type { ReviewerListItem, ReviewerSortField } from "@/types/reviewer";
+import { AvailabilityBadge } from "@/components/features/reviewers/availability-badge";
 
 // =============================================================================
 // TYPES
@@ -311,14 +312,12 @@ export function ReviewerTable({
                     >
                       {SELECTION_STATUS_LABELS[reviewer.selectionStatus][locale]}
                     </Badge>
-                    {reviewer.isAvailable && (
-                      <Badge
-                        variant="outline"
-                        className="text-[10px] w-fit text-green-600 border-green-300"
-                      >
-                        {t("card.available")}
-                      </Badge>
-                    )}
+                    <AvailabilityBadge
+                      isAvailable={reviewer.isAvailable}
+                      availableFrom={reviewer.availableFrom}
+                      availableTo={reviewer.availableTo}
+                      size="sm"
+                    />
                   </div>
                 </TableCell>
 

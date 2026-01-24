@@ -105,6 +105,8 @@ function transformToListItem(profile: {
   selectionStatus: string;
   isLeadQualified: boolean;
   isAvailable: boolean;
+  availableFrom: Date | null;
+  availableTo: Date | null;
   reviewsCompleted: number;
   yearsExperience: number;
   user: { id: string; firstName: string; lastName: string; email: string } | null;
@@ -140,6 +142,8 @@ function transformToListItem(profile: {
     selectionStatus: profile.selectionStatus as ReviewerListItem["selectionStatus"],
     isLeadQualified: profile.isLeadQualified,
     isAvailable: profile.isAvailable,
+    availableFrom: profile.availableFrom,
+    availableTo: profile.availableTo,
     primaryExpertise: profile.expertiseRecords.map((e) => e.area) as ExpertiseArea[],
     languages: profile.languages.map((l) => l.language) as Language[],
     reviewsCompleted: profile.reviewsCompleted,

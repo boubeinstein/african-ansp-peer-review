@@ -48,6 +48,7 @@ import {
   SELECTION_STATUS_COLOR,
   CERTIFICATION_TYPE_LABELS,
 } from "@/lib/reviewer/labels";
+import { AvailabilityBadge } from "@/components/features/reviewers/availability-badge";
 
 // =============================================================================
 // TYPES
@@ -152,6 +153,12 @@ export function ReviewerProfileView({
                   <h2 className="text-2xl font-bold">{fullName}</h2>
                   <StatusBadge status={profile.selectionStatus} locale={locale} />
                   <TypeBadge type={profile.reviewerType} locale={locale} />
+                  <AvailabilityBadge
+                    isAvailable={profile.isAvailable}
+                    availableFrom={profile.availableFrom}
+                    availableTo={profile.availableTo}
+                    showDetails
+                  />
                 </div>
 
                 <p className="text-muted-foreground">{profile.currentPosition}</p>

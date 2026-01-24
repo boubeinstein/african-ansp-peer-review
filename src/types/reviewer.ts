@@ -89,6 +89,8 @@ export interface ReviewerListItem {
   selectionStatus: PrismaReviewerProfile["selectionStatus"];
   isLeadQualified: boolean;
   isAvailable: boolean;
+  availableFrom: Date | null;
+  availableTo: Date | null;
   primaryExpertise: PrismaReviewerExpertise["area"][];
   languages: PrismaReviewerLanguage["language"][];
   reviewsCompleted: number;

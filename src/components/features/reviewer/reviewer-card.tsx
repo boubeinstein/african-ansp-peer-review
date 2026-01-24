@@ -43,6 +43,7 @@ import {
 } from "@/lib/reviewer/labels";
 import type { ReviewerListItem } from "@/types/reviewer";
 import { COIStatusIndicator } from "./coi-badge";
+import { AvailabilityBadge } from "@/components/features/reviewers/availability-badge";
 
 // =============================================================================
 // TYPES
@@ -167,11 +168,12 @@ export function ReviewerCard({
           >
             {REVIEWER_TYPE_LABELS[reviewer.reviewerType][locale]}
           </Badge>
-          {reviewer.isAvailable && (
-            <Badge variant="outline" className="text-xs text-green-600 border-green-300">
-              {t("card.available")}
-            </Badge>
-          )}
+          <AvailabilityBadge
+            isAvailable={reviewer.isAvailable}
+            availableFrom={reviewer.availableFrom}
+            availableTo={reviewer.availableTo}
+            size="sm"
+          />
         </div>
       </CardHeader>
 

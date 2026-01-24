@@ -2875,7 +2875,17 @@
       "noBlocks": "No blocked periods",
       "updated": "Availability updated successfully",
       "save": "Save Changes",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "available": "Available",
+      "unavailable": "Unavailable",
+      "upcoming": "Upcoming",
+      "availableAnytime": "Available anytime",
+      "availableUntil": "Available until {date}",
+      "availableFrom": "Available from {date}",
+      "notAccepting": "Not accepting assignments",
+      "windowExpired": "Availability window expired",
+      "pastDateError": "Cannot select dates in the past",
+      "endBeforeStart": "End date must be after start date"
     }
   },
   "reviews": {

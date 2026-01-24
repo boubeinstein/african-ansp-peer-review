@@ -89,32 +89,38 @@
       "partnership": "In partnership with ICAO, CANSO & AFCAC"
     },
     "showcase": {
+      "icaoEndorsed": "ICAO-Endorsed Programme",
+      "programmeTitle": "African ANSP Peer Review Programme",
+      "programmeSubtitle": "Collaborative aviation safety enhancement through systematic peer reviews",
+      "tagline": "Enhancing Aviation Safety Across Africa Through Collaborative Excellence",
       "stats": {
         "title": "Programme at a Glance",
-        "ansps": "ANSPs/CAAs",
+        "ansps": "Participating ANSPs",
         "reviewers": "Expert Reviewers",
         "teams": "Regional Teams",
-        "reviews": "Completed Reviews",
-        "coverage": "Covering all 5 ICAO AFI regions with pan-African expertise",
+        "reviews": "Reviews Completed",
+        "coverage": "Covering 3 African Regions: WACAF • ESAF • Northern Africa",
         "nextMilestone": "Next Milestone"
       },
       "teams": {
-        "title": "Regional Teams",
-        "footer": "Teams enable peer learning between ANSPs with similar operational contexts"
+        "title": "5 Regional Peer Support Teams",
+        "footer": "Cross-regional collaboration • Knowledge sharing • Mutual support"
       },
       "partners": {
-        "title": "Partner Organizations",
-        "icaoDesc": "UN Aviation Agency",
-        "cansoDesc": "Global ATM Voice",
-        "afcacDesc": "African Aviation Commission",
-        "usoap": "ICAO USOAP-CMA",
-        "usoapDesc": "Universal Safety Oversight Audit Programme aligned assessment framework",
-        "cansoSoe": "CANSO Standard of Excellence",
-        "cansoSoeDesc": "Industry best practices for ANS performance measurement"
+        "title": "Programme Framework & Partners",
+        "icaoDesc": "International Civil Aviation Organization",
+        "cansoDesc": "Civil Air Navigation Services Organisation",
+        "afcacDesc": "African Civil Aviation Commission",
+        "usoap": "USOAP CMA 2024",
+        "usoapDesc": "Protocol Questions for ANS, AGA & SSP audit areas",
+        "cansoSoe": "CANSO SoE 2024",
+        "cansoSoeDesc": "SMS Maturity Model across 4 components"
       }
     },
     "login": {
       "title": "Welcome Back",
+      "pageTitle": "Sign In - AFI Peer Review",
+      "pageDescription": "Sign in to the African ANSP Peer Review Programme",
       "description": "Sign in to your account to continue",
       "email": "Email Address",
       "emailPlaceholder": "name@organization.aero",
@@ -124,10 +130,13 @@
       "signingIn": "Signing in...",
       "noAccount": "Don't have an account?",
       "signUp": "Request Access",
+      "requestAccess": "Request Access",
       "success": "Welcome back!",
       "error": "Invalid email or password",
+      "invalidEmail": "Please enter a valid email address",
       "invalidCredentials": "Invalid email or password. Please try again.",
       "loginFailed": "Login failed. Please try again.",
+      "sessionRequired": "Please sign in to access this page.",
       "notParticipant": "Your organization is not yet a programme participant?",
       "requestToJoin": "Request to Join"
     },

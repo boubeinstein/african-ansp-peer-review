@@ -24,7 +24,7 @@ export function SlidePartners() {
           desc={t("cansoDesc")}
         />
         <PartnerLogo
-          src="/images/logos/AFCAC.png"
+          src="/images/logos/AFCAC.svg"
           name="AFCAC"
           desc={t("afcacDesc")}
         />

@@ -89,46 +89,55 @@
       "partnership": "En partenariat avec l'OACI, CANSO & CAFAC"
     },
     "showcase": {
+      "icaoEndorsed": "Programme Approuvé par l'OACI",
+      "programmeTitle": "Programme de Revue par les Pairs des ANSP Africains",
+      "programmeSubtitle": "Amélioration collaborative de la sécurité aérienne par des revues systématiques",
+      "tagline": "Améliorer la Sécurité Aérienne en Afrique par l'Excellence Collaborative",
       "stats": {
-        "title": "Le Programme en Bref",
-        "ansps": "ANSP/CAA",
-        "reviewers": "Experts Évaluateurs",
+        "title": "Aperçu du Programme",
+        "ansps": "ANSP Participants",
+        "reviewers": "Évaluateurs Experts",
         "teams": "Équipes Régionales",
         "reviews": "Revues Complétées",
-        "coverage": "Couvrant les 5 régions OACI AFI avec une expertise panafricaine",
+        "coverage": "Couvrant 3 régions africaines : WACAF • ESAF • Afrique du Nord",
         "nextMilestone": "Prochaine Étape"
       },
       "teams": {
-        "title": "Équipes Régionales",
-        "footer": "Les équipes permettent l'apprentissage entre ANSP ayant des contextes opérationnels similaires"
+        "title": "5 Équipes Régionales de Soutien",
+        "footer": "Collaboration inter-régionale • Partage des connaissances • Soutien mutuel"
       },
       "partners": {
-        "title": "Organisations Partenaires",
-        "icaoDesc": "Agence de l'ONU pour l'Aviation",
-        "cansoDesc": "Voix Mondiale de l'ATM",
-        "afcacDesc": "Commission Africaine de l'Aviation",
-        "usoap": "OACI USOAP-CMA",
-        "usoapDesc": "Programme universel d'audit de supervision de la sécurité - Cadre d'évaluation aligné",
-        "cansoSoe": "Standard d'Excellence CANSO",
-        "cansoSoeDesc": "Meilleures pratiques de l'industrie pour la mesure des performances ANS"
+        "title": "Cadre et Partenaires du Programme",
+        "icaoDesc": "Organisation de l'Aviation Civile Internationale",
+        "cansoDesc": "Organisation des Services de Navigation Aérienne Civile",
+        "afcacDesc": "Commission Africaine de l'Aviation Civile",
+        "usoap": "USOAP CMA 2024",
+        "usoapDesc": "Questions de protocole pour les domaines ANS, AGA et SSP",
+        "cansoSoe": "CANSO SoE 2024",
+        "cansoSoeDesc": "Modèle de maturité SMS à 4 composantes"
       }
     },
     "login": {
-      "title": "Bon Retour",
+      "title": "Bienvenue",
+      "pageTitle": "Connexion - Revue par les Pairs AFI",
+      "pageDescription": "Connectez-vous au Programme de Revue par les Pairs des ANSP Africains",
       "description": "Connectez-vous à votre compte pour continuer",
       "email": "Adresse Email",
       "emailPlaceholder": "nom@organisation.aero",
-      "password": "Mot de Passe",
+      "password": "Mot de passe",
       "forgotPassword": "Mot de passe oublié ?",
       "signIn": "Se Connecter",
       "signingIn": "Connexion en cours...",
-      "noAccount": "Vous n'avez pas de compte ?",
+      "noAccount": "Pas encore de compte ?",
       "signUp": "Demander l'Accès",
+      "requestAccess": "Demander l'Accès",
       "success": "Bienvenue !",
       "error": "Email ou mot de passe invalide",
+      "invalidEmail": "Veuillez entrer une adresse email valide",
       "invalidCredentials": "Email ou mot de passe invalide. Veuillez réessayer.",
       "loginFailed": "Échec de la connexion. Veuillez réessayer.",
-      "notParticipant": "Votre organisation n'est pas encore participante au programme ?",
+      "sessionRequired": "Veuillez vous connecter pour accéder à cette page.",
+      "notParticipant": "Organisation pas encore participante ?",
       "requestToJoin": "Demander à Rejoindre"
     },
     "register": {

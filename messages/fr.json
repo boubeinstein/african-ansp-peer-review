@@ -89,32 +89,25 @@
       "partnership": "En partenariat avec l'OACI, CANSO & CAFAC"
     },
     "showcase": {
-      "icaoEndorsed": "Programme Approuvé par l'OACI",
-      "programmeTitle": "Programme de Revue par les Pairs des ANSP Africains",
-      "programmeSubtitle": "Amélioration collaborative de la sécurité aérienne par des revues systématiques",
-      "tagline": "Améliorer la Sécurité Aérienne en Afrique par l'Excellence Collaborative",
+      "header": "Programme Africain de Revue par les Pairs des ANSP en Chiffres",
       "stats": {
-        "title": "Aperçu du Programme",
-        "ansps": "ANSP Participants",
-        "reviewers": "Évaluateurs Experts",
-        "teams": "Équipes Régionales",
-        "reviews": "Revues Complétées",
-        "coverage": "Couvrant 3 régions africaines : WACAF • ESAF • Afrique du Nord",
-        "nextMilestone": "Prochaine Étape"
+        "organizations": "Organisations Participantes",
+        "reviewers": "Évaluateurs Sélectionnés",
+        "reviewersFrom": "sur {count} nominés",
+        "teams": "Équipes de Soutien",
+        "years": "Années de Développement"
       },
       "teams": {
-        "title": "5 Équipes Régionales de Soutien",
-        "footer": "Collaboration inter-régionale • Partage des connaissances • Soutien mutuel"
+        "title": "5 Équipes de Soutien par les Pairs"
       },
-      "partners": {
-        "title": "Cadre et Partenaires du Programme",
-        "icaoDesc": "Organisation de l'Aviation Civile Internationale",
-        "cansoDesc": "Organisation des Services de Navigation Aérienne Civile",
-        "afcacDesc": "Commission Africaine de l'Aviation Civile",
-        "usoap": "USOAP CMA 2024",
-        "usoapDesc": "Questions de protocole pour les domaines ANS, AGA et SSP",
-        "cansoSoe": "CANSO SoE 2024",
-        "cansoSoeDesc": "Modèle de maturité SMS à 4 composantes"
+      "framework": {
+        "title": "Alignement Cadre"
+      },
+      "milestone": {
+        "title": "Prochaine Étape"
+      },
+      "footer": {
+        "tagline": "Améliorer la Sécurité Aérienne en Afrique par l'Excellence Collaborative"
       }
     },
     "login": {
@@ -5537,6 +5530,7 @@
     "totalFindingsCount": "Total : {count} constats",
     "findingTrend": "Tendance des Constats",
     "findingMetrics": "Métriques des Constats",
+    "openFindingsLabel": "Constats Ouverts",
     "closedFindings": "Constats Fermés",
     "avgResolutionTime": "Temps de Résolution Moyen",
     "findingsByArea": "Constats par Domaine d'Audit",
@@ -5547,6 +5541,7 @@
     "overdueCount": "Nombre en Retard",
     "avgClosureTime": "Temps de Clôture Moyen",
     "pendingVerification": "En Attente de Vérification",
+    "overdueCapsSectionTitle": "PAC en Retard",
     "noOverdueCAPs": "Aucun PAC en retard",
     "requiresImmediateAttention": "Ces PAC nécessitent une attention immédiate",
     "findingReference": "Référence du Constat",

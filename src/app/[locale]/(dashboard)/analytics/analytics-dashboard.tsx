@@ -560,7 +560,7 @@ export function AnalyticsDashboard({ locale }: AnalyticsDashboardProps) {
               <CardContent className="grid gap-4 md:grid-cols-2">
                 <div className="p-4 bg-muted rounded-lg text-center">
                   <p className="text-sm font-medium text-muted-foreground">
-                    {t("openFindings")}
+                    {t("openFindingsLabel")}
                   </p>
                   <p className="text-3xl font-bold text-yellow-600">
                     {findingStats?.openCount || 0}
@@ -737,7 +737,7 @@ export function AnalyticsDashboard({ locale }: AnalyticsDashboardProps) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-red-600">
                   <XCircle className="h-5 w-5" />
-                  {t("overdueCAPs")}
+                  {t("overdueCapsSectionTitle")}
                 </CardTitle>
                 <CardDescription>{t("requiresImmediateAttention")}</CardDescription>
               </CardHeader>

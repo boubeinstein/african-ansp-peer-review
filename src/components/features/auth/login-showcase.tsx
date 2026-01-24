@@ -3,187 +3,229 @@
 /**
  * Login Showcase Component
  *
- * Auto-rotating carousel for the login page left panel.
- * Features programme statistics, regional teams, and partner logos.
+ * Clean ICAO USOAP-style statistics showcase with verified programme facts.
+ * Displays only accurate, hardcoded data - no dynamic stats that may be incomplete.
  */
 
-import { useState, useEffect, useCallback } from "react";
-import { useLocale, useTranslations } from "next-intl";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Shield } from "lucide-react";
-import { trpc } from "@/lib/trpc/client";
-import { SlideStats } from "./slides/slide-stats";
-import { SlideTeams } from "./slides/slide-teams";
-import { SlidePartners } from "./slides/slide-partners";
-import { LanguageSelector } from "./language-selector";
+import { useTranslations, useLocale } from "next-intl";
 import { PartnerLogos } from "./partner-logos";
+import {
+  CheckCircle2,
+  Calendar,
+  Users,
+  Building2,
+  UsersRound,
+  Clock,
+} from "lucide-react";
 
-const SLIDE_INTERVAL = 6000; // 6 seconds
-const TOTAL_SLIDES = 3;
+// Verified programme data - hardcoded for accuracy
+const PROGRAMME_STATS = {
+  organizations: 20,
+  reviewers: 45,
+  nominated: 99,
+  teams: 5,
+  yearsBuilding: 10,
+};
+
+const TEAMS = [
+  {
+    number: 1,
+    nameEn: "ASECNA & Southern Africa Partnership",
+    nameFr: "Partenariat ASECNA & Afrique Australe",
+    members: ["ASECNA", "ATNS", "CAAB", "ESWACAA"],
+  },
+  {
+    number: 2,
+    nameEn: "East African Community",
+    nameFr: "Communauté d'Afrique de l'Est",
+    members: ["KCAA", "TCAA", "UCAA", "RCAA", "BCAA"],
+  },
+  {
+    number: 3,
+    nameEn: "West African Anglophone",
+    nameFr: "Afrique de l'Ouest Anglophone",
+    members: ["NAMA", "GCAA", "Roberts FIR"],
+  },
+  {
+    number: 4,
+    nameEn: "Southern & Eastern Africa",
+    nameFr: "Afrique Australe et Orientale",
+    members: ["ADM", "MCAA", "ACM", "CAAZ", "ZACL"],
+  },
+  {
+    number: 5,
+    nameEn: "Northern Africa",
+    nameFr: "Afrique du Nord",
+    members: ["DGAC", "OACA", "ANAC"],
+  },
+];
+
+const NEXT_MILESTONE = {
+  titleEn: "AFI Peer Reviewers Training",
+  titleFr: "Formation des Évaluateurs Pairs AFI",
+  date: "Feb 2-5, 2026",
+  location: "Dar es Salaam, Tanzania",
+};
 
 export function LoginShowcase() {
-  const t = useTranslations("auth");
+  const t = useTranslations("auth.showcase");
   const locale = useLocale();
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const [direction, setDirection] = useState(1);
-
-  // Fetch login page stats
-  const { data: stats } = trpc.public.getLoginPageStats.useQuery(undefined, {
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
-  });
-
-  const goToSlide = useCallback((index: number) => {
-    setDirection(index > currentSlide ? 1 : -1);
-    setCurrentSlide(index);
-  }, [currentSlide]);
-
-  const nextSlide = useCallback(() => {
-    setDirection(1);
-    setCurrentSlide((prev) => (prev + 1) % TOTAL_SLIDES);
-  }, []);
-
-  const prevSlide = useCallback(() => {
-    setDirection(-1);
-    setCurrentSlide((prev) => (prev - 1 + TOTAL_SLIDES) % TOTAL_SLIDES);
-  }, []);
-
-  // Auto-advance slides
-  useEffect(() => {
-    if (isPaused) return;
-
-    const interval = setInterval(() => {
-      nextSlide();
-    }, SLIDE_INTERVAL);
-
-    return () => clearInterval(interval);
-  }, [isPaused, nextSlide]);
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") prevSlide();
-      if (e.key === "ArrowRight") nextSlide();
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [nextSlide, prevSlide]);
-
-  const slideVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 300 : -300,
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction: number) => ({
-      x: direction > 0 ? -300 : 300,
-      opacity: 0,
-    }),
-  };
-
-  const slides = [
-    <SlideStats key="stats" stats={stats} />,
-    <SlideTeams key="teams" teams={stats?.teams} locale={locale} />,
-    <SlidePartners key="partners" />,
-  ];
 
   return (
-    <div
-      className="w-full h-full flex flex-col p-8 lg:p-12 text-white relative overflow-hidden"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-    >
-      {/* Header with Logos and Language Selector */}
-      <div className="flex items-center justify-between mb-6">
-        {/* Partner Logos - Visually Proportioned */}
-        <PartnerLogos variant="dark" size="lg" />
-
-        {/* Language Selector */}
-        <LanguageSelector variant="dark" />
+    <div className="w-full h-full flex flex-col bg-[#0f172a]">
+      {/* Header Banner - ICAO Blue Gradient */}
+      <div className="bg-gradient-to-r from-[#1e3a5f] to-[#0c4a6e] px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-1 h-8 bg-cyan-400 rounded-full" />
+            <h1 className="text-white text-lg font-semibold">{t("header")}</h1>
+          </div>
+          <PartnerLogos variant="dark" size="sm" showDividers={false} />
+        </div>
       </div>
 
-      {/* Badge */}
-      <div className="mb-3">
-        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-500/20 text-amber-300 border border-amber-500/30">
-          <Shield className="w-3 h-3 mr-1.5" />
-          {t("hero.badge")}
-        </span>
+      {/* Main Content */}
+      <div className="flex-1 p-6 overflow-auto">
+        {/* Key Stats Row */}
+        <div className="grid grid-cols-4 gap-4 mb-6">
+          <StatCard
+            value={PROGRAMME_STATS.organizations}
+            label={t("stats.organizations")}
+            icon={Building2}
+          />
+          <StatCard
+            value={PROGRAMME_STATS.reviewers}
+            label={t("stats.reviewers")}
+            sublabel={t("stats.reviewersFrom", {
+              count: PROGRAMME_STATS.nominated,
+            })}
+            icon={Users}
+          />
+          <StatCard
+            value={PROGRAMME_STATS.teams}
+            label={t("stats.teams")}
+            icon={UsersRound}
+          />
+          <StatCard
+            value={`${PROGRAMME_STATS.yearsBuilding}+`}
+            label={t("stats.years")}
+            icon={Clock}
+          />
+        </div>
+
+        {/* Teams Section */}
+        <div className="mb-6">
+          <h2 className="text-white font-semibold mb-3 flex items-center gap-2">
+            <UsersRound className="h-5 w-5 text-cyan-400" />
+            {t("teams.title")}
+          </h2>
+          <div className="grid grid-cols-5 gap-3">
+            {TEAMS.map((team) => (
+              <TeamCard
+                key={team.number}
+                number={team.number}
+                name={locale === "fr" ? team.nameFr : team.nameEn}
+                members={team.members}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom Row: Framework + Milestone */}
+        <div className="grid grid-cols-2 gap-4">
+          {/* Framework Alignment */}
+          <div className="bg-slate-800/50 rounded-xl p-5 border border-slate-700/50">
+            <h3 className="text-cyan-400 font-semibold text-sm mb-4 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4" />
+              {t("framework.title")}
+            </h3>
+            <div className="space-y-3">
+              <FrameworkItem label="USOAP CMA 2024" />
+              <FrameworkItem label="CANSO SoE 2024" />
+              <FrameworkItem label="ICAO Annex 19" />
+            </div>
+          </div>
+
+          {/* Next Milestone */}
+          <div className="bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-xl p-5 border border-cyan-500/30">
+            <h3 className="text-cyan-400 font-semibold text-sm mb-3 flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              {t("milestone.title")}
+            </h3>
+            <p className="text-white font-semibold text-lg">
+              {locale === "fr"
+                ? NEXT_MILESTONE.titleFr
+                : NEXT_MILESTONE.titleEn}
+            </p>
+            <p className="text-slate-300 text-sm mt-2">{NEXT_MILESTONE.date}</p>
+            <p className="text-slate-400 text-sm">{NEXT_MILESTONE.location}</p>
+          </div>
+        </div>
       </div>
 
-      {/* Title */}
-      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 leading-tight">
-        {t("hero.title")}
-      </h1>
+      {/* Footer */}
+      <div className="px-6 py-3 border-t border-slate-800">
+        <p className="text-slate-500 text-xs text-center">
+          {t("footer.tagline")}
+        </p>
+      </div>
+    </div>
+  );
+}
 
-      <p className="text-base lg:text-lg text-white/80 mb-4">
-        {t("hero.subtitle")}
+// Stat Card Component
+function StatCard({
+  value,
+  label,
+  sublabel,
+  icon: Icon,
+}: {
+  value: number | string;
+  label: string;
+  sublabel?: string;
+  icon: React.ComponentType<{ className?: string }>;
+}) {
+  return (
+    <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 hover:border-slate-600/50 transition-colors">
+      <Icon className="h-5 w-5 text-cyan-400 mb-3" />
+      <div className="text-3xl font-bold text-white mb-1">{value}</div>
+      <div className="text-slate-400 text-sm">{label}</div>
+      {sublabel && (
+        <div className="text-slate-500 text-xs mt-1">{sublabel}</div>
+      )}
+    </div>
+  );
+}
+
+// Team Card Component
+function TeamCard({
+  number,
+  name,
+  members,
+}: {
+  number: number;
+  name: string;
+  members: string[];
+}) {
+  return (
+    <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50 hover:border-cyan-500/30 transition-colors">
+      <div className="text-cyan-400 font-bold text-sm mb-1">Team {number}</div>
+      <p className="text-white text-xs font-medium mb-2 line-clamp-2 leading-tight">
+        {name}
       </p>
+      <p className="text-slate-500 text-xs leading-relaxed">
+        {members.join(", ")}
+      </p>
+    </div>
+  );
+}
 
-      <div className="h-1 w-24 bg-gradient-to-r from-amber-500 to-blue-500 rounded-full mb-6" />
-
-      {/* Carousel Content Area */}
-      <div className="flex-1 relative min-h-[280px]">
-        <AnimatePresence mode="wait" custom={direction}>
-          <motion.div
-            key={currentSlide}
-            custom={direction}
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="absolute inset-0"
-          >
-            {slides[currentSlide]}
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* Navigation Controls */}
-      <div className="flex items-center justify-between pt-4 mt-auto">
-        {/* Arrow Navigation */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={prevSlide}
-            className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-            aria-label={locale === "fr" ? "Diapositive précédente" : "Previous slide"}
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <button
-            onClick={nextSlide}
-            className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-            aria-label={locale === "fr" ? "Diapositive suivante" : "Next slide"}
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Dot Navigation */}
-        <div className="flex items-center gap-2">
-          {Array.from({ length: TOTAL_SLIDES }).map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                currentSlide === index
-                  ? "bg-amber-400 w-6"
-                  : "bg-white/40 hover:bg-white/60"
-              }`}
-              aria-label={`${locale === "fr" ? "Aller à la diapositive" : "Go to slide"} ${index + 1}`}
-            />
-          ))}
-        </div>
-
-        {/* Footer Info */}
-        <div className="text-xs text-white/50">
-          ICAO • CANSO • AFCAC
-        </div>
-      </div>
+// Framework Item Component
+function FrameworkItem({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-3">
+      <div className="h-2 w-2 rounded-full bg-green-400" />
+      <span className="text-slate-300 text-sm">{label}</span>
     </div>
   );
 }

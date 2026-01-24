@@ -89,32 +89,25 @@
       "partnership": "In partnership with ICAO, CANSO & AFCAC"
     },
     "showcase": {
-      "icaoEndorsed": "ICAO-Endorsed Programme",
-      "programmeTitle": "African ANSP Peer Review Programme",
-      "programmeSubtitle": "Collaborative aviation safety enhancement through systematic peer reviews",
-      "tagline": "Enhancing Aviation Safety Across Africa Through Collaborative Excellence",
+      "header": "African ANSP Peer Review Programme in Numbers",
       "stats": {
-        "title": "Programme at a Glance",
-        "ansps": "Participating ANSPs",
-        "reviewers": "Expert Reviewers",
-        "teams": "Regional Teams",
-        "reviews": "Reviews Completed",
-        "coverage": "Covering 3 African Regions: WACAF • ESAF • Northern Africa",
-        "nextMilestone": "Next Milestone"
+        "organizations": "Participating Organizations",
+        "reviewers": "Selected Reviewers",
+        "reviewersFrom": "from {count} nominated",
+        "teams": "Peer Support Teams",
+        "years": "Years of Development"
       },
       "teams": {
-        "title": "5 Regional Peer Support Teams",
-        "footer": "Cross-regional collaboration • Knowledge sharing • Mutual support"
+        "title": "5 Peer Support Teams"
       },
-      "partners": {
-        "title": "Programme Framework & Partners",
-        "icaoDesc": "International Civil Aviation Organization",
-        "cansoDesc": "Civil Air Navigation Services Organisation",
-        "afcacDesc": "African Civil Aviation Commission",
-        "usoap": "USOAP CMA 2024",
-        "usoapDesc": "Protocol Questions for ANS, AGA & SSP audit areas",
-        "cansoSoe": "CANSO SoE 2024",
-        "cansoSoeDesc": "SMS Maturity Model across 4 components"
+      "framework": {
+        "title": "Framework Alignment"
+      },
+      "milestone": {
+        "title": "Next Milestone"
+      },
+      "footer": {
+        "tagline": "Enhancing Aviation Safety Across Africa Through Collaborative Excellence"
       }
     },
     "login": {
@@ -5537,6 +5530,7 @@
     "totalFindingsCount": "Total: {count} findings",
     "findingTrend": "Finding Trend",
     "findingMetrics": "Finding Metrics",
+    "openFindingsLabel": "Open Findings",
     "closedFindings": "Closed Findings",
     "avgResolutionTime": "Avg Resolution Time",
     "findingsByArea": "Findings by Audit Area",
@@ -5547,6 +5541,7 @@
     "overdueCount": "Overdue Count",
     "avgClosureTime": "Avg Closure Time",
     "pendingVerification": "Pending Verification",
+    "overdueCapsSectionTitle": "Overdue CAPs",
     "noOverdueCAPs": "No overdue CAPs",
     "requiresImmediateAttention": "These CAPs require immediate attention",
     "findingReference": "Finding Reference",

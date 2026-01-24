@@ -24,6 +24,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { Loader2, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LanguageSelector } from "./language-selector";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -88,6 +89,11 @@ export function LoginForm() {
 
   return (
     <div className="space-y-6">
+      {/* Mobile Language Selector - only visible on small screens */}
+      <div className="flex justify-center lg:hidden">
+        <LanguageSelector variant="light" size="sm" />
+      </div>
+
       {/* Header with logos (desktop only - hidden on mobile since MobileHeader handles it) */}
       <div className="space-y-2 text-center">
         <div className="flex justify-center gap-4 mb-6">

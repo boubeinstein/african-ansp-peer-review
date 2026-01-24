@@ -3050,10 +3050,14 @@
       }
     },
     "timeline": {
+      "title": "Review Timeline",
+      "description": "Track the progress of this peer review through each phase",
       "progress": "Progress",
       "phasesComplete": "phases complete",
+      "current": "Current",
       "currentPhase": "Current",
       "blockedAt": "Blocked at",
+      "completed": "Completed",
       "inProgress": "In Progress",
       "blocked": "Blocked",
       "pending": "Pending",
@@ -3062,6 +3066,17 @@
       "sameDay": "Same day",
       "teamMembers": "{count, plural, =1 {1 team member} other {# team members}}",
       "findings": "{count, plural, =1 {1 finding} other {# findings}}",
+      "steps": {
+        "requestSubmitted": "Request Submitted",
+        "requestApproved": "Request Approved",
+        "teamAssigned": "Team Assigned",
+        "datesConfirmed": "Dates Confirmed",
+        "reviewStarted": "Review Started",
+        "fieldworkComplete": "Fieldwork Complete",
+        "reportDrafted": "Report Drafted",
+        "reportFinalized": "Report Finalized",
+        "reviewClosed": "Review Closed"
+      },
       "phases": {
         "requestSubmitted": "Request Submitted",
         "requestApproved": "Request Approved",

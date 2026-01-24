@@ -3050,10 +3050,14 @@
       }
     },
     "timeline": {
+      "title": "Chronologie de la Revue",
+      "description": "Suivre la progression de cette revue par les pairs à travers chaque phase",
       "progress": "Progression",
-      "phasesComplete": "phases terminées",
+      "phasesComplete": "phases complétées",
+      "current": "En cours",
       "currentPhase": "En cours",
       "blockedAt": "Bloqué à",
+      "completed": "Complété",
       "inProgress": "En cours",
       "blocked": "Bloqué",
       "pending": "En attente",
@@ -3062,6 +3066,17 @@
       "sameDay": "Même jour",
       "teamMembers": "{count, plural, =1 {1 membre d'équipe} other {# membres d'équipe}}",
       "findings": "{count, plural, =1 {1 constat} other {# constats}}",
+      "steps": {
+        "requestSubmitted": "Demande Soumise",
+        "requestApproved": "Demande Approuvée",
+        "teamAssigned": "Équipe Assignée",
+        "datesConfirmed": "Dates Confirmées",
+        "reviewStarted": "Revue Démarrée",
+        "fieldworkComplete": "Travail Terrain Terminé",
+        "reportDrafted": "Rapport Rédigé",
+        "reportFinalized": "Rapport Finalisé",
+        "reviewClosed": "Revue Clôturée"
+      },
       "phases": {
         "requestSubmitted": "Demande soumise",
         "requestApproved": "Demande approuvée",

@@ -73,11 +73,33 @@ export async function getEligibleReviewers(
   const hostTeamId = review.hostOrganization.regionalTeamId;
   const hostTeam = review.hostOrganization.regionalTeam;
 
-  // Get all certified/lead-qualified reviewers
+  // Current date for availability filtering
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Start of day for accurate comparison
+
+  // Get all certified/lead-qualified reviewers with date-aware availability filtering
+  // Logic: isAvailable = true AND (availableFrom is null OR <= today) AND (availableTo is null OR >= today)
   const allReviewers = await db.reviewerProfile.findMany({
     where: {
       status: { in: ["CERTIFIED", "LEAD_QUALIFIED"] },
       isAvailable: true,
+      // Date range filtering: today must fall within the availability window (or no window set)
+      AND: [
+        // Start date check: null (no restriction) OR today is on or after start
+        {
+          OR: [
+            { availableFrom: null },
+            { availableFrom: { lte: today } },
+          ],
+        },
+        // End date check: null (no restriction) OR today is on or before end
+        {
+          OR: [
+            { availableTo: null },
+            { availableTo: { gte: today } },
+          ],
+        },
+      ],
     },
     include: {
       user: {

@@ -5664,6 +5664,7 @@
     }
   },
   "commandPalette": {
+    "title": "Command Palette",
     "placeholder": "Search for a command...",
     "searchPlaceholder": "Type a command or search...",
     "noResults": "No results found.",

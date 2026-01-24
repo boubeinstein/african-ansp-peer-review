@@ -146,6 +146,22 @@ function ScoreBadge({ score }: { score: string }) {
 }
 
 // =============================================================================
+// TEAM MEMBER ORGANIZATIONS
+// =============================================================================
+
+const TEAM_MEMBERS: Record<number, string> = {
+  1: "ASECNA, ATNS, CAAB, ESWACAA",
+  2: "UCAA, TCAA, BCAA, RCAA, KCAA",
+  3: "NAMA, GCAA, Roberts FIR",
+  4: "ADM, MCAA, ACM, CAAZ, ZACL",
+  5: "DGAC, OACA, ANAC",
+};
+
+function getTeamMembers(teamNumber: number): string {
+  return TEAM_MEMBERS[teamNumber] || "";
+}
+
+// =============================================================================
 // TEAM CARD
 // =============================================================================
 
@@ -167,15 +183,19 @@ function TeamCard({ team, locale }: TeamCardProps) {
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <Badge variant="secondary">Team {team.teamNumber}</Badge>
+        <div className="flex items-center justify-between mb-1">
+          <Badge variant="default" className="text-sm font-bold px-3 py-1">
+            Team {team.teamNumber}
+          </Badge>
           <span
             className={`text-lg font-bold px-2 py-1 rounded ${getScoreColor(team.participationScore)}`}
           >
             {team.participationScore}
           </span>
         </div>
-        <CardTitle className="text-sm">{team.teamName}</CardTitle>
+        <p className="text-xs text-muted-foreground">
+          {getTeamMembers(team.teamNumber)}
+        </p>
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="grid grid-cols-2 gap-2 text-center">

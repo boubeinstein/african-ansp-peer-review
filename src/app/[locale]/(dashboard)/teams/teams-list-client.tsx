@@ -16,13 +16,28 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Users, Building2, ArrowRight, Crown, FileCheck } from "lucide-react";
+
+// =============================================================================
+// TEAM MEMBER ORGANIZATIONS
+// =============================================================================
+
+const TEAM_MEMBERS: Record<number, string> = {
+  1: "ASECNA, ATNS, CAAB, ESWACAA",
+  2: "UCAA, TCAA, BCAA, RCAA, KCAA",
+  3: "NAMA, GCAA, Roberts FIR",
+  4: "ADM, MCAA, ACM, CAAZ, ZACL",
+  5: "DGAC, OACA, ANAC",
+};
+
+function getTeamMembers(teamNumber: number): string {
+  return TEAM_MEMBERS[teamNumber] || "";
+}
 
 // =============================================================================
 // LOADING SKELETON
@@ -60,11 +75,10 @@ interface TeamCardProps {
     capClosureRate: number;
     participationScore: string;
   };
-  isMyTeam?: boolean;
   locale: string;
 }
 
-function TeamCard({ team, isMyTeam, locale }: TeamCardProps) {
+function TeamCard({ team, locale }: TeamCardProps) {
   const t = useTranslations("teams");
 
   const getScoreVariant = (score: string) => {
@@ -74,28 +88,21 @@ function TeamCard({ team, isMyTeam, locale }: TeamCardProps) {
   };
 
   return (
-    <Card
-      className={`hover:shadow-lg transition-shadow ${isMyTeam ? "border-primary ring-1 ring-primary/20" : ""}`}
-    >
+    <Card className="hover:shadow-lg transition-shadow">
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-lg font-semibold">
-              Team {team.teamNumber}
-            </Badge>
-            {isMyTeam && (
-              <Badge variant="default" className="text-xs">
-                {t("yourTeam")}
-              </Badge>
-            )}
-          </div>
+        <div className="flex items-center justify-between mb-1">
+          <Badge variant="default" className="text-sm font-bold px-3 py-1.5">
+            Team {team.teamNumber}
+          </Badge>
           <Badge variant={getScoreVariant(team.participationScore)}>
             {team.participationScore}
           </Badge>
         </div>
-        <CardTitle className="text-lg">{team.teamName}</CardTitle>
+        <p className="text-sm text-muted-foreground mt-2">
+          {getTeamMembers(team.teamNumber)}
+        </p>
         {team.leadOrganizationName && (
-          <CardDescription className="flex items-center gap-1">
+          <CardDescription className="flex items-center gap-1 mt-2">
             <Crown className="h-3 w-3 text-amber-500" />
             {t("leadBy")}: {team.leadOrganizationName}
           </CardDescription>
@@ -158,21 +165,14 @@ export function TeamsListClient() {
       retry: false,
     }
   );
-  const { data: myTeam } = trpc.teamStatistics.getMyTeam.useQuery();
 
   if (isLoading) {
     return <TeamsListSkeleton />;
   }
 
-  // Sort teams: user's team first, then by team number
+  // Sort teams by team number
   const sortedTeams = teams
-    ? [...teams].sort((a, b) => {
-        if (myTeam) {
-          if (a.teamId === myTeam.teamId) return -1;
-          if (b.teamId === myTeam.teamId) return 1;
-        }
-        return a.teamNumber - b.teamNumber;
-      })
+    ? [...teams].sort((a, b) => a.teamNumber - b.teamNumber)
     : [];
 
   return (
@@ -190,7 +190,6 @@ export function TeamsListClient() {
             <TeamCard
               key={team.teamId}
               team={team}
-              isMyTeam={myTeam?.teamId === team.teamId}
               locale={locale}
             />
           ))}

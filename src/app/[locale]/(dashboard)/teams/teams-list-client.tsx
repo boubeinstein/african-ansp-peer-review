@@ -30,7 +30,7 @@ import { Users, Building2, ArrowRight, Crown, FileCheck } from "lucide-react";
 const TEAM_MEMBERS: Record<number, string> = {
   1: "ASECNA, ATNS, CAAB, ESWACAA",
   2: "UCAA, TCAA, BCAA, RCAA, KCAA",
-  3: "NAMA, GCAA, Roberts FIR",
+  3: "NAMA, GCAA, RFIR",
   4: "ADM, MCAA, ACM, CAAZ, ZACL",
   5: "DGAC, OACA, ANAC",
 };

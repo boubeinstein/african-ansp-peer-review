@@ -88,6 +88,27 @@
       },
       "partnership": "En partenariat avec l'OACI, CANSO & CAFAC"
     },
+    "showcase": {
+      "tagline": "Renforcer la Sécurité Aérienne en Afrique par l'Excellence Collaborative",
+      "stats": {
+        "ansps": "ANSP/CAA",
+        "experts": "Experts Évaluateurs",
+        "teams": "Équipes Régionales",
+        "reviews": "Revues"
+      },
+      "nextMilestone": "Prochaine Étape",
+      "regionalTeams": "Équipes Régionales",
+      "orgs": "orgs",
+      "reviewers": "évaluateurs",
+      "teamsDescription": "Les équipes régionales facilitent les revues par les pairs en regroupant les ANSP ayant des contextes opérationnels similaires, permettant un partage efficace des connaissances et une amélioration collaborative.",
+      "partnerOrganizations": "Organisations Partenaires",
+      "partnershipBenefits": "Avantages du Partenariat",
+      "benefits": {
+        "standards": "Normes Mondiales",
+        "network": "Réseau Africain",
+        "safety": "Excellence en Sécurité"
+      }
+    },
     "login": {
       "title": "Bon Retour",
       "description": "Connectez-vous à votre compte pour continuer",

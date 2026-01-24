@@ -88,6 +88,27 @@
       },
       "partnership": "In partnership with ICAO, CANSO & AFCAC"
     },
+    "showcase": {
+      "tagline": "Enhancing Aviation Safety Across Africa Through Collaborative Excellence",
+      "stats": {
+        "ansps": "ANSPs/CAAs",
+        "experts": "Expert Reviewers",
+        "teams": "Regional Teams",
+        "reviews": "Reviews"
+      },
+      "nextMilestone": "Next Milestone",
+      "regionalTeams": "Regional Teams",
+      "orgs": "orgs",
+      "reviewers": "reviewers",
+      "teamsDescription": "Regional teams facilitate peer reviews by grouping ANSPs with similar operational contexts, enabling effective knowledge sharing and collaborative improvement.",
+      "partnerOrganizations": "Partner Organizations",
+      "partnershipBenefits": "Partnership Benefits",
+      "benefits": {
+        "standards": "Global Standards",
+        "network": "African Network",
+        "safety": "Safety Excellence"
+      }
+    },
     "login": {
       "title": "Welcome Back",
       "description": "Sign in to your account to continue",

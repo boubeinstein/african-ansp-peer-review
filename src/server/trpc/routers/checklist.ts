@@ -236,22 +236,27 @@ export const checklistRouter = router({
         });
       }
 
-      // Create all checklist items
-      const items = await ctx.db.$transaction(
-        CHECKLIST_ITEM_DEFINITIONS.map((def) =>
-          ctx.db.fieldworkChecklistItem.create({
-            data: {
-              reviewId,
-              phase: def.phase,
-              itemCode: def.itemCode,
-              sortOrder: def.sortOrder,
-              labelEn: def.labelEn,
-              labelFr: def.labelFr,
-              validationRules: (def.validationRules as unknown as Prisma.InputJsonValue) ?? Prisma.JsonNull,
-            },
-          })
-        )
-      );
+      // Create all checklist items using createMany for performance
+      await ctx.db.fieldworkChecklistItem.createMany({
+        data: CHECKLIST_ITEM_DEFINITIONS.map((def) => ({
+          reviewId,
+          phase: def.phase,
+          itemCode: def.itemCode,
+          sortOrder: def.sortOrder,
+          labelEn: def.labelEn,
+          labelFr: def.labelFr,
+          validationRules:
+            (def.validationRules as unknown as Prisma.InputJsonValue) ??
+            Prisma.JsonNull,
+        })),
+        skipDuplicates: true,
+      });
+
+      // Fetch and return the created items
+      const items = await ctx.db.fieldworkChecklistItem.findMany({
+        where: { reviewId },
+        orderBy: { sortOrder: "asc" },
+      });
 
       return items;
     }),
@@ -279,23 +284,22 @@ export const checklistRouter = router({
         include: includeRelations,
       });
 
-      // If no items, initialize them
+      // If no items, initialize them using createMany for performance
       if (items.length === 0) {
-        await ctx.db.$transaction(
-          CHECKLIST_ITEM_DEFINITIONS.map((def) =>
-            ctx.db.fieldworkChecklistItem.create({
-              data: {
-                reviewId,
-                phase: def.phase,
-                itemCode: def.itemCode,
-                sortOrder: def.sortOrder,
-                labelEn: def.labelEn,
-                labelFr: def.labelFr,
-                validationRules: (def.validationRules as unknown as Prisma.InputJsonValue) ?? Prisma.JsonNull,
-              },
-            })
-          )
-        );
+        await ctx.db.fieldworkChecklistItem.createMany({
+          data: CHECKLIST_ITEM_DEFINITIONS.map((def) => ({
+            reviewId,
+            phase: def.phase,
+            itemCode: def.itemCode,
+            sortOrder: def.sortOrder,
+            labelEn: def.labelEn,
+            labelFr: def.labelFr,
+            validationRules:
+              (def.validationRules as unknown as Prisma.InputJsonValue) ??
+              Prisma.JsonNull,
+          })),
+          skipDuplicates: true,
+        });
 
         // Fetch the newly created items with relations
         items = await ctx.db.fieldworkChecklistItem.findMany({

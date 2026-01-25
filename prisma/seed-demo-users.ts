@@ -1,18 +1,17 @@
 /**
  * Seed Script: Demo Users and Reviewer Profiles
- *
- * Creates 43 demo users with correct organization codes:
- * - 3 system users (Admin, Coordinator, Steering Committee)
- * - 40 reviewers (20 Lead Qualified, 20 Certified)
- *
- * Usage:
- *   npm run db:seed:demo-users
  */
-
-import { PrismaClient, UserRole, Locale, ReviewerStatus } from "@prisma/client";
+import "dotenv/config";
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "@prisma/client";
+import type { UserRole, Locale, ReviewerStatus } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
+
 
 const DEFAULT_PASSWORD = "Demo2024!";
 
@@ -246,4 +245,5 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
+    await pool.end();
   });

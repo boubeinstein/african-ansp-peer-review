@@ -57,6 +57,7 @@ import {
 
 /**
  * Roles with full access to organization assessments
+ * Includes org-level management AND reviewer roles who work on assessments
  */
 const ASSESSMENT_MANAGER_ROLES: UserRole[] = [
   "SUPER_ADMIN",
@@ -65,6 +66,8 @@ const ASSESSMENT_MANAGER_ROLES: UserRole[] = [
   "ANSP_ADMIN",
   "SAFETY_MANAGER",
   "QUALITY_MANAGER",
+  "LEAD_REVIEWER",
+  "PEER_REVIEWER",
 ];
 
 /**
@@ -887,29 +890,28 @@ export const assessmentRouter = router({
       const where: Prisma.AssessmentWhereInput = {};
 
       // Apply organization filter based on role
-      if (["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(user.role)) {
+      // Programme-level roles can see all assessments
+      const programmeRoles = ["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"];
+
+      if (programmeRoles.includes(user.role)) {
         // Admin can see all - apply optional filter
         if (filters.organizationId) {
           where.organizationId = filters.organizationId;
         }
       } else if (["STEERING_COMMITTEE"].includes(user.role)) {
-        // Can only see completed assessments
+        // Steering committee sees completed assessments across all orgs
         where.status = "COMPLETED";
         if (filters.organizationId) {
           where.organizationId = filters.organizationId;
         }
-      } else if (["PEER_REVIEWER", "LEAD_REVIEWER"].includes(user.role)) {
-        // Can see submitted+ assessments
-        where.status = { in: ["SUBMITTED", "UNDER_REVIEW", "COMPLETED"] };
-        if (filters.organizationId) {
-          where.organizationId = filters.organizationId;
-        }
       } else {
-        // Regular users can only see their organization's assessments
+        // Organization-level roles (including reviewers) see their org's assessments
         if (!user.organizationId) {
           return { assessments: [], total: 0, page, limit, totalPages: 0 };
         }
         where.organizationId = user.organizationId;
+        // Note: Reviewers see all statuses for their own org's assessments
+        // They can continue/view assessments created by coordinators
       }
 
       // Apply other filters

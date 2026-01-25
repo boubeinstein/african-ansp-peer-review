@@ -373,6 +373,103 @@ const ExportInput = z.object({
 
 export const assessmentRouter = router({
   // ============================================
+  // ASSESSMENT CREATION CONTEXT
+  // ============================================
+
+  /**
+   * Get context for assessment creation
+   * Returns user role, organization info, and available organizations
+   */
+  getCreationContext: protectedProcedure.query(async ({ ctx }) => {
+    const { user } = ctx;
+
+    // Roles that can create assessments for any organization
+    const globalRoles: UserRole[] = [
+      "SUPER_ADMIN",
+      "PROGRAMME_COORDINATOR",
+      "STEERING_COMMITTEE",
+    ];
+    const canSelectOrganization = globalRoles.includes(user.role);
+
+    // Roles that can only create for their own organization
+    const orgRoles: UserRole[] = [
+      "ANSP_ADMIN",
+      "SAFETY_MANAGER",
+      "QUALITY_MANAGER",
+    ];
+    const canCreateForOwnOrg = orgRoles.includes(user.role);
+
+    if (!canSelectOrganization && !canCreateForOwnOrg) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "You do not have permission to create assessments",
+      });
+    }
+
+    // Get user's organization
+    let userOrganization = null;
+    if (user.organizationId) {
+      userOrganization = await prisma.organization.findUnique({
+        where: { id: user.organizationId },
+        select: {
+          id: true,
+          nameEn: true,
+          nameFr: true,
+          organizationCode: true,
+          country: true,
+        },
+      });
+    }
+
+    // Get available organizations for selection
+    let availableOrganizations: {
+      id: string;
+      name: string;
+      code: string;
+      country: string;
+    }[] = [];
+
+    if (canSelectOrganization) {
+      // Programme coordinators can see all active organizations
+      const orgs = await prisma.organization.findMany({
+        where: { membershipStatus: "ACTIVE" },
+        select: {
+          id: true,
+          nameEn: true,
+          nameFr: true,
+          organizationCode: true,
+          country: true,
+        },
+        orderBy: { nameEn: "asc" },
+      });
+      availableOrganizations = orgs.map((org) => ({
+        id: org.id,
+        name: org.nameEn,
+        code: org.organizationCode ?? "",
+        country: org.country,
+      }));
+    } else if (userOrganization) {
+      // Org-level users can only see their own organization
+      availableOrganizations = [
+        {
+          id: userOrganization.id,
+          name: userOrganization.nameEn,
+          code: userOrganization.organizationCode ?? "",
+          country: userOrganization.country,
+        },
+      ];
+    }
+
+    return {
+      userRole: user.role,
+      userOrganizationId: user.organizationId,
+      userOrganizationName: userOrganization?.nameEn ?? null,
+      canSelectOrganization,
+      availableOrganizations,
+    };
+  }),
+
+  // ============================================
   // ASSESSMENT CRUD
   // ============================================
 

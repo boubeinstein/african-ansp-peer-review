@@ -292,11 +292,13 @@ function transformResponsesForScoring(
 // =============================================================================
 
 const CreateAssessmentInput = z.object({
+  // Organization ID - optional for org-level users (uses their org), required context for global roles
+  organizationId: z.string().cuid().optional(),
   // Either questionnaireId or questionnaireType must be provided
   questionnaireId: z.string().cuid().optional(),
   questionnaireType: z.nativeEnum(QuestionnaireType).optional(),
-  assessmentType: z.nativeEnum(AssessmentType),
-  title: z.string().min(3).max(200),
+  assessmentType: z.nativeEnum(AssessmentType).default("SELF_ASSESSMENT"),
+  title: z.string().min(3).max(200).optional(),
   description: z.string().max(2000).optional(),
   dueDate: z.date().optional(),
   // Selected audit areas for ANS assessments (when empty, all areas are included)
@@ -481,19 +483,47 @@ export const assessmentRouter = router({
     .mutation(async ({ ctx, input }) => {
       const user = ctx.user;
 
-      // User must belong to an organization
-      if (!user.organizationId) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "You must belong to an organization to create assessments",
-        });
-      }
-
       // Check user has permission
       if (!ASSESSMENT_MANAGER_ROLES.includes(user.role)) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "You do not have permission to create assessments",
+        });
+      }
+
+      // Determine target organization
+      const globalRoles: UserRole[] = [
+        "SUPER_ADMIN",
+        "SYSTEM_ADMIN",
+        "PROGRAMME_COORDINATOR",
+      ];
+      const canSelectOrganization = globalRoles.includes(user.role);
+
+      let targetOrganizationId: string;
+
+      if (canSelectOrganization && input.organizationId) {
+        // Global roles can create for any organization
+        targetOrganizationId = input.organizationId;
+      } else if (user.organizationId) {
+        // Org-level users create for their own organization
+        targetOrganizationId = user.organizationId;
+      } else {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You must belong to an organization or specify one to create assessments",
+        });
+      }
+
+      // Verify target organization exists and get details for reference number
+      const targetOrg = await prisma.organization.findUnique({
+        where: { id: targetOrganizationId },
+        select: { id: true, nameEn: true, organizationCode: true },
+      });
+
+      if (!targetOrg) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Organization not found",
         });
       }
 
@@ -539,7 +569,7 @@ export const assessmentRouter = router({
       // Check for existing active assessment of same type
       const existingAssessment = await prisma.assessment.findFirst({
         where: {
-          organizationId: user.organizationId,
+          organizationId: targetOrganizationId,
           questionnaireId: questionnaire.id,
           type: input.assessmentType,
           status: { notIn: ["COMPLETED", "ARCHIVED"] },
@@ -564,24 +594,11 @@ export const assessmentRouter = router({
         // Note: For SMS assessments, selectedAuditAreas is not applicable
       }
 
-      // Get organization for reference number generation
-      const organization = await prisma.organization.findUnique({
-        where: { id: user.organizationId! },
-        select: { organizationCode: true, nameEn: true },
-      });
-
-      if (!organization) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Organization not found",
-        });
-      }
-
       // Determine assessment type code
       const assessmentTypeCode = getAssessmentTypeCode(questionnaire.type);
 
       // Generate unique reference number
-      const orgCode = organization.organizationCode || organization.nameEn.substring(0, 6);
+      const orgCode = targetOrg.organizationCode || targetOrg.nameEn.substring(0, 6);
       const referenceNumber = await generateAssessmentReferenceNumber({
         organizationCode: orgCode,
         assessmentType: assessmentTypeCode,
@@ -608,7 +625,7 @@ export const assessmentRouter = router({
               description: input.description,
               dueDate: input.dueDate,
               questionnaireId: questionnaire.id,
-              organizationId: user.organizationId!,
+              organizationId: targetOrganizationId,
               status: "DRAFT",
               progress: 0,
               selectedAuditAreas,

@@ -26,6 +26,7 @@ import { translationRouter } from "./translation";
 import { teamStatisticsRouter } from "./team-statistics";
 import { activityRouter } from "./activity";
 import { publicRouter } from "./public";
+import { checklistRouter } from "./checklist";
 
 /**
  * Main app router combining all sub-routers
@@ -58,6 +59,7 @@ export const appRouter = router({
   teamStatistics: teamStatisticsRouter,
   activity: activityRouter,
   public: publicRouter,
+  checklist: checklistRouter,
 });
 
 /**

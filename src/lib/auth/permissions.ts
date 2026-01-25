@@ -127,13 +127,13 @@ export function canDeleteAssessment(
     return false;
   }
 
-  // SUPER_ADMIN and SYSTEM_ADMIN can delete any draft
-  if (["SUPER_ADMIN", "SYSTEM_ADMIN"].includes(userRole)) {
+  // Programme-level admins can delete any draft
+  if (["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(userRole)) {
     return true;
   }
 
-  // ANSP_ADMIN can delete from their organization
-  if (userRole === "ANSP_ADMIN" && isSameOrganization) {
+  // ANSP_ADMIN, LEAD_REVIEWER can delete from their organization
+  if (["ANSP_ADMIN", "LEAD_REVIEWER"].includes(userRole) && isSameOrganization) {
     return true;
   }
 

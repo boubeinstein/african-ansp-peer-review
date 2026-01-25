@@ -95,6 +95,10 @@ model User {
   reviewerProfile          ReviewerProfile?
   reviewApprovals          ReviewApproval[]       @relation("ReviewApprovals")
   fieldworkChecklists      FieldworkChecklist[]   @relation("FieldworkChecklists")
+  checklistItemsCompleted  FieldworkChecklistItem[] @relation("ChecklistCompletedBy")
+  checklistItemsOverridden FieldworkChecklistItem[] @relation("ChecklistOverriddenBy")
+  documentsReviewed        Document[]             @relation("DocumentReviewer")
+  documentsApproved        Document[]             @relation("DocumentApprover")
   preferences              UserPreferences?
   organization             Organization?          @relation(fields: [organizationId], references: [id])
 
@@ -548,6 +552,7 @@ model Review {
   blockedAvailability    ReviewerAvailability[]
   approvals              ReviewApproval[]
   fieldworkChecklist     FieldworkChecklist?
+  checklistItems         FieldworkChecklistItem[]
   hostOrganization       Organization           @relation("HostANSP", fields: [hostOrganizationId], references: [id])
 
   @@map("reviews")
@@ -640,6 +645,43 @@ model FieldworkChecklist {
   completedBy User?  @relation("FieldworkChecklists", fields: [completedById], references: [id])
 
   @@map("fieldwork_checklists")
+}
+
+// Fieldwork Checklist with Validation Rules (Enhanced)
+model FieldworkChecklistItem {
+  id            String         @id @default(cuid())
+
+  reviewId      String         @map("review_id")
+  review        Review         @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  phase         FieldworkPhase
+  itemCode      String         @map("item_code")
+  sortOrder     Int            @map("sort_order")
+
+  labelEn       String         @map("label_en")
+  labelFr       String         @map("label_fr")
+
+  isCompleted   Boolean        @default(false) @map("is_completed")
+  completedAt   DateTime?      @map("completed_at")
+  completedById String?        @map("completed_by_id")
+  completedBy   User?          @relation("ChecklistCompletedBy", fields: [completedById], references: [id])
+
+  // JSON validation rules (e.g., requires document upload, depends on other items)
+  validationRules Json?        @map("validation_rules")
+
+  // Override workflow for exceptions
+  isOverridden    Boolean      @default(false) @map("is_overridden")
+  overrideReason  String?      @map("override_reason")
+  overriddenById  String?      @map("overridden_by_id")
+  overriddenBy    User?        @relation("ChecklistOverriddenBy", fields: [overriddenById], references: [id])
+  overriddenAt    DateTime?    @map("overridden_at")
+
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+
+  @@unique([reviewId, itemCode])
+  @@index([reviewId, phase])
+  @@map("fieldwork_checklist_items")
 }
 
 model ReviewReport {
@@ -881,6 +923,17 @@ model Document {
   isConfidential Boolean               @default(false) @map("is_confidential")
   isDeleted      Boolean               @default(false) @map("is_deleted")
   deletedAt      DateTime?             @map("deleted_at")
+
+  // Document status workflow
+  status         DocumentStatus        @default(UPLOADED)
+  reviewedAt     DateTime?             @map("reviewed_at")
+  reviewedById   String?               @map("reviewed_by_id")
+  reviewedBy     User?                 @relation("DocumentReviewer", fields: [reviewedById], references: [id])
+  reviewNotes    String?               @map("review_notes")
+  approvedAt     DateTime?             @map("approved_at")
+  approvedById   String?               @map("approved_by_id")
+  approvedBy     User?                 @relation("DocumentApprover", fields: [approvedById], references: [id])
+
   createdAt      DateTime              @default(now()) @map("created_at")
   updatedAt      DateTime              @updatedAt @map("updated_at")
   assessment     Assessment?           @relation(fields: [assessmentId], references: [id])
@@ -1385,6 +1438,12 @@ enum ReviewPhase {
   CLOSED
 }
 
+enum FieldworkPhase {
+  PRE_VISIT
+  ON_SITE
+  POST_VISIT
+}
+
 enum TeamRole {
   LEAD_REVIEWER
   REVIEWER
@@ -1490,6 +1549,15 @@ enum DocumentCategory {
   FINAL_REPORT
   CAP_EVIDENCE
   CORRESPONDENCE
+}
+
+enum DocumentStatus {
+  UPLOADED
+  UNDER_REVIEW
+  REVIEWED
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
 }
 
 enum EventType {

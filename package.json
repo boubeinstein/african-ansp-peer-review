@@ -40,6 +40,8 @@
     "db:seed:training-demo": "npx tsx prisma/seed-training-demo.ts",
     "db:seed:training-part2": "npx tsx prisma/seed-training-demo-part2.ts",
     "db:seed:training-part3": "npx tsx prisma/seed-training-demo-part3.ts",
+    "db:seed:training-part4": "npx tsx prisma/seed-training-demo-part4.ts",
+    "db:seed:training-all": "npx tsx prisma/seed-training-demo-all.ts",
     "db:seed:all": "npx tsx prisma/seed.ts && npx tsx prisma/seed-dev-users.ts && npx tsx prisma/seed-training.ts"
   },
   "dependencies": {

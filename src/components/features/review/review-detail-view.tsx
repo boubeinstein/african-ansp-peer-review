@@ -25,8 +25,8 @@ import { ReportActions } from "./report-actions";
 import { ReviewActionButton } from "./review-action-button";
 import { ReviewNextActions } from "./review-next-actions";
 import { ReviewTimeline } from "./review-timeline";
-import { FieldworkChecklist } from "./fieldwork-checklist";
-import { DocumentManager } from "./document-manager";
+import { FieldworkChecklistEnhanced } from "./fieldwork-checklist-enhanced";
+import { ReviewDocumentsEnhanced } from "./review-documents-enhanced";
 
 // UI Components
 import { Button } from "@/components/ui/button";
@@ -641,26 +641,45 @@ export function ReviewDetailView({
       {/* Fieldwork Checklist - shown for team members on active reviews */}
       {review.teamMembers.length > 0 &&
         ["APPROVED", "PLANNING", "SCHEDULED", "IN_PROGRESS", "REPORT_DRAFTING"].includes(review.status) && (
-        <FieldworkChecklist
+        <FieldworkChecklistEnhanced
           reviewId={reviewId}
-          isLeadReviewer={review.teamMembers.some(
-            (m) => m.user.id === userId && m.role === "LEAD_REVIEWER"
-          )}
-          isAdmin={["SUPER_ADMIN", "SYSTEM_ADMIN"].includes(userRole || "")}
-          isTeamMember={
+          locale={locale}
+          canEdit={
             review.teamMembers.some((m) => m.user.id === userId) ||
             canManageTeams
           }
+          canOverride={["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(userRole || "")}
         />
       )}
 
       {/* Document Manager */}
-      <DocumentManager
+      <ReviewDocumentsEnhanced
         reviewId={reviewId}
-        isTeamMember={review.teamMembers.some((m) => m.user.id === userId)}
-        isAdmin={["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(userRole || "")}
-        isHostOrg={userOrganizationId === review.hostOrganization.id}
-        userId={userId || ""}
+        locale={locale}
+        canUpload={
+          canManageTeams ||
+          review.teamMembers.some((m) => m.user.id === userId) ||
+          userOrganizationId === review.hostOrganization.id
+        }
+        canReview={
+          canManageTeams ||
+          review.teamMembers.some(
+            (m) => m.user.id === userId && m.role === "LEAD_REVIEWER"
+          ) ||
+          review.teamMembers.some((m) => m.user.id === userId)
+        }
+        canApprove={
+          canManageTeams ||
+          review.teamMembers.some(
+            (m) => m.user.id === userId && m.role === "LEAD_REVIEWER"
+          )
+        }
+        canDelete={
+          ["SUPER_ADMIN", "SYSTEM_ADMIN"].includes(userRole || "") ||
+          review.teamMembers.some(
+            (m) => m.user.id === userId && m.role === "LEAD_REVIEWER"
+          )
+        }
       />
 
       {/* Report Actions */}

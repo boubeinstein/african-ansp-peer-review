@@ -5737,5 +5737,61 @@
       "select": "pour sélectionner",
       "close": "pour fermer"
     }
+  },
+  "assessments": {
+    "create": {
+      "pageTitle": "Créer une Auto-Évaluation",
+      "pageDescription": "Démarrer une nouvelle auto-évaluation pour votre organisation",
+      "back": "Retour",
+      "next": "Suivant",
+      "createAssessment": "Créer l'Évaluation",
+      "success": "Évaluation créée avec succès",
+      "errorLoadingContext": "Impossible de charger le contexte de création. Veuillez réessayer.",
+      "noQuestionnairesAvailable": "Aucun questionnaire disponible. Veuillez contacter un administrateur.",
+      "steps": {
+        "organization": {
+          "label": "Organisation",
+          "title": "Sélectionner l'Organisation",
+          "description": "Choisissez l'organisation concernée par cette évaluation"
+        },
+        "questionnaire": {
+          "label": "Questionnaire",
+          "title": "Sélectionner le Questionnaire",
+          "description": "Choisissez le cadre d'évaluation à utiliser"
+        },
+        "details": {
+          "label": "Détails",
+          "title": "Détails de l'Évaluation",
+          "description": "Fournissez des informations supplémentaires pour cette évaluation"
+        },
+        "confirm": {
+          "label": "Confirmer",
+          "title": "Vérifier et Confirmer",
+          "description": "Vérifiez vos sélections avant de créer l'évaluation"
+        }
+      },
+      "organizationFixed": "En tant que membre de votre organisation, vous ne pouvez créer des évaluations que pour :",
+      "yourOrganization": "Votre Organisation",
+      "selectOrganization": "Organisation",
+      "selectOrganizationPlaceholder": "Sélectionnez une organisation...",
+      "organizationSelected": "L'évaluation sera créée pour {name}",
+      "questionnaireDescANS": "Basé sur les Questions de Protocole USOAP CMA 2024 de l'OACI pour les Services de Navigation Aérienne",
+      "questionnaireDescSMS": "Basé sur la Norme d'Excellence CANSO en Systèmes de Gestion de la Sécurité 2024",
+      "assessmentTitle": "Titre de l'Évaluation",
+      "titleHint": "Un titre descriptif aide à identifier cette évaluation ultérieurement",
+      "description": "Description (Optionnel)",
+      "descriptionPlaceholder": "Ajoutez des notes ou du contexte pour cette évaluation...",
+      "reviewBeforeCreating": "Veuillez vérifier vos sélections",
+      "reviewWarning": "Une fois créée, l'organisation et le type de questionnaire ne peuvent pas être modifiés.",
+      "organization": "Organisation",
+      "questionnaire": "Questionnaire",
+      "title": "Titre",
+      "confirmDialog": {
+        "title": "Confirmer la Création de l'Évaluation",
+        "description": "Vous êtes sur le point de créer une nouvelle évaluation pour {organization} utilisant le questionnaire {questionnaire}. Cette action ne peut pas être annulée.",
+        "cancel": "Annuler",
+        "confirm": "Créer l'Évaluation"
+      }
+    }
   }
 }

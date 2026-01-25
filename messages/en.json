@@ -5737,5 +5737,61 @@
       "select": "to select",
       "close": "to close"
     }
+  },
+  "assessments": {
+    "create": {
+      "pageTitle": "Create Self-Assessment",
+      "pageDescription": "Start a new self-assessment for your organization",
+      "back": "Back",
+      "next": "Next",
+      "createAssessment": "Create Assessment",
+      "success": "Assessment created successfully",
+      "errorLoadingContext": "Unable to load creation context. Please try again.",
+      "noQuestionnairesAvailable": "No questionnaires available. Please contact an administrator.",
+      "steps": {
+        "organization": {
+          "label": "Organization",
+          "title": "Select Organization",
+          "description": "Choose which organization this assessment is for"
+        },
+        "questionnaire": {
+          "label": "Questionnaire",
+          "title": "Select Questionnaire",
+          "description": "Choose the assessment framework to use"
+        },
+        "details": {
+          "label": "Details",
+          "title": "Assessment Details",
+          "description": "Provide additional information for this assessment"
+        },
+        "confirm": {
+          "label": "Confirm",
+          "title": "Review & Confirm",
+          "description": "Review your selections before creating the assessment"
+        }
+      },
+      "organizationFixed": "As a member of your organization, you can only create assessments for:",
+      "yourOrganization": "Your Organization",
+      "selectOrganization": "Organization",
+      "selectOrganizationPlaceholder": "Select an organization...",
+      "organizationSelected": "Assessment will be created for {name}",
+      "questionnaireDescANS": "Based on ICAO USOAP CMA 2024 Protocol Questions for Air Navigation Services",
+      "questionnaireDescSMS": "Based on CANSO Standard of Excellence in Safety Management Systems 2024",
+      "assessmentTitle": "Assessment Title",
+      "titleHint": "A descriptive title helps identify this assessment later",
+      "description": "Description (Optional)",
+      "descriptionPlaceholder": "Add any notes or context for this assessment...",
+      "reviewBeforeCreating": "Please review your selections",
+      "reviewWarning": "Once created, the organization and questionnaire type cannot be changed.",
+      "organization": "Organization",
+      "questionnaire": "Questionnaire",
+      "title": "Title",
+      "confirmDialog": {
+        "title": "Confirm Assessment Creation",
+        "description": "You are about to create a new assessment for {organization} using the {questionnaire} questionnaire. This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Create Assessment"
+      }
+    }
   }
 }

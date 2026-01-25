@@ -37,6 +37,7 @@
     "db:seed:demo-users": "npx tsx prisma/seed-demo-users.ts",
     "db:seed:demo-users:cleanup": "npx tsx prisma/seed-demo-users.ts cleanup",
     "db:seed:checklist": "npx tsx prisma/seed-fieldwork-checklist.ts",
+    "db:seed:training-demo": "npx tsx prisma/seed-training-demo.ts",
     "db:seed:all": "npx tsx prisma/seed.ts && npx tsx prisma/seed-dev-users.ts && npx tsx prisma/seed-training.ts"
   },
   "dependencies": {

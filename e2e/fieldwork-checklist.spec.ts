@@ -588,7 +588,8 @@ test.describe("Complete Fieldwork", () => {
     await expect(page.getByText(/all checklist items must be completed/i)).toBeVisible();
 
     // Should list incomplete items
-    await expect(page.locator("ul li")).toHaveCount({ min: 1 });
+    const listItems = await page.locator("ul li").count();
+    expect(listItems).toBeGreaterThanOrEqual(1);
   });
 
   test("should disable Complete Fieldwork button when items incomplete", async ({ page }) => {

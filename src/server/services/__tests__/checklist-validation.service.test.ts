@@ -869,8 +869,8 @@ describe("ChecklistValidationService", () => {
   describe("Edge cases", () => {
     it("should handle unknown validation rule type gracefully", async () => {
       const unknownRule = {
-        type: "UNKNOWN_TYPE" as never,
-      };
+        type: "UNKNOWN_TYPE",
+      } as unknown as Parameters<typeof service.validateItem>[2];
 
       const result = await service.validateItem(mockReviewId, "TEST", unknownRule);
 

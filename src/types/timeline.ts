@@ -9,6 +9,10 @@ export interface ReviewTimelineData {
   actualStartDate?: Date | string | null;
   actualEndDate?: Date | string | null;
   updatedAt?: Date | string | null;
+  createdAt?: Date | string | null;
+  // Optional fields for backward compatibility
+  requestedStartDate?: Date | string | null;
+  requestedEndDate?: Date | string | null;
   teamMembers?: {
     id: string;
     confirmedAt?: Date | string | null;
@@ -21,6 +25,11 @@ export interface ReviewTimelineData {
     createdAt?: Date | string | null;
   } | null;
   findings?: { id: string }[];
+  approvals?: {
+    id: string;
+    approvedAt?: Date | string | null;
+    createdAt?: Date | string | null;
+  }[];
   _count?: {
     teamMembers?: number;
     findings?: number;

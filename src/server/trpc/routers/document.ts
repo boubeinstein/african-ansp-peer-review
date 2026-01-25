@@ -10,7 +10,7 @@ import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure } from "../trpc";
 import { documentService } from "@/server/services/document.service";
 import { prisma } from "@/lib/db";
-import { DocumentCategory } from "@prisma/client";
+import { DocumentCategory, DocumentStatus } from "@prisma/client";
 import {
   getSignedDownloadUrl,
   deleteFile,
@@ -645,6 +645,20 @@ export const documentRouter = router({
               lastName: true,
             },
           },
+          reviewedBy: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+          approvedBy: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
         },
         orderBy: [{ category: "asc" }, { uploadedAt: "desc" }],
       });
@@ -1013,21 +1027,411 @@ export const documentRouter = router({
         select: {
           category: true,
           fileSize: true,
+          status: true,
         },
       });
 
       const byCategory: Record<string, number> = {};
+      const byStatus: Record<string, number> = {};
       let totalSize = 0;
 
       documents.forEach((doc) => {
         byCategory[doc.category] = (byCategory[doc.category] || 0) + 1;
+        byStatus[doc.status] = (byStatus[doc.status] || 0) + 1;
         totalSize += doc.fileSize;
       });
 
+      // Calculate summary stats
+      const pendingReview = documents.filter(
+        (d) => d.status === "UPLOADED" || d.status === "UNDER_REVIEW"
+      ).length;
+      const reviewed = documents.filter((d) => d.status === "REVIEWED").length;
+      const approved = documents.filter((d) => d.status === "APPROVED").length;
+      const rejected = documents.filter((d) => d.status === "REJECTED").length;
+
       return {
         total: documents.length,
+        pendingReview,
+        reviewed,
+        approved,
+        rejected,
         byCategory,
+        byStatus,
         totalSize,
       };
+    }),
+
+  /**
+   * Update document status (review/approve/reject workflow)
+   */
+  updateDocumentStatus: protectedProcedure
+    .input(
+      z.object({
+        documentId: z.string().cuid(),
+        status: z.enum(["UNDER_REVIEW", "REVIEWED", "PENDING_APPROVAL", "APPROVED", "REJECTED"]),
+        reviewNotes: z.string().max(1000).optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { documentId, status, reviewNotes } = input;
+      const userId = ctx.session.user.id;
+      const userRole = ctx.session.user.role;
+
+      // Get the document
+      const document = await prisma.document.findUnique({
+        where: { id: documentId },
+        include: {
+          review: {
+            include: {
+              teamMembers: { select: { userId: true, role: true } },
+            },
+          },
+        },
+      });
+
+      if (!document) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Document not found" });
+      }
+
+      if (!document.review) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Document is not associated with a review" });
+      }
+
+      // Permission checks based on status transition
+      const reviewerRoles = [
+        "SUPER_ADMIN",
+        "SYSTEM_ADMIN",
+        "PROGRAMME_COORDINATOR",
+      ];
+      const isTeamMember = document.review.teamMembers.some((m) => m.userId === userId);
+      const isLeadReviewer = document.review.teamMembers.some(
+        (m) => m.userId === userId && m.role === "LEAD_REVIEWER"
+      );
+
+      // Check review permission
+      if (["UNDER_REVIEW", "REVIEWED"].includes(status)) {
+        if (!reviewerRoles.includes(userRole as string) && !isTeamMember) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Only reviewers can mark documents as reviewed",
+          });
+        }
+      }
+
+      // Check approval permission (only lead reviewers and coordinators)
+      if (["PENDING_APPROVAL", "APPROVED", "REJECTED"].includes(status)) {
+        if (!reviewerRoles.includes(userRole as string) && !isLeadReviewer) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Only lead reviewers and coordinators can approve/reject documents",
+          });
+        }
+      }
+
+      // Validate status transitions
+      const validTransitions: Record<string, string[]> = {
+        UPLOADED: ["UNDER_REVIEW", "REVIEWED"],
+        UNDER_REVIEW: ["REVIEWED", "REJECTED"],
+        REVIEWED: ["PENDING_APPROVAL", "APPROVED"],
+        PENDING_APPROVAL: ["APPROVED", "REJECTED"],
+        APPROVED: [], // Final state
+        REJECTED: ["UPLOADED"], // Can be re-uploaded
+      };
+
+      if (!validTransitions[document.status]?.includes(status)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Cannot transition from ${document.status} to ${status}`,
+        });
+      }
+
+      // Require notes for rejection
+      if (status === "REJECTED" && !reviewNotes?.trim()) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Review notes are required when rejecting a document",
+        });
+      }
+
+      // Build update data
+      const updateData: {
+        status: typeof status;
+        reviewNotes?: string;
+        reviewedAt?: Date;
+        reviewedById?: string;
+        approvedAt?: Date;
+        approvedById?: string;
+      } = {
+        status,
+        reviewNotes: reviewNotes || document.reviewNotes || undefined,
+      };
+
+      // Set reviewer/approver based on action
+      if (["UNDER_REVIEW", "REVIEWED"].includes(status)) {
+        updateData.reviewedAt = new Date();
+        updateData.reviewedById = userId;
+      }
+
+      if (["APPROVED", "REJECTED"].includes(status)) {
+        updateData.approvedAt = new Date();
+        updateData.approvedById = userId;
+      }
+
+      const updated = await prisma.document.update({
+        where: { id: documentId },
+        data: updateData,
+        include: {
+          uploadedBy: {
+            select: { id: true, firstName: true, lastName: true },
+          },
+          reviewedBy: {
+            select: { id: true, firstName: true, lastName: true },
+          },
+          approvedBy: {
+            select: { id: true, firstName: true, lastName: true },
+          },
+        },
+      });
+
+      return updated;
+    }),
+
+  /**
+   * Get documents by finding ID
+   */
+  getByFindingId: protectedProcedure
+    .input(z.object({ findingId: z.string().cuid() }))
+    .query(async ({ ctx, input }) => {
+      // Verify finding exists and user has access
+      const finding = await prisma.finding.findUnique({
+        where: { id: input.findingId },
+        include: {
+          review: {
+            include: {
+              teamMembers: { select: { userId: true } },
+              hostOrganization: { select: { id: true } },
+            },
+          },
+        },
+      });
+
+      if (!finding) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Finding not found" });
+      }
+
+      // Check access
+      const isAdmin = ["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(
+        ctx.session.user.role as string
+      );
+      const isTeamMember = finding.review?.teamMembers.some((m) => m.userId === ctx.session.user.id);
+      const isHostOrg = ctx.session.user.organizationId === finding.review?.hostOrganization.id;
+
+      if (!isAdmin && !isTeamMember && !isHostOrg) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to view documents for this finding",
+        });
+      }
+
+      const documents = await prisma.document.findMany({
+        where: { findingId: input.findingId, isDeleted: false },
+        include: {
+          uploadedBy: {
+            select: { id: true, firstName: true, lastName: true },
+          },
+          reviewedBy: {
+            select: { id: true, firstName: true, lastName: true },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      return documents;
+    }),
+
+  /**
+   * Get documents by CAP ID
+   */
+  getByCapId: protectedProcedure
+    .input(z.object({ capId: z.string().cuid() }))
+    .query(async ({ ctx, input }) => {
+      // Verify CAP exists and user has access
+      const cap = await prisma.correctiveActionPlan.findUnique({
+        where: { id: input.capId },
+        include: {
+          finding: {
+            include: {
+              review: {
+                include: {
+                  teamMembers: { select: { userId: true } },
+                  hostOrganization: { select: { id: true } },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!cap) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "CAP not found" });
+      }
+
+      // Check access
+      const isAdmin = ["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(
+        ctx.session.user.role as string
+      );
+      const isTeamMember = cap.finding?.review?.teamMembers.some(
+        (m) => m.userId === ctx.session.user.id
+      );
+      const isHostOrg = ctx.session.user.organizationId === cap.finding?.review?.hostOrganization.id;
+
+      if (!isAdmin && !isTeamMember && !isHostOrg) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to view documents for this CAP",
+        });
+      }
+
+      const documents = await prisma.document.findMany({
+        where: { capId: input.capId, isDeleted: false },
+        include: {
+          uploadedBy: {
+            select: { id: true, firstName: true, lastName: true },
+          },
+          reviewedBy: {
+            select: { id: true, firstName: true, lastName: true },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      return documents;
+    }),
+
+  /**
+   * Bulk update document status (for reviewing multiple documents)
+   */
+  bulkUpdateStatus: protectedProcedure
+    .input(
+      z.object({
+        documentIds: z.array(z.string().cuid()).min(1).max(50),
+        status: z.enum(["REVIEWED", "APPROVED"]),
+        reviewId: z.string().cuid(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { documentIds, status, reviewId } = input;
+      const userId = ctx.session.user.id;
+      const userRole = ctx.session.user.role;
+
+      // Verify review access
+      const review = await prisma.review.findUnique({
+        where: { id: reviewId },
+        include: {
+          teamMembers: { select: { userId: true, role: true } },
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Review not found" });
+      }
+
+      const isAdmin = ["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(
+        userRole as string
+      );
+      const isLeadReviewer = review.teamMembers.some(
+        (m) => m.userId === userId && m.role === "LEAD_REVIEWER"
+      );
+      const isTeamMember = review.teamMembers.some((m) => m.userId === userId);
+
+      // Permission check for approval
+      if (status === "APPROVED" && !isAdmin && !isLeadReviewer) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only lead reviewers and coordinators can approve documents",
+        });
+      }
+
+      // Permission check for review
+      if (status === "REVIEWED" && !isAdmin && !isTeamMember) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only team members can review documents",
+        });
+      }
+
+      const updateData: {
+        status: typeof status;
+        reviewedAt?: Date;
+        reviewedById?: string;
+        approvedAt?: Date;
+        approvedById?: string;
+      } = { status };
+
+      if (status === "REVIEWED") {
+        updateData.reviewedAt = new Date();
+        updateData.reviewedById = userId;
+      } else if (status === "APPROVED") {
+        updateData.approvedAt = new Date();
+        updateData.approvedById = userId;
+      }
+
+      const result = await prisma.document.updateMany({
+        where: {
+          id: { in: documentIds },
+          reviewId,
+          isDeleted: false,
+          // Only update documents that can transition to this status
+          status: status === "REVIEWED"
+            ? { in: ["UPLOADED", "UNDER_REVIEW"] }
+            : { in: ["REVIEWED", "PENDING_APPROVAL"] },
+        },
+        data: updateData,
+      });
+
+      return { updated: result.count };
+    }),
+
+  /**
+   * Get document counts by category for a review (for checklist validation)
+   */
+  getCountsByCategory: protectedProcedure
+    .input(
+      z.object({
+        reviewId: z.string().cuid(),
+        statuses: z.array(z.nativeEnum(DocumentStatus)).optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const { reviewId, statuses } = input;
+
+      const whereClause: {
+        reviewId: string;
+        isDeleted: boolean;
+        status?: { in: DocumentStatus[] };
+      } = {
+        reviewId,
+        isDeleted: false,
+      };
+
+      if (statuses && statuses.length > 0) {
+        whereClause.status = { in: statuses };
+      }
+
+      const documents = await prisma.document.groupBy({
+        by: ["category"],
+        where: whereClause,
+        _count: true,
+      });
+
+      const counts = documents.reduce(
+        (acc, doc) => {
+          acc[doc.category] = doc._count;
+          return acc;
+        },
+        {} as Record<string, number>
+      );
+
+      return counts;
     }),
 });

@@ -5739,6 +5739,24 @@
     }
   },
   "assessments": {
+    "title": "Self-Assessments",
+    "description": "Manage your organization's self-assessments and track progress",
+    "createAssessment": "New Assessment",
+    "filters": {
+      "selectOrganization": "Select organization",
+      "allOrganizations": "All Organizations",
+      "selectStatus": "Select status",
+      "allStatuses": "All Statuses",
+      "draft": "Draft",
+      "submitted": "Submitted",
+      "underReview": "Under Review",
+      "completed": "Completed",
+      "selectType": "Select type",
+      "allTypes": "All Types",
+      "ansUsoap": "ANS USOAP CMA",
+      "smsCanso": "SMS CANSO SoE",
+      "clearFilters": "Clear filters"
+    },
     "create": {
       "pageTitle": "Create Self-Assessment",
       "pageDescription": "Start a new self-assessment for your organization",

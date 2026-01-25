@@ -5739,6 +5739,24 @@
     }
   },
   "assessments": {
+    "title": "Auto-Évaluations",
+    "description": "Gérez les auto-évaluations de votre organisation et suivez les progrès",
+    "createAssessment": "Nouvelle Évaluation",
+    "filters": {
+      "selectOrganization": "Sélectionner l'organisation",
+      "allOrganizations": "Toutes les Organisations",
+      "selectStatus": "Sélectionner le statut",
+      "allStatuses": "Tous les Statuts",
+      "draft": "Brouillon",
+      "submitted": "Soumis",
+      "underReview": "En Révision",
+      "completed": "Terminé",
+      "selectType": "Sélectionner le type",
+      "allTypes": "Tous les Types",
+      "ansUsoap": "ANS USOAP CMA",
+      "smsCanso": "SMS CANSO SoE",
+      "clearFilters": "Effacer les filtres"
+    },
     "create": {
       "pageTitle": "Créer une Auto-Évaluation",
       "pageDescription": "Démarrer une nouvelle auto-évaluation pour votre organisation",

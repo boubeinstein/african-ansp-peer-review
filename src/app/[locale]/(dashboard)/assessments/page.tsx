@@ -1,351 +1,92 @@
-"use client";
-
-import { useState } from "react";
-import { useTranslations, useLocale } from "next-intl";
-import { Link } from "@/lib/i18n/routing";
+import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { AssessmentsList } from "@/components/features/assessments/assessments-list";
+import { AssessmentsFilters } from "@/components/features/assessments/assessments-filters";
+import { AssessmentsStats } from "@/components/features/assessments/assessments-stats";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
-import { Plus, ClipboardList, Clock, CheckCircle2, FileText, Loader2, PlayCircle, Award, Trash2, Archive, MoreVertical } from "lucide-react";
-import { trpc } from "@/lib/trpc/client";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { formatDistanceToNow } from "date-fns";
-import { fr, enUS } from "date-fns/locale";
-import { MaturityLevelBadge } from "@/components/features/assessment/maturity-level-badge";
-import { DeleteAssessmentDialog } from "@/components/features/assessment/delete-assessment-dialog";
-import { ArchiveAssessmentDialog } from "@/components/features/assessment/archive-assessment-dialog";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
-import type { AssessmentStatus } from "@prisma/client";
+import { Plus } from "lucide-react";
+import Link from "next/link";
 
-export default function AssessmentsPage() {
-  const t = useTranslations("assessment");
-  const locale = useLocale();
-  const dateLocale = locale === "fr" ? fr : enUS;
+export default async function AssessmentsPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ organizationId?: string; status?: string; type?: string }>;
+}) {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
 
-  // Dialog state
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
-  const [selectedAssessment, setSelectedAssessment] = useState<{
-    id: string;
-    title: string;
-    type: string;
-  } | null>(null);
+  const { locale } = await params;
+  const filters = await searchParams;
+  const t = await getTranslations("assessments");
 
-  const { data, isLoading, error } = trpc.assessment.list.useQuery({});
+  // Determine if user can see organization filter
+  const globalRoles = ["SUPER_ADMIN", "PROGRAMME_COORDINATOR", "STEERING_COMMITTEE", "SYSTEM_ADMIN"];
+  const canFilterByOrg = globalRoles.includes(session.user.role);
 
-  const assessments = data?.assessments ?? [];
+  // Determine if user can create assessments
+  const createRoles = [...globalRoles, "ANSP_ADMIN", "SAFETY_MANAGER", "QUALITY_MANAGER"];
+  const canCreate = createRoles.includes(session.user.role);
 
-  // Handler to open delete dialog
-  const handleDeleteClick = (assessment: { id: string; title: string; type: string }) => {
-    setSelectedAssessment(assessment);
-    setDeleteDialogOpen(true);
-  };
-
-  // Handler to open archive dialog
-  const handleArchiveClick = (assessment: { id: string; title: string }) => {
-    setSelectedAssessment({ ...assessment, type: "" });
-    setArchiveDialogOpen(true);
-  };
-
-  // Check if assessment can be deleted (DRAFT only)
-  const canDelete = (status: AssessmentStatus) => {
-    return status === "DRAFT";
-  };
-
-  // Check if assessment can be archived (SUBMITTED, UNDER_REVIEW, COMPLETED)
-  const canArchive = (status: AssessmentStatus) => {
-    return status === "SUBMITTED" || status === "UNDER_REVIEW" || status === "COMPLETED";
-  };
-
-  // Calculate stats
-  const stats = {
-    total: assessments.length,
-    inProgress: assessments.filter(a => a.status === "DRAFT").length,
-    completed: assessments.filter(a => a.status === "COMPLETED").length,
-    submitted: assessments.filter(a => a.status === "SUBMITTED" || a.status === "UNDER_REVIEW").length,
-  };
-
-  const getStatusBadge = (status: AssessmentStatus) => {
-    const variants: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; label: string }> = {
-      DRAFT: { variant: "secondary", label: t("status.draft") },
-      SUBMITTED: { variant: "outline", label: t("status.submitted") },
-      UNDER_REVIEW: { variant: "outline", label: t("status.underReview") },
-      COMPLETED: { variant: "default", label: t("status.completed") },
-      ARCHIVED: { variant: "secondary", label: t("status.archived") },
-    };
-    const config = variants[status] ?? { variant: "secondary" as const, label: status };
-    return <Badge variant={config.variant}>{config.label}</Badge>;
-  };
+  // For org-level users, always filter by their organization
+  const effectiveOrgFilter = canFilterByOrg ? filters.organizationId : session.user.organizationId ?? undefined;
 
   return (
-    <div className="container py-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="container py-8 space-y-6">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">{t("list.title")}</h1>
-          <p className="text-muted-foreground">{t("list.description")}</p>
+          <h1 className="text-3xl font-bold">{t("title")}</h1>
+          <p className="text-muted-foreground mt-1">{t("description")}</p>
         </div>
-        <Button asChild>
-          <Link href="/assessments/new">
-            <Plus className="h-4 w-4 mr-2" />
-            {t("list.newAssessment")}
-          </Link>
-        </Button>
+        {canCreate && (
+          <Button asChild>
+            <Link href={`/${locale}/assessments/new`}>
+              <Plus className="h-4 w-4 mr-2" />
+              {t("createAssessment")}
+            </Link>
+          </Button>
+        )}
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>{t("stats.total")}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <ClipboardList className="h-5 w-5 text-muted-foreground" />
-              <span className="text-2xl font-bold">{stats.total}</span>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>{t("stats.inProgress")}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-blue-500" />
-              <span className="text-2xl font-bold">{stats.inProgress}</span>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>{t("stats.completed")}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5 text-green-500" />
-              <span className="text-2xl font-bold">{stats.completed}</span>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>{t("stats.submitted")}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-purple-500" />
-              <span className="text-2xl font-bold">{stats.submitted}</span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <Suspense fallback={<AssessmentsStatsSkeleton />}>
+        <AssessmentsStats organizationId={effectiveOrgFilter} />
+      </Suspense>
 
-      {/* Loading State */}
-      {isLoading && (
-        <Card className="py-12">
-          <CardContent className="flex flex-col items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-            <p className="mt-4 text-muted-foreground">{t("list.loading")}</p>
-          </CardContent>
-        </Card>
-      )}
+      <AssessmentsFilters
+        showOrganizationFilter={canFilterByOrg}
+        initialFilters={filters}
+      />
 
-      {/* Error State */}
-      {error && (
-        <Card className="py-12 border-destructive">
-          <CardContent className="flex flex-col items-center justify-center text-center">
-            <p className="text-destructive">{error.message}</p>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Assessment List */}
-      {!isLoading && !error && assessments.length > 0 && (
-        <div className="space-y-4">
-          {assessments.map((assessment) => (
-            <Card key={assessment.id} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className="space-y-2 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      {/* Display reference number or fallback to title */}
-                      <h3 className="font-semibold text-lg font-mono">
-                        {assessment.referenceNumber || assessment.title}
-                      </h3>
-                      {getStatusBadge(assessment.status)}
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      {assessment.questionnaire.type === "ANS_USOAP_CMA"
-                        ? t("typeLabel.ans")
-                        : t("typeLabel.sms")}
-                      {" • "}
-                      {locale === "fr"
-                        ? assessment.organization.nameFr
-                        : assessment.organization.nameEn}
-                    </p>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span>
-                        {t("list.updated")} {formatDistanceToNow(new Date(assessment.updatedAt), {
-                          addSuffix: true,
-                          locale: dateLocale
-                        })}
-                      </span>
-                      {assessment.dueDate && (
-                        <span>
-                          {t("list.due")}: {new Date(assessment.dueDate).toLocaleDateString(locale)}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-col items-end gap-2 min-w-[200px]">
-                    {/* Show score for submitted/completed assessments */}
-                    {(assessment.status === "SUBMITTED" ||
-                      assessment.status === "UNDER_REVIEW" ||
-                      assessment.status === "COMPLETED") &&
-                      (assessment.eiScore !== null || assessment.maturityLevel !== null || assessment.overallScore !== null) ? (
-                      <div className="flex items-center gap-3 mb-1">
-                        {assessment.questionnaire.type === "ANS_USOAP_CMA" ? (
-                          <div className="flex items-center gap-2">
-                            <Award className="h-4 w-4 text-primary" />
-                            <span className="text-sm text-muted-foreground">EI:</span>
-                            <span className={cn(
-                              "font-bold text-lg",
-                              (assessment.eiScore ?? assessment.overallScore ?? 0) >= 80 ? "text-green-600" :
-                              (assessment.eiScore ?? assessment.overallScore ?? 0) >= 60 ? "text-yellow-600" :
-                              (assessment.eiScore ?? assessment.overallScore ?? 0) >= 40 ? "text-orange-600" : "text-red-600"
-                            )}>
-                              {(assessment.eiScore ?? assessment.overallScore)?.toFixed(1)}%
-                            </span>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <MaturityLevelBadge level={assessment.maturityLevel} size="sm" />
-                            <span className="font-semibold">
-                              {assessment.overallScore?.toFixed(1)}%
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="w-full">
-                        <div className="flex justify-between text-sm mb-1">
-                          <span>{t("list.progress")}</span>
-                          <span>{assessment.progress}%</span>
-                        </div>
-                        <Progress value={assessment.progress} className="h-2" />
-                      </div>
-                    )}
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href={`/assessments/${assessment.id}`}>
-                          {t("list.view")}
-                        </Link>
-                      </Button>
-                      {assessment.status === "DRAFT" && (
-                        <Button size="sm" asChild>
-                          <Link href={`/assessments/${assessment.id}`}>
-                            <PlayCircle className="h-4 w-4 mr-1" />
-                            {t("list.continue")}
-                          </Link>
-                        </Button>
-                      )}
-                      {/* Actions Menu */}
-                      {(canDelete(assessment.status) || canArchive(assessment.status)) && (
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                              <MoreVertical className="h-4 w-4" />
-                              <span className="sr-only">{t("list.actions")}</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            {canDelete(assessment.status) && (
-                              <DropdownMenuItem
-                                className="text-red-600 focus:text-red-600"
-                                onClick={() =>
-                                  handleDeleteClick({
-                                    id: assessment.id,
-                                    title: assessment.title,
-                                    type: locale === "fr"
-                                      ? assessment.questionnaire.titleFr
-                                      : assessment.questionnaire.titleEn,
-                                  })
-                                }
-                              >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                {t("delete.button")}
-                              </DropdownMenuItem>
-                            )}
-                            {canArchive(assessment.status) && (
-                              <DropdownMenuItem
-                                className="text-amber-600 focus:text-amber-600"
-                                onClick={() =>
-                                  handleArchiveClick({
-                                    id: assessment.id,
-                                    title: assessment.title,
-                                  })
-                                }
-                              >
-                                <Archive className="mr-2 h-4 w-4" />
-                                {t("archive.button")}
-                              </DropdownMenuItem>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {/* Empty State */}
-      {!isLoading && !error && assessments.length === 0 && (
-        <Card className="py-12">
-          <CardContent className="flex flex-col items-center justify-center text-center">
-            <div className="rounded-full bg-muted p-6 mb-4">
-              <ClipboardList className="h-12 w-12 text-muted-foreground" />
-            </div>
-            <h3 className="text-lg font-medium">{t("list.empty.title")}</h3>
-            <p className="text-muted-foreground max-w-sm mt-2">
-              {t("list.empty.description")}
-            </p>
-            <Button className="mt-6" asChild>
-              <Link href="/assessments/new">
-                <Plus className="h-4 w-4 mr-2" />
-                {t("list.empty.create")}
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Delete Dialog */}
-      {selectedAssessment && (
-        <DeleteAssessmentDialog
-          open={deleteDialogOpen}
-          onOpenChange={setDeleteDialogOpen}
-          assessmentId={selectedAssessment.id}
-          assessmentTitle={selectedAssessment.title}
-          assessmentType={selectedAssessment.type}
+      <Suspense fallback={<AssessmentsListSkeleton />}>
+        <AssessmentsList
+          organizationId={effectiveOrgFilter}
+          status={filters.status}
+          questionnaireType={filters.type}
         />
-      )}
+      </Suspense>
+    </div>
+  );
+}
 
-      {/* Archive Dialog */}
-      {selectedAssessment && (
-        <ArchiveAssessmentDialog
-          open={archiveDialogOpen}
-          onOpenChange={setArchiveDialogOpen}
-          assessmentId={selectedAssessment.id}
-          assessmentTitle={selectedAssessment.title}
-        />
-      )}
+function AssessmentsStatsSkeleton() {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {[1, 2, 3, 4].map((i) => (
+        <div key={i} className="h-24 bg-muted animate-pulse rounded-lg" />
+      ))}
+    </div>
+  );
+}
+
+function AssessmentsListSkeleton() {
+  return (
+    <div className="space-y-4">
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="h-24 bg-muted animate-pulse rounded-lg" />
+      ))}
     </div>
   );
 }

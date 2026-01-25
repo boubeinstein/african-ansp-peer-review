@@ -1,1076 +1,249 @@
 /**
  * Seed Script: Demo Users and Reviewer Profiles
  *
- * Creates demo users with reviewer profiles for all 20 organizations:
- * - 2 reviewers per organization (1 Lead Qualified, 1 Certified)
+ * Creates 43 demo users with correct organization codes:
  * - 3 system users (Admin, Coordinator, Steering Committee)
+ * - 40 reviewers (20 Lead Qualified, 20 Certified)
  *
  * Usage:
- *   npx tsx prisma/seed-demo-users.ts          # Seed data
- *   npx tsx prisma/seed-demo-users.ts cleanup  # Clean users
+ *   npm run db:seed:demo-users
  */
 
-import "dotenv/config";
-import { Pool } from "pg";
-import { PrismaPg } from "@prisma/adapter-pg";
-import {
-  PrismaClient,
-  UserRole,
-  ReviewerStatus,
-  LanguageProficiency,
-  ExpertiseArea,
-  Language,
-  ReviewerType,
-  ReviewerSelectionStatus,
-  ContactMethod,
-} from "@prisma/client";
-import * as bcrypt from "bcryptjs";
+import { PrismaClient, UserRole, Locale, ReviewerStatus } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient();
 
 const DEFAULT_PASSWORD = "Demo2024!";
-const SALT_ROUNDS = 10;
 
-// =============================================================================
-// USER DATA
-// =============================================================================
-
-interface ReviewerData {
+interface DemoUser {
+  email: string;
   firstName: string;
   lastName: string;
-  email: string;
-  orgIcaoCode: string;
   role: UserRole;
-  position: string;
-  yearsExperience: number;
-  status: ReviewerStatus;
-  isLeadQualified: boolean;
-  expertiseAreas: ExpertiseArea[];
-  languages: { language: Language; proficiency: LanguageProficiency; isNative: boolean }[];
-  reviewsCompleted: number;
-  reviewsAsLead: number;
+  orgCode: string; // ICAO code matching database
+  reviewerStatus?: ReviewerStatus;
 }
 
-interface SystemUserData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  orgIcaoCode: string;
-  role: UserRole;
-}
+// CORRECT organization codes (verified from database):
+// ASECNA, ATNS, CAAB, ESWACAA, KCAA, TCAA, UCAA, RCAA, BCAA,
+// NAMA, GCAA, RFIR, ADM, MCAA, ACM, CAAZ, ZACL, DGAC, OACA, ANAC
 
-// Team 1 - ASECNA & Southern Africa Partnership
-const TEAM_1_REVIEWERS: ReviewerData[] = [
+// System Users (3)
+const SYSTEM_USERS: DemoUser[] = [
   {
-    firstName: "Amadou",
-    lastName: "Diallo",
-    email: "amadou.diallo@asecna.aero",
-    orgIcaoCode: "ASEC",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Chief Air Traffic Controller",
-    yearsExperience: 22,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "SMS_POLICY", "SMS_RISK"],
-    languages: [
-      { language: "FR" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-      { language: "EN" as Language, proficiency: "ADVANCED" as LanguageProficiency, isNative: false },
-    ],
-    reviewsCompleted: 8,
-    reviewsAsLead: 3,
-  },
-  {
-    firstName: "Fatou",
-    lastName: "Ndiaye",
-    email: "fatou.ndiaye@asecna.aero",
-    orgIcaoCode: "ASEC",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Safety Manager",
-    yearsExperience: 12,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["SMS_ASSURANCE", "SMS_PROMOTION"],
-    languages: [
-      { language: "FR" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-      { language: "EN" as Language, proficiency: "INTERMEDIATE" as LanguageProficiency, isNative: false },
-    ],
-    reviewsCompleted: 4,
-    reviewsAsLead: 0,
-  },
-  {
-    firstName: "Thabo",
-    lastName: "Molefe",
-    email: "thabo.molefe@atns.co.za",
-    orgIcaoCode: "ATNS",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Operations Director",
-    yearsExperience: 25,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "CNS", "PANS_OPS"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 12,
-    reviewsAsLead: 5,
-  },
-  {
-    firstName: "Nomvula",
-    lastName: "Dlamini",
-    email: "nomvula.dlamini@atns.co.za",
-    orgIcaoCode: "ATNS",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Quality Assurance Manager",
-    yearsExperience: 10,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["SMS_ASSURANCE", "AIM_AIS"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 3,
-    reviewsAsLead: 0,
-  },
-  {
-    firstName: "Kago",
-    lastName: "Mothibi",
-    email: "kago.mothibi@caab.co.bw",
-    orgIcaoCode: "FBSK",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Senior ATC Supervisor",
-    yearsExperience: 18,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "SAR"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 6,
-    reviewsAsLead: 2,
-  },
-  {
-    firstName: "Lesego",
-    lastName: "Phiri",
-    email: "lesego.phiri@caab.co.bw",
-    orgIcaoCode: "FBSK",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "AIS Officer",
-    yearsExperience: 8,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["AIM_AIS", "MET"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 2,
-    reviewsAsLead: 0,
-  },
-  {
-    firstName: "Sipho",
-    lastName: "Dlamini",
-    email: "sipho.dlamini@ecaa.co.sz",
-    orgIcaoCode: "FDMS",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Director of Air Navigation Services",
-    yearsExperience: 20,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "SMS_POLICY", "CNS"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 5,
-    reviewsAsLead: 2,
-  },
-  {
-    firstName: "Thandiwe",
-    lastName: "Nkosi",
-    email: "thandiwe.nkosi@ecaa.co.sz",
-    orgIcaoCode: "FDMS",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Communications Specialist",
-    yearsExperience: 9,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["CNS", "MET"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 2,
-    reviewsAsLead: 0,
-  },
-];
-
-// Team 2 - East African Community
-const TEAM_2_REVIEWERS: ReviewerData[] = [
-  {
-    firstName: "James",
-    lastName: "Ochieng",
-    email: "james.ochieng@kcaa.or.ke",
-    orgIcaoCode: "HKJK",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Chief Operations Officer",
-    yearsExperience: 24,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "PANS_OPS", "SMS_POLICY"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 10,
-    reviewsAsLead: 4,
-  },
-  {
-    firstName: "Wanjiku",
-    lastName: "Kamau",
-    email: "wanjiku.kamau@kcaa.or.ke",
-    orgIcaoCode: "HKJK",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Safety Analyst",
-    yearsExperience: 11,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["SMS_RISK", "SMS_ASSURANCE"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 4,
-    reviewsAsLead: 0,
-  },
-  {
-    firstName: "Baraka",
-    lastName: "Mwakasege",
-    email: "baraka.mwakasege@tcaa.go.tz",
-    orgIcaoCode: "HTDA",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Director of ANS",
-    yearsExperience: 21,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "CNS", "SAR"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 7,
-    reviewsAsLead: 3,
-  },
-  {
-    firstName: "Rehema",
-    lastName: "Mushi",
-    email: "rehema.mushi@tcaa.go.tz",
-    orgIcaoCode: "HTDA",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "AIM Supervisor",
-    yearsExperience: 9,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["AIM_AIS", "MET"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 3,
-    reviewsAsLead: 0,
-  },
-  {
-    firstName: "Moses",
-    lastName: "Okello",
-    email: "moses.okello@caa.go.ug",
-    orgIcaoCode: "HUEN",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Senior ATC Manager",
-    yearsExperience: 19,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "SMS_POLICY", "PANS_OPS"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 6,
-    reviewsAsLead: 2,
-  },
-  {
-    firstName: "Grace",
-    lastName: "Nakato",
-    email: "grace.nakato@caa.go.ug",
-    orgIcaoCode: "HUEN",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Training Coordinator",
-    yearsExperience: 8,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["SMS_PROMOTION", "ATS"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 2,
-    reviewsAsLead: 0,
-  },
-  {
-    firstName: "Jean-Pierre",
-    lastName: "Mugabo",
-    email: "jp.mugabo@rcaa.gov.rw",
-    orgIcaoCode: "HRYR",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Deputy Director ANS",
-    yearsExperience: 17,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "CNS", "SMS_RISK"],
-    languages: [
-      { language: "EN" as Language, proficiency: "ADVANCED" as LanguageProficiency, isNative: false },
-      { language: "FR" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 5,
-    reviewsAsLead: 2,
-  },
-  {
-    firstName: "Claire",
-    lastName: "Uwimana",
-    email: "claire.uwimana@rcaa.gov.rw",
-    orgIcaoCode: "HRYR",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Quality Manager",
-    yearsExperience: 10,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["SMS_ASSURANCE", "SMS_PROMOTION"],
-    languages: [
-      { language: "EN" as Language, proficiency: "ADVANCED" as LanguageProficiency, isNative: false },
-      { language: "FR" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 3,
-    reviewsAsLead: 0,
-  },
-  {
-    firstName: "Pierre",
-    lastName: "Ndayisaba",
-    email: "pierre.ndayisaba@bcaa.bi",
-    orgIcaoCode: "HBBA",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Chief Air Traffic Controller",
-    yearsExperience: 16,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "SAR", "PANS_OPS"],
-    languages: [
-      { language: "FR" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-      { language: "EN" as Language, proficiency: "INTERMEDIATE" as LanguageProficiency, isNative: false },
-    ],
-    reviewsCompleted: 4,
-    reviewsAsLead: 1,
-  },
-  {
-    firstName: "Aline",
-    lastName: "Niyonzima",
-    email: "aline.niyonzima@bcaa.bi",
-    orgIcaoCode: "HBBA",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Safety Officer",
-    yearsExperience: 7,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["SMS_RISK", "MET"],
-    languages: [
-      { language: "FR" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-      { language: "EN" as Language, proficiency: "INTERMEDIATE" as LanguageProficiency, isNative: false },
-    ],
-    reviewsCompleted: 2,
-    reviewsAsLead: 0,
-  },
-];
-
-// Team 3 - West African Anglophone
-const TEAM_3_REVIEWERS: ReviewerData[] = [
-  {
-    firstName: "Chukwuemeka",
-    lastName: "Okonkwo",
-    email: "chukwuemeka.okonkwo@nama.gov.ng",
-    orgIcaoCode: "DNAA",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Director of Operations",
-    yearsExperience: 26,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "SMS_POLICY", "PANS_OPS", "CNS"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 14,
-    reviewsAsLead: 6,
-  },
-  {
-    firstName: "Ngozi",
-    lastName: "Adeyemi",
-    email: "ngozi.adeyemi@nama.gov.ng",
-    orgIcaoCode: "DNAA",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Senior Safety Manager",
-    yearsExperience: 13,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["SMS_RISK", "SMS_ASSURANCE", "SMS_PROMOTION"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 5,
-    reviewsAsLead: 0,
-  },
-  {
-    firstName: "Kwame",
-    lastName: "Asante",
-    email: "kwame.asante@gcaa.com.gh",
-    orgIcaoCode: "DGAA",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Chief ATC Manager",
-    yearsExperience: 20,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "CNS", "SAR"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 9,
-    reviewsAsLead: 4,
-  },
-  {
-    firstName: "Abena",
-    lastName: "Mensah",
-    email: "abena.mensah@gcaa.com.gh",
-    orgIcaoCode: "DGAA",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "AIM Manager",
-    yearsExperience: 11,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["AIM_AIS", "MET"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 4,
-    reviewsAsLead: 0,
-  },
-  {
-    firstName: "Sekou",
-    lastName: "Camara",
-    email: "sekou.camara@robertsfir.lr",
-    orgIcaoCode: "GLRB",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Operations Manager",
-    yearsExperience: 15,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "SMS_POLICY", "PANS_OPS"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 5,
-    reviewsAsLead: 2,
-  },
-  {
-    firstName: "Mariama",
-    lastName: "Bah",
-    email: "mariama.bah@robertsfir.lr",
-    orgIcaoCode: "GLRB",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Safety Specialist",
-    yearsExperience: 8,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["SMS_RISK", "SMS_ASSURANCE"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 2,
-    reviewsAsLead: 0,
-  },
-];
-
-// Team 4 - Southern & Eastern Africa
-const TEAM_4_REVIEWERS: ReviewerData[] = [
-  {
-    firstName: "Carlos",
-    lastName: "Machava",
-    email: "carlos.machava@adm.co.mz",
-    orgIcaoCode: "FQMA",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Director of ANS",
-    yearsExperience: 23,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "CNS", "SMS_POLICY"],
-    languages: [
-      { language: "PT" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-      { language: "EN" as Language, proficiency: "ADVANCED" as LanguageProficiency, isNative: false },
-    ],
-    reviewsCompleted: 8,
-    reviewsAsLead: 3,
-  },
-  {
-    firstName: "Ana",
-    lastName: "Tembe",
-    email: "ana.tembe@adm.co.mz",
-    orgIcaoCode: "FQMA",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Quality Manager",
-    yearsExperience: 10,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["SMS_ASSURANCE", "AIM_AIS"],
-    languages: [
-      { language: "PT" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-      { language: "EN" as Language, proficiency: "INTERMEDIATE" as LanguageProficiency, isNative: false },
-    ],
-    reviewsCompleted: 3,
-    reviewsAsLead: 0,
-  },
-  {
-    firstName: "Chimwemwe",
-    lastName: "Banda",
-    email: "chimwemwe.banda@dca.gov.mw",
-    orgIcaoCode: "FWKI",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Chief ATC",
-    yearsExperience: 18,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "SAR", "PANS_OPS"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 6,
-    reviewsAsLead: 2,
-  },
-  {
-    firstName: "Tionge",
-    lastName: "Phiri",
-    email: "tionge.phiri@dca.gov.mw",
-    orgIcaoCode: "FWKI",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Safety Officer",
-    yearsExperience: 9,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["SMS_RISK", "MET"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 2,
-    reviewsAsLead: 0,
-  },
-  {
-    firstName: "Jean-Claude",
-    lastName: "Rakotomalala",
-    email: "jc.rakotomalala@adema.mg",
-    orgIcaoCode: "FMMI",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Deputy Director Operations",
-    yearsExperience: 21,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "CNS", "SMS_POLICY"],
-    languages: [
-      { language: "FR" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-      { language: "EN" as Language, proficiency: "ADVANCED" as LanguageProficiency, isNative: false },
-    ],
-    reviewsCompleted: 7,
-    reviewsAsLead: 3,
-  },
-  {
-    firstName: "Hery",
-    lastName: "Andriamanana",
-    email: "hery.andriamanana@adema.mg",
-    orgIcaoCode: "FMMI",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "AIS Supervisor",
-    yearsExperience: 12,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["AIM_AIS", "MET"],
-    languages: [
-      { language: "FR" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-      { language: "EN" as Language, proficiency: "INTERMEDIATE" as LanguageProficiency, isNative: false },
-    ],
-    reviewsCompleted: 4,
-    reviewsAsLead: 0,
-  },
-  {
-    firstName: "Tendai",
-    lastName: "Moyo",
-    email: "tendai.moyo@caaz.co.zw",
-    orgIcaoCode: "FVHA",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Senior Operations Manager",
-    yearsExperience: 19,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "PANS_OPS", "SAR"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 6,
-    reviewsAsLead: 2,
-  },
-  {
-    firstName: "Chiedza",
-    lastName: "Ncube",
-    email: "chiedza.ncube@caaz.co.zw",
-    orgIcaoCode: "FVHA",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Training Manager",
-    yearsExperience: 10,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["SMS_PROMOTION", "SMS_ASSURANCE"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 3,
-    reviewsAsLead: 0,
-  },
-  {
-    firstName: "Mulenga",
-    lastName: "Chanda",
-    email: "mulenga.chanda@zacl.co.zm",
-    orgIcaoCode: "FLKK",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Director of Air Navigation",
-    yearsExperience: 22,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "CNS", "SMS_POLICY"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 8,
-    reviewsAsLead: 3,
-  },
-  {
-    firstName: "Natasha",
-    lastName: "Mumba",
-    email: "natasha.mumba@zacl.co.zm",
-    orgIcaoCode: "FLKK",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Quality Assurance Officer",
-    yearsExperience: 8,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["SMS_ASSURANCE", "AIM_AIS"],
-    languages: [
-      { language: "EN" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-    ],
-    reviewsCompleted: 2,
-    reviewsAsLead: 0,
-  },
-];
-
-// Team 5 - Northern Africa
-const TEAM_5_REVIEWERS: ReviewerData[] = [
-  {
-    firstName: "Youssef",
-    lastName: "Benali",
-    email: "youssef.benali@onda.ma",
-    orgIcaoCode: "GMMN",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Chief Operations Officer",
-    yearsExperience: 24,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "CNS", "PANS_OPS"],
-    languages: [
-      { language: "AR" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-      { language: "FR" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: false },
-      { language: "EN" as Language, proficiency: "ADVANCED" as LanguageProficiency, isNative: false },
-    ],
-    reviewsCompleted: 11,
-    reviewsAsLead: 5,
-  },
-  {
-    firstName: "Fatima",
-    lastName: "Alaoui",
-    email: "fatima.alaoui@onda.ma",
-    orgIcaoCode: "GMMN",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Safety Director",
-    yearsExperience: 14,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["SMS_POLICY", "SMS_RISK", "SMS_ASSURANCE"],
-    languages: [
-      { language: "AR" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-      { language: "FR" as Language, proficiency: "ADVANCED" as LanguageProficiency, isNative: false },
-      { language: "EN" as Language, proficiency: "INTERMEDIATE" as LanguageProficiency, isNative: false },
-    ],
-    reviewsCompleted: 5,
-    reviewsAsLead: 0,
-  },
-  {
-    firstName: "Mohamed",
-    lastName: "Trabelsi",
-    email: "mohamed.trabelsi@oaca.nat.tn",
-    orgIcaoCode: "DTTA",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Director of ANS",
-    yearsExperience: 21,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "SAR", "SMS_POLICY"],
-    languages: [
-      { language: "AR" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-      { language: "FR" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: false },
-      { language: "EN" as Language, proficiency: "ADVANCED" as LanguageProficiency, isNative: false },
-    ],
-    reviewsCompleted: 9,
-    reviewsAsLead: 4,
-  },
-  {
-    firstName: "Leila",
-    lastName: "Chaabane",
-    email: "leila.chaabane@oaca.nat.tn",
-    orgIcaoCode: "DTTA",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Quality Manager",
-    yearsExperience: 11,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["SMS_ASSURANCE", "SMS_PROMOTION"],
-    languages: [
-      { language: "AR" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-      { language: "FR" as Language, proficiency: "ADVANCED" as LanguageProficiency, isNative: false },
-      { language: "EN" as Language, proficiency: "INTERMEDIATE" as LanguageProficiency, isNative: false },
-    ],
-    reviewsCompleted: 4,
-    reviewsAsLead: 0,
-  },
-  {
-    firstName: "Karim",
-    lastName: "Boudiaf",
-    email: "karim.boudiaf@enna.dz",
-    orgIcaoCode: "DAAG",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "Senior Operations Manager",
-    yearsExperience: 20,
-    status: "LEAD_QUALIFIED" as ReviewerStatus,
-    isLeadQualified: true,
-    expertiseAreas: ["ATS", "CNS", "PANS_OPS"],
-    languages: [
-      { language: "AR" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-      { language: "FR" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: false },
-      { language: "EN" as Language, proficiency: "INTERMEDIATE" as LanguageProficiency, isNative: false },
-    ],
-    reviewsCompleted: 7,
-    reviewsAsLead: 3,
-  },
-  {
-    firstName: "Samira",
-    lastName: "Hadj",
-    email: "samira.hadj@enna.dz",
-    orgIcaoCode: "DAAG",
-    role: "PEER_REVIEWER" as UserRole,
-    position: "AIM Manager",
-    yearsExperience: 12,
-    status: "CERTIFIED" as ReviewerStatus,
-    isLeadQualified: false,
-    expertiseAreas: ["AIM_AIS", "MET"],
-    languages: [
-      { language: "AR" as Language, proficiency: "NATIVE" as LanguageProficiency, isNative: true },
-      { language: "FR" as Language, proficiency: "ADVANCED" as LanguageProficiency, isNative: false },
-      { language: "EN" as Language, proficiency: "BASIC" as LanguageProficiency, isNative: false },
-    ],
-    reviewsCompleted: 3,
-    reviewsAsLead: 0,
-  },
-];
-
-// System Users
-const SYSTEM_USERS: SystemUserData[] = [
-  {
+    email: "admin@aaprp.aero",
     firstName: "System",
     lastName: "Administrator",
-    email: "admin@aaprp.aero",
-    orgIcaoCode: "ASEC",
-    role: "SUPER_ADMIN" as UserRole,
+    role: "SUPER_ADMIN",
+    orgCode: "ASECNA",
   },
   {
+    email: "coordinator@aaprp.aero",
     firstName: "Pauline",
     lastName: "Runghen",
-    email: "coordinator@aaprp.aero",
-    orgIcaoCode: "ASEC",
-    role: "PROGRAMME_COORDINATOR" as UserRole,
+    role: "PROGRAMME_COORDINATOR",
+    orgCode: "ASECNA",
   },
   {
+    email: "steering@aaprp.aero",
     firstName: "Emmanuel",
     lastName: "Chukwuma",
-    email: "steering@aaprp.aero",
-    orgIcaoCode: "DNAA",
-    role: "STEERING_COMMITTEE" as UserRole,
+    role: "STEERING_COMMITTEE",
+    orgCode: "NAMA",
   },
 ];
 
-// Combine all reviewers
-const ALL_REVIEWERS: ReviewerData[] = [
-  ...TEAM_1_REVIEWERS,
-  ...TEAM_2_REVIEWERS,
-  ...TEAM_3_REVIEWERS,
-  ...TEAM_4_REVIEWERS,
-  ...TEAM_5_REVIEWERS,
+// Team 1: ASECNA & Southern Africa (8 reviewers)
+const TEAM1_REVIEWERS: DemoUser[] = [
+  { email: "amadou.diallo@asecna.aero", firstName: "Amadou", lastName: "Diallo", role: "LEAD_REVIEWER", orgCode: "ASECNA", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "fatou.ndiaye@asecna.aero", firstName: "Fatou", lastName: "Ndiaye", role: "PEER_REVIEWER", orgCode: "ASECNA", reviewerStatus: "CERTIFIED" },
+  { email: "thabo.molefe@atns.co.za", firstName: "Thabo", lastName: "Molefe", role: "LEAD_REVIEWER", orgCode: "ATNS", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "nomvula.dlamini@atns.co.za", firstName: "Nomvula", lastName: "Dlamini", role: "PEER_REVIEWER", orgCode: "ATNS", reviewerStatus: "CERTIFIED" },
+  { email: "kago.mothibi@caab.co.bw", firstName: "Kago", lastName: "Mothibi", role: "LEAD_REVIEWER", orgCode: "CAAB", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "lesego.phiri@caab.co.bw", firstName: "Lesego", lastName: "Phiri", role: "PEER_REVIEWER", orgCode: "CAAB", reviewerStatus: "CERTIFIED" },
+  { email: "sipho.dlamini@eswacaa.org.sz", firstName: "Sipho", lastName: "Dlamini", role: "LEAD_REVIEWER", orgCode: "ESWACAA", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "thandiwe.nkosi@eswacaa.org.sz", firstName: "Thandiwe", lastName: "Nkosi", role: "PEER_REVIEWER", orgCode: "ESWACAA", reviewerStatus: "CERTIFIED" },
 ];
 
-// =============================================================================
-// SEED FUNCTIONS
-// =============================================================================
+// Team 2: East African Community (10 reviewers)
+const TEAM2_REVIEWERS: DemoUser[] = [
+  { email: "james.ochieng@kcaa.or.ke", firstName: "James", lastName: "Ochieng", role: "LEAD_REVIEWER", orgCode: "KCAA", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "wanjiku.kamau@kcaa.or.ke", firstName: "Wanjiku", lastName: "Kamau", role: "PEER_REVIEWER", orgCode: "KCAA", reviewerStatus: "CERTIFIED" },
+  { email: "baraka.mwakasege@tcaa.go.tz", firstName: "Baraka", lastName: "Mwakasege", role: "LEAD_REVIEWER", orgCode: "TCAA", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "rehema.mushi@tcaa.go.tz", firstName: "Rehema", lastName: "Mushi", role: "PEER_REVIEWER", orgCode: "TCAA", reviewerStatus: "CERTIFIED" },
+  { email: "moses.okello@ucaa.go.ug", firstName: "Moses", lastName: "Okello", role: "LEAD_REVIEWER", orgCode: "UCAA", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "grace.nakato@ucaa.go.ug", firstName: "Grace", lastName: "Nakato", role: "PEER_REVIEWER", orgCode: "UCAA", reviewerStatus: "CERTIFIED" },
+  { email: "jean.mugabo@rcaa.gov.rw", firstName: "Jean-Pierre", lastName: "Mugabo", role: "LEAD_REVIEWER", orgCode: "RCAA", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "claire.uwimana@rcaa.gov.rw", firstName: "Claire", lastName: "Uwimana", role: "PEER_REVIEWER", orgCode: "RCAA", reviewerStatus: "CERTIFIED" },
+  { email: "pierre.ndayisaba@bcaa.gov.bi", firstName: "Pierre", lastName: "Ndayisaba", role: "LEAD_REVIEWER", orgCode: "BCAA", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "aline.niyonzima@bcaa.gov.bi", firstName: "Aline", lastName: "Niyonzima", role: "PEER_REVIEWER", orgCode: "BCAA", reviewerStatus: "CERTIFIED" },
+];
 
-async function seedUsers(): Promise<void> {
-  console.log("\n👤 Seeding Users and Reviewer Profiles...\n");
+// Team 3: West African Anglophone (6 reviewers)
+const TEAM3_REVIEWERS: DemoUser[] = [
+  { email: "chukwuemeka.okonkwo@nama.gov.ng", firstName: "Chukwuemeka", lastName: "Okonkwo", role: "LEAD_REVIEWER", orgCode: "NAMA", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "ngozi.adeyemi@nama.gov.ng", firstName: "Ngozi", lastName: "Adeyemi", role: "PEER_REVIEWER", orgCode: "NAMA", reviewerStatus: "CERTIFIED" },
+  { email: "kwame.asante@gcaa.com.gh", firstName: "Kwame", lastName: "Asante", role: "LEAD_REVIEWER", orgCode: "GCAA", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "abena.mensah@gcaa.com.gh", firstName: "Abena", lastName: "Mensah", role: "PEER_REVIEWER", orgCode: "GCAA", reviewerStatus: "CERTIFIED" },
+  { email: "sekou.camara@lcaa.gov.lr", firstName: "Sekou", lastName: "Camara", role: "LEAD_REVIEWER", orgCode: "RFIR", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "boubacar.diallo@lcaa.gov.lr", firstName: "Boubacar S. C.", lastName: "Diallo", role: "PEER_REVIEWER", orgCode: "RFIR", reviewerStatus: "CERTIFIED" },
+];
 
-  const passwordHash = await bcrypt.hash(DEFAULT_PASSWORD, SALT_ROUNDS);
+// Team 4: Southern & Eastern Africa (10 reviewers)
+const TEAM4_REVIEWERS: DemoUser[] = [
+  { email: "carlos.machava@aeroportos.co.mz", firstName: "Carlos", lastName: "Machava", role: "LEAD_REVIEWER", orgCode: "ADM", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "ana.tembe@aeroportos.co.mz", firstName: "Ana", lastName: "Tembe", role: "PEER_REVIEWER", orgCode: "ADM", reviewerStatus: "CERTIFIED" },
+  { email: "chimwemwe.banda@dca.gov.mw", firstName: "Chimwemwe", lastName: "Banda", role: "LEAD_REVIEWER", orgCode: "MCAA", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "tionge.phiri@dca.gov.mw", firstName: "Tionge", lastName: "Phiri", role: "PEER_REVIEWER", orgCode: "MCAA", reviewerStatus: "CERTIFIED" },
+  { email: "jean.rakoto@adema.mg", firstName: "Jean-Claude", lastName: "Rakotomalala", role: "LEAD_REVIEWER", orgCode: "ACM", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "hery.andria@adema.mg", firstName: "Hery", lastName: "Andriamanana", role: "PEER_REVIEWER", orgCode: "ACM", reviewerStatus: "CERTIFIED" },
+  { email: "tendai.moyo@caaz.co.zw", firstName: "Tendai", lastName: "Moyo", role: "LEAD_REVIEWER", orgCode: "CAAZ", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "chiedza.ncube@caaz.co.zw", firstName: "Chiedza", lastName: "Ncube", role: "PEER_REVIEWER", orgCode: "CAAZ", reviewerStatus: "CERTIFIED" },
+  { email: "mulenga.chanda@zacl.co.zm", firstName: "Mulenga", lastName: "Chanda", role: "LEAD_REVIEWER", orgCode: "ZACL", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "natasha.mumba@zacl.co.zm", firstName: "Natasha", lastName: "Mumba", role: "PEER_REVIEWER", orgCode: "ZACL", reviewerStatus: "CERTIFIED" },
+];
+
+// Team 5: Northern Africa (6 reviewers)
+const TEAM5_REVIEWERS: DemoUser[] = [
+  { email: "youssef.benali@onda.ma", firstName: "Youssef", lastName: "Benali", role: "LEAD_REVIEWER", orgCode: "DGAC", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "fatima.alaoui@onda.ma", firstName: "Fatima", lastName: "Alaoui", role: "PEER_REVIEWER", orgCode: "DGAC", reviewerStatus: "CERTIFIED" },
+  { email: "mohamed.trabelsi@oaca.nat.tn", firstName: "Mohamed", lastName: "Trabelsi", role: "LEAD_REVIEWER", orgCode: "OACA", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "leila.chaabane@oaca.nat.tn", firstName: "Leila", lastName: "Chaabane", role: "PEER_REVIEWER", orgCode: "OACA", reviewerStatus: "CERTIFIED" },
+  { email: "karim.boudiaf@enna.dz", firstName: "Karim", lastName: "Boudiaf", role: "LEAD_REVIEWER", orgCode: "ANAC", reviewerStatus: "LEAD_QUALIFIED" },
+  { email: "samira.hadj@enna.dz", firstName: "Samira", lastName: "Hadj", role: "PEER_REVIEWER", orgCode: "ANAC", reviewerStatus: "CERTIFIED" },
+];
+
+const ALL_USERS: DemoUser[] = [
+  ...SYSTEM_USERS,
+  ...TEAM1_REVIEWERS,
+  ...TEAM2_REVIEWERS,
+  ...TEAM3_REVIEWERS,
+  ...TEAM4_REVIEWERS,
+  ...TEAM5_REVIEWERS,
+];
+
+async function getOrganizationMap(): Promise<Map<string, string>> {
+  const orgs = await prisma.organization.findMany({
+    select: { id: true, organizationCode: true },
+  });
+
+  const map = new Map<string, string>();
+  for (const org of orgs) {
+    if (org.organizationCode) {
+      map.set(org.organizationCode, org.id);
+    }
+  }
+
+  return map;
+}
+
+async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, 12);
+}
+
+async function createUser(user: DemoUser, orgMap: Map<string, string>, passwordHash: string) {
+  const organizationId = orgMap.get(user.orgCode) || null;
+
+  if (!organizationId) {
+    console.warn(`  ⚠️ Org not found: ${user.orgCode} (user: ${user.email})`);
+    return null;
+  }
+
+  // Upsert user
+  const dbUser = await prisma.user.upsert({
+    where: { email: user.email },
+    update: {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+      organizationId,
+      passwordHash,
+      isActive: true,
+      emailVerified: new Date(),
+    },
+    create: {
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+      organizationId,
+      passwordHash,
+      isActive: true,
+      emailVerified: new Date(),
+      locale: "EN" as Locale,
+    },
+  });
+
+  // Create reviewer profile if applicable
+  if (user.reviewerStatus && organizationId) {
+    const yearsExp = user.reviewerStatus === "LEAD_QUALIFIED" ? 10 : 5;
+    const isLead = user.reviewerStatus === "LEAD_QUALIFIED";
+
+    await prisma.reviewerProfile.upsert({
+      where: { userId: dbUser.id },
+      update: {
+        status: user.reviewerStatus,
+        organizationId,
+        homeOrganizationId: organizationId,
+        isLeadQualified: isLead,
+      },
+      create: {
+        userId: dbUser.id,
+        organizationId,
+        homeOrganizationId: organizationId,
+        status: user.reviewerStatus,
+        currentPosition: isLead ? "Senior Reviewer" : "Reviewer",
+        yearsExperience: yearsExp,
+        isAvailable: true,
+        isLeadQualified: isLead,
+        leadQualifiedAt: isLead ? new Date() : null,
+        certifiedAt: new Date(),
+      },
+    });
+  }
+
+  const status = user.reviewerStatus === "LEAD_QUALIFIED" ? "LEAD" : user.reviewerStatus === "CERTIFIED" ? "CERT" : "";
+  console.log(`  ✅ ${user.firstName} ${user.lastName} (${user.orgCode})${status ? ` - ${status}` : ""}`);
+
+  return dbUser;
+}
+
+async function main() {
+  console.log("\n👤 Seeding Demo Users and Reviewer Profiles...\n");
+
+  // Get organization mapping
+  const orgMap = await getOrganizationMap();
+  console.log(`   Found ${orgMap.size} organizations in database\n`);
+
+  // Hash password once
+  const passwordHash = await hashPassword(DEFAULT_PASSWORD);
+
   let userCount = 0;
   let profileCount = 0;
 
-  // Seed Reviewers
-  for (const userData of ALL_REVIEWERS) {
-    // Find organization by organizationCode
-    const org = await prisma.organization.findFirst({
-      where: { organizationCode: userData.orgIcaoCode },
-    });
-
-    if (!org) {
-      console.log(`  ⚠️ Org not found: ${userData.orgIcaoCode}`);
-      continue;
+  // Create all users
+  for (const user of ALL_USERS) {
+    const result = await createUser(user, orgMap, passwordHash);
+    if (result) {
+      userCount++;
+      if (user.reviewerStatus) profileCount++;
     }
-
-    // Find or create user
-    let user = await prisma.user.findFirst({
-      where: { email: userData.email },
-    });
-
-    if (user) {
-      user = await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          role: userData.role,
-          organizationId: org.id,
-          passwordHash,
-          isActive: true,
-        },
-      });
-    } else {
-      user = await prisma.user.create({
-        data: {
-          email: userData.email,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          role: userData.role,
-          organizationId: org.id,
-          passwordHash,
-          isActive: true,
-        },
-      });
-    }
-    userCount++;
-
-    // Create reviewer profile
-    let profile = await prisma.reviewerProfile.findFirst({
-      where: { userId: user.id },
-    });
-
-    const now = new Date();
-    const certifiedAt = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000); // 1 year ago
-
-    if (profile) {
-      profile = await prisma.reviewerProfile.update({
-        where: { id: profile.id },
-        data: {
-          organizationId: org.id,
-          homeOrganizationId: org.id,
-          status: userData.status,
-          currentPosition: userData.position,
-          yearsExperience: userData.yearsExperience,
-          expertiseAreas: userData.expertiseAreas,
-          isLeadQualified: userData.isLeadQualified,
-          leadQualifiedAt: userData.isLeadQualified ? certifiedAt : null,
-          certifiedAt: certifiedAt,
-          reviewsCompleted: userData.reviewsCompleted,
-          reviewsAsLead: userData.reviewsAsLead,
-          isAvailable: true,
-          reviewerType: "PEER_REVIEWER" as ReviewerType,
-          selectionStatus: "SELECTED" as ReviewerSelectionStatus,
-          preferredContactMethod: "EMAIL" as ContactMethod,
-        },
-      });
-    } else {
-      profile = await prisma.reviewerProfile.create({
-        data: {
-          userId: user.id,
-          organizationId: org.id,
-          homeOrganizationId: org.id,
-          status: userData.status,
-          currentPosition: userData.position,
-          yearsExperience: userData.yearsExperience,
-          expertiseAreas: userData.expertiseAreas,
-          isLeadQualified: userData.isLeadQualified,
-          leadQualifiedAt: userData.isLeadQualified ? certifiedAt : null,
-          certifiedAt: certifiedAt,
-          reviewsCompleted: userData.reviewsCompleted,
-          reviewsAsLead: userData.reviewsAsLead,
-          isAvailable: true,
-          reviewerType: "PEER_REVIEWER" as ReviewerType,
-          selectionStatus: "SELECTED" as ReviewerSelectionStatus,
-          preferredContactMethod: "EMAIL" as ContactMethod,
-        },
-      });
-    }
-    profileCount++;
-
-    // Delete existing languages and recreate
-    await prisma.reviewerLanguage.deleteMany({
-      where: { reviewerProfileId: profile.id },
-    });
-
-    for (const lang of userData.languages) {
-      await prisma.reviewerLanguage.create({
-        data: {
-          reviewerProfileId: profile.id,
-          language: lang.language,
-          proficiency: lang.proficiency,
-          isNative: lang.isNative,
-          canConductInterviews: lang.proficiency === "NATIVE" || lang.proficiency === "ADVANCED",
-          canWriteReports: lang.proficiency === "NATIVE" || lang.proficiency === "ADVANCED",
-        },
-      });
-    }
-
-    console.log(`  ✅ ${userData.firstName} ${userData.lastName} (${userData.orgIcaoCode}) - ${userData.status}`);
   }
 
-  // Seed System Users
-  console.log("\n📋 Seeding System Users...\n");
-  for (const userData of SYSTEM_USERS) {
-    const org = await prisma.organization.findFirst({
-      where: { organizationCode: userData.orgIcaoCode },
-    });
-
-    if (!org) {
-      console.log(`  ⚠️ Org not found: ${userData.orgIcaoCode}`);
-      continue;
-    }
-
-    let user = await prisma.user.findFirst({
-      where: { email: userData.email },
-    });
-
-    if (user) {
-      user = await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          role: userData.role,
-          organizationId: org.id,
-          passwordHash,
-          isActive: true,
-        },
-      });
-    } else {
-      user = await prisma.user.create({
-        data: {
-          email: userData.email,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          role: userData.role,
-          organizationId: org.id,
-          passwordHash,
-          isActive: true,
-        },
-      });
-    }
-    userCount++;
-
-    console.log(`  ✅ ${userData.firstName} ${userData.lastName} (${userData.orgIcaoCode}) - ${userData.role}`);
-  }
-
-  console.log(`\n  Total: ${userCount} users, ${profileCount} reviewer profiles`);
-}
-
-async function cleanup(): Promise<void> {
-  console.log("\n🗑️ Cleaning up demo users...\n");
-
-  // Delete in correct order for foreign keys
-  console.log("  Deleting reviewer languages...");
-  await prisma.reviewerLanguage.deleteMany({});
-
-  console.log("  Deleting reviewer profiles...");
-  await prisma.reviewerProfile.deleteMany({});
-
-  console.log("  Deleting users...");
-  await prisma.user.deleteMany({});
-
-  console.log("\n✅ Cleanup complete");
-}
-
-async function printSummary(): Promise<void> {
-  console.log("\n" + "═".repeat(60));
+  console.log("\n════════════════════════════════════════════════════════════");
   console.log("📊 USER SEED SUMMARY");
-  console.log("═".repeat(60));
-
-  const teams = await prisma.regionalTeam.findMany({
-    orderBy: { teamNumber: "asc" },
-  });
-
-  for (const team of teams) {
-    const profiles = await prisma.reviewerProfile.findMany({
-      where: {
-        homeOrganization: {
-          regionalTeamId: team.id,
-        },
-      },
-      include: {
-        user: { select: { firstName: true, lastName: true } },
-        homeOrganization: { select: { organizationCode: true } },
-      },
-    });
-
-    console.log(`\n${team.nameEn} (${profiles.length} reviewers)`);
-    console.log("─".repeat(50));
-    for (const p of profiles) {
-      const status = p.isLeadQualified ? "LEAD" : "CERT";
-      console.log(`  ${p.user.firstName} ${p.user.lastName} (${p.homeOrganization.organizationCode}) - ${status}`);
-    }
-  }
-
-  const totalUsers = await prisma.user.count();
-  const totalProfiles = await prisma.reviewerProfile.count();
-  const totalLanguages = await prisma.reviewerLanguage.count();
-
-  console.log("\n" + "═".repeat(60));
-  console.log(`Total: ${totalUsers} users, ${totalProfiles} profiles, ${totalLanguages} languages`);
-  console.log("═".repeat(60));
+  console.log("════════════════════════════════════════════════════════════");
+  console.log(`Total: ${userCount} users, ${profileCount} reviewer profiles`);
+  console.log("════════════════════════════════════════════════════════════\n");
+  console.log(`📝 Default password for all users: ${DEFAULT_PASSWORD}\n`);
 }
 
-// =============================================================================
-// MAIN
-// =============================================================================
-
-async function main(): Promise<void> {
-  const command = process.argv[2];
-
-  try {
-    if (command === "cleanup") {
-      await cleanup();
-    } else {
-      await seedUsers();
-      await printSummary();
-    }
-  } catch (error) {
-    console.error("❌ Seed failed:", error);
+main()
+  .catch((e) => {
+    console.error("Seed failed:", e);
     process.exit(1);
-  } finally {
+  })
+  .finally(async () => {
     await prisma.$disconnect();
-    await pool.end();
-  }
-}
-
-main();
+  });

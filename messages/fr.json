@@ -3061,7 +3061,7 @@
       "inProgress": "En cours",
       "blocked": "Bloqué",
       "pending": "En attente",
-      "dateInconsistency": "La date semble hors de l'ordre chronologique",
+      "dateInconsistency": "La date peut être incohérente avec la séquence du flux de travail",
       "expected": "Prévu",
       "expectedDateTooltip": "Basé sur les dates demandées",
       "sameDay": "Même jour",

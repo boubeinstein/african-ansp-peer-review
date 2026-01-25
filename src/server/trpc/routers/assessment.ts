@@ -292,8 +292,8 @@ function transformResponsesForScoring(
 // =============================================================================
 
 const CreateAssessmentInput = z.object({
-  // Organization ID - optional for org-level users (uses their org), required context for global roles
-  organizationId: z.string().cuid().optional(),
+  // Organization ID - required for all users
+  organizationId: z.string().min(1, "Organization is required"),
   // Either questionnaireId or questionnaireType must be provided
   questionnaireId: z.string().cuid().optional(),
   questionnaireType: z.nativeEnum(QuestionnaireType).optional(),
@@ -483,41 +483,41 @@ export const assessmentRouter = router({
     .mutation(async ({ ctx, input }) => {
       const user = ctx.user;
 
-      // Check user has permission
-      if (!ASSESSMENT_MANAGER_ROLES.includes(user.role)) {
+      // Validate permission to create assessments
+      const globalRoles: UserRole[] = [
+        "SUPER_ADMIN",
+        "SYSTEM_ADMIN",
+        "PROGRAMME_COORDINATOR",
+        "STEERING_COMMITTEE",
+      ];
+      const orgRoles: UserRole[] = [
+        "ANSP_ADMIN",
+        "SAFETY_MANAGER",
+        "QUALITY_MANAGER",
+      ];
+
+      const canCreateForAnyOrg = globalRoles.includes(user.role);
+      const canCreateForOwnOrg = orgRoles.includes(user.role);
+
+      if (!canCreateForAnyOrg && !canCreateForOwnOrg) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "You do not have permission to create assessments",
         });
       }
 
-      // Determine target organization
-      const globalRoles: UserRole[] = [
-        "SUPER_ADMIN",
-        "SYSTEM_ADMIN",
-        "PROGRAMME_COORDINATOR",
-      ];
-      const canSelectOrganization = globalRoles.includes(user.role);
-
-      let targetOrganizationId: string;
-
-      if (canSelectOrganization && input.organizationId) {
-        // Global roles can create for any organization
-        targetOrganizationId = input.organizationId;
-      } else if (user.organizationId) {
-        // Org-level users create for their own organization
-        targetOrganizationId = user.organizationId;
-      } else {
+      // Org-level users can only create for their own organization
+      if (!canCreateForAnyOrg && user.organizationId !== input.organizationId) {
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "You must belong to an organization or specify one to create assessments",
+          code: "FORBIDDEN",
+          message: "You can only create assessments for your own organization",
         });
       }
 
-      // Verify target organization exists and get details for reference number
+      // Verify the organization exists and is active
       const targetOrg = await prisma.organization.findUnique({
-        where: { id: targetOrganizationId },
-        select: { id: true, nameEn: true, organizationCode: true },
+        where: { id: input.organizationId },
+        select: { id: true, nameEn: true, nameFr: true, organizationCode: true, membershipStatus: true },
       });
 
       if (!targetOrg) {
@@ -526,6 +526,15 @@ export const assessmentRouter = router({
           message: "Organization not found",
         });
       }
+
+      if (targetOrg.membershipStatus !== "ACTIVE") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot create assessment for inactive organization",
+        });
+      }
+
+      const targetOrganizationId = input.organizationId;
 
       // Resolve questionnaire - either by ID or by type
       let questionnaire;

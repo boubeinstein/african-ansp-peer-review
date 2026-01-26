@@ -18,7 +18,6 @@ import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Globe, LogOut, User, Settings, Search, Keyboard } from "lucide-react";
@@ -72,60 +71,58 @@ export function Header({ locale, user }: HeaderProps) {
           <h1 className="text-lg font-semibold">{t("appName")}</h1>
         </div>
 
-        <div className="flex items-center gap-1" suppressHydrationWarning>
-          <TooltipProvider delayDuration={0}>
-            {/* Command Palette */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setCommandOpen(true)}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <Search className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <div className="flex items-center gap-2">
-                  <span>{t("commandPalette")}</span>
-                  <kbd className="px-1.5 py-0.5 text-xs bg-muted rounded">⌘K</kbd>
-                </div>
-              </TooltipContent>
-            </Tooltip>
+        <div className="flex items-center gap-1">
+          {/* Command Palette */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setCommandOpen(true)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <Search className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <div className="flex items-center gap-2">
+                <span>{t("commandPalette")}</span>
+                <kbd className="px-1.5 py-0.5 text-xs bg-muted rounded">⌘K</kbd>
+              </div>
+            </TooltipContent>
+          </Tooltip>
 
-            {/* Keyboard Shortcuts */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setShortcutsOpen(true)}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <Keyboard className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <div className="flex items-center gap-2">
-                  <span>{t("keyboardShortcuts")}</span>
-                  <kbd className="px-1.5 py-0.5 text-xs bg-muted rounded">⌘/</kbd>
-                </div>
-              </TooltipContent>
-            </Tooltip>
+          {/* Keyboard Shortcuts */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShortcutsOpen(true)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <Keyboard className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <div className="flex items-center gap-2">
+                <span>{t("keyboardShortcuts")}</span>
+                <kbd className="px-1.5 py-0.5 text-xs bg-muted rounded">⌘/</kbd>
+              </div>
+            </TooltipContent>
+          </Tooltip>
 
-            {/* Language Toggle */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" onClick={switchLocale}>
-                  <Globe className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <p>{locale === "en" ? "Passer au français" : "Switch to English"}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          {/* Language Toggle */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" onClick={switchLocale}>
+                <Globe className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>{locale === "en" ? "Passer au français" : "Switch to English"}</p>
+            </TooltipContent>
+          </Tooltip>
 
           <NotificationBell locale={locale} />
 

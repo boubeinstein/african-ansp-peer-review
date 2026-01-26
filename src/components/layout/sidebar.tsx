@@ -14,7 +14,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
@@ -74,8 +73,7 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
       </div>
 
       <ScrollArea className="flex-1 px-3 py-4">
-        <TooltipProvider delayDuration={0}>
-          <nav className="flex flex-col gap-1">
+        <nav className="flex flex-col gap-1">
             {/* Main navigation items */}
             {navItems
               .filter((item) => item.section !== "admin")
@@ -206,7 +204,6 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
               </>
             )}
           </nav>
-        </TooltipProvider>
       </ScrollArea>
 
       <Button

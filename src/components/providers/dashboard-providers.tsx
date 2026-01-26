@@ -2,6 +2,7 @@
 
 import { TRPCProvider } from "@/lib/trpc/provider";
 import { KeyboardShortcutsProvider } from "@/components/features/shortcuts";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface DashboardProvidersProps {
   children: React.ReactNode;
@@ -10,7 +11,9 @@ interface DashboardProvidersProps {
 export function DashboardProviders({ children }: DashboardProvidersProps) {
   return (
     <TRPCProvider>
-      <KeyboardShortcutsProvider>{children}</KeyboardShortcutsProvider>
+      <TooltipProvider delayDuration={0}>
+        <KeyboardShortcutsProvider>{children}</KeyboardShortcutsProvider>
+      </TooltipProvider>
     </TRPCProvider>
   );
 }

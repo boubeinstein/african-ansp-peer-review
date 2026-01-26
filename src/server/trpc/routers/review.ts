@@ -495,6 +495,7 @@ export const reviewRouter = router({
 
   /**
    * Get review statistics
+   * Uses the same role-based visibility filtering as the list query
    */
   getStats: protectedProcedure
     .input(
@@ -506,34 +507,93 @@ export const reviewRouter = router({
         .optional()
     )
     .query(async ({ ctx, input }) => {
-      const where: Prisma.ReviewWhereInput = {};
+      const userRole = ctx.session.user.role;
+      const userOrgId = ctx.session.user.organizationId;
+      const userId = ctx.session.user.id;
+
+      // Build base filter from input
+      const baseFilter: Prisma.ReviewWhereInput = {};
 
       if (input?.organizationId) {
-        where.hostOrganizationId = input.organizationId;
+        baseFilter.hostOrganizationId = input.organizationId;
       }
 
       if (input?.year) {
-        where.requestedDate = {
+        baseFilter.requestedDate = {
           gte: new Date(input.year, 0, 1),
           lt: new Date(input.year + 1, 0, 1),
         };
       }
 
-      const [total, requested, scheduled, inProgress, completed, cancelled] =
-        await Promise.all([
-          ctx.db.review.count({ where }),
-          ctx.db.review.count({ where: { ...where, status: "REQUESTED" } }),
-          ctx.db.review.count({ where: { ...where, status: "SCHEDULED" } }),
-          ctx.db.review.count({ where: { ...where, status: "IN_PROGRESS" } }),
-          ctx.db.review.count({ where: { ...where, status: "COMPLETED" } }),
-          ctx.db.review.count({ where: { ...where, status: "CANCELLED" } }),
-        ]);
+      // Apply role-based visibility filter (same logic as list query)
+      const adminRoles = [
+        "SUPER_ADMIN",
+        "SYSTEM_ADMIN",
+        "PROGRAMME_COORDINATOR",
+        "STEERING_COMMITTEE",
+      ];
+
+      let where: Prisma.ReviewWhereInput;
+
+      if (adminRoles.includes(userRole)) {
+        // Admin roles see all reviews
+        where = { ...baseFilter };
+      } else if (
+        ["LEAD_REVIEWER", "PEER_REVIEWER", "OBSERVER"].includes(userRole)
+      ) {
+        // Reviewers/observers see: their org's reviews OR reviews they're team members of
+        const orConditions: Prisma.ReviewWhereInput[] = [
+          { teamMembers: { some: { userId } } },
+        ];
+
+        if (userOrgId) {
+          orConditions.push({ hostOrganizationId: userOrgId });
+        }
+
+        where = { ...baseFilter, OR: orConditions };
+      } else {
+        // ANSP staff roles see only their organization's reviews
+        if (userOrgId) {
+          where = { ...baseFilter, hostOrganizationId: userOrgId };
+        } else {
+          // User without org sees nothing
+          where = { ...baseFilter, id: "no-access-without-organization" };
+        }
+      }
+
+      const [
+        total,
+        requested,
+        approved,
+        planning,
+        scheduled,
+        inProgress,
+        reportDrafting,
+        reportReview,
+        completed,
+        cancelled,
+      ] = await Promise.all([
+        ctx.db.review.count({ where }),
+        ctx.db.review.count({ where: { ...where, status: "REQUESTED" } }),
+        ctx.db.review.count({ where: { ...where, status: "APPROVED" } }),
+        ctx.db.review.count({ where: { ...where, status: "PLANNING" } }),
+        ctx.db.review.count({ where: { ...where, status: "SCHEDULED" } }),
+        ctx.db.review.count({ where: { ...where, status: "IN_PROGRESS" } }),
+        ctx.db.review.count({ where: { ...where, status: "REPORT_DRAFTING" } }),
+        ctx.db.review.count({ where: { ...where, status: "REPORT_REVIEW" } }),
+        ctx.db.review.count({ where: { ...where, status: "COMPLETED" } }),
+        ctx.db.review.count({ where: { ...where, status: "CANCELLED" } }),
+      ]);
 
       return {
         total,
         requested,
+        approved,
+        planning,
         scheduled,
         inProgress,
+        reportDrafting,
+        reportReview,
         completed,
         cancelled,
       };

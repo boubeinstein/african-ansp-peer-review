@@ -1261,6 +1261,7 @@ export const capRouter = router({
 
   /**
    * Get CAP statistics
+   * Uses the same role-based visibility filtering as the list query
    */
   getStats: protectedProcedure
     .input(
@@ -1270,14 +1271,60 @@ export const capRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
+      const userRole = ctx.session.user.role;
+      const userOrgId = ctx.session.user.organizationId;
+      const userId = ctx.session.user.id;
+
+      // Build base filter from input
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const where: any = {};
+      const baseFilter: any = {};
 
       if (input.organizationId) {
-        where.finding = { organizationId: input.organizationId };
+        baseFilter.finding = { organizationId: input.organizationId };
       }
       if (input.reviewId) {
-        where.finding = { ...where.finding, reviewId: input.reviewId };
+        baseFilter.finding = { ...baseFilter.finding, reviewId: input.reviewId };
+      }
+
+      // Apply role-based visibility filter
+      const adminRoles = [
+        "SUPER_ADMIN",
+        "SYSTEM_ADMIN",
+        "PROGRAMME_COORDINATOR",
+        "STEERING_COMMITTEE",
+      ];
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let where: any;
+
+      if (adminRoles.includes(userRole)) {
+        // Admin roles see all CAPs
+        where = { ...baseFilter };
+      } else if (
+        ["LEAD_REVIEWER", "PEER_REVIEWER", "OBSERVER"].includes(userRole)
+      ) {
+        // Reviewers see: CAPs for their org's findings OR reviews they're team members of
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const orConditions: any[] = [
+          { finding: { review: { teamMembers: { some: { userId } } } } },
+        ];
+
+        if (userOrgId) {
+          orConditions.push({ finding: { organizationId: userOrgId } });
+        }
+
+        where = { ...baseFilter, OR: orConditions };
+      } else {
+        // ANSP staff roles see only their organization's CAPs
+        if (userOrgId) {
+          where = {
+            ...baseFilter,
+            finding: { ...baseFilter.finding, organizationId: userOrgId },
+          };
+        } else {
+          // User without org sees nothing
+          where = { ...baseFilter, id: "no-access-without-organization" };
+        }
       }
 
       const [total, byStatus, overdue] = await Promise.all([

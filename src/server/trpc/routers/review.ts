@@ -317,22 +317,41 @@ export const reviewRouter = router({
       // Role-based filtering
       const userRole = ctx.session.user.role;
       const userOrgId = ctx.session.user.organizationId;
+      const userId = ctx.session.user.id;
 
-      // ANSP users can only see their own organization's reviews
-      if (
-        ["ANSP_ADMIN", "SAFETY_MANAGER", "QUALITY_MANAGER", "STAFF"].includes(
-          userRole
-        )
+      // Admin roles can see all reviews
+      const adminRoles = [
+        "SUPER_ADMIN",
+        "SYSTEM_ADMIN",
+        "PROGRAMME_COORDINATOR",
+        "STEERING_COMMITTEE",
+      ];
+
+      if (adminRoles.includes(userRole)) {
+        // No additional filtering - admins see all reviews
+      } else if (
+        ["LEAD_REVIEWER", "PEER_REVIEWER", "OBSERVER"].includes(userRole)
       ) {
-        where.hostOrganizationId = userOrgId ?? undefined;
-      }
-
-      // Reviewers can see reviews they're assigned to or their org's reviews
-      if (userRole === "PEER_REVIEWER" || userRole === "LEAD_REVIEWER") {
-        where.OR = [
-          { hostOrganizationId: userOrgId ?? undefined },
-          { teamMembers: { some: { userId: ctx.session.user.id } } },
+        // Reviewers/observers see: their org's reviews OR reviews they're team members of
+        const orConditions: Prisma.ReviewWhereInput[] = [
+          { teamMembers: { some: { userId } } },
         ];
+
+        // Only add org filter if user has an organization
+        if (userOrgId) {
+          orConditions.push({ hostOrganizationId: userOrgId });
+        }
+
+        where.OR = orConditions;
+      } else {
+        // ANSP staff roles (ANSP_ADMIN, SAFETY_MANAGER, QUALITY_MANAGER, STAFF)
+        // can only see their own organization's reviews
+        if (userOrgId) {
+          where.hostOrganizationId = userOrgId;
+        } else {
+          // If user has no organization, they cannot see any reviews
+          where.id = "no-access-without-organization";
+        }
       }
 
       const [reviews, total] = await Promise.all([

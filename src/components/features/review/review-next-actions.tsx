@@ -64,10 +64,11 @@ export function ReviewNextActions({
 }: ReviewNextActionsProps) {
   const t = useTranslations("review.workflow");
 
-  // Fetch next actions and checklist
-  const { data, isLoading, error } = trpc.review.getNextActions.useQuery({
-    reviewId,
-  });
+  // Fetch next actions and checklist - only when reviewId is valid
+  const { data, isLoading, error } = trpc.review.getNextActions.useQuery(
+    { reviewId },
+    { enabled: !!reviewId && reviewId.length > 0 }
+  );
 
   // Loading state
   if (isLoading) {

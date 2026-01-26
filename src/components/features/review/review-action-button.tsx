@@ -103,9 +103,12 @@ export function ReviewActionButton({
   } | null>(null);
   const [notes, setNotes] = useState("");
 
-  // Fetch next actions
+  // Fetch next actions - only when reviewId is valid
   const { data: actionsData, isLoading: isLoadingActions } =
-    trpc.review.getNextActions.useQuery({ reviewId });
+    trpc.review.getNextActions.useQuery(
+      { reviewId },
+      { enabled: !!reviewId && reviewId.length > 0 }
+    );
 
   // Transition mutation
   const transitionMutation = trpc.review.transitionStatus.useMutation({

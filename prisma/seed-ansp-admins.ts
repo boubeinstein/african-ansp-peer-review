@@ -31,6 +31,14 @@ interface ANSPAdmin {
   orgCode: string;
 }
 
+// Emails that were incorrectly seeded and need to be cleaned up
+const WRONG_EMAILS_TO_DELETE = [
+  "admin@dca.gov.mw",   // Should be admin@mcaa.gov.mw
+  "admin@adema.mg",     // Should be admin@acm.mg
+  "admin@onda.ma",      // Should be admin@dgac.ma
+  "admin@enna.dz",      // Should be admin@anac.dz
+];
+
 // ANSP_ADMIN focal points - one per organization
 // Using organization codes from seed-teams-and-orgs.ts
 const ANSP_ADMIN_USERS: ANSPAdmin[] = [
@@ -52,17 +60,17 @@ const ANSP_ADMIN_USERS: ANSPAdmin[] = [
   { email: "admin@gcaa.com.gh", firstName: "GCAA", lastName: "Focal Point", orgCode: "GCAA" },
   { email: "admin@robertsfir.org", firstName: "Roberts FIR", lastName: "Focal Point", orgCode: "RFIR" },
 
-  // Team 4: Southern & Eastern Africa
-  { email: "admin@aeroportos.co.mz", firstName: "ADM", lastName: "Focal Point", orgCode: "ADM" },
-  { email: "admin@dca.gov.mw", firstName: "DCA-MW", lastName: "Focal Point", orgCode: "MCAA" },
-  { email: "admin@adema.mg", firstName: "ADEMA", lastName: "Focal Point", orgCode: "ACM" },
+  // Team 4: Southern & Eastern Africa (CORRECTED)
+  { email: "admin@aeroportos.co.mz", firstName: "ADM", lastName: "Focal Point", orgCode: "ADM" },         // Mozambique
+  { email: "admin@mcaa.gov.mw", firstName: "MCAA", lastName: "Focal Point", orgCode: "MCAA" },            // Malawi
+  { email: "admin@acm.mg", firstName: "ACM", lastName: "Focal Point", orgCode: "ACM" },                   // Madagascar
   { email: "admin@caaz.co.zw", firstName: "CAAZ", lastName: "Focal Point", orgCode: "CAAZ" },
   { email: "admin@zacl.co.zm", firstName: "ZACL", lastName: "Focal Point", orgCode: "ZACL" },
 
-  // Team 5: Northern Africa
-  { email: "admin@onda.ma", firstName: "ONDA", lastName: "Focal Point", orgCode: "DGAC" },
+  // Team 5: Northern Africa (CORRECTED)
+  { email: "admin@dgac.ma", firstName: "DGAC", lastName: "Focal Point", orgCode: "DGAC" },                // Morocco
   { email: "admin@oaca.nat.tn", firstName: "OACA", lastName: "Focal Point", orgCode: "OACA" },
-  { email: "admin@enna.dz", firstName: "ENNA", lastName: "Focal Point", orgCode: "ANAC" },
+  { email: "admin@anac.dz", firstName: "ANAC", lastName: "Focal Point", orgCode: "ANAC" },                // Algeria
 ];
 
 async function getOrganizationMap(): Promise<Map<string, string>> {
@@ -124,8 +132,23 @@ async function createANSPAdmin(
   return dbUser;
 }
 
+async function cleanupWrongUsers() {
+  console.log("🗑️ Cleaning up incorrectly seeded users...\n");
+
+  for (const email of WRONG_EMAILS_TO_DELETE) {
+    const result = await prisma.user.deleteMany({ where: { email } });
+    if (result.count > 0) {
+      console.log(`  🗑️ Deleted: ${email}`);
+    }
+  }
+  console.log("");
+}
+
 async function main() {
   console.log("\n🏢 Seeding ANSP_ADMIN Focal Point Users...\n");
+
+  // First, clean up any incorrectly seeded users
+  await cleanupWrongUsers();
 
   // Get organization mapping
   const orgMap = await getOrganizationMap();

@@ -617,16 +617,20 @@ export function DocumentManager({
 
   const utils = trpc.useUtils();
 
-  // Fetch documents
-  const { data: documents, isLoading } = trpc.document.getByReview.useQuery({
-    reviewId,
-    category: selectedCategory !== "all" ? selectedCategory : undefined,
-  });
+  // Fetch documents - only when reviewId is valid
+  const { data: documents, isLoading } = trpc.document.getByReview.useQuery(
+    {
+      reviewId,
+      category: selectedCategory !== "all" ? selectedCategory : undefined,
+    },
+    { enabled: !!reviewId && reviewId.length > 0 }
+  );
 
-  // Fetch stats
-  const { data: stats } = trpc.document.getReviewDocumentStats.useQuery({
-    reviewId,
-  });
+  // Fetch stats - only when reviewId is valid
+  const { data: stats } = trpc.document.getReviewDocumentStats.useQuery(
+    { reviewId },
+    { enabled: !!reviewId && reviewId.length > 0 }
+  );
 
   // Delete mutation
   const deleteDoc = trpc.document.deleteReviewDocument.useMutation({

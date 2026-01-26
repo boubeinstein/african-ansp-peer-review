@@ -72,9 +72,9 @@ export function Header({ locale, user }: HeaderProps) {
           <h1 className="text-lg font-semibold">{t("appName")}</h1>
         </div>
 
-        <div className="flex items-center gap-1">
-          {/* Command Palette */}
-          <TooltipProvider>
+        <div className="flex items-center gap-1" suppressHydrationWarning>
+          <TooltipProvider delayDuration={0}>
+            {/* Command Palette */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -93,10 +93,8 @@ export function Header({ locale, user }: HeaderProps) {
                 </div>
               </TooltipContent>
             </Tooltip>
-          </TooltipProvider>
 
-          {/* Keyboard Shortcuts */}
-          <TooltipProvider>
+            {/* Keyboard Shortcuts */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -115,10 +113,8 @@ export function Header({ locale, user }: HeaderProps) {
                 </div>
               </TooltipContent>
             </Tooltip>
-          </TooltipProvider>
 
-          {/* Language Toggle */}
-          <TooltipProvider>
+            {/* Language Toggle */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="ghost" size="icon" onClick={switchLocale}>

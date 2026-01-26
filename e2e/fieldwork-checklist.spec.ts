@@ -45,12 +45,6 @@ async function login(page: Page, email: string, password: string) {
   await page.waitForURL(/.*dashboard.*/);
 }
 
-async function logout(page: Page) {
-  await page.getByRole("button", { name: /user menu/i }).click();
-  await page.getByRole("menuitem", { name: /sign out/i }).click();
-  await page.waitForURL(/.*signin.*/);
-}
-
 async function navigateToReview(page: Page, reviewTitle: string) {
   await page.goto(`${BASE_URL}/en/reviews`);
   await page.getByRole("link", { name: reviewTitle }).first().click();

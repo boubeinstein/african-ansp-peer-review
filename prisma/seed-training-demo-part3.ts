@@ -1,579 +1,247 @@
 /**
- * AAPRP Training Demo Data Seed Script - Part 3
- * Creates sample documents and fieldwork checklist progress
- *
- * Run with: npm run db:seed:training-part3
+ * AAPRP Training Demo - Part 3: Documents & Checklists
+ * Corrected to match actual Prisma schema
+ * 
+ * Run: npm run db:seed:training-part3
  */
 
 import "dotenv/config";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
-import {
-  PrismaClient,
-  DocumentCategory,
-  DocumentStatus,
-} from "@prisma/client";
+import { PrismaClient, DocumentCategory, DocumentStatus } from "@prisma/client";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
-// ─────────────────────────────────────────────────────────────────
-// DOCUMENT DEFINITIONS
-// ─────────────────────────────────────────────────────────────────
+// DocumentCategory enum: POLICY, PROCEDURE, RECORD, CERTIFICATE, REPORT, TRAINING, EVIDENCE, OTHER,
+//                        PRE_VISIT_REQUEST, HOST_SUBMISSION, INTERVIEW_NOTES, DRAFT_REPORT, FINAL_REPORT, CAP_EVIDENCE, CORRESPONDENCE
+// DocumentStatus enum: UPLOADED, UNDER_REVIEW, REVIEWED, PENDING_APPROVAL, APPROVED, REJECTED
 
-interface DocumentDef {
+interface DocTemplate {
   category: DocumentCategory;
   status: DocumentStatus;
   name: string;
   fileType: string;
 }
 
-// Map review reference to phase for document assignment
-const REVIEW_PHASES: Record<string, string> = {
-  "AAPRP-DEMO-001": "COMPLETED",
-  "AAPRP-DEMO-002": "REPORTING",
-  "AAPRP-DEMO-003": "FIELDWORK",
-  "AAPRP-DEMO-004": "PLANNING",
-  "AAPRP-DEMO-005": "REQUESTED",
-};
-
-const DOCUMENTS_BY_PHASE: Record<string, DocumentDef[]> = {
-  // Completed review - all document types
-  COMPLETED: [
-    {
-      category: "PRE_VISIT_REQUEST" as DocumentCategory,
-      status: "APPROVED" as DocumentStatus,
-      name: "Document_Request_Letter.pdf",
-      fileType: "application/pdf",
-    },
-    {
-      category: "HOST_SUBMISSION" as DocumentCategory,
-      status: "APPROVED" as DocumentStatus,
-      name: "ATS_Manual_v3.2.pdf",
-      fileType: "application/pdf",
-    },
-    {
-      category: "HOST_SUBMISSION" as DocumentCategory,
-      status: "APPROVED" as DocumentStatus,
-      name: "Safety_Management_Manual.pdf",
-      fileType: "application/pdf",
-    },
-    {
-      category: "HOST_SUBMISSION" as DocumentCategory,
-      status: "APPROVED" as DocumentStatus,
-      name: "Training_Records_2025.xlsx",
-      fileType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    },
-    {
-      category: "INTERVIEW_NOTES" as DocumentCategory,
-      status: "REVIEWED" as DocumentStatus,
-      name: "Interview_ATS_Manager.pdf",
-      fileType: "application/pdf",
-    },
-    {
-      category: "INTERVIEW_NOTES" as DocumentCategory,
-      status: "REVIEWED" as DocumentStatus,
-      name: "Interview_Safety_Officer.pdf",
-      fileType: "application/pdf",
-    },
-    {
-      category: "EVIDENCE" as DocumentCategory,
-      status: "APPROVED" as DocumentStatus,
-      name: "Facility_Photos.zip",
-      fileType: "application/zip",
-    },
-    {
-      category: "EVIDENCE" as DocumentCategory,
-      status: "APPROVED" as DocumentStatus,
-      name: "Equipment_Inspection_Report.pdf",
-      fileType: "application/pdf",
-    },
-    {
-      category: "DRAFT_REPORT" as DocumentCategory,
-      status: "APPROVED" as DocumentStatus,
-      name: "Draft_Review_Report_v1.pdf",
-      fileType: "application/pdf",
-    },
-    {
-      category: "CORRESPONDENCE" as DocumentCategory,
-      status: "REVIEWED" as DocumentStatus,
-      name: "Host_Feedback_Draft.pdf",
-      fileType: "application/pdf",
-    },
-    {
-      category: "FINAL_REPORT" as DocumentCategory,
-      status: "APPROVED" as DocumentStatus,
-      name: "Final_Review_Report.pdf",
-      fileType: "application/pdf",
-    },
-    {
-      category: "CAP_EVIDENCE" as DocumentCategory,
-      status: "APPROVED" as DocumentStatus,
-      name: "CAP_Implementation_Evidence.pdf",
-      fileType: "application/pdf",
-    },
+const DOCS_BY_PHASE: Record<string, DocTemplate[]> = {
+  CLOSED: [
+    { category: "PRE_VISIT_REQUEST", status: "APPROVED", name: "Document_Request_Letter.pdf", fileType: "application/pdf" },
+    { category: "HOST_SUBMISSION", status: "APPROVED", name: "ATS_Operations_Manual_v3.2.pdf", fileType: "application/pdf" },
+    { category: "HOST_SUBMISSION", status: "APPROVED", name: "Safety_Management_Manual.pdf", fileType: "application/pdf" },
+    { category: "HOST_SUBMISSION", status: "APPROVED", name: "Training_Records_2025.xlsx", fileType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" },
+    { category: "INTERVIEW_NOTES", status: "REVIEWED", name: "Interview_ATS_Manager.pdf", fileType: "application/pdf" },
+    { category: "INTERVIEW_NOTES", status: "REVIEWED", name: "Interview_Safety_Officer.pdf", fileType: "application/pdf" },
+    { category: "EVIDENCE", status: "APPROVED", name: "Facility_Inspection_Photos.zip", fileType: "application/zip" },
+    { category: "DRAFT_REPORT", status: "APPROVED", name: "Draft_Review_Report_v1.pdf", fileType: "application/pdf" },
+    { category: "CORRESPONDENCE", status: "REVIEWED", name: "Host_Feedback_on_Draft.pdf", fileType: "application/pdf" },
+    { category: "FINAL_REPORT", status: "APPROVED", name: "Final_Review_Report.pdf", fileType: "application/pdf" },
   ],
-
-  // Reporting phase - most documents complete
   REPORTING: [
-    {
-      category: "PRE_VISIT_REQUEST" as DocumentCategory,
-      status: "APPROVED" as DocumentStatus,
-      name: "Document_Request.pdf",
-      fileType: "application/pdf",
-    },
-    {
-      category: "HOST_SUBMISSION" as DocumentCategory,
-      status: "REVIEWED" as DocumentStatus,
-      name: "Operations_Manual.pdf",
-      fileType: "application/pdf",
-    },
-    {
-      category: "HOST_SUBMISSION" as DocumentCategory,
-      status: "REVIEWED" as DocumentStatus,
-      name: "Quality_Manual.pdf",
-      fileType: "application/pdf",
-    },
-    {
-      category: "INTERVIEW_NOTES" as DocumentCategory,
-      status: "REVIEWED" as DocumentStatus,
-      name: "Staff_Interviews.pdf",
-      fileType: "application/pdf",
-    },
-    {
-      category: "EVIDENCE" as DocumentCategory,
-      status: "REVIEWED" as DocumentStatus,
-      name: "Site_Inspection_Photos.zip",
-      fileType: "application/zip",
-    },
-    {
-      category: "DRAFT_REPORT" as DocumentCategory,
-      status: "UNDER_REVIEW" as DocumentStatus,
-      name: "Draft_Report_v0.9.pdf",
-      fileType: "application/pdf",
-    },
-    {
-      category: "CORRESPONDENCE" as DocumentCategory,
-      status: "UPLOADED" as DocumentStatus,
-      name: "Email_Correspondence.pdf",
-      fileType: "application/pdf",
-    },
+    { category: "PRE_VISIT_REQUEST", status: "APPROVED", name: "Document_Request.pdf", fileType: "application/pdf" },
+    { category: "HOST_SUBMISSION", status: "REVIEWED", name: "Operations_Manual.pdf", fileType: "application/pdf" },
+    { category: "HOST_SUBMISSION", status: "REVIEWED", name: "Quality_Assurance_Manual.pdf", fileType: "application/pdf" },
+    { category: "INTERVIEW_NOTES", status: "REVIEWED", name: "Staff_Interviews_Summary.pdf", fileType: "application/pdf" },
+    { category: "EVIDENCE", status: "REVIEWED", name: "Site_Inspection_Photos.zip", fileType: "application/zip" },
+    { category: "DRAFT_REPORT", status: "UNDER_REVIEW", name: "Draft_Report_v0.9.pdf", fileType: "application/pdf" },
+    { category: "CORRESPONDENCE", status: "UPLOADED", name: "Email_Correspondence.pdf", fileType: "application/pdf" },
   ],
-
-  // Fieldwork phase - partial documents
-  FIELDWORK: [
-    {
-      category: "PRE_VISIT_REQUEST" as DocumentCategory,
-      status: "APPROVED" as DocumentStatus,
-      name: "Pre_Visit_Request.pdf",
-      fileType: "application/pdf",
-    },
-    {
-      category: "HOST_SUBMISSION" as DocumentCategory,
-      status: "REVIEWED" as DocumentStatus,
-      name: "Submitted_Documents.zip",
-      fileType: "application/zip",
-    },
-    {
-      category: "HOST_SUBMISSION" as DocumentCategory,
-      status: "UPLOADED" as DocumentStatus,
-      name: "Additional_Info.pdf",
-      fileType: "application/pdf",
-    },
-    {
-      category: "INTERVIEW_NOTES" as DocumentCategory,
-      status: "UPLOADED" as DocumentStatus,
-      name: "Day1_Interviews.pdf",
-      fileType: "application/pdf",
-    },
-    {
-      category: "EVIDENCE" as DocumentCategory,
-      status: "UPLOADED" as DocumentStatus,
-      name: "Initial_Evidence.zip",
-      fileType: "application/zip",
-    },
+  FOLLOW_UP: [
+    { category: "PRE_VISIT_REQUEST", status: "APPROVED", name: "Initial_Request.pdf", fileType: "application/pdf" },
+    { category: "HOST_SUBMISSION", status: "APPROVED", name: "Submitted_Documentation.pdf", fileType: "application/pdf" },
+    { category: "DRAFT_REPORT", status: "APPROVED", name: "Review_Report.pdf", fileType: "application/pdf" },
+    { category: "CAP_EVIDENCE", status: "UNDER_REVIEW", name: "CAP_Implementation_Evidence.pdf", fileType: "application/pdf" },
   ],
-
-  // Planning phase - minimal documents
+  ON_SITE: [
+    { category: "PRE_VISIT_REQUEST", status: "APPROVED", name: "Pre_Visit_Request.pdf", fileType: "application/pdf" },
+    { category: "HOST_SUBMISSION", status: "REVIEWED", name: "Submitted_Documents.zip", fileType: "application/zip" },
+    { category: "HOST_SUBMISSION", status: "UPLOADED", name: "Additional_Information.pdf", fileType: "application/pdf" },
+    { category: "INTERVIEW_NOTES", status: "UPLOADED", name: "Day1_Interview_Notes.pdf", fileType: "application/pdf" },
+    { category: "EVIDENCE", status: "UPLOADED", name: "Initial_Evidence_Collection.zip", fileType: "application/zip" },
+  ],
+  PREPARATION: [
+    { category: "PRE_VISIT_REQUEST", status: "REVIEWED", name: "Document_Request_Sent.pdf", fileType: "application/pdf" },
+    { category: "HOST_SUBMISSION", status: "UPLOADED", name: "Initial_Submission.pdf", fileType: "application/pdf" },
+  ],
   PLANNING: [
-    {
-      category: "PRE_VISIT_REQUEST" as DocumentCategory,
-      status: "UPLOADED" as DocumentStatus,
-      name: "Document_Request_Draft.pdf",
-      fileType: "application/pdf",
-    },
+    { category: "PRE_VISIT_REQUEST", status: "UPLOADED", name: "Draft_Document_Request.pdf", fileType: "application/pdf" },
   ],
 };
 
-// ─────────────────────────────────────────────────────────────────
-// CHECKLIST PROGRESS BY PHASE
-// ─────────────────────────────────────────────────────────────────
-
-const CHECKLIST_PROGRESS: Record<string, string[]> = {
-  // Completed review - all items done
-  COMPLETED: [
-    "PRE_DOC_REQUEST_SENT",
-    "PRE_DOCS_RECEIVED",
-    "PRE_COORDINATION_MEETING",
-    "PRE_PLAN_APPROVED",
-    "SITE_OPENING_MEETING",
-    "SITE_INTERVIEWS",
-    "SITE_FACILITIES",
-    "SITE_DOC_REVIEW",
-    "SITE_FINDINGS_DISCUSSED",
-    "SITE_CLOSING_MEETING",
-    "POST_FINDINGS_ENTERED",
-    "POST_EVIDENCE_UPLOADED",
-    "POST_DRAFT_REPORT",
-    "POST_HOST_FEEDBACK",
+// Checklist items to mark as completed by review phase
+const CHECKLIST_BY_PHASE: Record<string, string[]> = {
+  CLOSED: [
+    "PRE_DOC_REQUEST_SENT", "PRE_DOCS_RECEIVED", "PRE_COORDINATION_MEETING", "PRE_PLAN_APPROVED",
+    "SITE_OPENING_MEETING", "SITE_INTERVIEWS", "SITE_FACILITIES", "SITE_DOC_REVIEW",
+    "SITE_FINDINGS_DISCUSSED", "SITE_CLOSING_MEETING",
+    "POST_FINDINGS_ENTERED", "POST_EVIDENCE_UPLOADED", "POST_DRAFT_REPORT", "POST_HOST_FEEDBACK",
   ],
-
-  // Reporting phase - on-site complete, post-visit in progress
   REPORTING: [
-    "PRE_DOC_REQUEST_SENT",
-    "PRE_DOCS_RECEIVED",
-    "PRE_COORDINATION_MEETING",
-    "PRE_PLAN_APPROVED",
-    "SITE_OPENING_MEETING",
-    "SITE_INTERVIEWS",
-    "SITE_FACILITIES",
-    "SITE_DOC_REVIEW",
-    "SITE_FINDINGS_DISCUSSED",
-    "SITE_CLOSING_MEETING",
-    "POST_FINDINGS_ENTERED",
-    "POST_EVIDENCE_UPLOADED",
+    "PRE_DOC_REQUEST_SENT", "PRE_DOCS_RECEIVED", "PRE_COORDINATION_MEETING", "PRE_PLAN_APPROVED",
+    "SITE_OPENING_MEETING", "SITE_INTERVIEWS", "SITE_FACILITIES", "SITE_DOC_REVIEW",
+    "SITE_FINDINGS_DISCUSSED", "SITE_CLOSING_MEETING",
+    "POST_FINDINGS_ENTERED", "POST_EVIDENCE_UPLOADED",
   ],
-
-  // Fieldwork phase - pre-visit done, on-site in progress
-  FIELDWORK: [
-    "PRE_DOC_REQUEST_SENT",
-    "PRE_DOCS_RECEIVED",
-    "PRE_COORDINATION_MEETING",
-    "PRE_PLAN_APPROVED",
-    "SITE_OPENING_MEETING",
-    "SITE_INTERVIEWS",
+  FOLLOW_UP: [
+    "PRE_DOC_REQUEST_SENT", "PRE_DOCS_RECEIVED", "PRE_COORDINATION_MEETING", "PRE_PLAN_APPROVED",
+    "SITE_OPENING_MEETING", "SITE_INTERVIEWS", "SITE_FACILITIES", "SITE_DOC_REVIEW",
+    "SITE_FINDINGS_DISCUSSED", "SITE_CLOSING_MEETING",
+    "POST_FINDINGS_ENTERED", "POST_EVIDENCE_UPLOADED", "POST_DRAFT_REPORT", "POST_HOST_FEEDBACK",
   ],
-
-  // Planning phase - early pre-visit items only
-  PLANNING: ["PRE_DOC_REQUEST_SENT"],
+  ON_SITE: [
+    "PRE_DOC_REQUEST_SENT", "PRE_DOCS_RECEIVED", "PRE_COORDINATION_MEETING", "PRE_PLAN_APPROVED",
+    "SITE_OPENING_MEETING", "SITE_INTERVIEWS",
+  ],
+  PREPARATION: [
+    "PRE_DOC_REQUEST_SENT", "PRE_DOCS_RECEIVED",
+  ],
+  PLANNING: [
+    "PRE_DOC_REQUEST_SENT",
+  ],
 };
-
-// ─────────────────────────────────────────────────────────────────
-// SEED DOCUMENTS
-// ─────────────────────────────────────────────────────────────────
 
 async function seedDocuments() {
   console.log("\n📄 Creating demo documents...\n");
 
-  // Get reviews by reference number
   const reviews = await prisma.review.findMany({
-    where: {
-      referenceNumber: { in: Object.keys(REVIEW_PHASES) },
-    },
     include: { hostOrganization: true },
   });
 
-  for (const review of reviews) {
-    const phase = REVIEW_PHASES[review.referenceNumber];
-    const docs = DOCUMENTS_BY_PHASE[phase] || [];
+  let docCount = 0;
 
-    if (docs.length === 0) {
-      console.log(
-        `   ⏭️  No documents for ${review.referenceNumber} (${phase})`
-      );
+  for (const review of reviews) {
+    const docs = DOCS_BY_PHASE[review.phase] || [];
+    const orgName = review.hostOrganization?.organizationCode || review.hostOrganization?.nameEn || "Unknown";
+
+    if (!docs.length) {
+      console.log(`   ⏭️  No docs for ${orgName} (${review.phase})`);
       continue;
     }
 
-    console.log(
-      `   📋 Adding documents for ${review.referenceNumber} (${phase})...`
-    );
-
-    // Get a user to be the uploader
+    // Get uploader
     const uploader = await prisma.user.findFirst({
-      where: { role: "PROGRAMME_COORDINATOR" },
+      where: { email: "coordinator@aaprp.aero" },
     });
 
     if (!uploader) {
-      console.log("   ⚠️  No uploader found");
+      console.log(`   ⚠️  No uploader found`);
       continue;
     }
 
-    // Get a reviewer for reviewed/approved documents
-    const reviewer = await prisma.user.findFirst({
-      where: { role: "LEAD_REVIEWER" },
-    });
+    console.log(`   📋 Adding docs for ${orgName} (${review.phase})...`);
 
-    for (const docDef of docs) {
-      // Check if document already exists
-      const existing = await prisma.document.findFirst({
-        where: {
-          reviewId: review.id,
-          name: docDef.name,
-        },
+    for (const doc of docs) {
+      // Check if exists
+      const exists = await prisma.document.findFirst({
+        where: { reviewId: review.id, name: doc.name },
       });
-
-      if (existing) {
-        console.log(`      ⏭️  ${docDef.name} exists`);
+      if (exists) {
+        console.log(`      ⏭️  Exists: ${doc.name}`);
         continue;
       }
 
-      const docData: Parameters<typeof prisma.document.create>[0]["data"] = {
-        reviewId: review.id,
-        category: docDef.category,
-        status: docDef.status,
-        name: docDef.name,
-        originalName: docDef.name,
-        fileUrl: `https://demo.aaprp.aero/files/${review.referenceNumber}/${docDef.name}`,
-        fileSize: Math.floor(Math.random() * 5000000) + 100000, // 100KB - 5MB
-        fileType: docDef.fileType,
-        uploadedById: uploader.id,
-      };
-
-      // Add review/approval info based on status
-      if (["REVIEWED", "APPROVED"].includes(docDef.status) && reviewer) {
-        docData.reviewedAt = new Date();
-        docData.reviewedById = reviewer.id;
-        docData.reviewNotes = "Document reviewed and verified.";
-      }
-
-      if (docDef.status === "APPROVED" && reviewer) {
-        docData.approvedAt = new Date();
-        docData.approvedById = reviewer.id;
-      }
-
-      await prisma.document.create({ data: docData });
-      console.log(`      ✅ ${docDef.name} (${docDef.status})`);
+      await prisma.document.create({
+        data: {
+          name: doc.name,
+          originalName: doc.name,
+          description: `Demo document for ${review.phase} phase`,
+          fileUrl: `https://demo.aaprp.aero/files/${review.referenceNumber}/${doc.name}`,
+          fileType: doc.fileType,
+          fileSize: Math.floor(Math.random() * 5000000) + 100000, // 100KB - 5MB
+          category: doc.category,
+          reviewId: review.id,
+          organizationId: review.hostOrganizationId,
+          uploadedById: uploader.id,
+          status: doc.status,
+          reviewedAt: ["REVIEWED", "APPROVED", "PENDING_APPROVAL"].includes(doc.status) ? new Date() : null,
+          reviewedById: ["REVIEWED", "APPROVED", "PENDING_APPROVAL"].includes(doc.status) ? uploader.id : null,
+          reviewNotes: ["REVIEWED", "APPROVED"].includes(doc.status) ? "Document reviewed and verified." : null,
+          approvedAt: doc.status === "APPROVED" ? new Date() : null,
+          approvedById: doc.status === "APPROVED" ? uploader.id : null,
+        },
+      });
+      docCount++;
+      console.log(`      ✅ ${doc.name} (${doc.status})`);
     }
   }
-}
 
-// ─────────────────────────────────────────────────────────────────
-// SEED CHECKLIST PROGRESS
-// ─────────────────────────────────────────────────────────────────
+  return docCount;
+}
 
 async function seedChecklistProgress() {
   console.log("\n☑️  Updating checklist progress...\n");
 
-  // Get reviews with their checklist items
   const reviews = await prisma.review.findMany({
-    where: {
-      referenceNumber: { in: Object.keys(REVIEW_PHASES) },
-    },
-    include: {
-      hostOrganization: true,
+    include: { 
+      hostOrganization: true, 
       checklistItems: true,
     },
   });
 
-  for (const review of reviews) {
-    const phase = REVIEW_PHASES[review.referenceNumber];
-    const completedCodes = CHECKLIST_PROGRESS[phase] || [];
+  let itemsUpdated = 0;
 
-    if (review.checklistItems.length === 0) {
-      console.log(
-        `   ⏭️  No checklist items for ${review.referenceNumber}`
-      );
+  for (const review of reviews) {
+    const itemsToComplete = CHECKLIST_BY_PHASE[review.phase] || [];
+    const orgName = review.hostOrganization?.organizationCode || review.hostOrganization?.nameEn || "Unknown";
+
+    if (!review.checklistItems.length) {
+      console.log(`   ⏭️  No checklist items for ${orgName}`);
       continue;
     }
 
-    console.log(
-      `   📋 Updating checklist for ${review.referenceNumber} (${completedCodes.length}/14 items)...`
-    );
-
-    // Get a user to be the completer
-    const completer = await prisma.user.findFirst({
-      where: { role: "LEAD_REVIEWER" },
+    // Get completer (lead reviewer from team or coordinator)
+    const teamLead = await prisma.reviewTeamMember.findFirst({
+      where: { reviewId: review.id, role: "LEAD_REVIEWER" },
+      include: { user: true },
     });
+    const completer = teamLead?.user || await prisma.user.findFirst({ where: { email: "coordinator@aaprp.aero" } });
 
-    let updatedCount = 0;
-
+    let count = 0;
     for (const item of review.checklistItems) {
-      const shouldBeCompleted = completedCodes.includes(item.itemCode);
-
-      if (shouldBeCompleted && !item.isCompleted) {
+      if (itemsToComplete.includes(item.itemCode) && !item.isCompleted) {
         await prisma.fieldworkChecklistItem.update({
           where: { id: item.id },
-          data: {
-            isCompleted: true,
-            completedAt: new Date(),
+          data: { 
+            isCompleted: true, 
+            completedAt: new Date(), 
             completedById: completer?.id,
           },
         });
-        updatedCount++;
+        count++;
+        itemsUpdated++;
       }
     }
 
-    console.log(`      ✅ Updated ${updatedCount} items to completed`);
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────
-// INITIALIZE CHECKLISTS FOR REVIEWS WITHOUT THEM
-// ─────────────────────────────────────────────────────────────────
-
-const CHECKLIST_ITEM_DEFINITIONS = [
-  // PRE_VISIT items
-  {
-    phase: "PRE_VISIT",
-    itemCode: "PRE_DOC_REQUEST_SENT",
-    sortOrder: 1,
-    labelEn: "Document request sent to host organization",
-    labelFr: "Demande de documents envoyée à l'organisation hôte",
-  },
-  {
-    phase: "PRE_VISIT",
-    itemCode: "PRE_DOCS_RECEIVED",
-    sortOrder: 2,
-    labelEn: "Pre-visit documents received and reviewed",
-    labelFr: "Documents pré-visite reçus et examinés",
-  },
-  {
-    phase: "PRE_VISIT",
-    itemCode: "PRE_COORDINATION_MEETING",
-    sortOrder: 3,
-    labelEn: "Pre-visit coordination meeting held with team",
-    labelFr: "Réunion de coordination pré-visite tenue avec l'équipe",
-  },
-  {
-    phase: "PRE_VISIT",
-    itemCode: "PRE_PLAN_APPROVED",
-    sortOrder: 4,
-    labelEn: "Review plan approved by team",
-    labelFr: "Plan de revue approuvé par l'équipe",
-  },
-  // ON_SITE items
-  {
-    phase: "ON_SITE",
-    itemCode: "SITE_OPENING_MEETING",
-    sortOrder: 5,
-    labelEn: "Opening meeting conducted with host",
-    labelFr: "Réunion d'ouverture tenue avec l'hôte",
-  },
-  {
-    phase: "ON_SITE",
-    itemCode: "SITE_INTERVIEWS",
-    sortOrder: 6,
-    labelEn: "Staff interviews completed",
-    labelFr: "Entretiens avec le personnel terminés",
-  },
-  {
-    phase: "ON_SITE",
-    itemCode: "SITE_FACILITIES",
-    sortOrder: 7,
-    labelEn: "Facilities inspection completed",
-    labelFr: "Inspection des installations terminée",
-  },
-  {
-    phase: "ON_SITE",
-    itemCode: "SITE_DOC_REVIEW",
-    sortOrder: 8,
-    labelEn: "Document review completed",
-    labelFr: "Examen des documents terminé",
-  },
-  {
-    phase: "ON_SITE",
-    itemCode: "SITE_FINDINGS_DISCUSSED",
-    sortOrder: 9,
-    labelEn: "Preliminary findings discussed with host",
-    labelFr: "Constatations préliminaires discutées avec l'hôte",
-  },
-  {
-    phase: "ON_SITE",
-    itemCode: "SITE_CLOSING_MEETING",
-    sortOrder: 10,
-    labelEn: "Closing meeting conducted",
-    labelFr: "Réunion de clôture tenue",
-  },
-  // POST_VISIT items
-  {
-    phase: "POST_VISIT",
-    itemCode: "POST_FINDINGS_ENTERED",
-    sortOrder: 11,
-    labelEn: "All findings entered in system",
-    labelFr: "Toutes les constatations saisies dans le système",
-  },
-  {
-    phase: "POST_VISIT",
-    itemCode: "POST_EVIDENCE_UPLOADED",
-    sortOrder: 12,
-    labelEn: "Supporting evidence uploaded",
-    labelFr: "Preuves à l'appui téléchargées",
-  },
-  {
-    phase: "POST_VISIT",
-    itemCode: "POST_DRAFT_REPORT",
-    sortOrder: 13,
-    labelEn: "Draft report prepared",
-    labelFr: "Projet de rapport préparé",
-  },
-  {
-    phase: "POST_VISIT",
-    itemCode: "POST_HOST_FEEDBACK",
-    sortOrder: 14,
-    labelEn: "Host feedback received on draft findings",
-    labelFr: "Commentaires de l'hôte reçus sur les constatations",
-  },
-];
-
-async function initializeChecklists() {
-  console.log("\n📝 Initializing checklists for reviews...\n");
-
-  const reviews = await prisma.review.findMany({
-    where: {
-      referenceNumber: { in: Object.keys(REVIEW_PHASES) },
-    },
-    include: { checklistItems: true },
-  });
-
-  for (const review of reviews) {
-    if (review.checklistItems.length > 0) {
-      console.log(
-        `   ⏭️  ${review.referenceNumber} already has ${review.checklistItems.length} checklist items`
-      );
-      continue;
+    if (count > 0) {
+      console.log(`   ✅ ${orgName}: ${count}/${review.checklistItems.length} items completed`);
+    } else {
+      console.log(`   ⏭️  ${orgName}: already up to date`);
     }
-
-    console.log(`   📋 Creating checklist items for ${review.referenceNumber}...`);
-
-    await prisma.fieldworkChecklistItem.createMany({
-      data: CHECKLIST_ITEM_DEFINITIONS.map((def) => ({
-        reviewId: review.id,
-        phase: def.phase as "PRE_VISIT" | "ON_SITE" | "POST_VISIT",
-        itemCode: def.itemCode,
-        sortOrder: def.sortOrder,
-        labelEn: def.labelEn,
-        labelFr: def.labelFr,
-      })),
-      skipDuplicates: true,
-    });
-
-    console.log(`      ✅ Created 14 checklist items`);
   }
-}
 
-// ─────────────────────────────────────────────────────────────────
-// MAIN
-// ─────────────────────────────────────────────────────────────────
+  return itemsUpdated;
+}
 
 async function main() {
-  console.log(
-    "╔════════════════════════════════════════════════════════════╗"
-  );
-  console.log(
-    "║   AAPRP Training Demo Data - Part 3: Documents & Checklist ║"
-  );
-  console.log(
-    "╚════════════════════════════════════════════════════════════╝\n"
-  );
+  console.log("╔════════════════════════════════════════════════════════════╗");
+  console.log("║   AAPRP Training Demo - Part 3: Documents & Checklists     ║");
+  console.log("╚════════════════════════════════════════════════════════════╝");
 
   try {
-    await initializeChecklists();
-    await seedDocuments();
-    await seedChecklistProgress();
-    console.log("\n✅ Part 3 complete! All training demo data seeded.\n");
+    const docCount = await seedDocuments();
+    const checklistCount = await seedChecklistProgress();
+
+    console.log(`\n${"═".repeat(50)}`);
+    console.log(`📊 SUMMARY`);
+    console.log(`${"═".repeat(50)}`);
+    console.log(`   Documents created: ${docCount}`);
+    console.log(`   Checklist items updated: ${checklistCount}`);
+    console.log(`${"═".repeat(50)}`);
+    console.log("\n✅ Part 3 complete!\n");
+
   } catch (error) {
-    console.error("❌ Seed failed:", error);
+    console.error("❌ Error:", error);
     throw error;
   } finally {
     await prisma.$disconnect();
@@ -581,7 +249,4 @@ async function main() {
   }
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+main().catch((e) => { console.error(e); process.exit(1); });

@@ -1,67 +1,64 @@
 /**
- * AAPRP Training Demo Data Seed Script
- *
- * Creates comprehensive demo data for the AFI Peer Reviewers' Refresher Training
- * Date: March 23-26, 2026 (Dar es Salaam, Tanzania)
- *
- * Run with: npm run db:seed:training-demo
+ * AAPRP Training Demo - Part 1: Reviews & Team Members
+ * Corrected to match actual Prisma schema
+ * 
+ * Run: npm run db:seed:training
  */
 
 import "dotenv/config";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
-import {
-  PrismaClient,
-  ReviewStatus,
-  ReviewPhase,
-  ReviewType,
-  TeamRole,
-} from "@prisma/client";
+import { PrismaClient, ReviewPhase, ReviewStatus, FieldworkPhase } from "@prisma/client";
 
-// Initialize Prisma with pg adapter
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
-// ─────────────────────────────────────────────────────────────────
-// HELPER FUNCTIONS
-// ─────────────────────────────────────────────────────────────────
+// Schema enums:
+// ReviewPhase: PLANNING, PREPARATION, ON_SITE, REPORTING, FOLLOW_UP, CLOSED
+// ReviewStatus: REQUESTED, APPROVED, PLANNING, SCHEDULED, IN_PROGRESS, REPORT_DRAFTING, REPORT_REVIEW, COMPLETED, CANCELLED
+// TeamRole: LEAD_REVIEWER, REVIEWER, TECHNICAL_EXPERT, OBSERVER, TRAINEE
+// InvitationStatus: PENDING, INVITED, CONFIRMED, DECLINED, WITHDRAWN
 
-async function getOrganizationByCode(code: string) {
-  const org = await prisma.organization.findFirst({
-    where: { organizationCode: code },
-  });
-  if (!org) throw new Error(`Organization not found: ${code}`);
-  return org;
+interface ReviewConfig {
+  phase: ReviewPhase;
+  status: ReviewStatus;
+  description: string;
+  daysAgo: number; // How many days ago the review started
 }
 
-async function getUserByEmail(email: string) {
-  const user = await prisma.user.findUnique({
-    where: { email },
-  });
-  if (!user) throw new Error(`User not found: ${email}`);
-  return user;
-}
+const REVIEW_CONFIGS: ReviewConfig[] = [
+  { phase: "CLOSED", status: "COMPLETED", description: "Completed peer review with findings and CAPs resolved", daysAgo: 60 },
+  { phase: "REPORTING", status: "REPORT_DRAFTING", description: "Review in reporting phase - draft report being prepared", daysAgo: 30 },
+  { phase: "ON_SITE", status: "IN_PROGRESS", description: "Active fieldwork - on-site activities in progress", daysAgo: 7 },
+  { phase: "PREPARATION", status: "SCHEDULED", description: "Review scheduled - preparation phase", daysAgo: 0 },
+  { phase: "PLANNING", status: "APPROVED", description: "Review approved - planning team assignment", daysAgo: -14 },
+];
 
-async function getCoordinator() {
-  // Find any user with PROGRAMME_COORDINATOR role
-  const coordinator = await prisma.user.findFirst({
-    where: { role: "PROGRAMME_COORDINATOR" },
-  });
-  if (!coordinator) throw new Error("No programme coordinator found");
-  return coordinator;
-}
+// 14 fieldwork checklist items
+const CHECKLIST_ITEMS = [
+  // PRE_VISIT phase
+  { phase: "PRE_VISIT" as FieldworkPhase, itemCode: "PRE_DOC_REQUEST_SENT", sortOrder: 1, labelEn: "Document request sent to host", labelFr: "Demande de documents envoyée à l'hôte" },
+  { phase: "PRE_VISIT" as FieldworkPhase, itemCode: "PRE_DOCS_RECEIVED", sortOrder: 2, labelEn: "Pre-visit documents received and reviewed", labelFr: "Documents pré-visite reçus et examinés" },
+  { phase: "PRE_VISIT" as FieldworkPhase, itemCode: "PRE_COORDINATION_MEETING", sortOrder: 3, labelEn: "Coordination meeting held with team", labelFr: "Réunion de coordination tenue avec l'équipe" },
+  { phase: "PRE_VISIT" as FieldworkPhase, itemCode: "PRE_PLAN_APPROVED", sortOrder: 4, labelEn: "Review plan approved by team", labelFr: "Plan de revue approuvé par l'équipe" },
+  // ON_SITE phase
+  { phase: "ON_SITE" as FieldworkPhase, itemCode: "SITE_OPENING_MEETING", sortOrder: 5, labelEn: "Opening meeting conducted with host", labelFr: "Réunion d'ouverture tenue avec l'hôte" },
+  { phase: "ON_SITE" as FieldworkPhase, itemCode: "SITE_INTERVIEWS", sortOrder: 6, labelEn: "Staff interviews completed", labelFr: "Entretiens du personnel terminés" },
+  { phase: "ON_SITE" as FieldworkPhase, itemCode: "SITE_FACILITIES", sortOrder: 7, labelEn: "Facilities inspection completed", labelFr: "Inspection des installations terminée" },
+  { phase: "ON_SITE" as FieldworkPhase, itemCode: "SITE_DOC_REVIEW", sortOrder: 8, labelEn: "Document review completed", labelFr: "Examen des documents terminé" },
+  { phase: "ON_SITE" as FieldworkPhase, itemCode: "SITE_FINDINGS_DISCUSSED", sortOrder: 9, labelEn: "Preliminary findings discussed with host", labelFr: "Constatations préliminaires discutées avec l'hôte" },
+  { phase: "ON_SITE" as FieldworkPhase, itemCode: "SITE_CLOSING_MEETING", sortOrder: 10, labelEn: "Closing meeting conducted", labelFr: "Réunion de clôture tenue" },
+  // POST_VISIT phase
+  { phase: "POST_VISIT" as FieldworkPhase, itemCode: "POST_FINDINGS_ENTERED", sortOrder: 11, labelEn: "All findings entered in system", labelFr: "Toutes les constatations saisies dans le système" },
+  { phase: "POST_VISIT" as FieldworkPhase, itemCode: "POST_EVIDENCE_UPLOADED", sortOrder: 12, labelEn: "Supporting evidence uploaded", labelFr: "Preuves à l'appui téléchargées" },
+  { phase: "POST_VISIT" as FieldworkPhase, itemCode: "POST_DRAFT_REPORT", sortOrder: 13, labelEn: "Draft report prepared", labelFr: "Rapport préliminaire préparé" },
+  { phase: "POST_VISIT" as FieldworkPhase, itemCode: "POST_HOST_FEEDBACK", sortOrder: 14, labelEn: "Host feedback received on draft", labelFr: "Commentaires de l'hôte reçus sur le projet" },
+];
 
-async function getReviewerForOrg(orgCode: string, leadQualified: boolean = false) {
-  const org = await getOrganizationByCode(orgCode);
-  const profile = await prisma.reviewerProfile.findFirst({
-    where: {
-      homeOrganizationId: org.id,
-      ...(leadQualified ? { status: "LEAD_QUALIFIED" } : {}),
-    },
-    include: { user: true },
-  });
-  return profile;
+function generateReferenceNumber(index: number): string {
+  const year = new Date().getFullYear();
+  return `REV-${year}-${(index + 1).toString().padStart(3, '0')}`;
 }
 
 function addDays(date: Date, days: number): Date {
@@ -70,305 +67,221 @@ function addDays(date: Date, days: number): Date {
   return result;
 }
 
-// ─────────────────────────────────────────────────────────────────
-// REVIEW CONFIGURATIONS
-// ─────────────────────────────────────────────────────────────────
-
-interface TeamMemberConfig {
-  orgCode: string;
-  role: TeamRole;
-}
-
-interface ReviewConfig {
-  referenceNumber: string;
-  hostOrgCode: string;
-  status: ReviewStatus;
-  phase: ReviewPhase;
-  reviewType: ReviewType;
-  description: string;
-  startDaysFromNow: number;
-  endDaysFromNow: number;
-  teamMembers: TeamMemberConfig[];
-}
-
-// 5 demo reviews at different stages for training
-const DEMO_REVIEWS: ReviewConfig[] = [
-  {
-    // Completed review with full workflow
-    referenceNumber: "AAPRP-DEMO-001",
-    hostOrgCode: "FVHA", // Zimbabwe
-    status: "COMPLETED" as ReviewStatus,
-    phase: "CLOSED" as ReviewPhase,
-    reviewType: "FULL" as ReviewType,
-    description: "Completed peer review demonstrating full workflow with findings and CAPs",
-    startDaysFromNow: -60,
-    endDaysFromNow: -46,
-    teamMembers: [
-      { orgCode: "FBSK", role: "LEAD_REVIEWER" as TeamRole }, // Botswana
-      { orgCode: "FMMI", role: "REVIEWER" as TeamRole }, // Madagascar
-      { orgCode: "FLKK", role: "REVIEWER" as TeamRole }, // Zambia
-    ],
-  },
-  {
-    // Review in reporting phase
-    referenceNumber: "AAPRP-DEMO-002",
-    hostOrgCode: "HKJK", // Kenya
-    status: "IN_PROGRESS" as ReviewStatus,
-    phase: "REPORTING" as ReviewPhase,
-    reviewType: "FULL" as ReviewType,
-    description: "Review in reporting phase - draft report being prepared",
-    startDaysFromNow: -20,
-    endDaysFromNow: -6,
-    teamMembers: [
-      { orgCode: "HTDA", role: "LEAD_REVIEWER" as TeamRole }, // Tanzania
-      { orgCode: "HUEN", role: "REVIEWER" as TeamRole }, // Uganda
-      { orgCode: "HRYR", role: "REVIEWER" as TeamRole }, // Rwanda
-    ],
-  },
-  {
-    // Review in fieldwork phase (active)
-    referenceNumber: "AAPRP-DEMO-003",
-    hostOrgCode: "DNAA", // Nigeria
-    status: "IN_PROGRESS" as ReviewStatus,
-    phase: "ON_SITE" as ReviewPhase,
-    reviewType: "FULL" as ReviewType,
-    description: "Active fieldwork phase - on-site activities in progress",
-    startDaysFromNow: -5,
-    endDaysFromNow: 6,
-    teamMembers: [
-      { orgCode: "DGAA", role: "LEAD_REVIEWER" as TeamRole }, // Ghana
-      { orgCode: "GLRB", role: "REVIEWER" as TeamRole }, // Roberts FIR
-    ],
-  },
-  {
-    // Review in planning phase
-    referenceNumber: "AAPRP-DEMO-004",
-    hostOrgCode: "FQMA", // Mozambique
-    status: "APPROVED" as ReviewStatus,
-    phase: "PLANNING" as ReviewPhase,
-    reviewType: "FULL" as ReviewType,
-    description: "Review in planning phase - team assignment complete",
-    startDaysFromNow: 30,
-    endDaysFromNow: 41,
-    teamMembers: [
-      { orgCode: "ATNS", role: "LEAD_REVIEWER" as TeamRole }, // South Africa
-      { orgCode: "FMMI", role: "REVIEWER" as TeamRole }, // Madagascar
-    ],
-  },
-  {
-    // Newly requested review
-    referenceNumber: "AAPRP-DEMO-005",
-    hostOrgCode: "GMMN", // Morocco
-    status: "REQUESTED" as ReviewStatus,
-    phase: "PLANNING" as ReviewPhase,
-    reviewType: "FOCUSED" as ReviewType,
-    description: "Newly requested review awaiting approval - SMS focus",
-    startDaysFromNow: 60,
-    endDaysFromNow: 65,
-    teamMembers: [], // Not yet assigned
-  },
-];
-
-// ─────────────────────────────────────────────────────────────────
-// SEED: PEER REVIEWS
-// ─────────────────────────────────────────────────────────────────
-
 async function seedReviews() {
   console.log("\n📋 Creating demo peer reviews...\n");
 
-  const today = new Date();
-  const createdReviews: Array<{
-    id: string;
-    hostOrgCode: string;
-    phase: string;
-    referenceNumber: string;
-  }> = [];
+  // Get organizations (need at least 5)
+  const orgs = await prisma.organization.findMany({
+    orderBy: { nameEn: "asc" },
+    take: 10,
+  });
 
-  for (const config of DEMO_REVIEWS) {
-    // Check if review already exists
-    let review = await prisma.review.findFirst({
-      where: { referenceNumber: config.referenceNumber },
+  if (orgs.length < 5) {
+    console.log(`   ⚠️  Only ${orgs.length} organizations found. Need at least 5.`);
+    return [];
+  }
+
+  console.log(`   📊 Found ${orgs.length} organizations\n`);
+
+  const createdReviews: Array<{ id: string; orgName: string; phase: string }> = [];
+  const now = new Date();
+
+  for (let i = 0; i < REVIEW_CONFIGS.length; i++) {
+    const cfg = REVIEW_CONFIGS[i];
+    const org = orgs[i];
+    const refNum = generateReferenceNumber(i);
+
+    // Check if review already exists for this org
+    const exists = await prisma.review.findFirst({
+      where: { hostOrganizationId: org.id },
     });
 
-    if (review) {
-      console.log(`   ⏭️  Review already exists: ${config.referenceNumber}`);
-      createdReviews.push({
-        id: review.id,
-        hostOrgCode: config.hostOrgCode,
-        phase: config.phase,
-        referenceNumber: config.referenceNumber,
-      });
+    if (exists) {
+      console.log(`   ⏭️  Review exists for ${org.organizationCode || org.nameEn}`);
+      createdReviews.push({ id: exists.id, orgName: org.organizationCode || org.nameEn, phase: exists.phase });
       continue;
     }
 
-    const hostOrg = await getOrganizationByCode(config.hostOrgCode);
-
-    const reviewData = {
-      referenceNumber: config.referenceNumber,
-      hostOrganizationId: hostOrg.id,
-      status: config.status,
-      phase: config.phase,
-      reviewType: config.reviewType,
-      requestedDate: addDays(today, config.startDaysFromNow - 30),
-      plannedStartDate: addDays(today, config.startDaysFromNow),
-      plannedEndDate: addDays(today, config.endDaysFromNow),
-      objectives: config.description,
-      specialRequirements:
-        config.reviewType === "FOCUSED"
-          ? "Focus on SMS implementation and safety risk management"
-          : null,
-      accommodationProvided: true,
-      transportationProvided: true,
-    };
-
-    review = await prisma.review.create({
-      data: reviewData,
+    // Also check by reference number
+    const refExists = await prisma.review.findUnique({
+      where: { referenceNumber: refNum },
     });
 
-    console.log(
-      `   ✅ Created review: ${config.referenceNumber} - ${hostOrg.nameEn} (${config.phase})`
-    );
-    createdReviews.push({
-      id: review.id,
-      hostOrgCode: config.hostOrgCode,
-      phase: config.phase,
-      referenceNumber: config.referenceNumber,
+    if (refExists) {
+      console.log(`   ⏭️  Review ${refNum} already exists`);
+      createdReviews.push({ id: refExists.id, orgName: org.organizationCode || org.nameEn, phase: refExists.phase });
+      continue;
+    }
+
+    const requestedDate = addDays(now, -cfg.daysAgo - 30);
+    const plannedStart = addDays(now, -cfg.daysAgo);
+    const plannedEnd = addDays(plannedStart, 10);
+
+    const review = await prisma.review.create({
+      data: {
+        referenceNumber: refNum,
+        reviewType: "FULL",
+        hostOrganizationId: org.id,
+        status: cfg.status,
+        phase: cfg.phase,
+        requestedDate,
+        requestedStartDate: plannedStart,
+        requestedEndDate: plannedEnd,
+        plannedStartDate: ["SCHEDULED", "IN_PROGRESS", "REPORT_DRAFTING", "REPORT_REVIEW", "COMPLETED"].includes(cfg.status) ? plannedStart : null,
+        plannedEndDate: ["SCHEDULED", "IN_PROGRESS", "REPORT_DRAFTING", "REPORT_REVIEW", "COMPLETED"].includes(cfg.status) ? plannedEnd : null,
+        actualStartDate: ["IN_PROGRESS", "REPORT_DRAFTING", "REPORT_REVIEW", "COMPLETED"].includes(cfg.status) ? plannedStart : null,
+        actualEndDate: cfg.status === "COMPLETED" ? plannedEnd : null,
+        objectives: `Comprehensive ${cfg.phase.toLowerCase()} peer review of ${org.nameEn} ANS operations`,
+        locationType: "ON_SITE",
+        languagePreference: "BOTH",
+        primaryContactName: "ANSP Focal Point",
+        primaryContactEmail: `focal.point@${org.organizationCode?.toLowerCase() || 'ansp'}.aero`,
+      },
     });
+
+    console.log(`   ✅ Created: ${refNum} - ${org.organizationCode || org.nameEn} (${cfg.phase})`);
+    createdReviews.push({ id: review.id, orgName: org.organizationCode || org.nameEn, phase: cfg.phase });
   }
 
   return createdReviews;
 }
 
-// ─────────────────────────────────────────────────────────────────
-// SEED: REVIEW TEAM MEMBERS
-// ─────────────────────────────────────────────────────────────────
-
-async function seedTeamMembers(
-  reviews: Array<{
-    id: string;
-    hostOrgCode: string;
-    phase: string;
-    referenceNumber: string;
-  }>
-) {
+async function seedTeamMembers(reviews: Array<{ id: string; orgName: string; phase: string }>) {
   console.log("\n👥 Assigning review team members...\n");
 
+  let assigned = 0;
+
   for (const review of reviews) {
-    // Find the config for this review
-    const config = DEMO_REVIEWS.find(
-      (c) => c.referenceNumber === review.referenceNumber
-    );
-    if (!config || config.teamMembers.length === 0) continue;
+    // Skip reviews in early phases
+    if (review.phase === "PLANNING") {
+      console.log(`   ⏭️  ${review.orgName}: No team for PLANNING phase`);
+      continue;
+    }
 
-    for (const memberConfig of config.teamMembers) {
-      // Get reviewer profile from this organization
-      const profile = await getReviewerForOrg(
-        memberConfig.orgCode,
-        memberConfig.role === "LEAD_REVIEWER"
-      );
+    // Get the review's host organization
+    const reviewData = await prisma.review.findUnique({
+      where: { id: review.id },
+      select: { hostOrganizationId: true },
+    });
 
-      if (!profile) {
-        // Try without lead qualification requirement
-        const anyProfile = await getReviewerForOrg(memberConfig.orgCode, false);
-        if (!anyProfile) {
-          console.log(
-            `   ⚠️  No reviewer found for ${memberConfig.orgCode}`
-          );
-          continue;
-        }
+    if (!reviewData) continue;
 
-        // Check if already assigned
-        const existing = await prisma.reviewTeamMember.findFirst({
-          where: {
-            reviewId: review.id,
-            userId: anyProfile.userId,
-          },
-        });
+    // Find reviewers from OTHER organizations
+    const potentialReviewers = await prisma.user.findMany({
+      where: {
+        organizationId: { not: reviewData.hostOrganizationId },
+        role: { in: ["LEAD_REVIEWER", "PEER_REVIEWER"] },
+        isActive: true,
+      },
+      take: 5,
+    });
 
-        if (existing) continue;
+    if (potentialReviewers.length === 0) {
+      console.log(`   ⚠️  ${review.orgName}: No reviewers available`);
+      continue;
+    }
 
-        await prisma.reviewTeamMember.create({
-          data: {
-            reviewId: review.id,
-            userId: anyProfile.userId,
-            reviewerProfileId: anyProfile.id,
-            role: memberConfig.role,
-            confirmedAt: new Date(),
-          },
-        });
-
-        console.log(
-          `   ✅ Assigned ${anyProfile.user.firstName} ${anyProfile.user.lastName} (${memberConfig.role}) to ${review.referenceNumber}`
-        );
-        continue;
-      }
+    let teamCount = 0;
+    for (let i = 0; i < Math.min(potentialReviewers.length, 3); i++) {
+      const reviewer = potentialReviewers[i];
 
       // Check if already assigned
-      const existing = await prisma.reviewTeamMember.findFirst({
+      const exists = await prisma.reviewTeamMember.findUnique({
         where: {
-          reviewId: review.id,
-          userId: profile.userId,
+          reviewId_userId: {
+            reviewId: review.id,
+            userId: reviewer.id,
+          },
         },
       });
 
-      if (existing) continue;
+      if (exists) continue;
+
+      // Get reviewer profile if exists
+      const reviewerProfile = await prisma.reviewerProfile.findUnique({
+        where: { userId: reviewer.id },
+      });
 
       await prisma.reviewTeamMember.create({
         data: {
           reviewId: review.id,
-          userId: profile.userId,
-          reviewerProfileId: profile.id,
-          role: memberConfig.role,
+          userId: reviewer.id,
+          reviewerProfileId: reviewerProfile?.id,
+          role: i === 0 ? "LEAD_REVIEWER" : "REVIEWER",
+          invitationStatus: "CONFIRMED",
+          invitedAt: new Date(),
+          respondedAt: new Date(),
           confirmedAt: new Date(),
         },
       });
 
-      console.log(
-        `   ✅ Assigned ${profile.user.firstName} ${profile.user.lastName} (${memberConfig.role}) to ${review.referenceNumber}`
-      );
+      teamCount++;
+      assigned++;
     }
+
+    console.log(`   ✅ ${review.orgName}: Assigned ${teamCount} team members`);
   }
+
+  return assigned;
 }
 
-// ─────────────────────────────────────────────────────────────────
-// MAIN EXPORT
-// ─────────────────────────────────────────────────────────────────
+async function seedFieldworkChecklists(reviews: Array<{ id: string; orgName: string; phase: string }>) {
+  console.log("\n☑️  Creating fieldwork checklists...\n");
 
-export {
-  seedReviews,
-  seedTeamMembers,
-  getOrganizationByCode,
-  getUserByEmail,
-  getCoordinator,
-  getReviewerForOrg,
-  addDays,
-  prisma,
-  pool,
-  DEMO_REVIEWS,
-};
+  let created = 0;
 
-// ─────────────────────────────────────────────────────────────────
-// RUN IF EXECUTED DIRECTLY
-// ─────────────────────────────────────────────────────────────────
+  for (const review of reviews) {
+    // Check if checklist items already exist
+    const existingItems = await prisma.fieldworkChecklistItem.count({
+      where: { reviewId: review.id },
+    });
+
+    if (existingItems > 0) {
+      console.log(`   ⏭️  ${review.orgName}: Checklist already exists (${existingItems} items)`);
+      continue;
+    }
+
+    // Create all 14 checklist items
+    await prisma.fieldworkChecklistItem.createMany({
+      data: CHECKLIST_ITEMS.map(item => ({
+        reviewId: review.id,
+        phase: item.phase,
+        itemCode: item.itemCode,
+        sortOrder: item.sortOrder,
+        labelEn: item.labelEn,
+        labelFr: item.labelFr,
+        isCompleted: false,
+      })),
+    });
+
+    created += 14;
+    console.log(`   ✅ ${review.orgName}: Created 14 checklist items`);
+  }
+
+  return created;
+}
 
 async function main() {
-  console.log(
-    "╔════════════════════════════════════════════════════════════╗"
-  );
-  console.log(
-    "║     AAPRP Training Demo Data - Part 1: Reviews             ║"
-  );
-  console.log(
-    "╚════════════════════════════════════════════════════════════╝\n"
-  );
+  console.log("╔════════════════════════════════════════════════════════════╗");
+  console.log("║     AAPRP Training Demo - Part 1: Reviews & Team           ║");
+  console.log("╚════════════════════════════════════════════════════════════╝");
 
   try {
     const reviews = await seedReviews();
-    await seedTeamMembers(reviews);
+    const teamCount = await seedTeamMembers(reviews);
+    const checklistCount = await seedFieldworkChecklists(reviews);
 
+    console.log(`\n${"═".repeat(50)}`);
+    console.log(`📊 SUMMARY`);
+    console.log(`${"═".repeat(50)}`);
+    console.log(`   Reviews created/found: ${reviews.length}`);
+    console.log(`   Team members assigned: ${teamCount}`);
+    console.log(`   Checklist items created: ${checklistCount}`);
+    console.log(`${"═".repeat(50)}`);
     console.log("\n✅ Part 1 complete! Run seed-training-demo-part2.ts next.\n");
+
   } catch (error) {
-    console.error("❌ Seed failed:", error);
+    console.error("❌ Error:", error);
     throw error;
   } finally {
     await prisma.$disconnect();
@@ -376,11 +289,4 @@ async function main() {
   }
 }
 
-// Only run if this is the main module
-const isMainModule = require.main === module;
-if (isMainModule) {
-  main().catch((e) => {
-    console.error(e);
-    process.exit(1);
-  });
-}
+main().catch((e) => { console.error(e); process.exit(1); });

@@ -45,6 +45,10 @@
     "db:seed:training-part3": "npx tsx prisma/seed-training-demo-part3.ts",
     "db:seed:training-part4": "npx tsx prisma/seed-training-demo-part4.ts",
     "db:seed:training-all": "npx tsx prisma/seed-training-demo-all.ts",
+    "db:seed:cleanup": "npx tsx prisma/seed-cleanup-demo.ts",
+    "db:seed:teams": "npx tsx prisma/seed-teams-and-orgs.ts",
+    "db:seed:teams:reseed": "npx tsx prisma/seed-teams-and-orgs.ts cleanup && npx tsx prisma/seed-teams-and-orgs.ts",
+    "db:seed:fresh": "npx tsx prisma/seed-cleanup-demo.ts && npx tsx prisma/seed-teams-and-orgs.ts && npx tsx prisma/seed-fix-org-codes.ts && npx tsx prisma/seed-ansp-admins.ts && npx tsx prisma/seed-training-demo-all.ts",
     "db:seed:all": "npx tsx prisma/seed.ts && npx tsx prisma/seed-dev-users.ts && npx tsx prisma/seed-training.ts"
   },
   "dependencies": {

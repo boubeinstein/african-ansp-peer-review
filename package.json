@@ -37,6 +37,7 @@
     "db:seed:demo-users": "npx tsx prisma/seed-demo-users.ts",
     "db:seed:demo-users:cleanup": "npx tsx prisma/seed-demo-users.ts cleanup",
     "db:seed:ansp-admins": "npx tsx prisma/seed-ansp-admins.ts",
+    "db:seed:fix-org-codes": "npx tsx prisma/seed-fix-org-codes.ts",
     "db:seed:checklist": "npx tsx prisma/seed-fieldwork-checklist.ts",
     "db:seed:training-demo": "npx tsx prisma/seed-training-demo.ts",
     "db:seed:questionnaires": "npx tsx prisma/seed-questionnaires.ts",

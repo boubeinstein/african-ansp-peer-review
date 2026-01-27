@@ -34,6 +34,7 @@ import {
   RotateCcw,
   Reply,
 } from "lucide-react";
+import { CreateDiscussionDialog } from "./create-discussion-dialog";
 
 interface Author {
   id: string;
@@ -66,6 +67,7 @@ interface Discussion {
 
 interface DiscussionCardProps {
   discussion: Discussion;
+  reviewId: string;
   locale: string;
   userId: string;
   onUpdate: () => void;
@@ -73,6 +75,7 @@ interface DiscussionCardProps {
 
 export function DiscussionCard({
   discussion,
+  reviewId,
   locale,
   userId,
   onUpdate,
@@ -81,6 +84,7 @@ export function DiscussionCard({
   const dateLocale = locale === "fr" ? fr : enUS;
 
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showReplyForm, setShowReplyForm] = useState(false);
 
   const isAuthor = discussion.author.id === userId;
   const authorInitials = `${discussion.author.firstName[0]}${discussion.author.lastName[0]}`;
@@ -126,154 +130,188 @@ export function DiscussionCard({
   };
 
   return (
-    <Card className={discussion.isResolved ? "opacity-75" : ""}>
-      <CardContent className="p-4">
-        <div className="flex items-start gap-3">
-          {/* Avatar */}
-          <Avatar className="h-10 w-10">
-            <AvatarFallback className="bg-primary/10 text-primary text-sm">
-              {authorInitials}
-            </AvatarFallback>
-          </Avatar>
+    <>
+      <Card className={discussion.isResolved ? "opacity-75" : ""}>
+        <CardContent className="p-4">
+          <div className="flex items-start gap-3">
+            {/* Avatar */}
+            <Avatar className="h-10 w-10">
+              <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                {authorInitials}
+              </AvatarFallback>
+            </Avatar>
 
-          {/* Content */}
-          <div className="flex-1 min-w-0">
-            {/* Header */}
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex-1 min-w-0">
-                {/* Subject */}
-                {discussion.subject && (
-                  <h4 className="font-medium truncate">{discussion.subject}</h4>
-                )}
-
-                {/* Author and time */}
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">
-                    {authorName}
-                  </span>
-                  <span>•</span>
-                  <span>
-                    {formatDistanceToNow(new Date(discussion.createdAt), {
-                      addSuffix: true,
-                      locale: dateLocale,
-                    })}
-                  </span>
-                  {discussion.isEdited && (
-                    <>
-                      <span>•</span>
-                      <span className="italic">{t("edited")}</span>
-                    </>
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+              {/* Header */}
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                  {/* Subject */}
+                  {discussion.subject && (
+                    <h4 className="font-medium truncate">{discussion.subject}</h4>
                   )}
+
+                  {/* Author and time */}
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <span className="font-medium text-foreground">
+                      {authorName}
+                    </span>
+                    <span>•</span>
+                    <span>
+                      {formatDistanceToNow(new Date(discussion.createdAt), {
+                        addSuffix: true,
+                        locale: dateLocale,
+                      })}
+                    </span>
+                    {discussion.isEdited && (
+                      <>
+                        <span>•</span>
+                        <span className="italic">{t("edited")}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Status badge and actions */}
+                <div className="flex items-center gap-2">
+                  {discussion.isResolved ? (
+                    <Badge
+                      variant="secondary"
+                      className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                    >
+                      <CheckCircle2 className="h-3 w-3 mr-1" />
+                      {t("status.resolved")}
+                    </Badge>
+                  ) : (
+                    <Badge
+                      variant="secondary"
+                      className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300"
+                    >
+                      <Circle className="h-3 w-3 mr-1" />
+                      {t("status.open")}
+                    </Badge>
+                  )}
+
+                  {/* Actions dropdown */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => setShowReplyForm(true)}>
+                        <Reply className="mr-2 h-4 w-4" />
+                        {t("actions.reply")}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleResolve}>
+                        {discussion.isResolved ? (
+                          <>
+                            <RotateCcw className="mr-2 h-4 w-4" />
+                            {t("actions.reopen")}
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle2 className="mr-2 h-4 w-4" />
+                            {t("actions.resolve")}
+                          </>
+                        )}
+                      </DropdownMenuItem>
+                      {isAuthor && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={handleDelete}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            {t("actions.delete")}
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
 
-              {/* Status badge and actions */}
-              <div className="flex items-center gap-2">
-                {discussion.isResolved ? (
-                  <Badge
-                    variant="secondary"
-                    className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
-                  >
-                    <CheckCircle2 className="h-3 w-3 mr-1" />
-                    {t("status.resolved")}
-                  </Badge>
-                ) : (
-                  <Badge
-                    variant="secondary"
-                    className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300"
-                  >
-                    <Circle className="h-3 w-3 mr-1" />
-                    {t("status.open")}
-                  </Badge>
-                )}
-
-                {/* Actions dropdown */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={handleResolve}>
-                      {discussion.isResolved ? (
-                        <>
-                          <RotateCcw className="mr-2 h-4 w-4" />
-                          {t("actions.reopen")}
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle2 className="mr-2 h-4 w-4" />
-                          {t("actions.resolve")}
-                        </>
-                      )}
-                    </DropdownMenuItem>
-                    {isAuthor && (
-                      <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          onClick={handleDelete}
-                          className="text-destructive"
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          {t("actions.delete")}
-                        </DropdownMenuItem>
-                      </>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </div>
-
-            {/* Content */}
-            <p className="mt-2 text-sm whitespace-pre-wrap">
-              {discussion.content}
-            </p>
-
-            {/* Resolved info */}
-            {discussion.isResolved && discussion.resolvedBy && (
-              <p className="mt-2 text-xs text-muted-foreground italic">
-                {t("resolvedBy", {
-                  name: `${discussion.resolvedBy.firstName} ${discussion.resolvedBy.lastName}`,
-                })}
+              {/* Content */}
+              <p className="mt-2 text-sm whitespace-pre-wrap">
+                {discussion.content}
               </p>
-            )}
 
-            {/* Replies section */}
-            {discussion._count.replies > 0 && (
-              <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-                <CollapsibleTrigger asChild>
-                  <Button variant="ghost" size="sm" className="mt-2 -ml-2">
-                    {isExpanded ? (
-                      <ChevronDown className="mr-1 h-4 w-4" />
-                    ) : (
-                      <ChevronRight className="mr-1 h-4 w-4" />
-                    )}
-                    <MessageSquare className="mr-1 h-4 w-4" />
-                    {t("replies", { count: discussion._count.replies })}
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <div className="mt-3 pl-4 border-l-2 border-muted space-y-3">
-                    {discussion.replies.map((reply) => (
-                      <ReplyCard key={reply.id} reply={reply} locale={locale} />
-                    ))}
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
-            )}
+              {/* Resolved info */}
+              {discussion.isResolved && discussion.resolvedBy && (
+                <p className="mt-2 text-xs text-muted-foreground italic">
+                  {t("resolvedBy", {
+                    name: `${discussion.resolvedBy.firstName} ${discussion.resolvedBy.lastName}`,
+                  })}
+                </p>
+              )}
 
-            {/* Reply button if no replies */}
-            {discussion._count.replies === 0 && (
-              <Button variant="ghost" size="sm" className="mt-2 -ml-2">
-                <Reply className="mr-1 h-4 w-4" />
-                {t("actions.reply")}
-              </Button>
-            )}
+              {/* Replies section */}
+              {discussion._count.replies > 0 && (
+                <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+                  <CollapsibleTrigger asChild>
+                    <Button variant="ghost" size="sm" className="mt-2 -ml-2">
+                      {isExpanded ? (
+                        <ChevronDown className="mr-1 h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="mr-1 h-4 w-4" />
+                      )}
+                      <MessageSquare className="mr-1 h-4 w-4" />
+                      {t("replies", { count: discussion._count.replies })}
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <div className="mt-3 pl-4 border-l-2 border-muted space-y-3">
+                      {discussion.replies.map((reply) => (
+                        <ReplyCard key={reply.id} reply={reply} locale={locale} />
+                      ))}
+                    </div>
+                    {/* Reply button after replies */}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="mt-2 ml-2"
+                      onClick={() => setShowReplyForm(true)}
+                    >
+                      <Reply className="mr-1 h-4 w-4" />
+                      {t("actions.reply")}
+                    </Button>
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
+
+              {/* Reply button if no replies */}
+              {discussion._count.replies === 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="mt-2 -ml-2"
+                  onClick={() => setShowReplyForm(true)}
+                >
+                  <Reply className="mr-1 h-4 w-4" />
+                  {t("actions.reply")}
+                </Button>
+              )}
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      {/* Reply Dialog */}
+      <CreateDiscussionDialog
+        open={showReplyForm}
+        onOpenChange={setShowReplyForm}
+        reviewId={reviewId}
+        locale={locale}
+        parentId={discussion.id}
+        onSuccess={() => {
+          setShowReplyForm(false);
+          onUpdate();
+        }}
+      />
+    </>
   );
 }
 

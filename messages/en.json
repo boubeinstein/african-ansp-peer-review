@@ -3237,6 +3237,26 @@
         "dialog": {
           "createTitle": "New Discussion",
           "replyTitle": "Reply to Discussion"
+        },
+        "form": {
+          "createTitle": "Start New Discussion",
+          "createDescription": "Create a discussion to collaborate with your review team.",
+          "replyTitle": "Reply to Discussion",
+          "replyDescription": "Add your reply to this discussion thread.",
+          "subject": "Subject",
+          "subjectPlaceholder": "Brief topic or question...",
+          "content": "Message",
+          "contentPlaceholder": "Write your message here...",
+          "mentions": "Notify Team Members",
+          "addMention": "Add @mention",
+          "searchMembers": "Search team members...",
+          "noMembers": "No team members found",
+          "mentionsHelp": "Mentioned members will receive a notification.",
+          "cancel": "Cancel",
+          "submitCreate": "Start Discussion",
+          "submitReply": "Post Reply",
+          "createSuccess": "Discussion started successfully",
+          "replySuccess": "Reply posted successfully"
         }
       },
       "tasks": {

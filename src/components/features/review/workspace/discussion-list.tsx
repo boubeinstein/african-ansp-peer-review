@@ -115,6 +115,7 @@ export function DiscussionList({
             <DiscussionCard
               key={discussion.id}
               discussion={discussion}
+              reviewId={reviewId}
               locale={locale}
               userId={userId}
               onUpdate={() => refetch()}

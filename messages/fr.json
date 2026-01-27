@@ -3237,6 +3237,26 @@
         "dialog": {
           "createTitle": "Nouvelle discussion",
           "replyTitle": "Répondre à la discussion"
+        },
+        "form": {
+          "createTitle": "Nouvelle discussion",
+          "createDescription": "Créez une discussion pour collaborer avec votre équipe de revue.",
+          "replyTitle": "Répondre à la discussion",
+          "replyDescription": "Ajoutez votre réponse à ce fil de discussion.",
+          "subject": "Sujet",
+          "subjectPlaceholder": "Sujet ou question brève...",
+          "content": "Message",
+          "contentPlaceholder": "Écrivez votre message ici...",
+          "mentions": "Notifier les membres de l'équipe",
+          "addMention": "Ajouter @mention",
+          "searchMembers": "Rechercher des membres...",
+          "noMembers": "Aucun membre trouvé",
+          "mentionsHelp": "Les membres mentionnés recevront une notification.",
+          "cancel": "Annuler",
+          "submitCreate": "Démarrer la discussion",
+          "submitReply": "Publier la réponse",
+          "createSuccess": "Discussion démarrée avec succès",
+          "replySuccess": "Réponse publiée avec succès"
         }
       },
       "tasks": {

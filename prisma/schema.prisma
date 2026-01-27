@@ -31,8 +31,10 @@ model Organization {
   homeReviewers       ReviewerProfile[]   @relation("HomeReviewers")
   reviewsAsHost       Review[]            @relation("HostANSP")
   users               User[]
-  regionalTeam        RegionalTeam?       @relation("TeamMembers", fields: [regionalTeamId], references: [id])
-  leadsTeam           RegionalTeam?       @relation("TeamLead")
+  regionalTeam              RegionalTeam?            @relation("TeamMembers", fields: [regionalTeamId], references: [id])
+  leadsTeam                 RegionalTeam?            @relation("TeamLead")
+  bestPractices             BestPractice[]
+  bestPracticeAdoptions     BestPracticeAdoption[]
 
   @@map("organizations")
 }
@@ -101,6 +103,9 @@ model User {
   documentsApproved        Document[]             @relation("DocumentApprover")
   preferences              UserPreferences?
   organization             Organization?          @relation(fields: [organizationId], references: [id])
+  submittedBestPractices   BestPractice[]         @relation("SubmittedBestPractices")
+  reviewedBestPractices    BestPractice[]         @relation("ReviewedBestPractices")
+  adoptedBestPractices     BestPracticeAdoption[] @relation("AdoptedBestPractices")
 
   @@map("users")
 }
@@ -735,6 +740,7 @@ model Finding {
   organization         Organization          @relation(fields: [organizationId], references: [id])
   question             Question?             @relation(fields: [questionId], references: [id])
   review               Review                @relation(fields: [reviewId], references: [id])
+  bestPractice         BestPractice?
 
   @@index([reviewId, status])
   @@index([organizationId, status])
@@ -1639,6 +1645,123 @@ enum AuditAction {
   LOGOUT
   EXPORT
   VIEW_SENSITIVE
+}
+
+// =============================================================================
+// BEST PRACTICES LIBRARY
+// =============================================================================
+
+enum BestPracticeCategory {
+  SAFETY_MANAGEMENT
+  OPERATIONAL_EFFICIENCY
+  TRAINING_COMPETENCY
+  TECHNOLOGY_INNOVATION
+  REGULATORY_COMPLIANCE
+  STAKEHOLDER_ENGAGEMENT
+}
+
+enum BestPracticeStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  PUBLISHED
+  ARCHIVED
+}
+
+model BestPractice {
+  id                String              @id @default(cuid())
+  referenceNumber   String              @unique @map("reference_number")
+
+  // Source (optional link to finding that originated this)
+  findingId         String?             @unique @map("finding_id")
+  finding           Finding?            @relation(fields: [findingId], references: [id])
+
+  // Originating organization
+  organizationId    String              @map("organization_id")
+  organization      Organization        @relation(fields: [organizationId], references: [id])
+
+  // Submitted by
+  submittedById     String              @map("submitted_by_id")
+  submittedBy       User                @relation("SubmittedBestPractices", fields: [submittedById], references: [id])
+
+  // Content (bilingual)
+  titleEn           String              @map("title_en")
+  titleFr           String              @map("title_fr")
+  summaryEn         String              @db.Text @map("summary_en")
+  summaryFr         String              @db.Text @map("summary_fr")
+  descriptionEn     String              @db.Text @map("description_en")
+  descriptionFr     String              @db.Text @map("description_fr")
+  implementationEn  String              @db.Text @map("implementation_en")
+  implementationFr  String              @db.Text @map("implementation_fr")
+  benefitsEn        String              @db.Text @map("benefits_en")
+  benefitsFr        String              @db.Text @map("benefits_fr")
+
+  // Classification
+  category          BestPracticeCategory
+  auditArea         String?             @map("audit_area") // ATS, AIM, MET, CNS, SAR, SMS, etc.
+  tags              String[]            @default([])
+
+  // Media
+  imageUrl          String?             @map("image_url")
+  attachments       String[]            @default([])
+
+  // Workflow status
+  status            BestPracticeStatus  @default(DRAFT)
+  submittedAt       DateTime?           @map("submitted_at")
+  reviewedById      String?             @map("reviewed_by_id")
+  reviewedBy        User?               @relation("ReviewedBestPractices", fields: [reviewedById], references: [id])
+  reviewedAt        DateTime?           @map("reviewed_at")
+  reviewNotes       String?             @db.Text @map("review_notes")
+  publishedAt       DateTime?           @map("published_at")
+
+  // Engagement metrics
+  viewCount         Int                 @default(0) @map("view_count")
+
+  // Adoptions
+  adoptions         BestPracticeAdoption[]
+
+  // Timestamps
+  createdAt         DateTime            @default(now()) @map("created_at")
+  updatedAt         DateTime            @updatedAt @map("updated_at")
+
+  @@index([organizationId])
+  @@index([category])
+  @@index([status])
+  @@index([auditArea])
+  @@index([publishedAt(sort: Desc)])
+  @@map("best_practices")
+}
+
+model BestPracticeAdoption {
+  id                  String        @id @default(cuid())
+
+  bestPracticeId      String        @map("best_practice_id")
+  bestPractice        BestPractice  @relation(fields: [bestPracticeId], references: [id], onDelete: Cascade)
+
+  organizationId      String        @map("organization_id")
+  organization        Organization  @relation(fields: [organizationId], references: [id])
+
+  // Adoption details
+  adoptedById         String        @map("adopted_by_id")
+  adoptedBy           User          @relation("AdoptedBestPractices", fields: [adoptedById], references: [id])
+  adoptedAt           DateTime      @default(now()) @map("adopted_at")
+
+  // Implementation notes from adopting organization
+  implementationNotes String?       @db.Text @map("implementation_notes")
+
+  // Optional: track implementation status
+  implementationStatus String?      @map("implementation_status") // PLANNED, IN_PROGRESS, COMPLETED
+  completedAt         DateTime?     @map("completed_at")
+
+  // Timestamps
+  createdAt           DateTime      @default(now()) @map("created_at")
+  updatedAt           DateTime      @updatedAt @map("updated_at")
+
+  @@unique([bestPracticeId, organizationId])
+  @@index([organizationId])
+  @@index([bestPracticeId])
+  @@map("best_practice_adoptions")
 }
 
 // =============================================================================

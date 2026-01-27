@@ -106,6 +106,11 @@ model User {
   submittedBestPractices   BestPractice[]         @relation("SubmittedBestPractices")
   reviewedBestPractices    BestPractice[]         @relation("ReviewedBestPractices")
   adoptedBestPractices     BestPracticeAdoption[] @relation("AdoptedBestPractices")
+  discussionsAuthored      ReviewDiscussion[]     @relation("DiscussionAuthor")
+  discussionsResolved      ReviewDiscussion[]     @relation("ResolvedDiscussions")
+  tasksAssigned            ReviewTask[]           @relation("AssignedTasks")
+  tasksCreated             ReviewTask[]           @relation("CreatedTasks")
+  tasksCompleted           ReviewTask[]           @relation("CompletedTasks")
 
   @@map("users")
 }
@@ -559,6 +564,8 @@ model Review {
   fieldworkChecklist     FieldworkChecklist?
   checklistItems         FieldworkChecklistItem[]
   hostOrganization       Organization           @relation("HostANSP", fields: [hostOrganizationId], references: [id])
+  discussions            ReviewDiscussion[]
+  tasks                  ReviewTask[]
 
   @@map("reviews")
 }
@@ -1669,6 +1676,24 @@ enum BestPracticeStatus {
   ARCHIVED
 }
 
+// =============================================================================
+// REVIEWER COLLABORATION WORKSPACE
+// =============================================================================
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
 model BestPractice {
   id                String              @id @default(cuid())
   referenceNumber   String              @unique @map("reference_number")
@@ -1784,4 +1809,105 @@ model TranslationCache {
   @@unique([sourceHash, sourceLanguage, targetLanguage])
   @@index([entityType, entityId])
   @@map("translation_cache")
+}
+
+// =============================================================================
+// REVIEWER COLLABORATION WORKSPACE - MODELS
+// =============================================================================
+
+model ReviewDiscussion {
+  id              String              @id @default(cuid())
+
+  // Parent review
+  reviewId        String              @map("review_id")
+  review          Review              @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  // Author
+  authorId        String              @map("author_id")
+  author          User                @relation("DiscussionAuthor", fields: [authorId], references: [id])
+
+  // Threading (optional parent for replies)
+  parentId        String?             @map("parent_id")
+  parent          ReviewDiscussion?   @relation("DiscussionReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies         ReviewDiscussion[]  @relation("DiscussionReplies")
+
+  // Content
+  subject         String?             // Only for top-level discussions
+  content         String              @db.Text
+
+  // Mentions (stored as user IDs)
+  mentions        String[]            @default([])
+
+  // Attachments (URLs to uploaded files)
+  attachments     String[]            @default([])
+
+  // Status
+  isResolved      Boolean             @default(false) @map("is_resolved")
+  resolvedAt      DateTime?           @map("resolved_at")
+  resolvedById    String?             @map("resolved_by_id")
+  resolvedBy      User?               @relation("ResolvedDiscussions", fields: [resolvedById], references: [id])
+
+  // Edit tracking
+  isEdited        Boolean             @default(false) @map("is_edited")
+  editedAt        DateTime?           @map("edited_at")
+
+  // Soft delete
+  isDeleted       Boolean             @default(false) @map("is_deleted")
+  deletedAt       DateTime?           @map("deleted_at")
+
+  // Timestamps
+  createdAt       DateTime            @default(now()) @map("created_at")
+  updatedAt       DateTime            @updatedAt @map("updated_at")
+
+  // Linked task (optional)
+  linkedTask      ReviewTask?
+
+  @@index([reviewId, isDeleted])
+  @@index([reviewId, parentId])
+  @@index([authorId])
+  @@map("review_discussions")
+}
+
+model ReviewTask {
+  id              String          @id @default(cuid())
+
+  // Parent review
+  reviewId        String          @map("review_id")
+  review          Review          @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  // Assignment
+  assignedToId    String?         @map("assigned_to_id")
+  assignedTo      User?           @relation("AssignedTasks", fields: [assignedToId], references: [id])
+  createdById     String          @map("created_by_id")
+  createdBy       User            @relation("CreatedTasks", fields: [createdById], references: [id])
+
+  // Task details
+  title           String
+  description     String?         @db.Text
+
+  // Status and priority
+  status          TaskStatus      @default(PENDING)
+  priority        TaskPriority    @default(MEDIUM)
+
+  // Dates
+  dueDate         DateTime?       @map("due_date")
+  completedAt     DateTime?       @map("completed_at")
+  completedById   String?         @map("completed_by_id")
+  completedBy     User?           @relation("CompletedTasks", fields: [completedById], references: [id])
+
+  // Checklist items (JSON array)
+  checklist       Json?           // [{ id, text, completed }]
+
+  // Linked discussion (optional)
+  discussionId    String?         @unique @map("discussion_id")
+  discussion      ReviewDiscussion? @relation(fields: [discussionId], references: [id])
+
+  // Timestamps
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+
+  @@index([reviewId, status])
+  @@index([assignedToId, status])
+  @@index([reviewId, dueDate])
+  @@map("review_tasks")
 }

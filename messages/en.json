@@ -5907,6 +5907,10 @@
         "in_progress": "In Progress",
         "completed": "Completed",
         "andMore": "{count, plural, =1 {and 1 more organization...} other {and # more organizations...}}"
+      },
+      "related": {
+        "title": "Related Best Practices",
+        "viewPractice": "View"
       }
     }
   }

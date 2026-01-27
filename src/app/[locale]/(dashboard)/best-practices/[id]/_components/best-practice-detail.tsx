@@ -11,6 +11,7 @@ import BestPracticeLoading from "../loading";
 import { BestPracticeHeader } from "./best-practice-header";
 import { BestPracticeContent } from "./best-practice-content";
 import { BestPracticeSidebar } from "./best-practice-sidebar";
+import { RelatedPractices } from "./related-practices";
 
 interface BestPracticeDetailProps {
   id: string;
@@ -100,6 +101,13 @@ export function BestPracticeDetail({
           />
         </div>
       </div>
+
+      {/* Related Practices - full width below */}
+      <RelatedPractices
+        currentId={id}
+        category={practice.category}
+        locale={locale}
+      />
     </div>
   );
 }

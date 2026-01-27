@@ -1,0 +1,7 @@
+export { BestPracticeDetail } from "./best-practice-detail";
+export { BestPracticeHeader } from "./best-practice-header";
+export { BestPracticeContent } from "./best-practice-content";
+export { BestPracticeSidebar } from "./best-practice-sidebar";
+export { AdoptionButton } from "./adoption-button";
+export { AdoptionList } from "./adoption-list";
+export { RelatedPractices } from "./related-practices";

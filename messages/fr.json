@@ -5871,31 +5871,42 @@
         "tags": "Étiquettes",
         "attachments": "Pièces jointes"
       },
+      "sidebar": {
+        "adoption": "Adoption",
+        "originatingOrg": "Organisation d'origine",
+        "code": "Code",
+        "adoptedBy": "{count, plural, =1 {Adopté par 1 organisation} other {Adopté par # organisations}}",
+        "ownOrgMessage": "C'est la meilleure pratique de votre organisation. D'autres organisations peuvent l'adopter.",
+        "loginToAdopt": "Connectez-vous avec un compte d'organisation pour adopter cette pratique."
+      },
       "adoption": {
-        "title": "Adoption",
-        "ownPractice": "Ceci est la meilleure pratique de votre organisation",
-        "alreadyAdopted": "Votre organisation a adopté cette pratique",
-        "adopt": "Adopter cette pratique",
-        "remove": "Retirer l'adoption",
-        "adoptTitle": "Adopter la meilleure pratique",
-        "adoptDescription": "En adoptant cette meilleure pratique, votre organisation s'engage à mettre en œuvre l'approche décrite. Vous pouvez suivre l'avancement de votre mise en œuvre.",
-        "removeTitle": "Retirer l'adoption",
-        "removeDescription": "Êtes-vous sûr de vouloir retirer l'adoption de cette meilleure pratique par votre organisation ? Cette action peut être annulée en adoptant à nouveau.",
-        "notes": "Notes de mise en œuvre (Facultatif)",
-        "notesPlaceholder": "Décrivez comment vous prévoyez de mettre en œuvre cette pratique...",
-        "cancel": "Annuler",
-        "confirmAdopt": "Confirmer l'adoption",
-        "confirmRemove": "Retirer l'adoption",
-        "loginToAdopt": "Connectez-vous pour adopter cette meilleure pratique pour votre organisation",
-        "adoptSuccess": "Meilleure pratique adoptée avec succès",
-        "removeSuccess": "Adoption retirée avec succès"
+        "adoptButton": "Adopter cette pratique",
+        "yourPractice": "Pratique de votre organisation",
+        "alreadyAdopted": "Votre organisation a adopté ceci",
+        "removeAdoption": "Retirer l'adoption",
+        "adoptSuccess": "Pratique adoptée avec succès !",
+        "removeSuccess": "Adoption retirée avec succès",
+        "adoptDialog": {
+          "title": "Adopter la meilleure pratique",
+          "description": "Ajoutez cette meilleure pratique aux pratiques adoptées par votre organisation. Vous pouvez suivre votre progression de mise en œuvre au fil du temps.",
+          "notesLabel": "Notes de mise en œuvre (Facultatif)",
+          "notesPlaceholder": "Décrivez comment vous prévoyez de mettre en œuvre cette pratique, les adaptations nécessaires ou le calendrier...",
+          "notesHelp": "Ces notes sont privées pour votre organisation et peuvent être mises à jour ultérieurement.",
+          "cancel": "Annuler",
+          "confirm": "Adopter la pratique"
+        },
+        "removeDialog": {
+          "title": "Retirer l'adoption",
+          "description": "Êtes-vous sûr de vouloir retirer cette meilleure pratique des pratiques adoptées par votre organisation ? Cette action ne peut pas être annulée.",
+          "cancel": "Annuler",
+          "confirm": "Retirer l'adoption"
+        }
       },
-      "sourceOrg": {
-        "title": "Organisation source"
-      },
-      "adopters": {
-        "title": "Organisations adoptantes",
-        "andMore": "+{count} autres organisations"
+      "adoptionList": {
+        "planned": "Planifié",
+        "in_progress": "En cours",
+        "completed": "Terminé",
+        "andMore": "{count, plural, =1 {et 1 autre organisation...} other {et # autres organisations...}}"
       }
     }
   }

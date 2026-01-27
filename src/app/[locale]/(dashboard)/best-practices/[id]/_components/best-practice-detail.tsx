@@ -95,6 +95,7 @@ export function BestPracticeDetail({
             locale={locale}
             canAdopt={canAdopt}
             hasAdopted={hasAdopted}
+            userOrgId={userOrgId}
             isOwnOrg={isOwnOrg}
           />
         </div>

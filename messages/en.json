@@ -5871,31 +5871,42 @@
         "tags": "Tags",
         "attachments": "Attachments"
       },
+      "sidebar": {
+        "adoption": "Adoption",
+        "originatingOrg": "Originating Organization",
+        "code": "Code",
+        "adoptedBy": "{count, plural, =1 {Adopted by 1 organization} other {Adopted by # organizations}}",
+        "ownOrgMessage": "This is your organization's best practice. Other organizations can adopt it.",
+        "loginToAdopt": "Log in with an organization account to adopt this practice."
+      },
       "adoption": {
-        "title": "Adoption",
-        "ownPractice": "This is your organization's best practice",
-        "alreadyAdopted": "Your organization has adopted this practice",
-        "adopt": "Adopt This Practice",
-        "remove": "Remove Adoption",
-        "adoptTitle": "Adopt Best Practice",
-        "adoptDescription": "By adopting this best practice, your organization commits to implementing the described approach. You can track your implementation progress.",
-        "removeTitle": "Remove Adoption",
-        "removeDescription": "Are you sure you want to remove your organization's adoption of this best practice? This action can be undone by adopting again.",
-        "notes": "Implementation Notes (Optional)",
-        "notesPlaceholder": "Describe how you plan to implement this practice...",
-        "cancel": "Cancel",
-        "confirmAdopt": "Confirm Adoption",
-        "confirmRemove": "Remove Adoption",
-        "loginToAdopt": "Sign in to adopt this best practice for your organization",
-        "adoptSuccess": "Best practice adopted successfully",
-        "removeSuccess": "Adoption removed successfully"
+        "adoptButton": "Adopt This Practice",
+        "yourPractice": "Your Organization's Practice",
+        "alreadyAdopted": "Your organization adopted this",
+        "removeAdoption": "Remove Adoption",
+        "adoptSuccess": "Successfully adopted this best practice!",
+        "removeSuccess": "Adoption removed successfully",
+        "adoptDialog": {
+          "title": "Adopt Best Practice",
+          "description": "Add this best practice to your organization's adopted practices. You can track your implementation progress over time.",
+          "notesLabel": "Implementation Notes (Optional)",
+          "notesPlaceholder": "Describe how you plan to implement this practice, any adaptations needed, or timeline...",
+          "notesHelp": "These notes are private to your organization and can be updated later.",
+          "cancel": "Cancel",
+          "confirm": "Adopt Practice"
+        },
+        "removeDialog": {
+          "title": "Remove Adoption",
+          "description": "Are you sure you want to remove this best practice from your organization's adopted practices? This action cannot be undone.",
+          "cancel": "Cancel",
+          "confirm": "Remove Adoption"
+        }
       },
-      "sourceOrg": {
-        "title": "Source Organization"
-      },
-      "adopters": {
-        "title": "Adopting Organizations",
-        "andMore": "+{count} more organizations"
+      "adoptionList": {
+        "planned": "Planned",
+        "in_progress": "In Progress",
+        "completed": "Completed",
+        "andMore": "{count, plural, =1 {and 1 more organization...} other {and # more organizations...}}"
       }
     }
   }

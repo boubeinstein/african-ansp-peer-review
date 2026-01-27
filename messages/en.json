@@ -3329,7 +3329,14 @@
       "targetCloseDate": "Target Close",
       "closedAt": "Closed",
       "cap": "Corrective Action Plan",
-      "documents": "Supporting Documents"
+      "documents": "Supporting Documents",
+      "bestPractice": {
+        "title": "Best Practice",
+        "description": "This finding can be published as a best practice to share with other ANSPs.",
+        "publishButton": "Publish as Best Practice",
+        "alreadyPublished": "Published as Best Practice",
+        "viewPractice": "View Best Practice"
+      }
     },
     "errors": {
       "notFound": "Finding not found",

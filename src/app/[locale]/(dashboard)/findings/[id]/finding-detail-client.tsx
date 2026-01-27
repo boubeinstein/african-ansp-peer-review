@@ -44,11 +44,13 @@ import {
   ClipboardList,
   Edit,
   FileText,
+  Lightbulb,
   MoreHorizontal,
   Trash2,
   User,
   ExternalLink,
 } from "lucide-react";
+import { PublishBestPracticeButton } from "./_components/publish-best-practice-button";
 import type { FindingStatus, FindingSeverity, FindingType } from "@prisma/client";
 
 interface FindingDetailClientProps {
@@ -514,6 +516,23 @@ export function FindingDetailClient({ findingId }: FindingDetailClientProps) {
                   {finding.capRequired ? "Yes" : "No"}
                 </Badge>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Best Practice Publishing */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Lightbulb className="h-5 w-5" />
+                {t("detail.bestPractice.title")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PublishBestPracticeButton
+                findingId={findingId}
+                findingType={finding.findingType}
+                locale={locale}
+              />
             </CardContent>
           </Card>
         </div>

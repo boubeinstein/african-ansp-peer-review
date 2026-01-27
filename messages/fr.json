@@ -3329,7 +3329,14 @@
       "targetCloseDate": "Clôture cible",
       "closedAt": "Clôturée le",
       "cap": "Plan d'Action Corrective",
-      "documents": "Documents justificatifs"
+      "documents": "Documents justificatifs",
+      "bestPractice": {
+        "title": "Bonne pratique",
+        "description": "Cette constatation peut être publiée comme bonne pratique à partager avec d'autres ANSP.",
+        "publishButton": "Publier comme bonne pratique",
+        "alreadyPublished": "Publiée comme bonne pratique",
+        "viewPractice": "Voir la bonne pratique"
+      }
     },
     "errors": {
       "notFound": "Constatation introuvable",

@@ -333,6 +333,27 @@ export const bestPracticeRouter = router({
     }),
 
   // ===========================================================================
+  // GET BY FINDING ID - Check if a best practice exists for a finding
+  // ===========================================================================
+
+  getByFindingId: publicProcedure
+    .input(z.object({ findingId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const practice = await ctx.db.bestPractice.findUnique({
+        where: { findingId: input.findingId },
+        select: {
+          id: true,
+          referenceNumber: true,
+          titleEn: true,
+          titleFr: true,
+          status: true,
+        },
+      });
+
+      return practice;
+    }),
+
+  // ===========================================================================
   // CREATE - Protected (ANSP users can submit)
   // ===========================================================================
 

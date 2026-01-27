@@ -3261,9 +3261,48 @@
       },
       "tasks": {
         "title": "Tâches de revue",
+        "stats": {
+          "pending": "en attente",
+          "inProgress": "en cours",
+          "completed": "terminées",
+          "overdue": "en retard",
+          "myTasks": "assignées à moi"
+        },
+        "filters": {
+          "status": "Statut",
+          "allStatuses": "Tous les statuts",
+          "priority": "Priorité",
+          "allPriorities": "Toutes les priorités",
+          "assignee": "Assigné à",
+          "allAssignees": "Tous les assignés",
+          "assignedToMe": "Assignées à moi"
+        },
+        "status": {
+          "pending": "En attente",
+          "inProgress": "En cours",
+          "completed": "Terminée",
+          "cancelled": "Annulée"
+        },
+        "priority": {
+          "urgent": "Urgente",
+          "high": "Haute",
+          "medium": "Moyenne",
+          "low": "Basse"
+        },
+        "actions": {
+          "newTask": "Nouvelle tâche"
+        },
+        "pagination": {
+          "page": "Page {page} sur {totalPages}"
+        },
         "empty": {
           "title": "Pas encore de tâches",
-          "description": "Créez des tâches pour coordonner le travail entre les membres de l'équipe"
+          "description": "Créez des tâches pour coordonner le travail et suivre les progrès parmi les membres de votre équipe de revue.",
+          "action": "Créer une tâche"
+        },
+        "form": {
+          "createTitle": "Créer une nouvelle tâche",
+          "editTitle": "Modifier la tâche"
         }
       }
     }

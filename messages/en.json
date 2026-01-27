@@ -3261,9 +3261,48 @@
       },
       "tasks": {
         "title": "Review Tasks",
+        "stats": {
+          "pending": "pending",
+          "inProgress": "in progress",
+          "completed": "completed",
+          "overdue": "overdue",
+          "myTasks": "assigned to me"
+        },
+        "filters": {
+          "status": "Status",
+          "allStatuses": "All Statuses",
+          "priority": "Priority",
+          "allPriorities": "All Priorities",
+          "assignee": "Assignee",
+          "allAssignees": "All Assignees",
+          "assignedToMe": "Assigned to Me"
+        },
+        "status": {
+          "pending": "Pending",
+          "inProgress": "In Progress",
+          "completed": "Completed",
+          "cancelled": "Cancelled"
+        },
+        "priority": {
+          "urgent": "Urgent",
+          "high": "High",
+          "medium": "Medium",
+          "low": "Low"
+        },
+        "actions": {
+          "newTask": "New Task"
+        },
+        "pagination": {
+          "page": "Page {page} of {totalPages}"
+        },
         "empty": {
           "title": "No tasks yet",
-          "description": "Create tasks to coordinate work among team members"
+          "description": "Create tasks to coordinate work and track progress among your review team members.",
+          "action": "Create Task"
+        },
+        "form": {
+          "createTitle": "Create New Task",
+          "editTitle": "Edit Task"
         }
       }
     }

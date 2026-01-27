@@ -5853,6 +5853,45 @@
     "card": {
       "view": "Voir",
       "yourOrg": "Votre org"
+    },
+    "detail": {
+      "backToLibrary": "Retour à la bibliothèque",
+      "notFound": "Meilleure pratique non trouvée",
+      "views": "vues",
+      "adoptions": "adoptions",
+      "sections": {
+        "description": "Description",
+        "implementation": "Guide de mise en œuvre",
+        "benefits": "Avantages et résultats",
+        "sourceFinding": "Constatation associée",
+        "tags": "Étiquettes"
+      },
+      "adoption": {
+        "title": "Adoption",
+        "ownPractice": "Ceci est la meilleure pratique de votre organisation",
+        "alreadyAdopted": "Votre organisation a adopté cette pratique",
+        "adopt": "Adopter cette pratique",
+        "remove": "Retirer l'adoption",
+        "adoptTitle": "Adopter la meilleure pratique",
+        "adoptDescription": "En adoptant cette meilleure pratique, votre organisation s'engage à mettre en œuvre l'approche décrite. Vous pouvez suivre l'avancement de votre mise en œuvre.",
+        "removeTitle": "Retirer l'adoption",
+        "removeDescription": "Êtes-vous sûr de vouloir retirer l'adoption de cette meilleure pratique par votre organisation ? Cette action peut être annulée en adoptant à nouveau.",
+        "notes": "Notes de mise en œuvre (Facultatif)",
+        "notesPlaceholder": "Décrivez comment vous prévoyez de mettre en œuvre cette pratique...",
+        "cancel": "Annuler",
+        "confirmAdopt": "Confirmer l'adoption",
+        "confirmRemove": "Retirer l'adoption",
+        "loginToAdopt": "Connectez-vous pour adopter cette meilleure pratique pour votre organisation",
+        "adoptSuccess": "Meilleure pratique adoptée avec succès",
+        "removeSuccess": "Adoption retirée avec succès"
+      },
+      "sourceOrg": {
+        "title": "Organisation source"
+      },
+      "adopters": {
+        "title": "Organisations adoptantes",
+        "andMore": "+{count} autres organisations"
+      }
     }
   }
 }

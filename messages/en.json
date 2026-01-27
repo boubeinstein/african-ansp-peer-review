@@ -5853,6 +5853,45 @@
     "card": {
       "view": "View",
       "yourOrg": "Your Org"
+    },
+    "detail": {
+      "backToLibrary": "Back to Library",
+      "notFound": "Best practice not found",
+      "views": "views",
+      "adoptions": "adoptions",
+      "sections": {
+        "description": "Description",
+        "implementation": "Implementation Guide",
+        "benefits": "Benefits & Outcomes",
+        "sourceFinding": "Related Finding",
+        "tags": "Tags"
+      },
+      "adoption": {
+        "title": "Adoption",
+        "ownPractice": "This is your organization's best practice",
+        "alreadyAdopted": "Your organization has adopted this practice",
+        "adopt": "Adopt This Practice",
+        "remove": "Remove Adoption",
+        "adoptTitle": "Adopt Best Practice",
+        "adoptDescription": "By adopting this best practice, your organization commits to implementing the described approach. You can track your implementation progress.",
+        "removeTitle": "Remove Adoption",
+        "removeDescription": "Are you sure you want to remove your organization's adoption of this best practice? This action can be undone by adopting again.",
+        "notes": "Implementation Notes (Optional)",
+        "notesPlaceholder": "Describe how you plan to implement this practice...",
+        "cancel": "Cancel",
+        "confirmAdopt": "Confirm Adoption",
+        "confirmRemove": "Remove Adoption",
+        "loginToAdopt": "Sign in to adopt this best practice for your organization",
+        "adoptSuccess": "Best practice adopted successfully",
+        "removeSuccess": "Adoption removed successfully"
+      },
+      "sourceOrg": {
+        "title": "Source Organization"
+      },
+      "adopters": {
+        "title": "Adopting Organizations",
+        "andMore": "+{count} more organizations"
+      }
     }
   }
 }

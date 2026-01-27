@@ -110,6 +110,7 @@
     "superjson": "^2.2.6",
     "tailwind-merge": "^3.4.0",
     "use-debounce": "^10.1.0",
+    "uuid": "^13.0.0",
     "xlsx": "^0.18.5",
     "zod": "^4.3.5",
     "zustand": "^5.0.10"
@@ -122,6 +123,7 @@
     "@types/pg": "^8.16.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/uuid": "^10.0.0",
     "@vitest/coverage-v8": "^4.0.17",
     "dotenv": "^17.2.3",
     "eslint": "^9",

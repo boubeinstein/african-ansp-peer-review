@@ -199,6 +199,7 @@ export function TaskList({ reviewId, locale, userId }: TaskListProps) {
             <TaskCard
               key={task.id}
               task={task}
+              reviewId={reviewId}
               locale={locale}
               userId={userId}
               onUpdate={() => refetch()}

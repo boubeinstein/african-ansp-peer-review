@@ -82,6 +82,7 @@ interface Task {
 
 interface TaskCardProps {
   task: Task;
+  reviewId: string;
   locale: string;
   userId: string;
   onUpdate: () => void;
@@ -138,11 +139,17 @@ const PRIORITY_CONFIG: Record<TaskPriority, {
   },
 };
 
-export function TaskCard({ task, locale, userId, onUpdate }: TaskCardProps) {
+export function TaskCard({ task, reviewId, locale, userId, onUpdate }: TaskCardProps) {
   const t = useTranslations("reviews.workspace.tasks");
   const dateLocale = locale === "fr" ? fr : enUS;
 
   const [showEditDialog, setShowEditDialog] = useState(false);
+
+  // Fetch team members for edit dialog
+  const { data: teamMembers } = trpc.reviewDiscussion.getTeamMembers.useQuery(
+    { reviewId },
+    { enabled: showEditDialog }
+  );
 
   const isCreator = task.createdBy.id === userId;
   const statusConfig = STATUS_CONFIG[task.status];
@@ -358,9 +365,9 @@ export function TaskCard({ task, locale, userId, onUpdate }: TaskCardProps) {
       <CreateTaskDialog
         open={showEditDialog}
         onOpenChange={setShowEditDialog}
-        reviewId=""
+        reviewId={reviewId}
         locale={locale}
-        teamMembers={[]}
+        teamMembers={teamMembers || []}
         onSuccess={() => {
           setShowEditDialog(false);
           onUpdate();

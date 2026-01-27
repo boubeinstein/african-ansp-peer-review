@@ -20,7 +20,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Globe, LogOut, User, Settings, Search, Keyboard } from "lucide-react";
+import { Globe, LogOut, Settings, Search, Keyboard } from "lucide-react";
 import Link from "next/link";
 import { NotificationBell } from "@/components/features/notifications/notification-bell";
 import { CommandPalette } from "@/components/features/command-palette";
@@ -157,12 +157,6 @@ export function Header({ locale, user }: HeaderProps) {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href={`/${locale}/profile`}>
-                  <User className="mr-2 h-4 w-4" />
-                  {t("actions.profile")}
-                </Link>
-              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href={`/${locale}/settings`}>
                   <Settings className="mr-2 h-4 w-4" />

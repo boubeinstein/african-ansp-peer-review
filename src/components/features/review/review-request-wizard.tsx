@@ -31,8 +31,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
@@ -58,6 +56,182 @@ import {
   Phone,
   User,
 } from "lucide-react";
+
+// =============================================================================
+// SIMPLE CHECKBOX (Bypasses Radix Presence issue)
+// =============================================================================
+
+interface SimpleCheckboxProps {
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
+  className?: string;
+  id?: string;
+}
+
+function SimpleCheckbox({
+  checked,
+  onCheckedChange,
+  className,
+  id,
+}: SimpleCheckboxProps) {
+  return (
+    <button
+      type="button"
+      role="checkbox"
+      aria-checked={checked}
+      id={id}
+      onClick={(e) => {
+        e.stopPropagation();
+        onCheckedChange(!checked);
+      }}
+      className={cn(
+        "size-4 shrink-0 rounded-[4px] border shadow-xs outline-none transition-colors",
+        "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        "disabled:cursor-not-allowed disabled:opacity-50",
+        checked
+          ? "bg-primary border-primary"
+          : "border-input bg-background hover:bg-accent",
+        className
+      )}
+    >
+      {checked && (
+        <svg
+          className="size-3.5 text-primary-foreground mx-auto"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={3}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M5 13l4 4L19 7"
+          />
+        </svg>
+      )}
+    </button>
+  );
+}
+
+// =============================================================================
+// SIMPLE RADIO GROUP (Bypasses Radix Presence issue)
+// =============================================================================
+
+interface SimpleRadioOption {
+  value: string;
+  label: React.ReactNode;
+  description?: React.ReactNode;
+}
+
+interface SimpleRadioGroupProps {
+  value: string;
+  onValueChange: (value: string) => void;
+  options: SimpleRadioOption[];
+  className?: string;
+  variant?: "card" | "inline";
+}
+
+function SimpleRadioGroup({
+  value,
+  onValueChange,
+  options,
+  className,
+  variant = "card",
+}: SimpleRadioGroupProps) {
+  // Radio indicator component with hardcoded colors for visibility
+  const RadioIndicator = ({ isSelected }: { isSelected: boolean }) => (
+    <span
+      className="shrink-0"
+      style={{
+        display: 'inline-block',
+        width: '18px',
+        height: '18px',
+        borderRadius: '50%',
+        border: '2px solid',
+        borderColor: isSelected ? '#2563eb' : '#9ca3af',
+        backgroundColor: isSelected ? '#2563eb' : 'transparent',
+        position: 'relative',
+      }}
+    >
+      {isSelected && (
+        <span
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '6px',
+            height: '6px',
+            borderRadius: '50%',
+            backgroundColor: '#ffffff',
+          }}
+        />
+      )}
+    </span>
+  );
+
+  if (variant === "inline") {
+    return (
+      <div className={cn("flex gap-4", className)} role="radiogroup">
+        {options.map((option) => {
+          const isSelected = value === option.value;
+          return (
+            <label
+              key={option.value}
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={() => onValueChange(option.value)}
+            >
+              <RadioIndicator isSelected={isSelected} />
+              <span className="font-normal">{option.label}</span>
+            </label>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // Card variant
+  return (
+    <div className={cn("space-y-3", className)} role="radiogroup">
+      {options.map((option) => {
+        const isSelected = value === option.value;
+        return (
+          <div
+            key={option.value}
+            role="radio"
+            aria-checked={isSelected}
+            tabIndex={0}
+            onClick={() => onValueChange(option.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onValueChange(option.value);
+              }
+            }}
+            className={cn(
+              "flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all",
+              isSelected
+                ? "border-primary ring-2 ring-primary/20 bg-primary/5"
+                : "border-gray-200 dark:border-gray-700 hover:border-primary/50"
+            )}
+          >
+            <span className="mt-0.5">
+              <RadioIndicator isSelected={isSelected} />
+            </span>
+            <div className="flex-1">
+              <div className="font-medium">{option.label}</div>
+              {option.description && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  {option.description}
+                </p>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 // =============================================================================
 // TYPES
@@ -227,26 +401,21 @@ function AssessmentStep({ form, assessments }: AssessmentStepProps) {
                 control={form.control}
                 name="assessmentIds"
                 render={({ field }) => {
-                  const isSelected = field.value?.includes(assessment.id);
-                  const toggleSelection = () => {
-                    const newValue = isSelected
-                      ? field.value?.filter((id) => id !== assessment.id)
-                      : [...(field.value || []), assessment.id];
+                  const isSelected = field.value?.includes(assessment.id) ?? false;
+
+                  const handleChange = (checked: boolean) => {
+                    const currentValue = field.value || [];
+                    const newValue = checked
+                      ? [...currentValue, assessment.id]
+                      : currentValue.filter((id) => id !== assessment.id);
                     field.onChange(newValue);
                   };
+
                   return (
                     <FormItem>
                       <FormControl>
-                        <div
-                          role="button"
-                          tabIndex={0}
-                          onClick={toggleSelection}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              toggleSelection();
-                            }
-                          }}
+                        <label
+                          htmlFor={`assessment-${assessment.id}`}
                           className={cn(
                             "w-full flex items-center gap-4 p-4 rounded-lg border-2 text-left transition-all cursor-pointer",
                             isSelected
@@ -254,10 +423,10 @@ function AssessmentStep({ form, assessments }: AssessmentStepProps) {
                               : "border-border hover:border-primary/50"
                           )}
                         >
-                          <Checkbox
+                          <SimpleCheckbox
+                            id={`assessment-${assessment.id}`}
                             checked={isSelected}
-                            onCheckedChange={toggleSelection}
-                            onClick={(e) => e.stopPropagation()}
+                            onCheckedChange={handleChange}
                           />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
@@ -278,7 +447,7 @@ function AssessmentStep({ form, assessments }: AssessmentStepProps) {
                               </p>
                             )}
                           </div>
-                        </div>
+                        </label>
                       </FormControl>
                     </FormItem>
                   );
@@ -314,71 +483,28 @@ function ScopeStep({ form }: ScopeStepProps) {
           <FormItem>
             <FormLabel>{t("scope.typeLabel")}</FormLabel>
             <FormControl>
-              <RadioGroup
-                onValueChange={field.onChange}
+              <SimpleRadioGroup
                 value={field.value}
-                className="space-y-3"
-              >
-                <div
-                  className={cn(
-                    "flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all",
-                    field.value === "FULL"
-                      ? "border-primary ring-2 ring-primary/20 bg-primary/5"
-                      : "border-border hover:border-primary/50"
-                  )}
-                  onClick={() => field.onChange("FULL")}
-                >
-                  <RadioGroupItem value="FULL" id="type-full" className="mt-1" />
-                  <div>
-                    <Label htmlFor="type-full" className="font-medium cursor-pointer">
-                      {t("scope.types.ansOnly")}
-                    </Label>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {t("scope.types.ansOnlyDesc")}
-                    </p>
-                  </div>
-                </div>
-
-                <div
-                  className={cn(
-                    "flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all",
-                    field.value === "FOCUSED"
-                      ? "border-primary ring-2 ring-primary/20 bg-primary/5"
-                      : "border-border hover:border-primary/50"
-                  )}
-                  onClick={() => field.onChange("FOCUSED")}
-                >
-                  <RadioGroupItem value="FOCUSED" id="type-focused" className="mt-1" />
-                  <div>
-                    <Label htmlFor="type-focused" className="font-medium cursor-pointer">
-                      {t("scope.types.smsOnly")}
-                    </Label>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {t("scope.types.smsOnlyDesc")}
-                    </p>
-                  </div>
-                </div>
-
-                <div
-                  className={cn(
-                    "flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all",
-                    field.value === "FOLLOW_UP"
-                      ? "border-primary ring-2 ring-primary/20 bg-primary/5"
-                      : "border-border hover:border-primary/50"
-                  )}
-                  onClick={() => field.onChange("FOLLOW_UP")}
-                >
-                  <RadioGroupItem value="FOLLOW_UP" id="type-comprehensive" className="mt-1" />
-                  <div>
-                    <Label htmlFor="type-comprehensive" className="font-medium cursor-pointer">
-                      {t("scope.types.comprehensive")}
-                    </Label>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {t("scope.types.comprehensiveDesc")}
-                    </p>
-                  </div>
-                </div>
-              </RadioGroup>
+                onValueChange={field.onChange}
+                variant="card"
+                options={[
+                  {
+                    value: "FULL",
+                    label: t("scope.types.ansOnly"),
+                    description: t("scope.types.ansOnlyDesc"),
+                  },
+                  {
+                    value: "FOCUSED",
+                    label: t("scope.types.smsOnly"),
+                    description: t("scope.types.smsOnlyDesc"),
+                  },
+                  {
+                    value: "FOLLOW_UP",
+                    label: t("scope.types.comprehensive"),
+                    description: t("scope.types.comprehensiveDesc"),
+                  },
+                ]}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -411,26 +537,21 @@ function ScopeStep({ form }: ScopeStepProps) {
                       control={form.control}
                       name="focusAreas"
                       render={({ field }) => {
-                        const isSelected = field.value?.includes(area);
-                        const toggleArea = () => {
-                          const newValue = isSelected
-                            ? field.value?.filter((a) => a !== area)
-                            : [...(field.value || []), area];
+                        const isSelected = field.value?.includes(area) ?? false;
+
+                        const handleChange = (checked: boolean) => {
+                          const currentValue = field.value || [];
+                          const newValue = checked
+                            ? [...currentValue, area]
+                            : currentValue.filter((a) => a !== area);
                           field.onChange(newValue);
                         };
+
                         return (
                           <FormItem>
                             <FormControl>
-                              <div
-                                role="button"
-                                tabIndex={0}
-                                onClick={toggleArea}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter" || e.key === " ") {
-                                    e.preventDefault();
-                                    toggleArea();
-                                  }
-                                }}
+                              <label
+                                htmlFor={`focus-area-ans-${area}`}
                                 className={cn(
                                   "w-full flex items-center gap-2 p-3 rounded-md border-2 text-left transition-all text-sm cursor-pointer",
                                   isSelected
@@ -438,13 +559,13 @@ function ScopeStep({ form }: ScopeStepProps) {
                                     : "border-border hover:border-primary/50"
                                 )}
                               >
-                                <Checkbox
+                                <SimpleCheckbox
+                                  id={`focus-area-ans-${area}`}
                                   checked={isSelected}
-                                  onCheckedChange={toggleArea}
-                                  onClick={(e) => e.stopPropagation()}
+                                  onCheckedChange={handleChange}
                                 />
                                 <span>{t(`scope.focusAreas.${area}`)}</span>
-                              </div>
+                              </label>
                             </FormControl>
                           </FormItem>
                         );
@@ -466,26 +587,21 @@ function ScopeStep({ form }: ScopeStepProps) {
                       control={form.control}
                       name="focusAreas"
                       render={({ field }) => {
-                        const isSelected = field.value?.includes(area);
-                        const toggleArea = () => {
-                          const newValue = isSelected
-                            ? field.value?.filter((a) => a !== area)
-                            : [...(field.value || []), area];
+                        const isSelected = field.value?.includes(area) ?? false;
+
+                        const handleChange = (checked: boolean) => {
+                          const currentValue = field.value || [];
+                          const newValue = checked
+                            ? [...currentValue, area]
+                            : currentValue.filter((a) => a !== area);
                           field.onChange(newValue);
                         };
+
                         return (
                           <FormItem>
                             <FormControl>
-                              <div
-                                role="button"
-                                tabIndex={0}
-                                onClick={toggleArea}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter" || e.key === " ") {
-                                    e.preventDefault();
-                                    toggleArea();
-                                  }
-                                }}
+                              <label
+                                htmlFor={`focus-area-sms-${area}`}
                                 className={cn(
                                   "w-full flex items-center gap-2 p-3 rounded-md border-2 text-left transition-all text-sm cursor-pointer",
                                   isSelected
@@ -493,13 +609,13 @@ function ScopeStep({ form }: ScopeStepProps) {
                                     : "border-border hover:border-primary/50"
                                 )}
                               >
-                                <Checkbox
+                                <SimpleCheckbox
+                                  id={`focus-area-sms-${area}`}
                                   checked={isSelected}
-                                  onCheckedChange={toggleArea}
-                                  onClick={(e) => e.stopPropagation()}
+                                  onCheckedChange={handleChange}
                                 />
                                 <span>{t(`scope.focusAreas.${area}`)}</span>
-                              </div>
+                              </label>
                             </FormControl>
                           </FormItem>
                         );
@@ -694,71 +810,28 @@ function LogisticsStep({ form }: LogisticsStepProps) {
           <FormItem>
             <FormLabel>{t("logistics.locationLabel")}</FormLabel>
             <FormControl>
-              <RadioGroup
-                onValueChange={field.onChange}
+              <SimpleRadioGroup
                 value={field.value}
-                className="space-y-3"
-              >
-                <div
-                  className={cn(
-                    "flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all",
-                    field.value === "ON_SITE"
-                      ? "border-primary ring-2 ring-primary/20 bg-primary/5"
-                      : "border-border hover:border-primary/50"
-                  )}
-                  onClick={() => field.onChange("ON_SITE")}
-                >
-                  <RadioGroupItem value="ON_SITE" id="loc-onsite" className="mt-1" />
-                  <div>
-                    <Label htmlFor="loc-onsite" className="font-medium cursor-pointer">
-                      {t("logistics.location.onSite")}
-                    </Label>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {t("logistics.location.onSiteDesc")}
-                    </p>
-                  </div>
-                </div>
-
-                <div
-                  className={cn(
-                    "flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all",
-                    field.value === "HYBRID"
-                      ? "border-primary ring-2 ring-primary/20 bg-primary/5"
-                      : "border-border hover:border-primary/50"
-                  )}
-                  onClick={() => field.onChange("HYBRID")}
-                >
-                  <RadioGroupItem value="HYBRID" id="loc-hybrid" className="mt-1" />
-                  <div>
-                    <Label htmlFor="loc-hybrid" className="font-medium cursor-pointer">
-                      {t("logistics.location.hybrid")}
-                    </Label>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {t("logistics.location.hybridDesc")}
-                    </p>
-                  </div>
-                </div>
-
-                <div
-                  className={cn(
-                    "flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all",
-                    field.value === "REMOTE"
-                      ? "border-primary ring-2 ring-primary/20 bg-primary/5"
-                      : "border-border hover:border-primary/50"
-                  )}
-                  onClick={() => field.onChange("REMOTE")}
-                >
-                  <RadioGroupItem value="REMOTE" id="loc-remote" className="mt-1" />
-                  <div>
-                    <Label htmlFor="loc-remote" className="font-medium cursor-pointer">
-                      {t("logistics.location.remote")}
-                    </Label>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {t("logistics.location.remoteDesc")}
-                    </p>
-                  </div>
-                </div>
-              </RadioGroup>
+                onValueChange={field.onChange}
+                variant="card"
+                options={[
+                  {
+                    value: "ON_SITE",
+                    label: t("logistics.location.onSite"),
+                    description: t("logistics.location.onSiteDesc"),
+                  },
+                  {
+                    value: "HYBRID",
+                    label: t("logistics.location.hybrid"),
+                    description: t("logistics.location.hybridDesc"),
+                  },
+                  {
+                    value: "REMOTE",
+                    label: t("logistics.location.remote"),
+                    description: t("logistics.location.remoteDesc"),
+                  },
+                ]}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -779,8 +852,8 @@ function LogisticsStep({ form }: LogisticsStepProps) {
               render={({ field }) => (
                 <FormItem className="flex items-center gap-3 space-y-0">
                   <FormControl>
-                    <Checkbox
-                      checked={field.value}
+                    <SimpleCheckbox
+                      checked={field.value ?? false}
                       onCheckedChange={field.onChange}
                     />
                   </FormControl>
@@ -797,8 +870,8 @@ function LogisticsStep({ form }: LogisticsStepProps) {
               render={({ field }) => (
                 <FormItem className="flex items-center gap-3 space-y-0">
                   <FormControl>
-                    <Checkbox
-                      checked={field.value}
+                    <SimpleCheckbox
+                      checked={field.value ?? false}
                       onCheckedChange={field.onChange}
                     />
                   </FormControl>
@@ -823,30 +896,17 @@ function LogisticsStep({ form }: LogisticsStepProps) {
             <FormLabel>{t("logistics.languageLabel")}</FormLabel>
             <FormDescription>{t("logistics.languageDescription")}</FormDescription>
             <FormControl>
-              <RadioGroup
-                onValueChange={field.onChange}
+              <SimpleRadioGroup
                 value={field.value}
-                className="flex gap-4 pt-2"
-              >
-                <div className="flex items-center gap-2">
-                  <RadioGroupItem value="EN" id="lang-en" />
-                  <Label htmlFor="lang-en" className="font-normal cursor-pointer">
-                    English
-                  </Label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <RadioGroupItem value="FR" id="lang-fr" />
-                  <Label htmlFor="lang-fr" className="font-normal cursor-pointer">
-                    Français
-                  </Label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <RadioGroupItem value="BOTH" id="lang-both" />
-                  <Label htmlFor="lang-both" className="font-normal cursor-pointer">
-                    {t("logistics.bothLanguages")}
-                  </Label>
-                </div>
-              </RadioGroup>
+                onValueChange={field.onChange}
+                variant="inline"
+                className="pt-2"
+                options={[
+                  { value: "EN", label: "English" },
+                  { value: "FR", label: "Français" },
+                  { value: "BOTH", label: t("logistics.bothLanguages") },
+                ]}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

@@ -134,7 +134,7 @@ async function main() {
       titleEn: "Welcome to AAPRP Platform",
       titleFr: "Bienvenue sur la plateforme AAPRP",
       messageEn:
-        "The African ANSP Peer Review Programme platform is ready for the February 2026 training. Explore the features and prepare for the refresher course.",
+        "The African ANSP Peer Review Programme platform is ready for the March 2026 training. Explore the features and prepare for the refresher course.",
       messageFr:
         "La plateforme du Programme africain de revue par les pairs des ANSP est prête pour la formation de février 2026. Explorez les fonctionnalités et préparez-vous au cours de remise à niveau.",
       priority: "LOW",

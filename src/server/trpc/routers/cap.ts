@@ -31,6 +31,12 @@ import {
   logVerification,
   logStatusChange,
 } from "@/server/services/audit";
+import {
+  sendNotification,
+  getRecipientsByRole,
+  getProgrammeManagementRecipients,
+} from "@/server/services/notification-service";
+import { NotificationType, NotificationPriority } from "@prisma/client";
 
 // =============================================================================
 // ROLE DEFINITIONS
@@ -587,6 +593,29 @@ export const capRouter = router({
         },
       });
 
+      // Send notification to programme management
+      try {
+        const recipients = await getProgrammeManagementRecipients();
+        if (recipients.length > 0) {
+          await sendNotification(recipients, {
+            type: NotificationType.CAP_SUBMITTED,
+            titleEn: "CAP Submitted for Review",
+            titleFr: "PAC soumis pour examen",
+            messageEn: `Corrective Action Plan for finding ${updated.finding.referenceNumber} has been submitted and requires review.`,
+            messageFr: `Le Plan d'Actions Correctives pour la constatation ${updated.finding.referenceNumber} a été soumis et nécessite un examen.`,
+            entityType: "CAP",
+            entityId: updated.id,
+            actionUrl: `/caps/${updated.id}`,
+            actionLabelEn: "Review CAP",
+            actionLabelFr: "Examiner le PAC",
+            priority: NotificationPriority.NORMAL,
+          });
+        }
+      } catch (error) {
+        console.error("[CAP Submit] Failed to send notifications:", error);
+        // Don't fail the request if notifications fail
+      }
+
       return updated;
     }),
 
@@ -694,6 +723,47 @@ export const capRouter = router({
         metadata: { previousStatus: cap.status, notes: input.notes },
       });
 
+      // Send notification to host organization
+      try {
+        const capWithOrg = await ctx.db.correctiveActionPlan.findUnique({
+          where: { id: input.id },
+          include: {
+            finding: {
+              select: {
+                referenceNumber: true,
+                review: {
+                  select: { hostOrganizationId: true },
+                },
+              },
+            },
+          },
+        });
+
+        if (capWithOrg) {
+          const recipients = await getRecipientsByRole(
+            ["ANSP_ADMIN", "SAFETY_MANAGER", "QUALITY_MANAGER"],
+            capWithOrg.finding.review.hostOrganizationId
+          );
+          if (recipients.length > 0) {
+            await sendNotification(recipients, {
+              type: NotificationType.CAP_ACCEPTED,
+              titleEn: "CAP Accepted",
+              titleFr: "PAC accepté",
+              messageEn: `Your Corrective Action Plan for finding ${capWithOrg.finding.referenceNumber} has been accepted. Please begin implementation.`,
+              messageFr: `Votre Plan d'Actions Correctives pour la constatation ${capWithOrg.finding.referenceNumber} a été accepté. Veuillez commencer la mise en œuvre.`,
+              entityType: "CAP",
+              entityId: updated.id,
+              actionUrl: `/caps/${updated.id}`,
+              actionLabelEn: "View CAP",
+              actionLabelFr: "Voir le PAC",
+              priority: NotificationPriority.NORMAL,
+            });
+          }
+        }
+      } catch (error) {
+        console.error("[CAP Accept] Failed to send notifications:", error);
+      }
+
       return updated;
     }),
 
@@ -748,6 +818,47 @@ export const capRouter = router({
         entityId: input.id,
         metadata: { previousStatus: cap.status, reason: input.reason },
       });
+
+      // Send notification to host organization (high priority)
+      try {
+        const capWithOrg = await ctx.db.correctiveActionPlan.findUnique({
+          where: { id: input.id },
+          include: {
+            finding: {
+              select: {
+                referenceNumber: true,
+                review: {
+                  select: { hostOrganizationId: true },
+                },
+              },
+            },
+          },
+        });
+
+        if (capWithOrg) {
+          const recipients = await getRecipientsByRole(
+            ["ANSP_ADMIN", "SAFETY_MANAGER", "QUALITY_MANAGER"],
+            capWithOrg.finding.review.hostOrganizationId
+          );
+          if (recipients.length > 0) {
+            await sendNotification(recipients, {
+              type: NotificationType.CAP_REJECTED,
+              titleEn: "CAP Rejected - Revision Required",
+              titleFr: "PAC rejeté - Révision requise",
+              messageEn: `Your Corrective Action Plan for finding ${capWithOrg.finding.referenceNumber} has been rejected. Reason: ${input.reason}. Please revise and resubmit.`,
+              messageFr: `Votre Plan d'Actions Correctives pour la constatation ${capWithOrg.finding.referenceNumber} a été rejeté. Raison: ${input.reason}. Veuillez réviser et soumettre à nouveau.`,
+              entityType: "CAP",
+              entityId: updated.id,
+              actionUrl: `/caps/${updated.id}`,
+              actionLabelEn: "Revise CAP",
+              actionLabelFr: "Réviser le PAC",
+              priority: NotificationPriority.HIGH,
+            });
+          }
+        }
+      } catch (error) {
+        console.error("[CAP Reject] Failed to send notifications:", error);
+      }
 
       return updated;
     }),
@@ -949,6 +1060,47 @@ export const capRouter = router({
         },
       });
 
+      // Send notification to host organization
+      try {
+        const capWithOrg = await ctx.db.correctiveActionPlan.findUnique({
+          where: { id: input.id },
+          include: {
+            finding: {
+              select: {
+                referenceNumber: true,
+                review: {
+                  select: { hostOrganizationId: true },
+                },
+              },
+            },
+          },
+        });
+
+        if (capWithOrg) {
+          const recipients = await getRecipientsByRole(
+            ["ANSP_ADMIN", "SAFETY_MANAGER", "QUALITY_MANAGER"],
+            capWithOrg.finding.review.hostOrganizationId
+          );
+          if (recipients.length > 0) {
+            await sendNotification(recipients, {
+              type: NotificationType.CAP_VERIFIED,
+              titleEn: "CAP Verified",
+              titleFr: "PAC vérifié",
+              messageEn: `Your Corrective Action Plan for finding ${capWithOrg.finding.referenceNumber} has been verified. The implementation has been confirmed as effective.`,
+              messageFr: `Votre Plan d'Actions Correctives pour la constatation ${capWithOrg.finding.referenceNumber} a été vérifié. La mise en œuvre a été confirmée comme efficace.`,
+              entityType: "CAP",
+              entityId: updated.id,
+              actionUrl: `/caps/${updated.id}`,
+              actionLabelEn: "View CAP",
+              actionLabelFr: "Voir le PAC",
+              priority: NotificationPriority.NORMAL,
+            });
+          }
+        }
+      } catch (error) {
+        console.error("[CAP Verify] Failed to send notifications:", error);
+      }
+
       return updated;
     }),
 
@@ -1005,6 +1157,47 @@ export const capRouter = router({
           failureReason: input.failureReason,
         },
       });
+
+      // Send notification to host organization (high priority)
+      try {
+        const capWithOrg = await ctx.db.correctiveActionPlan.findUnique({
+          where: { id: input.id },
+          include: {
+            finding: {
+              select: {
+                referenceNumber: true,
+                review: {
+                  select: { hostOrganizationId: true },
+                },
+              },
+            },
+          },
+        });
+
+        if (capWithOrg) {
+          const recipients = await getRecipientsByRole(
+            ["ANSP_ADMIN", "SAFETY_MANAGER", "QUALITY_MANAGER"],
+            capWithOrg.finding.review.hostOrganizationId
+          );
+          if (recipients.length > 0) {
+            await sendNotification(recipients, {
+              type: NotificationType.CAP_REJECTED,
+              titleEn: "CAP Verification Failed - Rework Required",
+              titleFr: "Échec de la vérification du PAC - Reprise requise",
+              messageEn: `Corrective Action Plan for finding ${capWithOrg.finding.referenceNumber} failed verification. Reason: ${input.failureReason}. Additional implementation work is required.`,
+              messageFr: `Le Plan d'Actions Correctives pour la constatation ${capWithOrg.finding.referenceNumber} a échoué à la vérification. Raison: ${input.failureReason}. Un travail de mise en œuvre supplémentaire est requis.`,
+              entityType: "CAP",
+              entityId: updated.id,
+              actionUrl: `/caps/${updated.id}`,
+              actionLabelEn: "View CAP",
+              actionLabelFr: "Voir le PAC",
+              priority: NotificationPriority.HIGH,
+            });
+          }
+        }
+      } catch (error) {
+        console.error("[CAP Fail Verification] Failed to send notifications:", error);
+      }
 
       return updated;
     }),
@@ -1065,6 +1258,47 @@ export const capRouter = router({
         newStatus: "CLOSED",
         metadata: { notes: input.notes },
       });
+
+      // Send notification to host organization
+      try {
+        const capWithOrg = await ctx.db.correctiveActionPlan.findUnique({
+          where: { id: input.id },
+          include: {
+            finding: {
+              select: {
+                referenceNumber: true,
+                review: {
+                  select: { hostOrganizationId: true },
+                },
+              },
+            },
+          },
+        });
+
+        if (capWithOrg) {
+          const recipients = await getRecipientsByRole(
+            ["ANSP_ADMIN", "SAFETY_MANAGER", "QUALITY_MANAGER"],
+            capWithOrg.finding.review.hostOrganizationId
+          );
+          if (recipients.length > 0) {
+            await sendNotification(recipients, {
+              type: NotificationType.CAP_CLOSED,
+              titleEn: "CAP Closed",
+              titleFr: "PAC clôturé",
+              messageEn: `Corrective Action Plan for finding ${capWithOrg.finding.referenceNumber} has been closed. The finding has been successfully addressed.`,
+              messageFr: `Le Plan d'Actions Correctives pour la constatation ${capWithOrg.finding.referenceNumber} a été clôturé. La constatation a été traitée avec succès.`,
+              entityType: "CAP",
+              entityId: updated.id,
+              actionUrl: `/caps/${updated.id}`,
+              actionLabelEn: "View CAP",
+              actionLabelFr: "Voir le PAC",
+              priority: NotificationPriority.NORMAL,
+            });
+          }
+        }
+      } catch (error) {
+        console.error("[CAP Close] Failed to send notifications:", error);
+      }
 
       return updated;
     }),

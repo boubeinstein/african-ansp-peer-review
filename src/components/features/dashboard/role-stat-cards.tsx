@@ -153,6 +153,14 @@ export function RoleStatCards({
           colorScheme = config.getColor(numericValue);
         }
 
+        // Format value for display
+        let displayValue: string | number | null = rawValue;
+
+        // Format EI Score as percentage with 1 decimal place
+        if (config.id === "latest-ei-score" && typeof rawValue === "number") {
+          displayValue = `${rawValue.toFixed(1)}%`;
+        }
+
         // Get translated strings
         const title = t(config.titleKey);
         const subtitle = config.subtitleKey ? t(config.subtitleKey) : undefined;
@@ -161,7 +169,7 @@ export function RoleStatCards({
           <StatCard
             key={config.id}
             title={title}
-            value={rawValue}
+            value={displayValue}
             subtitle={subtitle}
             icon={config.icon}
             colorScheme={colorScheme}

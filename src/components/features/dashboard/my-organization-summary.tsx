@@ -334,7 +334,7 @@ export function MyOrganizationSummary({
             </CardDescription>
           </div>
           <Button variant="outline" size="sm" asChild>
-            <Link href={`/${locale}/organization`}>
+            <Link href={`/${locale}/organizations/${organization.id}`}>
               {t("viewProfile")}
               <ArrowRight className="h-4 w-4 ml-1" />
             </Link>

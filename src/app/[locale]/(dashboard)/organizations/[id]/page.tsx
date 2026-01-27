@@ -389,9 +389,9 @@ export default function OrganizationDetailPage({
   // The edit page will handle unauthorized access appropriately
   const isAdmin = true;
 
-  // Handlers
+  // Handlers - navigate to dashboard since ANSP users don't have access to organizations list
   const handleBack = () => {
-    router.push(`/${locale}/organizations`);
+    router.push(`/${locale}/dashboard`);
   };
 
   const handleEdit = () => {

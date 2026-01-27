@@ -50,6 +50,8 @@ import {
 
 interface TeamDetailClientProps {
   teamId: string;
+  /** Whether user can navigate to /teams list (true for admins, false for ANSP users) */
+  canAccessTeamsList?: boolean;
 }
 
 // =============================================================================
@@ -395,11 +397,14 @@ function FindingsCapsSummary({
 // MAIN COMPONENT
 // =============================================================================
 
-export function TeamDetailClient({ teamId }: TeamDetailClientProps) {
+export function TeamDetailClient({ teamId, canAccessTeamsList = true }: TeamDetailClientProps) {
   const t = useTranslations("teams.detail");
   const params = useParams();
   const router = useRouter();
   const locale = (params.locale as string) || "en";
+
+  // Back destination: /teams for admins, /dashboard for ANSP users
+  const backHref = canAccessTeamsList ? `/${locale}/teams` : `/${locale}/dashboard`;
 
   const {
     data: team,
@@ -434,7 +439,7 @@ export function TeamDetailClient({ teamId }: TeamDetailClientProps) {
       {/* Header */}
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
-          <Link href={`/${locale}/teams`}>
+          <Link href={backHref}>
             <ArrowLeft className="h-5 w-5" />
           </Link>
         </Button>

@@ -12,12 +12,18 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function SettingsPage() {
+interface SettingsPageProps {
+  searchParams: Promise<{ tab?: string }>;
+}
+
+export default async function SettingsPage({ searchParams }: SettingsPageProps) {
   const session = await auth();
 
   if (!session?.user) {
     redirect("/login");
   }
+
+  const { tab } = await searchParams;
 
   return (
     <SettingsClient
@@ -27,6 +33,7 @@ export default async function SettingsPage() {
       firstName={session.user.firstName ?? ""}
       lastName={session.user.lastName ?? ""}
       organizationId={session.user.organizationId}
+      initialTab={tab}
     />
   );
 }

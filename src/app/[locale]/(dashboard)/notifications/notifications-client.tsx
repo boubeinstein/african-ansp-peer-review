@@ -215,7 +215,7 @@ export function NotificationsClient({ locale }: NotificationsClientProps) {
           <p className="text-muted-foreground">{t("pageDescription")}</p>
         </div>
         <Button variant="outline" asChild>
-          <Link href={`/${locale}/settings`}>
+          <Link href={`/${locale}/settings?tab=notifications`}>
             <Settings className="mr-2 h-4 w-4" />
             {t("preferences")}
           </Link>

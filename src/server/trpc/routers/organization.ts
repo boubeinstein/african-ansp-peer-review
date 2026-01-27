@@ -16,6 +16,7 @@ import {
   organizationFiltersSchema,
   organizationIdSchema,
 } from "@/types/organization";
+import { hasPermission } from "@/lib/rbac/permissions";
 
 // =============================================================================
 // CONSTANTS
@@ -163,15 +164,33 @@ export const organizationRouter = router({
 
   /**
    * List organizations with filtering and pagination
+   * Users without organizations.all permission only see their own organization
    */
   list: protectedProcedure
     .input(organizationFiltersSchema)
-    .query(async ({ input }) => {
+    .query(async ({ ctx, input }) => {
       const { page, pageSize, sortBy, sortOrder } = input;
       const skip = (page - 1) * pageSize;
 
       const where = buildOrganizationWhereClause(input);
       const orderBy = buildOrganizationOrderBy(sortBy, sortOrder);
+
+      // Check if user has permission to see all organizations
+      const canSeeAll = hasPermission(ctx.user.role, "organizations.all");
+
+      // If user cannot see all, restrict to their own organization
+      if (!canSeeAll && ctx.user.organizationId) {
+        where.id = ctx.user.organizationId;
+      } else if (!canSeeAll && !ctx.user.organizationId) {
+        // User has no organization and no permission to see all - return empty
+        return {
+          items: [],
+          total: 0,
+          page,
+          pageSize,
+          totalPages: 0,
+        };
+      }
 
       const [items, total] = await Promise.all([
         prisma.organization.findMany({
@@ -195,10 +214,22 @@ export const organizationRouter = router({
 
   /**
    * Get organization by ID with related counts
+   * Users without organizations.all can only view their own organization
    */
   getById: protectedProcedure
     .input(organizationIdSchema)
-    .query(async ({ input }) => {
+    .query(async ({ ctx, input }) => {
+      // Check if user has permission to see all organizations
+      const canSeeAll = hasPermission(ctx.user.role, "organizations.all");
+
+      // If user cannot see all, verify they're requesting their own organization
+      if (!canSeeAll && ctx.user.organizationId !== input.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You can only view your own organization",
+        });
+      }
+
       const organization = await prisma.organization.findUnique({
         where: { id: input.id },
         include: organizationWithCountsInclude,
@@ -216,8 +247,30 @@ export const organizationRouter = router({
 
   /**
    * Get organization statistics
+   * Users without organizations.all permission only see stats for their own organization
    */
-  getStats: protectedProcedure.query(async () => {
+  getStats: protectedProcedure.query(async ({ ctx }) => {
+    // Check if user has permission to see all organizations
+    const canSeeAll = hasPermission(ctx.user.role, "organizations.all");
+
+    // Build where clause based on permissions
+    const where: Prisma.OrganizationWhereInput = {};
+    if (!canSeeAll && ctx.user.organizationId) {
+      where.id = ctx.user.organizationId;
+    } else if (!canSeeAll && !ctx.user.organizationId) {
+      // User has no organization and no permission to see all - return empty stats
+      return {
+        total: 0,
+        active: 0,
+        pending: 0,
+        suspended: 0,
+        inactive: 0,
+        byRegion: {},
+        byStatus: {},
+        byCountry: {},
+      };
+    }
+
     const [
       total,
       byStatus,
@@ -225,23 +278,26 @@ export const organizationRouter = router({
       byCountry,
     ] = await Promise.all([
       // Total count
-      prisma.organization.count(),
+      prisma.organization.count({ where }),
 
       // Count by status
       prisma.organization.groupBy({
         by: ["membershipStatus"],
+        where,
         _count: { id: true },
       }),
 
       // Count by region
       prisma.organization.groupBy({
         by: ["region"],
+        where,
         _count: { id: true },
       }),
 
       // Count by country
       prisma.organization.groupBy({
         by: ["country"],
+        where,
         _count: { id: true },
         orderBy: { _count: { id: "desc" } },
         take: 20, // Top 20 countries

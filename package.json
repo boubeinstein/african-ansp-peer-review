@@ -47,7 +47,6 @@
     "db:seed:training-all": "npx tsx prisma/seed-training-demo-all.ts",
     "db:seed:notifications": "npx tsx prisma/seed-notifications.ts",
     "db:seed:cleanup": "npx tsx prisma/seed-cleanup-demo.ts",
-    "db:seed:teams": "npx tsx prisma/seed-teams-and-orgs.ts",
     "db:seed:teams:reseed": "npx tsx prisma/seed-teams-and-orgs.ts cleanup && npx tsx prisma/seed-teams-and-orgs.ts",
     "db:seed:fresh": "npx tsx prisma/seed-cleanup-demo.ts && npx tsx prisma/seed-teams-and-orgs.ts && npx tsx prisma/seed-fix-org-codes.ts && npx tsx prisma/seed-ansp-admins.ts && npx tsx prisma/seed-training-demo-all.ts",
     "db:seed:all": "npx tsx prisma/seed.ts && npx tsx prisma/seed-dev-users.ts && npx tsx prisma/seed-training.ts"
@@ -110,6 +109,7 @@
     "sonner": "^2.0.7",
     "superjson": "^2.2.6",
     "tailwind-merge": "^3.4.0",
+    "use-debounce": "^10.1.0",
     "xlsx": "^0.18.5",
     "zod": "^4.3.5",
     "zustand": "^5.0.10"

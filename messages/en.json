@@ -64,6 +64,7 @@
     "reviews": "Peer Reviews",
     "findings": "Findings",
     "caps": "CAPs",
+    "bestPractices": "Best Practices",
     "organizations": "Organizations",
     "reviewers": "Reviewers",
     "teams": "Teams",
@@ -5812,6 +5813,46 @@
         "cancel": "Cancel",
         "confirm": "Create Assessment"
       }
+    }
+  },
+  "bestPractices": {
+    "meta": {
+      "title": "Best Practices Library",
+      "description": "Discover and adopt proven aviation safety practices from across Africa"
+    },
+    "title": "Best Practices Library",
+    "description": "Discover and adopt proven aviation safety practices shared by ANSPs across Africa",
+    "actions": {
+      "submit": "Submit Best Practice"
+    },
+    "stats": {
+      "totalPractices": "Published Practices",
+      "totalAdoptions": "Total Adoptions",
+      "categories": "Categories",
+      "totalViews": "Total Views"
+    },
+    "filters": {
+      "searchPlaceholder": "Search best practices...",
+      "allCategories": "All Categories",
+      "allAreas": "All Audit Areas",
+      "sortNewest": "Newest First",
+      "sortPopular": "Most Viewed",
+      "sortMostAdopted": "Most Adopted",
+      "clearFilters": "Clear"
+    },
+    "showing": "Showing {count} of {total} best practices",
+    "empty": {
+      "title": "No best practices found",
+      "description": "There are no best practices matching your criteria. Try adjusting your filters or check back later."
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {page} of {totalPages}"
+    },
+    "card": {
+      "view": "View",
+      "yourOrg": "Your Org"
     }
   }
 }

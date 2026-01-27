@@ -15,6 +15,7 @@ import {
   Settings,
   UserCog,
   ShieldCheck,
+  Lightbulb,
   type LucideIcon,
 } from "lucide-react";
 import { hasPermission, type Feature } from "./permissions";
@@ -73,6 +74,12 @@ const allNavItems: NavItem[] = [
     href: "/caps",
     icon: CheckSquare,
     feature: "caps",
+  },
+  {
+    name: "bestPractices",
+    href: "/best-practices",
+    icon: Lightbulb,
+    feature: "bestPractices",
   },
   {
     name: "reviewers",

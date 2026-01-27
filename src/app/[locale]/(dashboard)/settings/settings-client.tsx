@@ -24,6 +24,9 @@ const ADMIN_ROLES = ["SUPER_ADMIN", "SYSTEM_ADMIN"];
 // Roles that have access to organization settings
 const ORG_ADMIN_ROLES = ["SUPER_ADMIN", "SYSTEM_ADMIN", "ANSP_ADMIN"];
 
+// Valid tab values for the settings page
+const VALID_TABS = ["profile", "preferences", "notifications", "security", "organization", "admin"];
+
 interface SettingsClientProps {
   userId: string;
   userRole: string;
@@ -31,6 +34,7 @@ interface SettingsClientProps {
   firstName: string;
   lastName: string;
   organizationId?: string | null;
+  initialTab?: string;
 }
 
 export function SettingsClient({
@@ -39,11 +43,27 @@ export function SettingsClient({
   firstName,
   lastName,
   organizationId,
+  initialTab,
 }: SettingsClientProps) {
   const t = useTranslations("settings");
 
   const isAdmin = ADMIN_ROLES.includes(userRole);
   const isOrgAdmin = ORG_ADMIN_ROLES.includes(userRole);
+
+  // Validate and determine the active tab
+  const getValidTab = () => {
+    if (!initialTab || !VALID_TABS.includes(initialTab)) {
+      return "profile";
+    }
+    // Check role-based access for organization and admin tabs
+    if (initialTab === "organization" && !isOrgAdmin) {
+      return "profile";
+    }
+    if (initialTab === "admin" && !isAdmin) {
+      return "profile";
+    }
+    return initialTab;
+  };
 
   return (
     <div className="container mx-auto py-6 px-4 lg:px-6 space-y-6">
@@ -59,7 +79,7 @@ export function SettingsClient({
       </div>
 
       {/* Settings Tabs */}
-      <Tabs defaultValue="profile" className="space-y-6">
+      <Tabs defaultValue={getValidTab()} className="space-y-6">
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-6 lg:w-auto">
           <TabsTrigger value="profile" className="flex items-center gap-2">
             <User className="h-4 w-4" />

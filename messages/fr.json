@@ -64,6 +64,7 @@
     "reviews": "Revues par les Pairs",
     "findings": "Constatations",
     "caps": "PAC",
+    "bestPractices": "Meilleures Pratiques",
     "organizations": "Organisations",
     "reviewers": "Évaluateurs",
     "teams": "Équipes",
@@ -5812,6 +5813,46 @@
         "cancel": "Annuler",
         "confirm": "Créer l'Évaluation"
       }
+    }
+  },
+  "bestPractices": {
+    "meta": {
+      "title": "Bibliothèque des meilleures pratiques",
+      "description": "Découvrez et adoptez les pratiques de sécurité aérienne éprouvées à travers l'Afrique"
+    },
+    "title": "Bibliothèque des meilleures pratiques",
+    "description": "Découvrez et adoptez les pratiques de sécurité aérienne éprouvées partagées par les ANSP à travers l'Afrique",
+    "actions": {
+      "submit": "Soumettre une pratique"
+    },
+    "stats": {
+      "totalPractices": "Pratiques publiées",
+      "totalAdoptions": "Adoptions totales",
+      "categories": "Catégories",
+      "totalViews": "Vues totales"
+    },
+    "filters": {
+      "searchPlaceholder": "Rechercher des pratiques...",
+      "allCategories": "Toutes les catégories",
+      "allAreas": "Tous les domaines",
+      "sortNewest": "Plus récentes",
+      "sortPopular": "Plus consultées",
+      "sortMostAdopted": "Plus adoptées",
+      "clearFilters": "Effacer"
+    },
+    "showing": "Affichage de {count} sur {total} meilleures pratiques",
+    "empty": {
+      "title": "Aucune pratique trouvée",
+      "description": "Aucune meilleure pratique ne correspond à vos critères. Essayez d'ajuster vos filtres ou revenez plus tard."
+    },
+    "pagination": {
+      "previous": "Précédent",
+      "next": "Suivant",
+      "page": "Page {page} sur {totalPages}"
+    },
+    "card": {
+      "view": "Voir",
+      "yourOrg": "Votre org"
     }
   }
 }

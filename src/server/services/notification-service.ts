@@ -567,7 +567,7 @@ interface FindingForNotification {
 /**
  * CAP data needed for notifications.
  */
-interface CAPForNotification {
+export interface CAPForNotification {
   id: string;
   dueDate: Date;
   assignedToId: string | null;

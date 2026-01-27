@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,6 +11,16 @@ import { auth } from "@/lib/auth";
 interface OrganizationsPageProps {
   params: Promise<{ locale: string }>;
 }
+
+/**
+ * Roles that can access the full Organizations list page
+ */
+const ADMIN_ROLES = [
+  "SUPER_ADMIN",
+  "SYSTEM_ADMIN",
+  "PROGRAMME_COORDINATOR",
+  "STEERING_COMMITTEE",
+];
 
 export async function generateMetadata({ params }: OrganizationsPageProps) {
   const { locale } = await params;
@@ -59,15 +70,36 @@ export default async function OrganizationsPage({
 }: OrganizationsPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  // Get user session
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect(`/${locale}/login`);
+  }
+
+  const { user } = session;
+
+  // ANSP users should be redirected to their own organization's detail page
+  // This provides proper access control, not just hidden navigation
+  if (!ADMIN_ROLES.includes(user.role)) {
+    if (user.organizationId) {
+      // Redirect to their organization's detail page
+      redirect(`/${locale}/organizations/${user.organizationId}`);
+    } else {
+      // No organization assigned - redirect to dashboard
+      redirect(`/${locale}/dashboard`);
+    }
+  }
+
   const t = await getTranslations({ locale, namespace: "organizations" });
 
-  // Check if user is admin
-  const session = await auth();
-  const isAdmin = session?.user?.role && [
+  // Check if user can create organizations (more restrictive than viewing)
+  const canCreate = [
     "SUPER_ADMIN",
     "SYSTEM_ADMIN",
     "PROGRAMME_COORDINATOR",
-  ].includes(session.user.role);
+  ].includes(user.role);
 
   return (
     <div className="container py-6 space-y-6">
@@ -77,7 +109,7 @@ export default async function OrganizationsPage({
           <h1 className="text-3xl font-bold">{t("title")}</h1>
           <p className="text-muted-foreground">{t("description")}</p>
         </div>
-        {isAdmin && (
+        {canCreate && (
           <Button asChild>
             <Link href={`/${locale}/organizations/new`}>
               <Plus className="h-4 w-4 mr-2" />

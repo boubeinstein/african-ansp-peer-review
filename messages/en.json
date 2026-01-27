@@ -3192,6 +3192,27 @@
         "upload": "Failed to upload document",
         "delete": "Failed to delete document"
       }
+    },
+    "workspace": {
+      "title": "Team Workspace",
+      "tabs": {
+        "discussions": "Discussions",
+        "tasks": "Tasks"
+      },
+      "discussions": {
+        "title": "Team Discussions",
+        "empty": {
+          "title": "No discussions yet",
+          "description": "Start a discussion to collaborate with your review team"
+        }
+      },
+      "tasks": {
+        "title": "Review Tasks",
+        "empty": {
+          "title": "No tasks yet",
+          "description": "Create tasks to coordinate work among team members"
+        }
+      }
     }
   },
   "finding": {

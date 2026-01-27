@@ -3192,6 +3192,27 @@
         "upload": "Échec du téléversement",
         "delete": "Échec de la suppression"
       }
+    },
+    "workspace": {
+      "title": "Espace de travail d'équipe",
+      "tabs": {
+        "discussions": "Discussions",
+        "tasks": "Tâches"
+      },
+      "discussions": {
+        "title": "Discussions d'équipe",
+        "empty": {
+          "title": "Pas encore de discussions",
+          "description": "Commencez une discussion pour collaborer avec votre équipe de revue"
+        }
+      },
+      "tasks": {
+        "title": "Tâches de revue",
+        "empty": {
+          "title": "Pas encore de tâches",
+          "description": "Créez des tâches pour coordonner le travail entre les membres de l'équipe"
+        }
+      }
     }
   },
   "finding": {

@@ -27,6 +27,7 @@ import { ReviewNextActions } from "./review-next-actions";
 import { ReviewTimeline } from "./review-timeline";
 import { FieldworkChecklistEnhanced } from "./fieldwork-checklist-enhanced";
 import { ReviewDocumentsEnhanced } from "./review-documents-enhanced";
+import { ReviewWorkspace } from "./review-workspace";
 
 // UI Components
 import { Button } from "@/components/ui/button";
@@ -649,6 +650,16 @@ export function ReviewDetailView({
             canManageTeams
           }
           canOverride={["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(userRole || "")}
+        />
+      )}
+
+      {/* Team Workspace - shown for team members on active reviews */}
+      {review.teamMembers.length > 0 &&
+        ["APPROVED", "PLANNING", "SCHEDULED", "IN_PROGRESS", "REPORT_DRAFTING"].includes(review.status) && (
+        <ReviewWorkspace
+          reviewId={reviewId}
+          locale={locale}
+          userId={userId || ""}
         />
       )}
 

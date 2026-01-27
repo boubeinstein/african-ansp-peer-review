@@ -3201,9 +3201,42 @@
       },
       "discussions": {
         "title": "Team Discussions",
+        "stats": {
+          "unresolved": "{count, plural, =0 {No open} =1 {1 open} other {# open}}",
+          "resolved": "{count, plural, =0 {None resolved} =1 {1 resolved} other {# resolved}}"
+        },
+        "filters": {
+          "showResolved": "Show resolved"
+        },
+        "actions": {
+          "newDiscussion": "New Discussion",
+          "reply": "Reply",
+          "resolve": "Mark as resolved",
+          "reopen": "Reopen",
+          "delete": "Delete",
+          "resolveSuccess": "Discussion marked as resolved",
+          "unresolveSuccess": "Discussion reopened",
+          "deleteSuccess": "Discussion deleted",
+          "deleteConfirm": "Are you sure you want to delete this discussion?"
+        },
+        "status": {
+          "open": "Open",
+          "resolved": "Resolved"
+        },
+        "edited": "edited",
+        "resolvedBy": "Resolved by {name}",
+        "replies": "{count, plural, =1 {1 reply} other {# replies}}",
+        "pagination": {
+          "page": "Page {page} of {totalPages}"
+        },
         "empty": {
           "title": "No discussions yet",
-          "description": "Start a discussion to collaborate with your review team"
+          "description": "Start a discussion to collaborate with your review team on findings, questions, and coordination.",
+          "action": "Start Discussion"
+        },
+        "dialog": {
+          "createTitle": "New Discussion",
+          "replyTitle": "Reply to Discussion"
         }
       },
       "tasks": {

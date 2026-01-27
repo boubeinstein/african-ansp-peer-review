@@ -3201,9 +3201,42 @@
       },
       "discussions": {
         "title": "Discussions d'équipe",
+        "stats": {
+          "unresolved": "{count, plural, =0 {Aucune ouverte} =1 {1 ouverte} other {# ouvertes}}",
+          "resolved": "{count, plural, =0 {Aucune résolue} =1 {1 résolue} other {# résolues}}"
+        },
+        "filters": {
+          "showResolved": "Afficher les résolues"
+        },
+        "actions": {
+          "newDiscussion": "Nouvelle discussion",
+          "reply": "Répondre",
+          "resolve": "Marquer comme résolue",
+          "reopen": "Rouvrir",
+          "delete": "Supprimer",
+          "resolveSuccess": "Discussion marquée comme résolue",
+          "unresolveSuccess": "Discussion rouverte",
+          "deleteSuccess": "Discussion supprimée",
+          "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette discussion ?"
+        },
+        "status": {
+          "open": "Ouverte",
+          "resolved": "Résolue"
+        },
+        "edited": "modifié",
+        "resolvedBy": "Résolue par {name}",
+        "replies": "{count, plural, =1 {1 réponse} other {# réponses}}",
+        "pagination": {
+          "page": "Page {page} sur {totalPages}"
+        },
         "empty": {
           "title": "Pas encore de discussions",
-          "description": "Commencez une discussion pour collaborer avec votre équipe de revue"
+          "description": "Démarrez une discussion pour collaborer avec votre équipe sur les constats, questions et la coordination.",
+          "action": "Démarrer une discussion"
+        },
+        "dialog": {
+          "createTitle": "Nouvelle discussion",
+          "replyTitle": "Répondre à la discussion"
         }
       },
       "tasks": {

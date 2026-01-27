@@ -5912,6 +5912,60 @@
         "title": "Meilleures pratiques connexes",
         "viewPractice": "Voir"
       }
+    },
+    "new": {
+      "meta": {
+        "title": "Soumettre une meilleure pratique",
+        "description": "Partagez une pratique éprouvée avec la communauté de la sécurité aérienne"
+      },
+      "title": "Soumettre une meilleure pratique",
+      "description": "Partagez une pratique de sécurité aérienne éprouvée de votre organisation",
+      "linkedToFinding": "Cette meilleure pratique sera liée à la constatation {reference}",
+      "createSuccess": "Meilleure pratique créée avec succès en tant que brouillon",
+      "sections": {
+        "basicInfo": "Informations de base",
+        "basicInfoDesc": "Fournissez le titre, le résumé et la classification de votre meilleure pratique",
+        "content": "Contenu détaillé",
+        "contentDesc": "Décrivez la pratique, comment la mettre en œuvre et ses avantages"
+      },
+      "fields": {
+        "titleEn": "Titre (Anglais)",
+        "titleFr": "Titre (Français)",
+        "summaryEn": "Résumé (Anglais)",
+        "summaryFr": "Résumé (Français)",
+        "summaryHelp": "Un bref aperçu qui apparaîtra dans les résultats de recherche (max 500 caractères)",
+        "category": "Catégorie",
+        "auditArea": "Domaine d'audit (Facultatif)",
+        "noAuditArea": "Non spécifique à un domaine d'audit",
+        "tags": "Étiquettes",
+        "descriptionEn": "Description (Anglais)",
+        "descriptionFr": "Description (Français)",
+        "implementationEn": "Guide de mise en œuvre (Anglais)",
+        "implementationFr": "Guide de mise en œuvre (Français)",
+        "implementationHelp": "Instructions étape par étape pour mettre en œuvre cette pratique",
+        "benefitsEn": "Avantages (Anglais)",
+        "benefitsFr": "Avantages (Français)"
+      },
+      "placeholders": {
+        "titleEn": "Entrez un titre clair et descriptif",
+        "titleFr": "Entrez un titre clair et descriptif",
+        "summaryEn": "Décrivez brièvement ce que cette pratique accomplit...",
+        "summaryFr": "Décrivez brièvement ce que cette pratique accomplit...",
+        "category": "Sélectionnez une catégorie",
+        "auditArea": "Sélectionnez un domaine d'audit",
+        "tags": "Tapez une étiquette et appuyez sur Entrée",
+        "descriptionEn": "Fournissez une description détaillée de la pratique...",
+        "descriptionFr": "Fournissez une description détaillée de la pratique...",
+        "implementationEn": "Décrivez comment mettre en œuvre cette pratique étape par étape...",
+        "implementationFr": "Décrivez comment mettre en œuvre cette pratique étape par étape...",
+        "benefitsEn": "Énumérez les principaux avantages et résultats...",
+        "benefitsFr": "Énumérez les principaux avantages et résultats..."
+      },
+      "actions": {
+        "cancel": "Annuler",
+        "saveDraft": "Enregistrer comme brouillon",
+        "addTag": "Ajouter"
+      }
     }
   }
 }

@@ -5912,6 +5912,60 @@
         "title": "Related Best Practices",
         "viewPractice": "View"
       }
+    },
+    "new": {
+      "meta": {
+        "title": "Submit Best Practice",
+        "description": "Share a proven practice with the aviation safety community"
+      },
+      "title": "Submit Best Practice",
+      "description": "Share a proven aviation safety practice from your organization",
+      "linkedToFinding": "This best practice will be linked to finding {reference}",
+      "createSuccess": "Best practice created successfully as draft",
+      "sections": {
+        "basicInfo": "Basic Information",
+        "basicInfoDesc": "Provide the title, summary, and classification for your best practice",
+        "content": "Detailed Content",
+        "contentDesc": "Describe the practice, how to implement it, and its benefits"
+      },
+      "fields": {
+        "titleEn": "Title (English)",
+        "titleFr": "Title (French)",
+        "summaryEn": "Summary (English)",
+        "summaryFr": "Summary (French)",
+        "summaryHelp": "A brief overview that will appear in search results (max 500 characters)",
+        "category": "Category",
+        "auditArea": "Audit Area (Optional)",
+        "noAuditArea": "Not specific to an audit area",
+        "tags": "Tags",
+        "descriptionEn": "Description (English)",
+        "descriptionFr": "Description (French)",
+        "implementationEn": "Implementation Guide (English)",
+        "implementationFr": "Implementation Guide (French)",
+        "implementationHelp": "Step-by-step instructions for implementing this practice",
+        "benefitsEn": "Benefits (English)",
+        "benefitsFr": "Benefits (French)"
+      },
+      "placeholders": {
+        "titleEn": "Enter a clear, descriptive title",
+        "titleFr": "Entrez un titre clair et descriptif",
+        "summaryEn": "Briefly describe what this practice achieves...",
+        "summaryFr": "Décrivez brièvement ce que cette pratique accomplit...",
+        "category": "Select a category",
+        "auditArea": "Select an audit area",
+        "tags": "Type a tag and press Enter",
+        "descriptionEn": "Provide a detailed description of the practice...",
+        "descriptionFr": "Fournissez une description détaillée de la pratique...",
+        "implementationEn": "Describe how to implement this practice step by step...",
+        "implementationFr": "Décrivez comment mettre en œuvre cette pratique étape par étape...",
+        "benefitsEn": "List the key benefits and outcomes...",
+        "benefitsFr": "Énumérez les principaux avantages et résultats..."
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "saveDraft": "Save as Draft",
+        "addTag": "Add"
+      }
     }
   }
 }

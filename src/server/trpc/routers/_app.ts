@@ -28,6 +28,7 @@ import { activityRouter } from "./activity";
 import { publicRouter } from "./public";
 import { checklistRouter } from "./checklist";
 import { bestPracticeRouter } from "./best-practice";
+import { reviewDiscussionRouter } from "./review-discussion";
 
 /**
  * Main app router combining all sub-routers
@@ -62,6 +63,7 @@ export const appRouter = router({
   public: publicRouter,
   checklist: checklistRouter,
   bestPractice: bestPracticeRouter,
+  reviewDiscussion: reviewDiscussionRouter,
 });
 
 /**

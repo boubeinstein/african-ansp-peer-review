@@ -27,6 +27,7 @@ import { teamStatisticsRouter } from "./team-statistics";
 import { activityRouter } from "./activity";
 import { publicRouter } from "./public";
 import { checklistRouter } from "./checklist";
+import { bestPracticeRouter } from "./best-practice";
 
 /**
  * Main app router combining all sub-routers
@@ -60,6 +61,7 @@ export const appRouter = router({
   activity: activityRouter,
   public: publicRouter,
   checklist: checklistRouter,
+  bestPractice: bestPracticeRouter,
 });
 
 /**

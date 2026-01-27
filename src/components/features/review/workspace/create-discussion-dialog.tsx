@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -63,7 +63,7 @@ export function CreateDiscussionDialog({
   open,
   onOpenChange,
   reviewId,
-  locale,
+  locale: _locale,
   onSuccess,
   parentId,
 }: CreateDiscussionDialogProps) {
@@ -104,14 +104,15 @@ export function CreateDiscussionDialog({
     },
   });
 
-  // Reset form when dialog opens/closes
-  useEffect(() => {
-    if (!open) {
+  // Handle dialog open/close with reset
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen) {
       form.reset();
       setMentions([]);
       setMentionFilter("");
     }
-  }, [open, form]);
+    onOpenChange(newOpen);
+  };
 
   const onSubmit = (values: FormValues) => {
     createMutation.mutate({
@@ -172,7 +173,7 @@ export function CreateDiscussionDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>

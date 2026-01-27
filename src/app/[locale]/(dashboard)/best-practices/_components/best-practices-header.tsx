@@ -7,13 +7,11 @@ import { Lightbulb, Plus } from "lucide-react";
 
 interface BestPracticesHeaderProps {
   locale: string;
-  userRole?: string;
   userOrgId?: string | null;
 }
 
 export function BestPracticesHeader({
   locale,
-  userRole,
   userOrgId,
 }: BestPracticesHeaderProps) {
   const t = useTranslations("bestPractices");

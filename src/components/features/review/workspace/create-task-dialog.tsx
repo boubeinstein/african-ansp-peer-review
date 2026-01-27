@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -104,7 +104,7 @@ export function CreateTaskDialog({
   open,
   onOpenChange,
   reviewId,
-  locale,
+  locale: _locale,
   teamMembers,
   onSuccess,
   editTask,
@@ -114,6 +114,7 @@ export function CreateTaskDialog({
   const isEditMode = !!editTask;
   const [checklist, setChecklist] = useState<ChecklistItem[]>([]);
   const [newItemText, setNewItemText] = useState("");
+  const lastEditTaskIdRef = useRef<string | null>(null);
 
   // Fetch team members if not provided (for edit mode)
   const { data: fetchedTeamMembers } = trpc.reviewDiscussion.getTeamMembers.useQuery(
@@ -165,24 +166,16 @@ export function CreateTaskDialog({
     });
     setChecklist([]);
     setNewItemText("");
+    lastEditTaskIdRef.current = null;
   };
 
-  // Initialize form with edit data
-  useEffect(() => {
-    if (open && editTask) {
-      const assigneeId = editTask.assignedTo?.id || editTask.assignedToId || "";
-      form.reset({
-        title: editTask.title,
-        description: editTask.description || "",
-        assignedToId: assigneeId,
-        priority: editTask.priority as TaskPriority,
-        dueDate: editTask.dueDate ? new Date(editTask.dueDate) : null,
-      });
-      setChecklist((editTask.checklist as ChecklistItem[]) || []);
-    } else if (!open) {
+  // Handle dialog close - reset form
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen) {
       resetForm();
     }
-  }, [open, editTask, form]);
+    onOpenChange(newOpen);
+  };
 
   const onSubmit = (values: FormValues) => {
     const data = {
@@ -240,9 +233,28 @@ export function CreateTaskDialog({
 
   const isPending = createMutation.isPending || updateMutation.isPending;
 
+  // Initialize form when dialog content receives focus (opens)
+  const handleOpenAutoFocus = () => {
+    if (editTask && lastEditTaskIdRef.current !== editTask.id) {
+      lastEditTaskIdRef.current = editTask.id;
+      const assigneeId = editTask.assignedTo?.id || editTask.assignedToId || "";
+      form.reset({
+        title: editTask.title,
+        description: editTask.description || "",
+        assignedToId: assigneeId,
+        priority: editTask.priority as TaskPriority,
+        dueDate: editTask.dueDate ? new Date(editTask.dueDate) : null,
+      });
+      setChecklist((editTask.checklist as ChecklistItem[]) || []);
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent
+        className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto"
+        onOpenAutoFocus={handleOpenAutoFocus}
+      >
         <DialogHeader>
           <DialogTitle>
             {isEditMode ? t("editTitle") : t("createTitle")}

@@ -66,7 +66,7 @@ export function BestPracticesFilters({
   const t = useTranslations("bestPractices.filters");
   const router = useRouter();
   const pathname = usePathname();
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const [searchValue, setSearchValue] = useState(search);
 
   const updateFilters = useCallback(

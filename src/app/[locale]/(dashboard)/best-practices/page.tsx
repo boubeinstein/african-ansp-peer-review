@@ -41,7 +41,6 @@ export default async function BestPracticesPage({
     <div className="container mx-auto py-6 space-y-6">
       <BestPracticesHeader
         locale={locale}
-        userRole={session?.user?.role}
         userOrgId={session?.user?.organizationId}
       />
 
@@ -49,7 +48,6 @@ export default async function BestPracticesPage({
         <BestPracticesContent
           locale={locale}
           searchParams={searchParamsResolved}
-          userId={session?.user?.id}
           userOrgId={session?.user?.organizationId}
         />
       </Suspense>

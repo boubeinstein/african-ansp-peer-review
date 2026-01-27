@@ -1,6 +1,5 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import { trpc } from "@/lib/trpc/client";
 import { BestPracticesStats } from "./best-practices-stats";
 import { BestPracticesFilters } from "./best-practices-filters";
@@ -16,17 +15,14 @@ interface BestPracticesContentProps {
     auditArea?: string;
     sortBy?: string;
   };
-  userId?: string;
   userOrgId?: string | null;
 }
 
 export function BestPracticesContent({
   locale,
   searchParams,
-  userId,
   userOrgId,
 }: BestPracticesContentProps) {
-  const t = useTranslations("bestPractices");
 
   const page = parseInt(searchParams.page || "1", 10);
   const search = searchParams.search || "";

@@ -5857,14 +5857,19 @@
     "detail": {
       "backToLibrary": "Retour à la bibliothèque",
       "notFound": "Meilleure pratique non trouvée",
-      "views": "vues",
-      "adoptions": "adoptions",
+      "header": {
+        "publishedOn": "Publié le {date}",
+        "views": "{count, plural, =0 {Aucune vue} =1 {1 vue} other {# vues}}",
+        "adoptions": "{count, plural, =0 {Aucune adoption} =1 {1 adoption} other {# adoptions}}"
+      },
       "sections": {
         "description": "Description",
         "implementation": "Guide de mise en œuvre",
-        "benefits": "Avantages et résultats",
-        "sourceFinding": "Constatation associée",
-        "tags": "Étiquettes"
+        "benefits": "Avantages",
+        "sourceFinding": "Constatation source",
+        "sourceDescription": "Cette meilleure pratique a été identifiée lors d'une revue par les pairs et publiée pour être partagée avec d'autres ANSP.",
+        "tags": "Étiquettes",
+        "attachments": "Pièces jointes"
       },
       "adoption": {
         "title": "Adoption",

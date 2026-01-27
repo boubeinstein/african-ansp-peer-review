@@ -5857,14 +5857,19 @@
     "detail": {
       "backToLibrary": "Back to Library",
       "notFound": "Best practice not found",
-      "views": "views",
-      "adoptions": "adoptions",
+      "header": {
+        "publishedOn": "Published {date}",
+        "views": "{count, plural, =0 {No views} =1 {1 view} other {# views}}",
+        "adoptions": "{count, plural, =0 {No adoptions} =1 {1 adoption} other {# adoptions}}"
+      },
       "sections": {
         "description": "Description",
         "implementation": "Implementation Guide",
-        "benefits": "Benefits & Outcomes",
-        "sourceFinding": "Related Finding",
-        "tags": "Tags"
+        "benefits": "Benefits",
+        "sourceFinding": "Source Finding",
+        "sourceDescription": "This best practice was identified during a peer review and published to share with other ANSPs.",
+        "tags": "Tags",
+        "attachments": "Attachments"
       },
       "adoption": {
         "title": "Adoption",

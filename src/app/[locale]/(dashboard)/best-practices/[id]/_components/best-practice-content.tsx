@@ -1,18 +1,27 @@
 "use client";
 
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   FileText,
   Lightbulb,
-  CheckCircle,
-  Link as LinkIcon,
+  CheckCircle2,
+  Target,
+  Paperclip,
+  ExternalLink,
   Tag,
 } from "lucide-react";
 
-interface BestPractice {
+interface Finding {
   id: string;
+  referenceNumber: string;
+  titleEn: string;
+  titleFr: string;
+}
+
+interface Practice {
   descriptionEn: string;
   descriptionFr: string;
   implementationEn: string;
@@ -21,29 +30,19 @@ interface BestPractice {
   benefitsFr: string;
   tags: string[];
   attachments: string[];
-  finding: {
-    id: string;
-    referenceNumber: string;
-    titleEn: string;
-    titleFr: string;
-  } | null;
+  finding?: Finding | null;
 }
 
 interface BestPracticeContentProps {
-  practice: BestPractice;
+  practice: Practice;
   locale: string;
 }
 
-export function BestPracticeContent({
-  practice,
-  locale,
-}: BestPracticeContentProps) {
-  const t = useTranslations("bestPractices.detail");
+export function BestPracticeContent({ practice, locale }: BestPracticeContentProps) {
+  const t = useTranslations("bestPractices.detail.sections");
 
-  const description =
-    locale === "fr" ? practice.descriptionFr : practice.descriptionEn;
-  const implementation =
-    locale === "fr" ? practice.implementationFr : practice.implementationEn;
+  const description = locale === "fr" ? practice.descriptionFr : practice.descriptionEn;
+  const implementation = locale === "fr" ? practice.implementationFr : practice.implementationEn;
   const benefits = locale === "fr" ? practice.benefitsFr : practice.benefitsEn;
   const findingTitle = practice.finding
     ? locale === "fr"
@@ -53,47 +52,47 @@ export function BestPracticeContent({
 
   return (
     <div className="space-y-6">
-      {/* Description */}
+      {/* Description Section */}
       <Card>
-        <CardHeader>
+        <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-lg">
             <FileText className="h-5 w-5 text-primary" />
-            {t("sections.description")}
+            {t("description")}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="prose dark:prose-invert max-w-none">
-            <p className="whitespace-pre-wrap">{description}</p>
+          <div className="prose prose-sm dark:prose-invert max-w-none">
+            {formatContentToParagraphs(description)}
           </div>
         </CardContent>
       </Card>
 
-      {/* Implementation */}
+      {/* Implementation Guide Section */}
       <Card>
-        <CardHeader>
+        <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Lightbulb className="h-5 w-5 text-primary" />
-            {t("sections.implementation")}
+            <Target className="h-5 w-5 text-primary" />
+            {t("implementation")}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="prose dark:prose-invert max-w-none">
-            <p className="whitespace-pre-wrap">{implementation}</p>
+          <div className="prose prose-sm dark:prose-invert max-w-none">
+            {formatContentToParagraphs(implementation)}
           </div>
         </CardContent>
       </Card>
 
-      {/* Benefits */}
+      {/* Benefits Section */}
       <Card>
-        <CardHeader>
+        <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <CheckCircle className="h-5 w-5 text-primary" />
-            {t("sections.benefits")}
+            <CheckCircle2 className="h-5 w-5 text-primary" />
+            {t("benefits")}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="prose dark:prose-invert max-w-none">
-            <p className="whitespace-pre-wrap">{benefits}</p>
+          <div className="prose prose-sm dark:prose-invert max-w-none">
+            {formatContentToParagraphs(benefits)}
           </div>
         </CardContent>
       </Card>
@@ -101,28 +100,37 @@ export function BestPracticeContent({
       {/* Source Finding (if linked) */}
       {practice.finding && (
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">
-              <LinkIcon className="h-5 w-5 text-primary" />
-              {t("sections.sourceFinding")}
+              <Lightbulb className="h-5 w-5 text-primary" />
+              {t("sourceFinding")}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-2">
-              <Badge variant="outline">{practice.finding.referenceNumber}</Badge>
-              <span className="text-sm">{findingTitle}</span>
-            </div>
+            <Link
+              href={`/${locale}/findings/${practice.finding.id}`}
+              className="inline-flex items-center gap-2 text-primary hover:underline"
+            >
+              <Badge variant="outline" className="font-mono">
+                {practice.finding.referenceNumber}
+              </Badge>
+              <span>{findingTitle}</span>
+              <ExternalLink className="h-4 w-4" />
+            </Link>
+            <p className="text-sm text-muted-foreground mt-2">
+              {t("sourceDescription")}
+            </p>
           </CardContent>
         </Card>
       )}
 
-      {/* Tags */}
+      {/* Tags Section */}
       {practice.tags.length > 0 && (
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Tag className="h-5 w-5 text-primary" />
-              {t("sections.tags")}
+              {t("tags")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -136,6 +144,81 @@ export function BestPracticeContent({
           </CardContent>
         </Card>
       )}
+
+      {/* Attachments Section */}
+      {practice.attachments.length > 0 && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Paperclip className="h-5 w-5 text-primary" />
+              {t("attachments")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2">
+              {practice.attachments.map((attachment, index) => (
+                <li key={index}>
+                  <a
+                    href={attachment}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-primary hover:underline text-sm"
+                  >
+                    <Paperclip className="h-4 w-4" />
+                    <span>{extractFileName(attachment)}</span>
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
+}
+
+/**
+ * Convert plain text with newlines to React paragraphs
+ */
+function formatContentToParagraphs(text: string): React.ReactNode {
+  if (!text) return null;
+
+  const paragraphs = text.split(/\n\n+/);
+
+  return paragraphs.map((paragraph, index) => {
+    // Handle single line breaks within paragraphs
+    const lines = paragraph.split(/\n/);
+
+    if (lines.length === 1) {
+      return <p key={index}>{paragraph}</p>;
+    }
+
+    return (
+      <p key={index}>
+        {lines.map((line, lineIndex) => (
+          <span key={lineIndex}>
+            {line}
+            {lineIndex < lines.length - 1 && <br />}
+          </span>
+        ))}
+      </p>
+    );
+  });
+}
+
+/**
+ * Extract filename from URL or path
+ */
+function extractFileName(url: string): string {
+  try {
+    const urlObj = new URL(url);
+    const pathname = urlObj.pathname;
+    const filename = pathname.split("/").pop();
+    return filename || url;
+  } catch {
+    // If not a valid URL, try to extract from path
+    const parts = url.split("/");
+    return parts.pop() || url;
+  }
 }

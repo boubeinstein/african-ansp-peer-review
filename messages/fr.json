@@ -3303,6 +3303,18 @@
         "form": {
           "createTitle": "Créer une nouvelle tâche",
           "editTitle": "Modifier la tâche"
+        },
+        "card": {
+          "changeStatus": "Changer le statut",
+          "edit": "Modifier la tâche",
+          "delete": "Supprimer",
+          "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette tâche ?",
+          "statusUpdated": "Statut de la tâche mis à jour",
+          "deleted": "Tâche supprimée",
+          "assignedTo": "Assignée à {name}",
+          "completedBy": "Terminée par {name} le {date}",
+          "dueToday": "Échéance aujourd'hui",
+          "dueTomorrow": "Échéance demain"
         }
       }
     }

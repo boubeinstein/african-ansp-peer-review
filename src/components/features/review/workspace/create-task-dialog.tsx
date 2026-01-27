@@ -15,6 +15,18 @@ interface TeamMember {
   email: string;
 }
 
+interface EditTask {
+  id: string;
+  title: string;
+  description: string | null;
+  status: string;
+  priority: string;
+  dueDate: string | Date | null;
+  checklist: unknown;
+  assignedToId?: string | null;
+  assignedTo?: { id: string } | null;
+}
+
 interface CreateTaskDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -22,16 +34,7 @@ interface CreateTaskDialogProps {
   locale: string;
   teamMembers: TeamMember[];
   onSuccess: () => void;
-  editTask?: {
-    id: string;
-    title: string;
-    description: string | null;
-    status: string;
-    priority: string;
-    dueDate: string | Date | null;
-    assignedToId: string | null;
-    checklist: unknown;
-  };
+  editTask?: EditTask;
 }
 
 export function CreateTaskDialog({

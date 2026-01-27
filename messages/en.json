@@ -3303,6 +3303,18 @@
         "form": {
           "createTitle": "Create New Task",
           "editTitle": "Edit Task"
+        },
+        "card": {
+          "changeStatus": "Change Status",
+          "edit": "Edit Task",
+          "delete": "Delete",
+          "deleteConfirm": "Are you sure you want to delete this task?",
+          "statusUpdated": "Task status updated",
+          "deleted": "Task deleted",
+          "assignedTo": "Assigned to {name}",
+          "completedBy": "Completed by {name} on {date}",
+          "dueToday": "Due today",
+          "dueTomorrow": "Due tomorrow"
         }
       }
     }

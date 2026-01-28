@@ -13,7 +13,9 @@ import {
   BestPracticeStatus,
   Prisma,
   PrismaClient,
+  UserRole,
 } from "@prisma/client";
+import { canPerformAnspActions } from "@/lib/permissions";
 
 // =============================================================================
 // INPUT SCHEMAS
@@ -361,13 +363,14 @@ export const bestPracticeRouter = router({
     .input(createBestPracticeSchema)
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx.session;
+      const userRole = user.role as UserRole;
+      const userOrgId = user.organizationId;
 
-      // User must belong to an organization
-      if (!user.organizationId) {
+      // Business rule: Must be ANSP role with organization
+      if (!canPerformAnspActions(userRole, userOrgId)) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message:
-            "You must belong to an organization to submit a best practice",
+          message: "Only ANSP organization members can submit best practices",
         });
       }
 
@@ -403,7 +406,7 @@ export const bestPracticeRouter = router({
       const practice = await ctx.db.bestPractice.create({
         data: {
           referenceNumber,
-          organizationId: user.organizationId,
+          organizationId: userOrgId!,
           submittedById: user.id,
           titleEn: input.titleEn,
           titleFr: input.titleFr,
@@ -748,39 +751,36 @@ export const bestPracticeRouter = router({
     .input(adoptBestPracticeSchema)
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx.session;
+      const userRole = user.role as UserRole;
+      const userOrgId = user.organizationId;
 
-      if (!user.organizationId) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message:
-            "You must belong to an organization to adopt a best practice",
-        });
-      }
-
-      // Verify best practice exists and is published
-      const practice = await ctx.db.bestPractice.findUnique({
+      // Get the best practice
+      const bestPractice = await ctx.db.bestPractice.findUnique({
         where: { id: input.bestPracticeId },
+        select: { organizationId: true, status: true },
       });
 
-      if (!practice) {
+      if (!bestPractice) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Best practice not found" });
+      }
+
+      if (bestPractice.status !== "PUBLISHED") {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Can only adopt published best practices" });
+      }
+
+      // Business rule: Must be ANSP role with organization
+      if (!canPerformAnspActions(userRole, userOrgId)) {
         throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Best practice not found",
+          code: "FORBIDDEN",
+          message: "Only ANSP organization members can adopt best practices",
         });
       }
 
-      if (practice.status !== BestPracticeStatus.PUBLISHED) {
+      // Business rule: Cannot adopt own organization's practice
+      if (userOrgId === bestPractice.organizationId) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Only published best practices can be adopted",
-        });
-      }
-
-      // Can't adopt your own organization's practice
-      if (practice.organizationId === user.organizationId) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "You cannot adopt your own organization's best practice",
+          message: "Cannot adopt your own organization's best practice",
         });
       }
 
@@ -789,7 +789,7 @@ export const bestPracticeRouter = router({
         where: {
           bestPracticeId_organizationId: {
             bestPracticeId: input.bestPracticeId,
-            organizationId: user.organizationId,
+            organizationId: userOrgId!,
           },
         },
       });
@@ -804,7 +804,7 @@ export const bestPracticeRouter = router({
       const adoption = await ctx.db.bestPracticeAdoption.create({
         data: {
           bestPracticeId: input.bestPracticeId,
-          organizationId: user.organizationId,
+          organizationId: userOrgId!,
           adoptedById: user.id,
           implementationNotes: input.implementationNotes,
           implementationStatus: "PLANNED",

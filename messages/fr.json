@@ -788,7 +788,7 @@
       "completed": "Terminé",
       "archived": "Archivé",
       "DRAFT": "Brouillon",
-      "IN_PROGRESS": "En cours",
+      "in_progress": "En cours",
       "SUBMITTED": "Soumis",
       "UNDER_REVIEW": "En évaluation",
       "COMPLETED": "Terminé",
@@ -2971,6 +2971,7 @@
       "PLANNING": "Planification",
       "SCHEDULED": "Programmée",
       "IN_PROGRESS": "En cours",
+      "in_progress": "En cours",
       "REPORT_DRAFTING": "Rédaction du rapport",
       "REPORT_REVIEW": "Revue du rapport",
       "COMPLETED": "Terminée",
@@ -3284,6 +3285,7 @@
         "title": "Tâches de revue",
         "stats": {
           "pending": "en attente",
+          "in_progress": "en cours",
           "inProgress": "en cours",
           "completed": "terminées",
           "overdue": "en retard",
@@ -3300,6 +3302,7 @@
         },
         "status": {
           "pending": "En attente",
+          "in_progress": "En cours",
           "inProgress": "En cours",
           "completed": "Terminée",
           "cancelled": "Annulée"
@@ -3834,7 +3837,7 @@
       "noMilestones": "Aucun jalon défini",
       "status": {
         "PENDING": "En attente",
-        "IN_PROGRESS": "En cours",
+        "in_progress": "En cours",
         "COMPLETED": "Terminé",
         "OVERDUE": "En retard",
         "CANCELLED": "Annulé"
@@ -4538,7 +4541,7 @@
         "APPROVED": "Approuvée",
         "PLANNING": "Planification",
         "SCHEDULED": "Programmée",
-        "IN_PROGRESS": "En cours",
+        "in_progress": "En cours",
         "REPORT_DRAFTING": "Rédaction du rapport",
         "REPORT_REVIEW": "Revue du rapport",
         "COMPLETED": "Terminée",

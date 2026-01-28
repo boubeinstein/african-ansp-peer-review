@@ -788,7 +788,7 @@
       "completed": "Completed",
       "archived": "Archived",
       "DRAFT": "Draft",
-      "IN_PROGRESS": "In Progress",
+      "in_progress": "In Progress",
       "SUBMITTED": "Submitted",
       "UNDER_REVIEW": "Under Review",
       "COMPLETED": "Completed",
@@ -796,7 +796,7 @@
     },
     "statusDescription": {
       "DRAFT": "Assessment has been created but not started",
-      "IN_PROGRESS": "Assessment is actively being completed",
+      "in_progress": "Assessment is actively being completed",
       "SUBMITTED": "Assessment submitted for review",
       "UNDER_REVIEW": "Assessment is being reviewed",
       "COMPLETED": "Assessment has been finalized",
@@ -2971,6 +2971,7 @@
       "PLANNING": "Planning",
       "SCHEDULED": "Scheduled",
       "IN_PROGRESS": "In Progress",
+      "in_progress": "In Progress",
       "REPORT_DRAFTING": "Report Drafting",
       "REPORT_REVIEW": "Report Review",
       "COMPLETED": "Completed",
@@ -3284,6 +3285,7 @@
         "title": "Review Tasks",
         "stats": {
           "pending": "pending",
+          "in_progress": "in progress",
           "inProgress": "in progress",
           "completed": "completed",
           "overdue": "overdue",
@@ -3300,6 +3302,7 @@
         },
         "status": {
           "pending": "Pending",
+          "in_progress": "In Progress",
           "inProgress": "In Progress",
           "completed": "Completed",
           "cancelled": "Cancelled"
@@ -3385,7 +3388,7 @@
       "CAP_REQUIRED": "CAP Required",
       "CAP_SUBMITTED": "CAP Submitted",
       "CAP_ACCEPTED": "CAP Accepted",
-      "IN_PROGRESS": "In Progress",
+      "in_progress": "In Progress",
       "VERIFICATION": "Under Verification",
       "CLOSED": "Closed",
       "DEFERRED": "Deferred"
@@ -3834,7 +3837,7 @@
       "noMilestones": "No milestones defined",
       "status": {
         "PENDING": "Pending",
-        "IN_PROGRESS": "In Progress",
+        "in_progress": "In Progress",
         "COMPLETED": "Completed",
         "OVERDUE": "Overdue",
         "CANCELLED": "Cancelled"
@@ -4538,7 +4541,7 @@
         "APPROVED": "Approved",
         "PLANNING": "Planning",
         "SCHEDULED": "Scheduled",
-        "IN_PROGRESS": "In Progress",
+        "in_progress": "In Progress",
         "REPORT_DRAFTING": "Report Drafting",
         "REPORT_REVIEW": "Report Review",
         "COMPLETED": "Completed",
@@ -5144,7 +5147,7 @@
       "statuses": {
         "DRAFT": "Draft",
         "OPEN": "Open",
-        "IN_PROGRESS": "In Progress",
+        "in_progress": "In Progress",
         "RESOLVED": "Resolved",
         "VERIFIED": "Verified",
         "CLOSED": "Closed"

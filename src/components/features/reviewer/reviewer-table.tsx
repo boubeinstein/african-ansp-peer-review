@@ -31,8 +31,9 @@ import {
   ArrowDown,
   ArrowUp,
   ArrowUpDown,
-  Edit2,
   Eye,
+  Lock,
+  Pencil,
   Star,
 } from "lucide-react";
 import {
@@ -349,7 +350,7 @@ export function ReviewerTable({
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    {onEdit && (!canEdit || canEdit(reviewer)) && (
+                    {onEdit && (!canEdit || canEdit(reviewer)) ? (
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -359,7 +360,7 @@ export function ReviewerTable({
                               className="h-8 w-8"
                               onClick={() => onEdit(reviewer.id)}
                             >
-                              <Edit2 className="h-4 w-4" />
+                              <Pencil className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
@@ -367,7 +368,27 @@ export function ReviewerTable({
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
-                    )}
+                    ) : onEdit ? (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                                disabled
+                              >
+                                <Lock className="h-4 w-4" />
+                              </Button>
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{t("permissions.cannotEditOtherOrg")}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    ) : null}
                   </div>
                 </TableCell>
               </TableRow>

@@ -27,9 +27,10 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Building2,
-  Edit2,
   Eye,
   Globe,
+  Lock,
+  Pencil,
   Star,
   User,
 } from "lucide-react";
@@ -53,6 +54,7 @@ interface ReviewerCardProps {
   reviewer: ReviewerListItem;
   onView: (id: string) => void;
   onEdit?: (id: string) => void;
+  canEdit?: boolean; // RBAC permission from API
   showCOICheck?: string; // organizationId to check against
   hasCOI?: boolean;
   // Selection props
@@ -69,6 +71,7 @@ export function ReviewerCard({
   reviewer,
   onView,
   onEdit,
+  canEdit = true,
   showCOICheck,
   hasCOI,
   isSelected,
@@ -264,15 +267,30 @@ export function ReviewerCard({
           <Eye className="h-4 w-4 mr-1" />
           {t("actions.view")}
         </Button>
-        {onEdit && (
+        {onEdit && canEdit ? (
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onEdit(reviewer.id)}
           >
-            <Edit2 className="h-4 w-4" />
+            <Pencil className="h-4 w-4" />
           </Button>
-        )}
+        ) : onEdit && !canEdit ? (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span>
+                  <Button variant="ghost" size="sm" disabled>
+                    <Lock className="h-4 w-4" />
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t("permissions.cannotEditOtherOrg")}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : null}
       </CardFooter>
     </Card>
   );

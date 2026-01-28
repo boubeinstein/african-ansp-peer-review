@@ -2857,6 +2857,9 @@
       "allTeams": "All Teams",
       "default": "Default"
     },
+    "permissions": {
+      "cannotEditOtherOrg": "You can only edit reviewers from your organization"
+    },
     "export": {
       "title": "Export Reviewers",
       "descriptionSelected": "Export {count} selected reviewers to a file",

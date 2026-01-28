@@ -239,6 +239,12 @@ export function ReviewerDirectory({
     return items.map(transformToListItem);
   }, [items]);
 
+  // Map of canEdit by reviewer ID from API response
+  const canEditMap = useMemo(() => {
+    if (!items) return new Map<string, boolean>();
+    return new Map(items.map((item) => [item.id, item.canEdit ?? false]));
+  }, [items]);
+
   const totalPages = data?.totalPages ?? 1;
   const totalCount = data?.total ?? 0;
 
@@ -576,7 +582,8 @@ export function ReviewerDirectory({
               key={reviewer.id}
               reviewer={reviewer}
               onView={handleViewProfile}
-              onEdit={getEditHandler(reviewer)}
+              onEdit={handleEditProfile}
+              canEdit={canEditMap.get(reviewer.id) ?? canEdit(reviewer)}
               isSelected={isSelected(reviewer.id)}
               onSelect={(checked) => handleSelectOne(reviewer.id, checked)}
             />

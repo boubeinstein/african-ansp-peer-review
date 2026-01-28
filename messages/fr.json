@@ -2857,6 +2857,9 @@
       "allTeams": "Toutes les équipes",
       "default": "Par défaut"
     },
+    "permissions": {
+      "cannotEditOtherOrg": "Vous ne pouvez modifier que les évaluateurs de votre organisation"
+    },
     "export": {
       "title": "Exporter les évaluateurs",
       "descriptionSelected": "Exporter {count} évaluateurs sélectionnés vers un fichier",

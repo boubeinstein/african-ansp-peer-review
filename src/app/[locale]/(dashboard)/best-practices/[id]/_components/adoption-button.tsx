@@ -15,13 +15,16 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { CheckCircle2, Loader2, Plus, Trash2 } from "lucide-react";
+import { CheckCircle2, Info, Loader2, Plus, Trash2 } from "lucide-react";
+import { isOversightRole } from "@/lib/permissions";
+import { UserRole } from "@prisma/client";
 
 interface AdoptionButtonProps {
   practiceId: string;
   canAdopt: boolean;
   hasAdopted: boolean;
   isOwnOrg: boolean;
+  userRole?: string;
 }
 
 export function AdoptionButton({
@@ -29,6 +32,7 @@ export function AdoptionButton({
   canAdopt,
   hasAdopted,
   isOwnOrg,
+  userRole,
 }: AdoptionButtonProps) {
   const t = useTranslations("bestPractices.detail.adoption");
   const utils = trpc.useUtils();
@@ -74,6 +78,16 @@ export function AdoptionButton({
   const handleRemove = () => {
     removeMutation.mutate({ bestPracticeId: practiceId });
   };
+
+  // Oversight role - show informational message
+  if (userRole && isOversightRole(userRole as UserRole)) {
+    return (
+      <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-md">
+        <Info className="h-4 w-4 inline mr-2" />
+        {t("oversightRoleMessage")}
+      </div>
+    );
+  }
 
   // Own organization - show badge
   if (isOwnOrg) {

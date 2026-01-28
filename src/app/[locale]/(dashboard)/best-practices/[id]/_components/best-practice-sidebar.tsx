@@ -42,6 +42,7 @@ interface BestPracticeSidebarProps {
   canAdopt: boolean;
   hasAdopted: boolean;
   userOrgId?: string | null;
+  userRole?: string;
   isOwnOrg: boolean;
 }
 
@@ -51,6 +52,7 @@ export function BestPracticeSidebar({
   canAdopt,
   hasAdopted,
   userOrgId,
+  userRole,
   isOwnOrg,
 }: BestPracticeSidebarProps) {
   const t = useTranslations("bestPractices.detail.sidebar");
@@ -75,6 +77,7 @@ export function BestPracticeSidebar({
             canAdopt={canAdopt}
             hasAdopted={hasAdopted}
             isOwnOrg={isOwnOrg}
+            userRole={userRole}
           />
 
           {isOwnOrg && (

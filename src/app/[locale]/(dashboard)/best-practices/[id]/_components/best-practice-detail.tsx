@@ -17,12 +17,14 @@ interface BestPracticeDetailProps {
   id: string;
   locale: string;
   userOrgId?: string | null;
+  userRole?: string;
 }
 
 export function BestPracticeDetail({
   id,
   locale,
   userOrgId,
+  userRole,
 }: BestPracticeDetailProps) {
   const t = useTranslations("bestPractices.detail");
 
@@ -97,6 +99,7 @@ export function BestPracticeDetail({
             canAdopt={canAdopt}
             hasAdopted={hasAdopted}
             userOrgId={userOrgId}
+            userRole={userRole}
             isOwnOrg={isOwnOrg}
           />
         </div>

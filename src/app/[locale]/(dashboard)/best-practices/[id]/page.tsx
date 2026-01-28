@@ -73,6 +73,7 @@ export default async function BestPracticeDetailPage({ params }: PageProps) {
           id={id}
           locale={locale}
           userOrgId={session?.user?.organizationId}
+          userRole={session?.user?.role}
         />
       </Suspense>
     </div>

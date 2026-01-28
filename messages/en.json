@@ -2795,13 +2795,21 @@
     "filters": {
       "title": "Filter Reviewers",
       "description": "Narrow down the reviewer list",
+      "searchPlaceholder": "Search reviewers...",
+      "allTeams": "All Teams",
+      "myTeam": "My Team",
+      "default": "Default",
+      "allStatuses": "All Statuses",
+      "active": "Active",
+      "inactive": "Inactive",
       "expertise": "Expertise Areas",
       "languages": "Languages",
       "status": "Selection Status",
       "other": "Other Filters",
       "availableOnly": "Available Only",
       "leadQualifiedOnly": "Lead Qualified Only",
-      "apply": "Apply Filters"
+      "apply": "Apply Filters",
+      "viewingAllTeamsReadOnly": "Viewing all teams. You can only edit reviewers from your organization."
     },
     "results": {
       "showing": "Showing {count} of {total} reviewers"
@@ -2860,6 +2868,9 @@
     "permissions": {
       "cannotEditOtherOrg": "You can only edit reviewers from your organization",
       "viewOnly": "View Only"
+    },
+    "labels": {
+      "sameTeamDifferentOrg": "Same team, different organization"
     },
     "export": {
       "title": "Export Reviewers",

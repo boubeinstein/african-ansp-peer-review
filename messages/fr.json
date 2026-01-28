@@ -2795,13 +2795,21 @@
     "filters": {
       "title": "Filtrer les évaluateurs",
       "description": "Affiner la liste des évaluateurs",
+      "searchPlaceholder": "Rechercher des évaluateurs...",
+      "allTeams": "Toutes les équipes",
+      "myTeam": "Mon équipe",
+      "default": "Par défaut",
+      "allStatuses": "Tous les statuts",
+      "active": "Actif",
+      "inactive": "Inactif",
       "expertise": "Domaines d'expertise",
       "languages": "Langues",
       "status": "Statut de sélection",
       "other": "Autres filtres",
       "availableOnly": "Disponibles uniquement",
       "leadQualifiedOnly": "Qualifiés Lead uniquement",
-      "apply": "Appliquer les filtres"
+      "apply": "Appliquer les filtres",
+      "viewingAllTeamsReadOnly": "Affichage de toutes les équipes. Vous ne pouvez modifier que les évaluateurs de votre organisation."
     },
     "results": {
       "showing": "Affichage de {count} sur {total} évaluateurs"
@@ -2860,6 +2868,9 @@
     "permissions": {
       "cannotEditOtherOrg": "Vous ne pouvez modifier que les évaluateurs de votre organisation",
       "viewOnly": "Lecture seule"
+    },
+    "labels": {
+      "sameTeamDifferentOrg": "Même équipe, organisation différente"
     },
     "export": {
       "title": "Exporter les évaluateurs",

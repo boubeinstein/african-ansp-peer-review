@@ -129,20 +129,24 @@ function SummaryCard({ icon, label, value, color }: SummaryCardProps) {
 // SCORE BADGE
 // =============================================================================
 
-function ScoreBadge({ score }: { score: string }) {
-  const variants: Record<
-    string,
-    "default" | "secondary" | "destructive" | "outline"
-  > = {
-    "A+": "default",
-    A: "default",
-    "B+": "secondary",
-    B: "secondary",
-    C: "outline",
-    D: "destructive",
-  };
+const RATING_STYLES: Record<string, string> = {
+  "A+": "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800",
+  A: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800",
+  "B+": "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800",
+  B: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800",
+  C: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800",
+  D: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800",
+  E: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400 border-gray-200 dark:border-gray-800",
+};
 
-  return <Badge variant={variants[score] || "outline"}>{score}</Badge>;
+function ScoreBadge({ score }: { score: string }) {
+  const style = RATING_STYLES[score] || "bg-muted text-muted-foreground";
+
+  return (
+    <Badge variant="outline" className={`font-semibold ${style}`}>
+      {score}
+    </Badge>
+  );
 }
 
 // =============================================================================

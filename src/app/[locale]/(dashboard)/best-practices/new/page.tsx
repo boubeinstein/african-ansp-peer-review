@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
+import { UserRole } from "@prisma/client";
+import { canSubmitBestPractice } from "@/lib/permissions";
 import { BestPracticeForm } from "./_components/best-practice-form";
 
 export async function generateMetadata({
@@ -34,9 +36,14 @@ export default async function NewBestPracticePage({
     redirect(`/${locale}/login`);
   }
 
-  // Must belong to an organization
-  if (!session.user.organizationId) {
-    redirect(`/${locale}/best-practices`);
+  // Business rule: Must be ANSP role with organization
+  const canSubmit = canSubmitBestPractice(
+    session.user.role as UserRole,
+    session.user.organizationId
+  );
+
+  if (!canSubmit) {
+    redirect(`/${locale}/best-practices?error=not-ansp-member`);
   }
 
   return (

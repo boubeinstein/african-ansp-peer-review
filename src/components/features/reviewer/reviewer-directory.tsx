@@ -227,6 +227,11 @@ export function ReviewerDirectory({
     isActive: filters.isAvailable,
   });
 
+  // Get userContext from API response for RBAC
+  const apiUserContext = data?.userContext;
+  const isApiAdmin = apiUserContext?.isAdmin ?? false;
+  const userRegionalTeamId = apiUserContext?.userRegionalTeamId ?? null;
+
   // Transform API data to list items
   const items = data?.items;
   const reviewers = useMemo(() => {
@@ -491,6 +496,14 @@ export function ReviewerDirectory({
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+        </div>
+      )}
+
+      {/* RBAC Info Banner - show for non-admins viewing all reviewers */}
+      {!isApiAdmin && userRegionalTeamId && (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 px-3 py-2 rounded-md">
+          <Users className="h-4 w-4" />
+          <span>{t("rbac.viewingAllReviewers")}</span>
         </div>
       )}
 

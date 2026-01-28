@@ -2851,6 +2851,12 @@
       "statusChangeUnavailable": "Le changement de statut groupé sera bientôt disponible",
       "teamCreationUnavailable": "La création d'équipe sera bientôt disponible"
     },
+    "rbac": {
+      "viewingAllReviewers": "Vous consultez tous les évaluateurs. Vous ne pouvez modifier que les évaluateurs de votre organisation.",
+      "myTeam": "Mon équipe",
+      "allTeams": "Toutes les équipes",
+      "default": "Par défaut"
+    },
     "export": {
       "title": "Exporter les évaluateurs",
       "descriptionSelected": "Exporter {count} évaluateurs sélectionnés vers un fichier",

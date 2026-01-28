@@ -2851,6 +2851,12 @@
       "statusChangeUnavailable": "Bulk status change will be available soon",
       "teamCreationUnavailable": "Team creation will be available soon"
     },
+    "rbac": {
+      "viewingAllReviewers": "You are viewing all reviewers. You can only edit reviewers from your organization.",
+      "myTeam": "My Team",
+      "allTeams": "All Teams",
+      "default": "Default"
+    },
     "export": {
       "title": "Export Reviewers",
       "descriptionSelected": "Export {count} selected reviewers to a file",

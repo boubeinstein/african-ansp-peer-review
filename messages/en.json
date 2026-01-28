@@ -2858,7 +2858,8 @@
       "default": "Default"
     },
     "permissions": {
-      "cannotEditOtherOrg": "You can only edit reviewers from your organization"
+      "cannotEditOtherOrg": "You can only edit reviewers from your organization",
+      "viewOnly": "View Only"
     },
     "export": {
       "title": "Export Reviewers",

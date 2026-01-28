@@ -9,10 +9,8 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { UserRole } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { createCaller, createServerContext } from "@/server/trpc";
-import { canEditReviewer } from "@/lib/rbac";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, AlertCircle } from "lucide-react";
@@ -101,25 +99,12 @@ export default async function EditReviewerPage({
     notFound();
   }
 
-  // Check edit permission using server-side auth
-  const userRole = session.user.role as UserRole;
-  const userOrgId = session.user.organizationId;
-  const reviewerOrgId = reviewer.organizationId;
-  const isOwnProfile = reviewer.userId === session.user.id;
-
-  const hasEditPermission = Boolean(
-    isOwnProfile ||
-      (reviewerOrgId &&
-        canEditReviewer({
-          userRole,
-          userOrgId,
-          reviewerOrgId,
-        }))
-  );
+  // Use canEdit from API response (centralized permission logic)
+  const hasEditPermission = reviewer.canEdit ?? false;
 
   // Redirect if no permission
   if (!hasEditPermission) {
-    redirect(`/${locale}/reviewers/${id}`);
+    redirect(`/${locale}/reviewers/${id}?error=no-permission`);
   }
 
   return <ReviewerEditClient reviewer={reviewer} locale={locale} />;

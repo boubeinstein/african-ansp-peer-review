@@ -2858,7 +2858,8 @@
       "default": "Par défaut"
     },
     "permissions": {
-      "cannotEditOtherOrg": "Vous ne pouvez modifier que les évaluateurs de votre organisation"
+      "cannotEditOtherOrg": "Vous ne pouvez modifier que les évaluateurs de votre organisation",
+      "viewOnly": "Lecture seule"
     },
     "export": {
       "title": "Exporter les évaluateurs",

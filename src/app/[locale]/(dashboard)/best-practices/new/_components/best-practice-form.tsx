@@ -369,8 +369,8 @@ export function BestPracticeForm({
                     <FormItem>
                       <FormLabel>{t("fields.auditArea")}</FormLabel>
                       <Select
-                        onValueChange={field.onChange}
-                        value={field.value || ""}
+                        onValueChange={(value) => field.onChange(value === "_none" ? "" : value)}
+                        value={field.value || "_none"}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -380,7 +380,7 @@ export function BestPracticeForm({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="">
+                          <SelectItem value="_none">
                             {t("fields.noAuditArea")}
                           </SelectItem>
                           {AUDIT_AREAS.map((area) => (

@@ -94,7 +94,6 @@ interface CreateTaskDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   reviewId: string;
-  locale: string;
   teamMembers: TeamMember[];
   onSuccess: () => void;
   editTask?: EditTask;
@@ -104,7 +103,6 @@ export function CreateTaskDialog({
   open,
   onOpenChange,
   reviewId,
-  locale: _locale,
   teamMembers,
   onSuccess,
   editTask,

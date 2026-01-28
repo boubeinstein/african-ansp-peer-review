@@ -52,6 +52,7 @@ export function Header({ locale, user }: HeaderProps) {
   const [pendingKey, setPendingKey] = useState<string | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional hydration pattern
     setMounted(true);
   }, []);
 

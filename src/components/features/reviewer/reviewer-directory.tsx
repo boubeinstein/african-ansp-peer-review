@@ -292,14 +292,6 @@ export function ReviewerDirectory({
     [router, locale]
   );
 
-  // Get edit handler for a specific reviewer (returns undefined if no permission)
-  const getEditHandler = useCallback(
-    (reviewer: ReviewerListItem): ((id: string) => void) | undefined => {
-      return canEdit(reviewer) ? handleEditProfile : undefined;
-    },
-    [canEdit, handleEditProfile]
-  );
-
   function handleSort(field: ReviewerSortField) {
     if (sortBy === field) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");

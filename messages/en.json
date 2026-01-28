@@ -5845,6 +5845,7 @@
       "findings": "Findings",
       "caps": "Corrective Actions",
       "assessments": "Assessments",
+      "bestPractices": "Best Practices",
       "settings": "Settings"
     },
     "create": {

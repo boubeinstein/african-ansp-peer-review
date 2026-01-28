@@ -48,6 +48,7 @@ export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcut
         { keys: ["G", "→", "F"], label: t("navigation.findings") },
         { keys: ["G", "→", "C"], label: t("navigation.caps") },
         { keys: ["G", "→", "A"], label: t("navigation.assessments") },
+        { keys: ["G", "→", "B"], label: t("navigation.bestPractices") },
         { keys: ["G", "→", "S"], label: t("navigation.settings") },
       ],
     },

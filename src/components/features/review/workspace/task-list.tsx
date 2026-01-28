@@ -238,7 +238,6 @@ export function TaskList({ reviewId, locale, userId }: TaskListProps) {
         open={showCreateDialog}
         onOpenChange={setShowCreateDialog}
         reviewId={reviewId}
-        locale={locale}
         teamMembers={teamMembers || []}
         onSuccess={() => {
           setShowCreateDialog(false);

@@ -54,6 +54,7 @@ export function useKeyboardShortcuts({
         const navMap: Record<string, string> = {
           h: "/dashboard", r: "/reviews", f: "/findings", c: "/caps",
           a: "/assessments", v: "/reviewers", o: "/organizations", s: "/settings",
+          b: "/best-practices",
         };
         if (navMap[key]) navigate(navMap[key]);
       }

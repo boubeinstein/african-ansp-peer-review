@@ -304,7 +304,6 @@ export function DiscussionCard({
         open={showReplyForm}
         onOpenChange={setShowReplyForm}
         reviewId={reviewId}
-        locale={locale}
         parentId={discussion.id}
         onSuccess={() => {
           setShowReplyForm(false);

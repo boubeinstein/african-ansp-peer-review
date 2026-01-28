@@ -44,7 +44,6 @@ import {
   getReviewerByUserId,
   searchReviewers,
   checkCOIConflict,
-  getReviewerStats,
   reviewerProfileInclude,
   reviewerProfileListInclude,
 } from "@/server/db/queries/reviewer";
@@ -123,38 +122,6 @@ async function logAuditEntry(
     });
   } catch (error) {
     console.error("[Audit] Failed to log reviewer entry:", error);
-  }
-}
-
-/**
- * Check if user has permission to edit a reviewer profile
- * Admins can edit all, others can only edit reviewers from their org
- */
-async function checkReviewerEditPermission(
-  session: { user: { role: string; organizationId: string | null } },
-  db: typeof prisma,
-  reviewerId: string
-): Promise<void> {
-  const userRole = session.user.role;
-  const userOrgId = session.user.organizationId;
-  const isAdmin = ["PROGRAMME_COORDINATOR", "SYSTEM_ADMIN", "SUPER_ADMIN"].includes(userRole);
-
-  if (isAdmin) return; // Admins can edit all
-
-  const reviewer = await db.reviewerProfile.findUnique({
-    where: { id: reviewerId },
-    select: { organizationId: true },
-  });
-
-  if (!reviewer) {
-    throw new TRPCError({ code: "NOT_FOUND", message: "Reviewer not found" });
-  }
-
-  if (reviewer.organizationId !== userOrgId) {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "You can only edit reviewers from your organization",
-    });
   }
 }
 

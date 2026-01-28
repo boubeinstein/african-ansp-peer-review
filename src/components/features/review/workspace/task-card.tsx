@@ -366,7 +366,6 @@ export function TaskCard({ task, reviewId, locale, userId, onUpdate }: TaskCardP
         open={showEditDialog}
         onOpenChange={setShowEditDialog}
         reviewId={reviewId}
-        locale={locale}
         teamMembers={teamMembers || []}
         onSuccess={() => {
           setShowEditDialog(false);

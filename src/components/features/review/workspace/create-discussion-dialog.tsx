@@ -54,7 +54,6 @@ interface CreateDiscussionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   reviewId: string;
-  locale: string;
   onSuccess: () => void;
   parentId?: string;
 }
@@ -63,7 +62,6 @@ export function CreateDiscussionDialog({
   open,
   onOpenChange,
   reviewId,
-  locale: _locale,
   onSuccess,
   parentId,
 }: CreateDiscussionDialogProps) {

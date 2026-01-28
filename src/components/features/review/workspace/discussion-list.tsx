@@ -154,7 +154,6 @@ export function DiscussionList({
         open={showCreateDialog}
         onOpenChange={setShowCreateDialog}
         reviewId={reviewId}
-        locale={locale}
         onSuccess={() => {
           setShowCreateDialog(false);
           refetch();

@@ -7,17 +7,14 @@ import { Lightbulb, Plus } from "lucide-react";
 
 interface BestPracticesHeaderProps {
   locale: string;
-  userOrgId?: string | null;
+  canSubmit: boolean;
 }
 
 export function BestPracticesHeader({
   locale,
-  userOrgId,
+  canSubmit,
 }: BestPracticesHeaderProps) {
   const t = useTranslations("bestPractices");
-
-  // Users with an organization can submit best practices
-  const canSubmit = !!userOrgId;
 
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">

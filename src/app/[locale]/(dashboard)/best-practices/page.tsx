@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
+import { UserRole } from "@prisma/client";
+import { canSubmitBestPractice } from "@/lib/permissions";
 import { BestPracticesHeader } from "./_components/best-practices-header";
 import { BestPracticesContent } from "./_components/best-practices-content";
 import { BestPracticesLoading } from "./loading";
@@ -37,12 +39,14 @@ export default async function BestPracticesPage({
   const searchParamsResolved = await searchParams;
   const session = await auth();
 
+  const canSubmit = canSubmitBestPractice(
+    session?.user?.role as UserRole,
+    session?.user?.organizationId
+  );
+
   return (
     <div className="container mx-auto py-6 space-y-6">
-      <BestPracticesHeader
-        locale={locale}
-        userOrgId={session?.user?.organizationId}
-      />
+      <BestPracticesHeader locale={locale} canSubmit={canSubmit} />
 
       <Suspense fallback={<BestPracticesLoading />}>
         <BestPracticesContent

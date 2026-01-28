@@ -232,20 +232,47 @@ export const reviewerRouter = router({
   list: protectedProcedure
     .input(reviewerProfileFilterSchema)
     .query(async ({ ctx, input }) => {
+      const { session } = ctx;
+      const userRole = session.user.role;
+      const userOrgId = session.user.organizationId;
+
+      // Determine if user is admin (can edit all)
+      const isAdmin = ["PROGRAMME_COORDINATOR", "SYSTEM_ADMIN", "SUPER_ADMIN"].includes(userRole);
+
+      // Get user's regional team for default filtering
+      let userRegionalTeamId: string | null = null;
+      if (userOrgId) {
+        const userOrg = await ctx.db.organization.findUnique({
+          where: { id: userOrgId },
+          select: { regionalTeamId: true },
+        });
+        userRegionalTeamId = userOrg?.regionalTeamId ?? null;
+      }
+
       // Check if user can view all reviewers
       if (!canViewReviewer(ctx.session, "")) {
         // Return only the user's own profile if they can't view all
         const ownProfile = await getReviewerByUserId(ctx.user.id);
+        const items = ownProfile ? [{
+          ...ownProfile,
+          canEdit: true, // Users can always edit their own profile
+        }] : [];
         return {
-          items: ownProfile ? [ownProfile] : [],
+          items,
           total: ownProfile ? 1 : 0,
           page: 1,
           pageSize: input.pageSize,
           totalPages: 1,
+          userContext: {
+            isAdmin,
+            userOrgId,
+            userRegionalTeamId,
+            canEditAll: isAdmin,
+          },
         };
       }
 
-      return searchReviewers({
+      const result = await searchReviewers({
         page: input.page,
         pageSize: input.pageSize,
         sortBy: input.sortBy,
@@ -261,14 +288,75 @@ export const reviewerRouter = router({
         isLeadQualified: input.isLeadQualified,
         isAvailable: input.isActive,
       });
+
+      // Add canEdit flag to each reviewer
+      const reviewersWithPermissions = result.items.map((reviewer) => ({
+        ...reviewer,
+        canEdit: isAdmin || reviewer.organizationId === userOrgId,
+      }));
+
+      return {
+        items: reviewersWithPermissions,
+        total: result.total,
+        page: result.page,
+        pageSize: result.pageSize,
+        totalPages: result.totalPages,
+        userContext: {
+          isAdmin,
+          userOrgId,
+          userRegionalTeamId,
+          canEditAll: isAdmin,
+        },
+      };
     }),
 
   /**
-   * Get reviewer statistics
+   * Get reviewer statistics with role-based filtering
    */
   getStats: protectedProcedure.query(async ({ ctx }) => {
-    assertCanCoordinateReviewers(ctx.session);
-    return getReviewerStats();
+    const { session } = ctx;
+    const userRole = session.user.role;
+    const userOrgId = session.user.organizationId;
+    const isAdmin = ["PROGRAMME_COORDINATOR", "SYSTEM_ADMIN", "SUPER_ADMIN"].includes(userRole);
+
+    // Get user's regional team
+    let userRegionalTeamId: string | null = null;
+    if (userOrgId) {
+      const userOrg = await ctx.db.organization.findUnique({
+        where: { id: userOrgId },
+        select: { regionalTeamId: true },
+      });
+      userRegionalTeamId = userOrg?.regionalTeamId ?? null;
+    }
+
+    // Programme-wide stats
+    const [totalAll, activeAll] = await Promise.all([
+      ctx.db.reviewerProfile.count(),
+      ctx.db.reviewerProfile.count({ where: { isAvailable: true } }),
+    ]);
+
+    // Team stats
+    let totalTeam = 0;
+    let activeTeam = 0;
+    if (userRegionalTeamId) {
+      const teamFilter = { homeOrganization: { regionalTeamId: userRegionalTeamId } };
+      [totalTeam, activeTeam] = await Promise.all([
+        ctx.db.reviewerProfile.count({ where: teamFilter }),
+        ctx.db.reviewerProfile.count({ where: { ...teamFilter, isAvailable: true } }),
+      ]);
+    }
+
+    // Own org stats
+    const totalOwnOrg = userOrgId
+      ? await ctx.db.reviewerProfile.count({ where: { organizationId: userOrgId } })
+      : 0;
+
+    return {
+      programme: { total: totalAll, active: activeAll, inactive: totalAll - activeAll },
+      team: userRegionalTeamId ? { total: totalTeam, active: activeTeam, inactive: totalTeam - activeTeam } : null,
+      ownOrganization: { total: totalOwnOrg },
+      userContext: { isAdmin, userRegionalTeamId, userOrgId },
+    };
   }),
 
   // ============================================

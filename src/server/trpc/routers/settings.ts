@@ -107,15 +107,46 @@ export const settingsRouter = router({
    * Get or create user preferences (creates default if none exist)
    */
   getPreferences: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+
+    // First verify user exists in database
+    const user = await ctx.db.user.findUnique({
+      where: { id: userId },
+      select: { id: true },
+    });
+
+    if (!user) {
+      // User doesn't exist in database - return default preferences
+      // This can happen if session is stale or user was deleted
+      console.warn(`[Settings] User ${userId} not found in database`);
+      return {
+        id: "default",
+        userId,
+        locale: "EN" as const,
+        theme: "SYSTEM" as const,
+        dateFormat: "DD/MM/YYYY",
+        showTrainingModule: true,
+        compactView: false,
+        emailNotifications: true,
+        notifyOnReviewAssignment: true,
+        notifyOnFindingCreated: true,
+        notifyOnCAPStatusChange: true,
+        notifyOnReportReady: true,
+        digestFrequency: "DAILY" as const,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+    }
+
     let preferences = await ctx.db.userPreferences.findUnique({
-      where: { userId: ctx.session.user.id },
+      where: { userId },
     });
 
     // Create default preferences if none exist
     if (!preferences) {
       preferences = await ctx.db.userPreferences.create({
         data: {
-          userId: ctx.session.user.id,
+          userId,
         },
       });
     }

@@ -778,46 +778,53 @@ export const reviewDiscussionRouter = router({
   // ===========================================================================
 
   getStats: protectedProcedure
-    .input(z.object({ reviewId: z.string() }))
+    .input(z.object({ reviewId: z.string().optional() }))
     .query(async ({ ctx, input }) => {
       const { user } = ctx.session;
+      const userId = user.id;
+      const userRole = user.role;
 
-      // Check access
-      const hasAccess = await checkReviewAccess(ctx.db, input.reviewId, user.id);
-      if (!hasAccess) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "You do not have access to this review",
-        });
+      // Verify access if reviewId provided
+      if (input.reviewId) {
+        const hasAccess = await verifyReviewAccess(
+          ctx.db,
+          userId,
+          userRole,
+          input.reviewId
+        );
+
+        if (!hasAccess) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You do not have access to this review",
+          });
+        }
       }
 
-      const [total, resolved, unresolved] = await Promise.all([
+      // Get team-based filter
+      const teamFilter = await getTeamFilter(ctx.db, userId, userRole);
+
+      const where: Prisma.ReviewDiscussionWhereInput = {
+        ...(teamFilter || {}),
+        ...(input.reviewId && { reviewId: input.reviewId }),
+        parentId: null, // Only top-level discussions
+        isDeleted: false,
+      };
+
+      const [total, open, resolved, myDiscussions] = await Promise.all([
+        ctx.db.reviewDiscussion.count({ where }),
         ctx.db.reviewDiscussion.count({
-          where: {
-            reviewId: input.reviewId,
-            parentId: null,
-            isDeleted: false,
-          },
+          where: { ...where, isResolved: false },
         }),
         ctx.db.reviewDiscussion.count({
-          where: {
-            reviewId: input.reviewId,
-            parentId: null,
-            isDeleted: false,
-            isResolved: true,
-          },
+          where: { ...where, isResolved: true },
         }),
         ctx.db.reviewDiscussion.count({
-          where: {
-            reviewId: input.reviewId,
-            parentId: null,
-            isDeleted: false,
-            isResolved: false,
-          },
+          where: { ...where, authorId: userId },
         }),
       ]);
 
-      return { total, resolved, unresolved };
+      return { total, open, resolved, myDiscussions };
     }),
 
   // ===========================================================================

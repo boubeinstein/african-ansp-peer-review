@@ -52,9 +52,9 @@ export function ReviewWorkspace({
               {t("tabs.discussions")}
               {loadingDiscussions ? (
                 <Loader2 className="h-3 w-3 animate-spin" />
-              ) : discussionStats && discussionStats.unresolved > 0 ? (
+              ) : discussionStats && discussionStats.open > 0 ? (
                 <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                  {discussionStats.unresolved}
+                  {discussionStats.open}
                 </Badge>
               ) : null}
             </TabsTrigger>

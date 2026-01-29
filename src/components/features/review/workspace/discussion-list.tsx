@@ -75,7 +75,7 @@ export function DiscussionList({
             <>
               <div className="flex items-center gap-2 text-sm">
                 <Circle className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-                <span>{t("stats.unresolved", { count: stats.unresolved })}</span>
+                <span>{t("stats.open", { count: stats.open })}</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <CheckCircle2 className="h-4 w-4 text-green-500" />

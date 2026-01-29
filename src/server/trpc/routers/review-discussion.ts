@@ -124,6 +124,85 @@ async function notifyMentions(
 }
 
 /**
+ * Get team filter based on user role
+ * - Oversight roles: No filter (see all teams)
+ * - Team members: Filter by their assigned team(s)
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function getTeamFilter(
+  db: PrismaClient | Prisma.TransactionClient,
+  userId: string,
+  userRole: string
+): Promise<Prisma.ReviewDiscussionWhereInput | null> {
+  // Oversight roles can see all discussions - no filter needed
+  if (OVERSIGHT_ROLES.includes(userRole as (typeof OVERSIGHT_ROLES)[number])) {
+    return null;
+  }
+
+  // Get user's organization and its regional team
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: {
+      organization: {
+        select: { regionalTeamId: true },
+      },
+    },
+  });
+
+  // Get reviews user is directly assigned to
+  const directAssignments = await db.reviewTeamMember.findMany({
+    where: { userId },
+    select: {
+      reviewId: true,
+      review: {
+        select: {
+          hostOrganization: {
+            select: { regionalTeamId: true },
+          },
+        },
+      },
+    },
+  });
+
+  // Collect team IDs and review IDs
+  const teamIds: string[] = [];
+  const reviewIds: string[] = [];
+
+  // Add user's organization's regional team
+  if (user?.organization?.regionalTeamId) {
+    teamIds.push(user.organization.regionalTeamId);
+  }
+
+  // Add teams and reviews from direct assignments
+  directAssignments.forEach((assignment) => {
+    reviewIds.push(assignment.reviewId);
+    if (assignment.review.hostOrganization?.regionalTeamId) {
+      teamIds.push(assignment.review.hostOrganization.regionalTeamId);
+    }
+  });
+
+  // If user has no team assignments, return filter that matches nothing
+  if (teamIds.length === 0 && reviewIds.length === 0) {
+    return { id: { equals: "no-access-placeholder" } };
+  }
+
+  // Return filter for user's teams OR directly assigned reviews
+  // Team filter goes through review -> hostOrganization -> regionalTeamId
+  return {
+    OR: [
+      {
+        review: {
+          hostOrganization: {
+            regionalTeamId: { in: [...new Set(teamIds)] },
+          },
+        },
+      },
+      { reviewId: { in: [...new Set(reviewIds)] } },
+    ],
+  };
+}
+
+/**
  * Verify if a user has access to a specific review
  * - Oversight roles have access to all reviews
  * - Team members have access to reviews they're assigned to

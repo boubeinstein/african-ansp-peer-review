@@ -181,7 +181,8 @@ export function NewReviewClient({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(newReviewSchema) as any,
     defaultValues: {
-      hostOrganizationId: "",
+      // For ANSP roles, pre-fill with their org; for oversight, leave empty
+      hostOrganizationId: isOversight ? "" : (userOrgId ?? ""),
       assessmentIds: [],
       reviewType: "FULL",
       focusAreas: [],
@@ -860,7 +861,10 @@ export function NewReviewClient({
             >
               {tCommon("cancel")}
             </Button>
-            <Button type="submit" disabled={createReview.isPending}>
+            <Button
+              type="submit"
+              disabled={createReview.isPending || (isOversight && !selectedOrgId)}
+            >
               {createReview.isPending && (
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               )}

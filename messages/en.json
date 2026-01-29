@@ -5,6 +5,8 @@
     "save": "Save",
     "cancel": "Cancel",
     "edit": "Edit",
+    "back": "Back",
+    "optional": "optional",
     "actions": {
       "save": "Save",
       "cancel": "Cancel",

@@ -112,6 +112,12 @@ model User {
   tasksCreated             ReviewTask[]           @relation("CreatedTasks")
   tasksCompleted           ReviewTask[]           @relation("CompletedTasks")
 
+  // Real-time collaboration
+  sessionsStarted          ReviewSession[]        @relation("SessionStarter")
+  sessionParticipations    SessionParticipant[]
+  sessionActivities        SessionActivity[]
+  documentAnnotations      DocumentAnnotation[]
+
   @@map("users")
 }
 
@@ -567,6 +573,9 @@ model Review {
   discussions            ReviewDiscussion[]
   tasks                  ReviewTask[]
 
+  // Real-time collaboration
+  sessions               ReviewSession[]
+
   @@map("reviews")
 }
 
@@ -748,6 +757,9 @@ model Finding {
   question             Question?             @relation(fields: [questionId], references: [id])
   review               Review                @relation(fields: [reviewId], references: [id])
   bestPractice         BestPractice?
+
+  // Document annotations linked to this finding
+  annotations          DocumentAnnotation[]
 
   @@index([reviewId, status])
   @@index([organizationId, status])
@@ -956,6 +968,9 @@ model Document {
   review         Review?               @relation(fields: [reviewId], references: [id])
   uploadedBy     User                  @relation("UploadedDocuments", fields: [uploadedById], references: [id])
   responses      ResponseDocument[]
+
+  // Collaborative annotations
+  annotations    DocumentAnnotation[]
 
   @@index([organizationId, isDeleted])
   @@index([assessmentId])
@@ -1910,4 +1925,206 @@ model ReviewTask {
   @@index([assignedToId, status])
   @@index([reviewId, dueDate])
   @@map("review_tasks")
+}
+
+// =============================================================================
+// REAL-TIME COLLABORATION
+// =============================================================================
+
+/// Tracks active collaboration sessions for a review
+model ReviewSession {
+  id             String              @id @default(cuid())
+  reviewId       String              @map("review_id")
+  review         Review              @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  // Session metadata
+  sessionType    SessionType         @default(FIELDWORK) @map("session_type")
+  title          String?
+  description    String?
+
+  // Timing
+  startedAt      DateTime            @default(now()) @map("started_at")
+  endedAt        DateTime?           @map("ended_at")
+  scheduledStart DateTime?           @map("scheduled_start")
+  scheduledEnd   DateTime?           @map("scheduled_end")
+
+  // Session state
+  status         SessionStatus       @default(ACTIVE)
+  isRecording    Boolean             @default(false) @map("is_recording")
+
+  // Creator
+  startedById    String              @map("started_by_id")
+  startedBy      User                @relation("SessionStarter", fields: [startedById], references: [id])
+
+  // Participants
+  participants   SessionParticipant[]
+  activities     SessionActivity[]
+
+  createdAt      DateTime            @default(now()) @map("created_at")
+  updatedAt      DateTime            @updatedAt @map("updated_at")
+
+  @@index([reviewId])
+  @@index([status])
+  @@map("review_sessions")
+}
+
+enum SessionType {
+  FIELDWORK       // On-site review session
+  REMOTE          // Remote collaboration
+  DOCUMENT_REVIEW // Document review session
+  DEBRIEF         // Team debrief
+  PLANNING        // Planning session
+}
+
+enum SessionStatus {
+  SCHEDULED
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+/// Tracks participants in a collaboration session
+model SessionParticipant {
+  id            String          @id @default(cuid())
+  sessionId     String          @map("session_id")
+  session       ReviewSession   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  userId        String          @map("user_id")
+  user          User            @relation(fields: [userId], references: [id])
+
+  // Presence info
+  joinedAt      DateTime        @default(now()) @map("joined_at")
+  leftAt        DateTime?       @map("left_at")
+  isOnline      Boolean         @default(true) @map("is_online")
+  lastSeenAt    DateTime        @default(now()) @map("last_seen_at")
+
+  // Current focus
+  currentFocus  String?         @map("current_focus") // e.g., "finding:123", "document:456"
+  cursorPosition Json?          @map("cursor_position") // {x, y, element}
+
+  // Role in session
+  role          ParticipantRole @default(PARTICIPANT)
+
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+
+  @@unique([sessionId, userId])
+  @@index([sessionId])
+  @@index([userId])
+  @@map("session_participants")
+}
+
+enum ParticipantRole {
+  HOST        // Session host (usually team lead)
+  PRESENTER   // Currently presenting/leading
+  PARTICIPANT // Active participant
+  OBSERVER    // View-only
+}
+
+/// Activity log for audit trail and session replay
+model SessionActivity {
+  id           String        @id @default(cuid())
+  sessionId    String        @map("session_id")
+  session      ReviewSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  userId       String        @map("user_id")
+  user         User          @relation(fields: [userId], references: [id])
+
+  // Activity details
+  activityType ActivityType  @map("activity_type")
+  targetType   String?       @map("target_type") // "finding", "document", "comment", etc.
+  targetId     String?       @map("target_id")
+
+  // Activity data
+  data         Json?         // Flexible storage for activity-specific data
+  previousData Json?         @map("previous_data") // For tracking changes
+
+  // Metadata
+  timestamp    DateTime      @default(now())
+  ipAddress    String?       @map("ip_address")
+  userAgent    String?       @map("user_agent")
+
+  @@index([sessionId])
+  @@index([userId])
+  @@index([timestamp])
+  @@index([activityType])
+  @@map("session_activities")
+}
+
+enum ActivityType {
+  // Session activities
+  SESSION_JOIN
+  SESSION_LEAVE
+  SESSION_PAUSE
+  SESSION_RESUME
+
+  // Content activities
+  FINDING_VIEW
+  FINDING_CREATE
+  FINDING_EDIT
+  FINDING_DELETE
+
+  COMMENT_ADD
+  COMMENT_EDIT
+  COMMENT_DELETE
+
+  DOCUMENT_VIEW
+  DOCUMENT_UPLOAD
+  DOCUMENT_ANNOTATE
+
+  // Collaboration activities
+  CURSOR_MOVE
+  SELECTION_CHANGE
+  FOCUS_CHANGE
+
+  // Task activities
+  TASK_CREATE
+  TASK_UPDATE
+  TASK_COMPLETE
+}
+
+/// Collaborative document annotations
+model DocumentAnnotation {
+  id          String         @id @default(cuid())
+  documentId  String         @map("document_id")
+  document    Document       @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  // Position
+  pageNumber  Int            @map("page_number")
+  x           Float
+  y           Float
+  width       Float?
+  height      Float?
+
+  // Annotation content
+  type        AnnotationType
+  content     String?
+  color       String         @default("#FFEB3B")
+
+  // Creator
+  createdById String         @map("created_by_id")
+  createdBy   User           @relation(fields: [createdById], references: [id])
+
+  // Session context (if created during session)
+  sessionId   String?        @map("session_id")
+
+  // Link to finding if annotation supports a finding
+  findingId   String?        @map("finding_id")
+  finding     Finding?       @relation(fields: [findingId], references: [id])
+
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  @@index([documentId])
+  @@index([findingId])
+  @@map("document_annotations")
+}
+
+enum AnnotationType {
+  HIGHLIGHT
+  COMMENT
+  DRAWING
+  STAMP
+  TEXT
 }

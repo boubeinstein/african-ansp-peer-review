@@ -30,6 +30,7 @@ import { checklistRouter } from "./checklist";
 import { bestPracticeRouter } from "./best-practice";
 import { reviewDiscussionRouter } from "./review-discussion";
 import { reviewTaskRouter } from "./review-task";
+import { collaborationRouter } from "./collaboration";
 
 /**
  * Main app router combining all sub-routers
@@ -66,6 +67,7 @@ export const appRouter = router({
   bestPractice: bestPracticeRouter,
   reviewDiscussion: reviewDiscussionRouter,
   reviewTask: reviewTaskRouter,
+  collaboration: collaborationRouter,
 });
 
 /**

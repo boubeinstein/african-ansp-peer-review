@@ -16,7 +16,7 @@
  */
 
 import "dotenv/config";
-import { db } from "../../src/lib/db";
+import { db } from "../src/lib/db";
 import { BestPracticeCategory, BestPracticeStatus } from "@prisma/client";
 
 const prisma = db;
@@ -1325,7 +1325,7 @@ async function seedBestPractices() {
 
   const staffUsers = await prisma.user.findMany({
     where: {
-      role: { in: ["ANSP_ADMIN", "SAFETY_MANAGER", "QUALITY_MANAGER"] },
+      role: { in: ["ANSP_ADMIN", "SAFETY_MANAGER", "QUALITY_MANAGER", "LEAD_REVIEWER", "PEER_REVIEWER"] },
       isActive: true,
       organizationId: { not: null },
     },

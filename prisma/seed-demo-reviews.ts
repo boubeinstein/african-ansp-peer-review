@@ -50,51 +50,51 @@ const DEMO_REVIEWS: ReviewConfig[] = [
   {
     // Team 2 - East African Community
     referenceNumber: "AAPRP-2026-001",
-    hostOrgIcaoCode: "HKJK", // Kenya
+    hostOrgIcaoCode: "KCAA", // Kenya
     status: "COMPLETED" as ReviewStatus,
     phase: "CLOSED" as ReviewPhase,
     type: "FULL" as ReviewType,
     startDaysFromNow: -60,
     endDaysFromNow: -46,
     teamMembers: [
-      { orgIcaoCode: "HTDA", role: "LEAD_REVIEWER" as TeamRole }, // Tanzania
-      { orgIcaoCode: "HUEN", role: "REVIEWER" as TeamRole }, // Uganda
-      { orgIcaoCode: "HRYR", role: "REVIEWER" as TeamRole }, // Rwanda
+      { orgIcaoCode: "TCAA", role: "LEAD_REVIEWER" as TeamRole }, // Tanzania
+      { orgIcaoCode: "UCAA", role: "REVIEWER" as TeamRole }, // Uganda
+      { orgIcaoCode: "RCAA", role: "REVIEWER" as TeamRole }, // Rwanda
     ],
   },
   {
     // Team 4 - Southern & Eastern Africa
     referenceNumber: "AAPRP-2026-002",
-    hostOrgIcaoCode: "FQMA", // Mozambique
+    hostOrgIcaoCode: "ADM", // Mozambique
     status: "IN_PROGRESS" as ReviewStatus,
     phase: "ON_SITE" as ReviewPhase,
     type: "FULL" as ReviewType,
     startDaysFromNow: -5,
     endDaysFromNow: 6,
     teamMembers: [
-      { orgIcaoCode: "FVHA", role: "LEAD_REVIEWER" as TeamRole }, // Zimbabwe
-      { orgIcaoCode: "FMMI", role: "REVIEWER" as TeamRole }, // Madagascar
-      { orgIcaoCode: "FLKK", role: "REVIEWER" as TeamRole }, // Zambia
+      { orgIcaoCode: "ADM", role: "LEAD_REVIEWER" as TeamRole }, // Zimbabwe
+      { orgIcaoCode: "ACM", role: "REVIEWER" as TeamRole }, // Madagascar
+      { orgIcaoCode: "ZACL", role: "REVIEWER" as TeamRole }, // Zambia
     ],
   },
   {
     // Team 3 - West African Anglophone
     referenceNumber: "AAPRP-2026-003",
-    hostOrgIcaoCode: "DNAA", // Nigeria
+    hostOrgIcaoCode: "NAMA", // Nigeria
     status: "APPROVED" as ReviewStatus,
     phase: "PLANNING" as ReviewPhase,
     type: "FULL" as ReviewType,
     startDaysFromNow: 30,
     endDaysFromNow: 41,
     teamMembers: [
-      { orgIcaoCode: "DGAA", role: "LEAD_REVIEWER" as TeamRole }, // Ghana
-      { orgIcaoCode: "GLRB", role: "REVIEWER" as TeamRole }, // Roberts FIR
+      { orgIcaoCode: "GCAA", role: "LEAD_REVIEWER" as TeamRole }, // Ghana
+      { orgIcaoCode: "RFIR", role: "REVIEWER" as TeamRole }, // Roberts FIR
     ],
   },
   {
     // Team 5 - Northern Africa
     referenceNumber: "AAPRP-2026-004",
-    hostOrgIcaoCode: "GMMN", // Morocco
+    hostOrgIcaoCode: "DGAC", // Morocco
     status: "REQUESTED" as ReviewStatus,
     phase: "PLANNING" as ReviewPhase,
     type: "FOCUSED" as ReviewType,
@@ -103,7 +103,7 @@ const DEMO_REVIEWS: ReviewConfig[] = [
     teamMembers: [], // Not yet assigned
   },
   {
-    // Team 1 - ASECNA & Southern Africa
+    // Team 1 - ASECNANA & Southern Africa
     referenceNumber: "AAPRP-2026-005",
     hostOrgIcaoCode: "ATNS", // South Africa
     status: "PLANNING" as ReviewStatus,
@@ -112,8 +112,8 @@ const DEMO_REVIEWS: ReviewConfig[] = [
     startDaysFromNow: 45,
     endDaysFromNow: 59,
     teamMembers: [
-      { orgIcaoCode: "ASEC", role: "LEAD_REVIEWER" as TeamRole }, // ASECNA
-      { orgIcaoCode: "FBSK", role: "REVIEWER" as TeamRole }, // Botswana
+      { orgIcaoCode: "ASECNA", role: "LEAD_REVIEWER" as TeamRole }, // ASECNANA
+      { orgIcaoCode: "CAAB", role: "REVIEWER" as TeamRole }, // Botswana
     ],
   },
 ];

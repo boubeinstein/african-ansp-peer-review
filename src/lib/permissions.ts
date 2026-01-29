@@ -107,3 +107,33 @@ export function canBeReviewHost(
   }
   return true;
 }
+
+/**
+ * Check if user can view all team chats (oversight roles only)
+ */
+export function canViewAllTeamChats(role: UserRole): boolean {
+  return isOversightRole(role);
+}
+
+/**
+ * Check if user can view a specific team's chats
+ * - Oversight roles can view all team chats
+ * - Team members can only view their own team's chats
+ */
+export function canViewTeamChat(
+  userRole: UserRole,
+  userTeamId: string | null,
+  chatTeamId: string | null
+): boolean {
+  // Oversight roles can view all
+  if (isOversightRole(userRole)) {
+    return true;
+  }
+
+  // Team members can only view their own team's chats
+  if (!userTeamId || !chatTeamId) {
+    return false;
+  }
+
+  return userTeamId === chatTeamId;
+}

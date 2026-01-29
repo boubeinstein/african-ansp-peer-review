@@ -8,6 +8,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure } from "@/server/trpc/trpc";
 import { Prisma, PrismaClient } from "@prisma/client";
+import { OVERSIGHT_ROLES } from "@/lib/permissions";
 
 // =============================================================================
 // INPUT SCHEMAS
@@ -120,6 +121,67 @@ async function notifyMentions(
   if (notifications.length > 0) {
     await db.notification.createMany({ data: notifications });
   }
+}
+
+/**
+ * Verify if a user has access to a specific review
+ * - Oversight roles have access to all reviews
+ * - Team members have access to reviews they're assigned to
+ * - Users in the same regional team have access
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function verifyReviewAccess(
+  db: PrismaClient | Prisma.TransactionClient,
+  userId: string,
+  userRole: string,
+  reviewId: string
+): Promise<boolean> {
+  // Oversight roles have access to all reviews
+  if (OVERSIGHT_ROLES.includes(userRole as (typeof OVERSIGHT_ROLES)[number])) {
+    return true;
+  }
+
+  // Check if user is directly assigned to the review
+  const directAssignment = await db.reviewTeamMember.findFirst({
+    where: {
+      reviewId,
+      userId,
+    },
+  });
+
+  if (directAssignment) {
+    return true;
+  }
+
+  // Check if user is in the same regional team as the review
+  // Regional team is linked through Organization
+  const [review, user] = await Promise.all([
+    db.review.findUnique({
+      where: { id: reviewId },
+      select: {
+        hostOrganization: {
+          select: { regionalTeamId: true },
+        },
+      },
+    }),
+    db.user.findUnique({
+      where: { id: userId },
+      select: {
+        organization: {
+          select: { regionalTeamId: true },
+        },
+      },
+    }),
+  ]);
+
+  const reviewTeamId = review?.hostOrganization?.regionalTeamId;
+  const userTeamId = user?.organization?.regionalTeamId;
+
+  if (reviewTeamId && userTeamId && reviewTeamId === userTeamId) {
+    return true;
+  }
+
+  return false;
 }
 
 // =============================================================================

@@ -118,6 +118,10 @@ model User {
   sessionActivities        SessionActivity[]
   documentAnnotations      DocumentAnnotation[]
 
+  // Workflow automation
+  workflowsCreated         WorkflowDefinition[]   @relation("WorkflowCreator")
+  workflowActions          WorkflowHistory[]      @relation("WorkflowActor")
+
   @@map("users")
 }
 
@@ -1039,6 +1043,154 @@ model AuditLog {
   @@index([userId])
   @@index([createdAt])
   @@map("audit_logs")
+}
+
+// =============================================================================
+// WORKFLOW AUTOMATION MODELS
+// =============================================================================
+
+model WorkflowDefinition {
+  id              String              @id @default(cuid())
+  code            String              @unique
+  nameEn          String              @map("name_en")
+  nameFr          String              @map("name_fr")
+  descriptionEn   String?             @map("description_en") @db.Text
+  descriptionFr   String?             @map("description_fr") @db.Text
+  entityType      WorkflowEntityType
+  isActive        Boolean             @default(true) @map("is_active")
+  isDefault       Boolean             @default(false) @map("is_default")
+  version         Int                 @default(1)
+  states          WorkflowState[]
+  transitions     WorkflowTransition[]
+  escalationRules EscalationRule[]
+  executions      WorkflowExecution[]
+  createdAt       DateTime            @default(now()) @map("created_at")
+  updatedAt       DateTime            @updatedAt @map("updated_at")
+  createdById     String?             @map("created_by_id")
+  createdBy       User?               @relation("WorkflowCreator", fields: [createdById], references: [id])
+
+  @@index([entityType, isActive])
+  @@map("workflow_definitions")
+}
+
+model WorkflowState {
+  id                String              @id @default(cuid())
+  workflowId        String              @map("workflow_id")
+  workflow          WorkflowDefinition  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  code              String
+  labelEn           String              @map("label_en")
+  labelFr           String              @map("label_fr")
+  stateType         WorkflowStateType   @default(INTERMEDIATE) @map("state_type")
+  color             String?
+  icon              String?
+  sortOrder         Int                 @default(0) @map("sort_order")
+  defaultSLADays    Int?                @map("default_sla_days")
+  fromTransitions   WorkflowTransition[] @relation("FromState")
+  toTransitions     WorkflowTransition[] @relation("ToState")
+  escalationRules   EscalationRule[]
+
+  @@unique([workflowId, code])
+  @@map("workflow_states")
+}
+
+model WorkflowTransition {
+  id                  String              @id @default(cuid())
+  workflowId          String              @map("workflow_id")
+  workflow            WorkflowDefinition  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  fromStateId         String              @map("from_state_id")
+  fromState           WorkflowState       @relation("FromState", fields: [fromStateId], references: [id])
+  toStateId           String              @map("to_state_id")
+  toState             WorkflowState       @relation("ToState", fields: [toStateId], references: [id])
+  code                String
+  labelEn             String              @map("label_en")
+  labelFr             String              @map("label_fr")
+  trigger             TransitionTrigger   @default(MANUAL)
+  allowedRoles        Json                @default("[]") @map("allowed_roles")
+  conditions          Json?
+  onTransitionActions Json?               @map("on_transition_actions")
+  buttonVariant       String?             @map("button_variant")
+  confirmRequired     Boolean             @default(false) @map("confirm_required")
+  confirmMessageEn    String?             @map("confirm_message_en")
+  confirmMessageFr    String?             @map("confirm_message_fr")
+
+  @@unique([workflowId, fromStateId, code])
+  @@map("workflow_transitions")
+}
+
+model EscalationRule {
+  id                 String              @id @default(cuid())
+  workflowId         String              @map("workflow_id")
+  workflow           WorkflowDefinition  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  stateId            String              @map("state_id")
+  state              WorkflowState       @relation(fields: [stateId], references: [id])
+  nameEn             String              @map("name_en")
+  nameFr             String              @map("name_fr")
+  triggerAfterDays   Int                 @map("trigger_after_days")
+  triggerConditions  Json?               @map("trigger_conditions")
+  action             EscalationAction
+  actionConfig       Json?               @map("action_config")
+  repeatIntervalDays Int?                @map("repeat_interval_days")
+  maxRepeats         Int?                @map("max_repeats")
+  isActive           Boolean             @default(true) @map("is_active")
+
+  @@map("escalation_rules")
+}
+
+model WorkflowExecution {
+  id               String              @id @default(cuid())
+  workflowId       String              @map("workflow_id")
+  workflow         WorkflowDefinition  @relation(fields: [workflowId], references: [id])
+  entityType       WorkflowEntityType  @map("entity_type")
+  entityId         String              @map("entity_id")
+  currentStateCode String              @map("current_state_code")
+  startedAt        DateTime            @default(now()) @map("started_at")
+  completedAt      DateTime?           @map("completed_at")
+  history          WorkflowHistory[]
+  slaTrackers      SLATracker[]
+
+  @@unique([entityType, entityId])
+  @@index([workflowId, currentStateCode])
+  @@map("workflow_executions")
+}
+
+model WorkflowHistory {
+  id              String              @id @default(cuid())
+  executionId     String              @map("execution_id")
+  execution       WorkflowExecution   @relation(fields: [executionId], references: [id], onDelete: Cascade)
+  fromStateCode   String?             @map("from_state_code")
+  toStateCode     String              @map("to_state_code")
+  transitionCode  String?             @map("transition_code")
+  trigger         TransitionTrigger
+  performedById   String?             @map("performed_by_id")
+  performedBy     User?               @relation("WorkflowActor", fields: [performedById], references: [id])
+  comment         String?             @db.Text
+  metadata        Json?
+  performedAt     DateTime            @default(now()) @map("performed_at")
+  durationInState Int?                @map("duration_in_state")
+
+  @@index([executionId, performedAt])
+  @@map("workflow_history")
+}
+
+model SLATracker {
+  id              String              @id @default(cuid())
+  executionId     String              @map("execution_id")
+  execution       WorkflowExecution   @relation(fields: [executionId], references: [id], onDelete: Cascade)
+  stateCode       String              @map("state_code")
+  targetDays      Int                 @map("target_days")
+  startedAt       DateTime            @map("started_at")
+  pausedAt        DateTime?           @map("paused_at")
+  pausedDuration  Int                 @default(0) @map("paused_duration")
+  dueAt           DateTime            @map("due_at")
+  status          SLAStatus           @default(RUNNING)
+  breachedAt      DateTime?           @map("breached_at")
+  completedAt     DateTime?           @map("completed_at")
+  escalationCount Int                 @default(0) @map("escalation_count")
+  lastEscalatedAt DateTime?           @map("last_escalated_at")
+
+  @@unique([executionId, stateCode])
+  @@index([status, dueAt])
+  @@map("sla_trackers")
 }
 
 model UserPreferences {
@@ -2127,4 +2279,44 @@ enum AnnotationType {
   DRAWING
   STAMP
   TEXT
+}
+
+// =============================================================================
+// WORKFLOW AUTOMATION ENUMS
+// =============================================================================
+
+enum WorkflowEntityType {
+  CAP
+  FINDING
+  REVIEW
+}
+
+enum WorkflowStateType {
+  INITIAL
+  INTERMEDIATE
+  TERMINAL
+  REJECTED
+}
+
+enum TransitionTrigger {
+  MANUAL
+  AUTOMATIC
+  SCHEDULED
+  SLA_BREACH
+}
+
+enum EscalationAction {
+  NOTIFY
+  REASSIGN
+  ESCALATE
+  AUTO_REJECT
+  AUTO_CLOSE
+}
+
+enum SLAStatus {
+  NOT_STARTED
+  RUNNING
+  PAUSED
+  BREACHED
+  COMPLETED
 }

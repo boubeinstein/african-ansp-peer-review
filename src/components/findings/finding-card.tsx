@@ -46,6 +46,7 @@ interface Finding {
 
 interface FindingCardProps {
   finding: Finding;
+  userId?: string; // Pass from server component - no need for SessionProvider
   sessionId?: string;
   locale?: string;
   onUpdate?: () => void;
@@ -70,14 +71,15 @@ const statusColors: Record<string, string> = {
 
 export function FindingCard({
   finding,
+  userId,
   sessionId,
   locale = "en",
   onUpdate,
 }: FindingCardProps) {
   const [showEdit, setShowEdit] = useState(false);
 
-  // Get members viewing this finding
-  const { members } = usePresence({ reviewId: finding.reviewId });
+  // Get members viewing this finding - pass userId to avoid needing SessionProvider
+  const { members } = usePresence({ reviewId: finding.reviewId, userId });
   const viewingMembers = members.filter(
     (m) => m.currentFocus === `finding:${finding.id}`
   );

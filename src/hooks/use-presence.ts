@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useSession } from "next-auth/react";
 import { getPusherClient } from "@/lib/pusher/client";
 import { CHANNELS, EVENTS } from "@/lib/pusher/server";
 import type { Channel, PresenceChannel } from "pusher-js";
@@ -21,6 +20,7 @@ export interface PresenceMember {
 
 interface UsePresenceOptions {
   reviewId: string;
+  userId?: string; // Pass from server component - no need for SessionProvider
   onMemberJoined?: (member: PresenceMember) => void;
   onMemberLeft?: (memberId: string) => void;
   onMemberUpdated?: (member: PresenceMember) => void;
@@ -53,11 +53,11 @@ interface PusherMembersData {
 
 export function usePresence({
   reviewId,
+  userId,
   onMemberJoined,
   onMemberLeft,
   onMemberUpdated,
 }: UsePresenceOptions): UsePresenceReturn {
-  const { data: session } = useSession();
   const [members, setMembers] = useState<PresenceMember[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [myMemberId, setMyMemberId] = useState<string | null>(null);
@@ -72,7 +72,7 @@ export function usePresence({
   }, [members]);
 
   useEffect(() => {
-    if (!session?.user || !reviewId) return;
+    if (!userId || !reviewId) return;
 
     const pusher = getPusherClient();
 
@@ -164,7 +164,7 @@ export function usePresence({
     presenceChannel.bind(
       EVENTS.CURSOR_MOVE,
       (data: { userId: string; position: { x: number; y: number } }) => {
-        if (data.userId !== session.user.id) {
+        if (data.userId !== userId) {
           setMembers((prev) =>
             prev.map((m) =>
               m.id === data.userId ? { ...m, cursorPosition: data.position } : m
@@ -184,46 +184,46 @@ export function usePresence({
       privateChannelRef.current = null;
       setIsConnected(false);
     };
-  }, [session?.user, reviewId, onMemberJoined, onMemberLeft, onMemberUpdated]);
+  }, [userId, reviewId, onMemberJoined, onMemberLeft, onMemberUpdated]);
 
   // Update focus (which element user is viewing/editing)
   const updateFocus = useCallback(
     (focus: string) => {
-      if (!channelRef.current || !session?.user) return;
+      if (!channelRef.current || !userId) return;
 
       channelRef.current.trigger("client-focus-change", {
-        userId: session.user.id,
+        userId,
         focus,
       });
     },
-    [session]
+    [userId]
   );
 
   // Update cursor position
   const updateCursor = useCallback(
     (position: { x: number; y: number }) => {
-      if (!channelRef.current || !session?.user) return;
+      if (!channelRef.current || !userId) return;
 
       // Throttle cursor updates
       channelRef.current.trigger("client-cursor-move", {
-        userId: session.user.id,
+        userId,
         position,
       });
     },
-    [session]
+    [userId]
   );
 
   // Broadcast typing indicator
   const broadcastTyping = useCallback(
     (isTyping: boolean) => {
-      if (!channelRef.current || !session?.user) return;
+      if (!channelRef.current || !userId) return;
 
       channelRef.current.trigger(
         isTyping ? "client-typing-start" : "client-typing-stop",
-        { userId: session.user.id }
+        { userId }
       );
     },
-    [session]
+    [userId]
   );
 
   return {

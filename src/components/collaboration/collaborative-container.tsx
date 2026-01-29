@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 interface CollaborativeContainerProps {
   reviewId: string;
+  userId?: string; // Pass from server component - no need for SessionProvider
   showCursors?: boolean;
   children: React.ReactNode;
   className?: string;
@@ -14,6 +15,7 @@ interface CollaborativeContainerProps {
 
 export function CollaborativeContainer({
   reviewId,
+  userId,
   showCursors = true,
   children,
   className,
@@ -22,6 +24,7 @@ export function CollaborativeContainer({
 
   const { members, updateCursor, updateFocus } = usePresence({
     reviewId,
+    userId,
   });
 
   // Track cursor movement

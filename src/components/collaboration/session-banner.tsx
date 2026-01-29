@@ -44,9 +44,10 @@ export function SessionBanner({
     },
   });
 
-  // Presence hook (only if session exists)
+  // Presence hook - pass userId to avoid needing SessionProvider
   const { members, isConnected } = usePresence({
     reviewId,
+    userId: session?.user?.id,
   });
 
   const isInSession = activeSession?.participants.some(

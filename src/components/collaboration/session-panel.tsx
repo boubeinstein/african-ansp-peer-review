@@ -62,8 +62,8 @@ export function SessionPanel({
 
   const utils = trpc.useUtils();
 
-  // Presence
-  const { members } = usePresence({ reviewId });
+  // Presence - pass userId to avoid needing SessionProvider
+  const { members } = usePresence({ reviewId, userId: authSession?.user?.id });
 
   // Session activities
   const { data: activitiesData } = trpc.collaboration.getSessionActivities.useQuery(

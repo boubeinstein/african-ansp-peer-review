@@ -25,6 +25,7 @@ interface LiveUpdate {
 
 interface UseLiveSyncOptions {
   reviewId: string;
+  userId?: string; // Pass from server component - no need for SessionProvider
   showToasts?: boolean;
   onFindingsChange?: () => void; // Callback to refetch findings
 }
@@ -42,6 +43,7 @@ interface UseLiveSyncReturn {
 
 export function useLiveSync({
   reviewId,
+  userId,
   showToasts = true,
   onFindingsChange,
 }: UseLiveSyncOptions): UseLiveSyncReturn {
@@ -94,9 +96,10 @@ export function useLiveSync({
     [addUpdate]
   );
 
-  // Presence
+  // Presence - pass userId to avoid needing SessionProvider
   const { members, isConnected, updateFocus } = usePresence({
     reviewId,
+    userId,
     onMemberJoined: handleMemberJoined,
     onMemberLeft: handleMemberLeft,
   });

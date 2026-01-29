@@ -4824,6 +4824,8 @@
       "sections": {
         "organization": "Organisation hôte",
         "organizationDesc": "Sélectionnez l'organisation qui sera évaluée",
+        "organizationDescOversight": "Sélectionnez l'ANSP cible qui sera évalué",
+        "organizationDescAnsp": "Vous demandez une revue par les pairs pour votre organisation",
         "reviewType": "Type de revue",
         "reviewTypeDesc": "Choisissez le type et la portée de la revue par les pairs",
         "schedule": "Calendrier",
@@ -4836,6 +4838,12 @@
       "fields": {
         "hostOrganization": "Organisation hôte",
         "selectOrganization": "Sélectionnez une organisation...",
+        "selectTargetAnsp": "Sélectionner l'ANSP cible",
+        "selectTargetAnspHelp": "Sélectionnez l'ANSP qui fera l'objet de cette revue par les pairs",
+        "organization": "Organisation",
+        "loadingOrg": "Chargement de l'organisation...",
+        "requestingForYourOrg": "Vous demandez une revue par les pairs pour votre organisation. Votre demande sera examinée et approuvée par le coordinateur du programme.",
+        "requestWillBeReviewed": "Une fois approuvée, une équipe de revue sera assignée et la revue sera planifiée.",
         "assessments": "Auto-évaluations",
         "assessmentsDesc": "Sélectionnez les évaluations soumises à réviser",
         "submittedOn": "Soumis",

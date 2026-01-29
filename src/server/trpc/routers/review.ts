@@ -28,6 +28,12 @@ import {
   Prisma,
 } from "@prisma/client";
 
+import {
+  isOversightRole,
+  canRequestPeerReview,
+  canManagePeerReviews,
+} from "@/lib/permissions";
+
 // Notification service imports
 import {
   notifyReviewRequested,
@@ -156,7 +162,8 @@ function canAccessReview(
 // =============================================================================
 
 const reviewRequestSchema = z.object({
-  hostOrganizationId: z.string(),
+  // Optional for ANSP roles (auto-uses own org), required for oversight roles
+  hostOrganizationId: z.string().optional(),
   assessmentIds: z.array(z.string()).min(1, "At least one assessment must be selected"),
   reviewType: z.nativeEnum(ReviewType),
   focusAreas: z.array(z.string()).optional(),
@@ -679,22 +686,66 @@ export const reviewRouter = router({
 
   /**
    * Create a new review request
+   *
+   * Business Rules:
+   * - ANSP Admins can REQUEST peer reviews for their own organization (status: REQUESTED)
+   * - Programme Coordinators can CREATE reviews for a target ANSP (status: APPROVED)
+   * - Programme Coordinators cannot create reviews for their own organization
    */
   create: protectedProcedure
     .input(reviewRequestSchema)
     .mutation(async ({ ctx, input }) => {
-      // Check if user can request reviews
-      if (!REVIEW_REQUESTER_ROLES.includes(ctx.session.user.role)) {
+      const userRole = ctx.session.user.role as UserRole;
+      const userOrgId = ctx.session.user.organizationId;
+
+      // Determine the host organization and initial status based on role
+      let hostOrganizationId: string;
+      let initialStatus: ReviewStatus;
+
+      if (isOversightRole(userRole)) {
+        // Programme Coordinator creating directly
+        // Must have a target organization specified
+        if (!input.hostOrganizationId) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Please select a target organization for the peer review",
+          });
+        }
+
+        // Cannot create review for own organization
+        if (input.hostOrganizationId === userOrgId) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Programme Coordinators cannot create peer reviews for their own organization. Reviews should be requested by the ANSP.",
+          });
+        }
+
+        hostOrganizationId = input.hostOrganizationId;
+        initialStatus = "APPROVED"; // PC-created reviews are pre-approved
+
+      } else if (canRequestPeerReview(userRole, userOrgId)) {
+        // ANSP Admin requesting review for own organization
+        if (input.hostOrganizationId && input.hostOrganizationId !== userOrgId) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You can only request peer reviews for your own organization",
+          });
+        }
+
+        hostOrganizationId = userOrgId!;
+        initialStatus = "REQUESTED"; // Needs PC approval
+
+      } else {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "You do not have permission to request reviews",
+          message: "You do not have permission to create peer reviews",
         });
       }
 
-      // Check for active reviews
+      // Check for active reviews for the target organization
       const activeReview = await ctx.db.review.findFirst({
         where: {
-          hostOrganizationId: input.hostOrganizationId,
+          hostOrganizationId,
           status: {
             in: ["REQUESTED", "APPROVED", "SCHEDULED", "IN_PROGRESS"],
           },
@@ -732,7 +783,7 @@ export const reviewRouter = router({
       const assessments = await ctx.db.assessment.findMany({
         where: {
           id: { in: input.assessmentIds },
-          organizationId: input.hostOrganizationId,
+          organizationId: hostOrganizationId,
           status: "SUBMITTED",
         },
         select: { id: true },
@@ -749,10 +800,10 @@ export const reviewRouter = router({
       const review = await ctx.db.review.create({
         data: {
           referenceNumber: generateReviewNumber(year, sequence),
-          hostOrganizationId: input.hostOrganizationId,
+          hostOrganizationId,
           reviewType: input.reviewType,
           locationType: input.locationType,
-          status: "REQUESTED",
+          status: initialStatus,
           phase: "PLANNING",
           requestedDate: new Date(),
           requestedStartDate: input.requestedStartDate,
@@ -809,15 +860,31 @@ export const reviewRouter = router({
 
       // Send notifications to stakeholders
       try {
-        await notifyReviewRequested({
-          id: review.id,
-          referenceNumber: review.referenceNumber,
-          hostOrganization: {
-            id: review.hostOrganization.id,
-            nameEn: review.hostOrganization.nameEn,
-            nameFr: review.hostOrganization.nameFr,
-          },
-        });
+        if (initialStatus === "REQUESTED") {
+          // ANSP request - notify Programme Coordinators
+          await notifyReviewRequested({
+            id: review.id,
+            referenceNumber: review.referenceNumber,
+            hostOrganization: {
+              id: review.hostOrganization.id,
+              nameEn: review.hostOrganization.nameEn,
+              nameFr: review.hostOrganization.nameFr,
+            },
+          });
+        } else if (initialStatus === "APPROVED") {
+          // PC-created review - notify the host organization
+          await notifyReviewApproved({
+            id: review.id,
+            referenceNumber: review.referenceNumber,
+            hostOrganization: {
+              id: review.hostOrganization.id,
+              nameEn: review.hostOrganization.nameEn,
+              nameFr: review.hostOrganization.nameFr ?? review.hostOrganization.nameEn,
+            },
+            plannedStartDate: review.requestedStartDate,
+            plannedEndDate: review.requestedEndDate,
+          });
+        }
       } catch (error) {
         console.error("[Review Create] Failed to send notifications:", error);
         // Don't fail the request if notifications fail

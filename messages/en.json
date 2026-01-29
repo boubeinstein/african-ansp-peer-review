@@ -4824,6 +4824,8 @@
       "sections": {
         "organization": "Host Organization",
         "organizationDesc": "Select the organization that will be reviewed",
+        "organizationDescOversight": "Select the target ANSP that will be reviewed",
+        "organizationDescAnsp": "You are requesting a peer review for your organization",
         "reviewType": "Review Type",
         "reviewTypeDesc": "Choose the type and scope of the peer review",
         "schedule": "Schedule",
@@ -4836,6 +4838,12 @@
       "fields": {
         "hostOrganization": "Host Organization",
         "selectOrganization": "Select an organization...",
+        "selectTargetAnsp": "Select Target ANSP",
+        "selectTargetAnspHelp": "Select the ANSP that will be the subject of this peer review",
+        "organization": "Organization",
+        "loadingOrg": "Loading organization...",
+        "requestingForYourOrg": "You are requesting a peer review for your organization. Your request will be reviewed and approved by the Programme Coordinator.",
+        "requestWillBeReviewed": "Once approved, a review team will be assigned and the review will be scheduled.",
         "assessments": "Self-Assessments",
         "assessmentsDesc": "Select the submitted assessments to be reviewed",
         "submittedOn": "Submitted",

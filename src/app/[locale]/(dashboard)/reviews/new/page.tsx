@@ -1,15 +1,9 @@
 import { redirect, notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { auth } from "@/lib/auth";
+import { UserRole } from "@prisma/client";
+import { isOversightRole, canRequestPeerReview } from "@/lib/permissions";
 import { NewReviewClient } from "./client";
-
-// Roles that can create reviews (coordinators and admins)
-const REVIEW_CREATOR_ROLES = [
-  "PROGRAMME_COORDINATOR",
-  "STEERING_COMMITTEE",
-  "SUPER_ADMIN",
-  "SYSTEM_ADMIN",
-] as const;
 
 interface NewReviewPageProps {
   params: Promise<{ locale: string }>;
@@ -34,16 +28,25 @@ export default async function NewReviewPage({ params }: NewReviewPageProps) {
     redirect(`/${locale}/login`);
   }
 
-  const { id: userId, role } = session.user;
+  const { id: userId, role, organizationId } = session.user;
+  const userRole = role as UserRole;
 
-  // Check if user has permission to create reviews
-  if (!REVIEW_CREATOR_ROLES.includes(role as typeof REVIEW_CREATOR_ROLES[number])) {
+  // Check if user has permission to create/request reviews
+  const canManage = isOversightRole(userRole);
+  const canRequest = canRequestPeerReview(userRole, organizationId);
+
+  if (!canManage && !canRequest) {
     notFound();
   }
 
   return (
     <div className="container max-w-4xl py-6">
-      <NewReviewClient userId={userId} locale={locale} />
+      <NewReviewClient
+        userId={userId}
+        locale={locale}
+        userRole={role}
+        userOrgId={organizationId}
+      />
     </div>
   );
 }

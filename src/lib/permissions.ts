@@ -73,3 +73,37 @@ export function canAdoptBestPractice(
 export function canReviewBestPractice(role: UserRole): boolean {
   return OVERSIGHT_ROLES.includes(role);
 }
+
+/**
+ * Check if user can request a peer review (ANSP requesting for own org)
+ */
+export function canRequestPeerReview(
+  role: UserRole,
+  organizationId: string | null | undefined
+): boolean {
+  // Only ANSP roles with an organization can request reviews
+  return isAnspRole(role) && !!organizationId;
+}
+
+/**
+ * Check if user can create/approve peer reviews (oversight function)
+ */
+export function canManagePeerReviews(role: UserRole): boolean {
+  return ["PROGRAMME_COORDINATOR", "SUPER_ADMIN", "SYSTEM_ADMIN"].includes(role);
+}
+
+/**
+ * Check if organization can be a peer review host for this user
+ * Programme Coordinators cannot select their own org as host
+ */
+export function canBeReviewHost(
+  organizationId: string,
+  userRole: UserRole,
+  userOrgId: string | null | undefined
+): boolean {
+  // Programme Coordinators cannot select their own org as host
+  if (isOversightRole(userRole) && organizationId === userOrgId) {
+    return false;
+  }
+  return true;
+}

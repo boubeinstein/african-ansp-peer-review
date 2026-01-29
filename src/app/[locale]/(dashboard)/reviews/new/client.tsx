@@ -65,12 +65,17 @@ import {
   CalendarIcon,
   FileText,
   Globe,
+  Info,
   Loader2,
   Mail,
   MapPin,
   Phone,
   User,
 } from "lucide-react";
+
+// Permissions
+import { isOversightRole } from "@/lib/permissions";
+import { UserRole } from "@prisma/client";
 
 // =============================================================================
 // TYPES
@@ -79,11 +84,13 @@ import {
 interface NewReviewClientProps {
   userId: string;
   locale: string;
+  userRole: string;
+  userOrgId: string | null | undefined;
 }
 
-// Form schema
+// Form schema - hostOrganizationId is optional (auto-set for ANSP roles)
 const newReviewSchema = z.object({
-  hostOrganizationId: z.string().min(1, "Please select a host organization"),
+  hostOrganizationId: z.string().optional(),
   assessmentIds: z
     .array(z.string())
     .min(1, "Please select at least one assessment"),
@@ -113,15 +120,43 @@ const ANS_FOCUS_AREAS = ["ATS", "AIM", "MET", "CNS", "SAR"] as const;
 // COMPONENT
 // =============================================================================
 
-export function NewReviewClient({ locale }: NewReviewClientProps) {
+export function NewReviewClient({
+  locale,
+  userRole,
+  userOrgId,
+}: NewReviewClientProps) {
   const t = useTranslations("review.new");
   const tCommon = useTranslations("common");
   const router = useRouter();
-  const [selectedOrgId, setSelectedOrgId] = useState<string>("");
 
-  // Fetch organizations
+  // Determine if user is oversight role or ANSP role
+  const isOversight = isOversightRole(userRole as UserRole);
+
+  // For ANSP roles, use their own org; for oversight, they must select
+  const [selectedOrgId, setSelectedOrgId] = useState<string>(
+    isOversight ? "" : (userOrgId ?? "")
+  );
+
+  // Fetch organizations (only needed for oversight roles)
   const { data: organizations, isLoading: orgsLoading } =
-    trpc.organization.getAll.useQuery({ activeOnly: true });
+    trpc.organization.getAll.useQuery(
+      { activeOnly: true },
+      { enabled: isOversight }
+    );
+
+  // Fetch user's organization (for ANSP roles display)
+  const { data: userOrganization } = trpc.organization.getById.useQuery(
+    { id: userOrgId! },
+    { enabled: !isOversight && !!userOrgId }
+  );
+
+  // Filter out user's own org from dropdown for oversight roles
+  const eligibleOrganizations = organizations?.filter((org) => {
+    if (isOversight && org.id === userOrgId) {
+      return false; // Exclude PC's own org
+    }
+    return true;
+  });
 
   // Fetch assessments for selected organization
   const { data: assessments, isLoading: assessmentsLoading } =
@@ -183,8 +218,8 @@ export function NewReviewClient({ locale }: NewReviewClientProps) {
     });
   };
 
-  // Loading state
-  if (orgsLoading) {
+  // Loading state (only for oversight roles who need org list)
+  if (isOversight && orgsLoading) {
     return (
       <div className="space-y-6">
         <Skeleton className="h-8 w-64" />
@@ -221,46 +256,79 @@ export function NewReviewClient({ locale }: NewReviewClientProps) {
                 {t("sections.organization")}
               </CardTitle>
               <CardDescription>
-                {t("sections.organizationDesc")}
+                {isOversight
+                  ? t("sections.organizationDescOversight")
+                  : t("sections.organizationDescAnsp")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="hostOrganizationId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("fields.hostOrganization")}</FormLabel>
-                    <Select
-                      value={field.value}
-                      onValueChange={handleOrganizationChange}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue
-                            placeholder={t("fields.selectOrganization")}
-                          />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {organizations?.map((org) => (
-                          <SelectItem key={org.id} value={org.id}>
-                            {locale === "fr" && org.nameFr
-                              ? org.nameFr
-                              : org.nameEn}
-                            {org.organizationCode && (
-                              <span className="text-muted-foreground ml-2">
-                                ({org.organizationCode})
-                              </span>
-                            )}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {isOversight ? (
+                /* Programme Coordinator view - select target ANSP */
+                <FormField
+                  control={form.control}
+                  name="hostOrganizationId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("fields.selectTargetAnsp")} *</FormLabel>
+                      <Select
+                        value={field.value}
+                        onValueChange={handleOrganizationChange}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={t("fields.selectOrganization")}
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {eligibleOrganizations?.map((org) => (
+                            <SelectItem key={org.id} value={org.id}>
+                              {locale === "fr" && org.nameFr
+                                ? org.nameFr
+                                : org.nameEn}
+                              {org.organizationCode && (
+                                <span className="text-muted-foreground ml-2">
+                                  ({org.organizationCode})
+                                </span>
+                              )}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        {t("fields.selectTargetAnspHelp")}
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ) : (
+                /* ANSP Admin view - show own org info and request message */
+                <>
+                  <Alert>
+                    <Info className="h-4 w-4" />
+                    <AlertDescription>
+                      {t("fields.requestingForYourOrg")}
+                    </AlertDescription>
+                  </Alert>
+                  <div className="p-4 bg-muted rounded-md">
+                    <p className="text-sm text-muted-foreground mb-1">
+                      {t("fields.organization")}
+                    </p>
+                    <p className="font-medium">
+                      {userOrganization
+                        ? locale === "fr" && userOrganization.nameFr
+                          ? userOrganization.nameFr
+                          : userOrganization.nameEn
+                        : t("fields.loadingOrg")}
+                    </p>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {t("fields.requestWillBeReviewed")}
+                  </p>
+                </>
+              )}
 
               {/* Assessments Selection */}
               {selectedOrgId && (

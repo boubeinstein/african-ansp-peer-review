@@ -32,3 +32,5 @@ export {
 } from "./use-live-findings";
 
 export { useLiveSync } from "./use-live-sync";
+
+export { useConnectionStatus } from "./use-connection-status";

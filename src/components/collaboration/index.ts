@@ -31,3 +31,8 @@ export {
   ActivityToast,
 } from "./activity-feed";
 export type { ActivityItem } from "./activity-feed";
+
+// Connection & Error handling
+export { ConnectionStatus } from "./connection-status";
+export { CollaborationErrorBoundary } from "./collaboration-error-boundary";
+export { OfflineIndicator } from "./offline-indicator";

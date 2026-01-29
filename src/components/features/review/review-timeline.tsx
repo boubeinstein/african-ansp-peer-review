@@ -16,6 +16,7 @@ import {
   Loader2,
   AlertCircle,
   ChevronDown,
+  XCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -29,6 +30,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { resolveTimelineData } from "@/lib/resolve-timeline";
 import type { ReviewTimelineData, TimelineStep } from "@/types/timeline";
 
@@ -62,9 +64,48 @@ export function ReviewTimeline({
   const t = useTranslations("reviews.timeline");
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
+  const isCancelled = review.status === "CANCELLED";
   const timeline = resolveTimelineData(review);
   const progressPercent =
     (timeline.completedCount / timeline.totalCount) * 100;
+
+  // If cancelled, show cancelled state
+  if (isCancelled) {
+    return (
+      <TooltipProvider>
+        <div className="border rounded-lg">
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-muted-foreground" />
+              <h3 className="font-semibold">{t("title")}</h3>
+            </div>
+          </div>
+          <div className="px-4 pb-4">
+            <Alert variant="destructive">
+              <XCircle className="h-4 w-4" />
+              <AlertTitle>{t("cancelled.title")}</AlertTitle>
+              <AlertDescription>
+                {t("cancelled.description")}
+              </AlertDescription>
+            </Alert>
+            {/* Show completed steps before cancellation with cancelled styling */}
+            <div className="mt-4 space-y-0 opacity-60">
+              {timeline.steps
+                .filter((s) => s.status === "completed")
+                .map((step, index, arr) => (
+                  <TimelineStepItem
+                    key={step.id}
+                    step={{ ...step, status: "cancelled" as const }}
+                    isLast={index === arr.length - 1}
+                    t={t}
+                  />
+                ))}
+            </div>
+          </div>
+        </div>
+      </TooltipProvider>
+    );
+  }
 
   return (
     <TooltipProvider>
@@ -139,6 +180,7 @@ interface TimelineStepItemProps {
 
 function TimelineStepItem({ step, isLast, t }: TimelineStepItemProps) {
   const Icon = STEP_ICONS[step.id] ?? CheckCircle2;
+  const isCancelled = step.status === "cancelled";
 
   return (
     <div className="flex gap-3">
@@ -152,13 +194,17 @@ function TimelineStepItem({ step, isLast, t }: TimelineStepItemProps) {
             step.status === "current" &&
               "bg-blue-100 border-blue-500 text-blue-600 dark:bg-blue-900/30",
             step.status === "pending" &&
-              "bg-muted border-muted-foreground/30 text-muted-foreground"
+              "bg-muted border-muted-foreground/30 text-muted-foreground",
+            isCancelled &&
+              "bg-red-100 border-red-400 text-red-500 dark:bg-red-900/30"
           )}
         >
           {step.status === "current" ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : step.status === "completed" ? (
             <CheckCircle2 className="h-4 w-4" />
+          ) : isCancelled ? (
+            <XCircle className="h-4 w-4" />
           ) : (
             <Icon className="h-4 w-4" />
           )}
@@ -167,7 +213,8 @@ function TimelineStepItem({ step, isLast, t }: TimelineStepItemProps) {
           <div
             className={cn(
               "w-0.5 h-12 -my-1",
-              step.status === "completed" ? "bg-green-500" : "bg-muted"
+              step.status === "completed" ? "bg-green-500" : "bg-muted",
+              isCancelled && "bg-red-300 dark:bg-red-800"
             )}
           />
         )}
@@ -181,7 +228,8 @@ function TimelineStepItem({ step, isLast, t }: TimelineStepItemProps) {
               "font-medium",
               step.status === "completed" && "text-foreground",
               step.status === "current" && "text-blue-600 dark:text-blue-400",
-              step.status === "pending" && "text-muted-foreground"
+              step.status === "pending" && "text-muted-foreground",
+              isCancelled && "text-red-600 dark:text-red-400 line-through"
             )}
           >
             {t(`steps.${step.labelKey}`)}
@@ -202,21 +250,29 @@ function TimelineStepItem({ step, isLast, t }: TimelineStepItemProps) {
             </Tooltip>
           )}
         </div>
-        <div className="text-sm text-muted-foreground mt-0.5">
+        <div className={cn(
+          "text-sm mt-0.5",
+          isCancelled ? "text-red-500 dark:text-red-400" : "text-muted-foreground"
+        )}>
           {step.displayDate ? (
-            <span className={step.isInferred ? "italic" : ""}>
+            <span className={cn(step.isInferred ? "italic" : "", isCancelled && "line-through")}>
               {step.displayDate}
             </span>
           ) : step.status === "completed" ? (
             <span className="text-green-600 dark:text-green-400">
               {t("completed")}
             </span>
+          ) : isCancelled ? (
+            <span>{t("cancelled.label")}</span>
           ) : (
             t("pending")
           )}
         </div>
         {step.details && (
-          <div className="text-xs text-muted-foreground mt-1">
+          <div className={cn(
+            "text-xs mt-1",
+            isCancelled ? "text-red-400 dark:text-red-500" : "text-muted-foreground"
+          )}>
             {step.details}
           </div>
         )}

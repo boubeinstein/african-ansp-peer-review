@@ -3111,6 +3111,11 @@
         "reportDrafted": "Rapport rédigé",
         "reportFinalized": "Rapport finalisé",
         "reviewClosed": "Revue clôturée"
+      },
+      "cancelled": {
+        "title": "Revue par les pairs annulée",
+        "description": "Cette revue par les pairs a été annulée et ne se poursuivra pas.",
+        "label": "Annulée"
       }
     },
     "fieldworkChecklist": {

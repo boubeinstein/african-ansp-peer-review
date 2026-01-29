@@ -3090,6 +3090,11 @@
       "sameDay": "Same day",
       "teamMembers": "{count, plural, =1 {1 team member} other {# team members}}",
       "findings": "{count, plural, =1 {1 finding} other {# findings}}",
+      "cancelled": {
+        "title": "Peer Review Cancelled",
+        "description": "This peer review has been cancelled and will not proceed.",
+        "label": "Cancelled"
+      },
       "steps": {
         "requestSubmitted": "Request Submitted",
         "requestApproved": "Request Approved",

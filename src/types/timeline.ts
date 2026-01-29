@@ -39,7 +39,7 @@ export interface ReviewTimelineData {
 export interface TimelineStep {
   id: string;
   labelKey: string;
-  status: "completed" | "current" | "pending";
+  status: "completed" | "current" | "pending" | "cancelled";
   date: Date | null;
   displayDate: string | null;
   details: string | null;

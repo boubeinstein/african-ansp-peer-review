@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useSession } from "next-auth/react";
 import { getPusherClient } from "@/lib/pusher/client";
 import { CHANNELS, EVENTS } from "@/lib/pusher/server";
 import type { Channel } from "pusher-js";
@@ -46,6 +45,7 @@ export interface CommentAdded {
 
 interface UseLiveFindingsOptions {
   reviewId: string;
+  userId?: string; // Pass from server component - no need for SessionProvider
   onFindingCreated?: (data: FindingCreated) => void;
   onFindingUpdated?: (data: FindingUpdate) => void;
   onFindingDeleted?: (data: FindingDeleted) => void;
@@ -58,17 +58,17 @@ interface UseLiveFindingsReturn {
 
 export function useLiveFindings({
   reviewId,
+  userId,
   onFindingCreated,
   onFindingUpdated,
   onFindingDeleted,
   onCommentAdded,
 }: UseLiveFindingsOptions): UseLiveFindingsReturn {
-  const { data: session } = useSession();
   const channelRef = useRef<Channel | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    if (!session?.user || !reviewId) return;
+    if (!userId || !reviewId) return;
 
     const pusher = getPusherClient();
     const channel = pusher.subscribe(CHANNELS.review(reviewId));
@@ -82,7 +82,7 @@ export function useLiveFindings({
     // Finding created
     channel.bind(EVENTS.FINDING_CREATED, (data: FindingCreated) => {
       // Don't notify if current user created it
-      if (data.createdBy.id !== session.user.id) {
+      if (data.createdBy.id !== userId) {
         onFindingCreated?.(data);
       }
     });
@@ -90,7 +90,7 @@ export function useLiveFindings({
     // Finding updated
     channel.bind(EVENTS.FINDING_UPDATED, (data: FindingUpdate) => {
       // Don't notify if current user updated it
-      if (data.updatedBy.id !== session.user.id) {
+      if (data.updatedBy.id !== userId) {
         onFindingUpdated?.(data);
       }
     });
@@ -103,7 +103,7 @@ export function useLiveFindings({
 
     // Comment added
     channel.bind(EVENTS.COMMENT_ADDED, (data: CommentAdded) => {
-      if (data.addedBy?.id !== session.user.id) {
+      if (data.addedBy?.id !== userId) {
         onCommentAdded?.(data);
       }
     });
@@ -116,7 +116,7 @@ export function useLiveFindings({
       setIsConnected(false);
     };
   }, [
-    session?.user,
+    userId,
     reviewId,
     onFindingCreated,
     onFindingUpdated,

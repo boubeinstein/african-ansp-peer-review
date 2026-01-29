@@ -146,9 +146,10 @@ export function useLiveSync({
     [addUpdate, onFindingsChange]
   );
 
-  // Live findings
+  // Live findings - pass userId to avoid needing SessionProvider
   useLiveFindings({
     reviewId,
+    userId,
     onFindingCreated: handleFindingCreated,
     onFindingUpdated: handleFindingUpdated,
     onFindingDeleted: handleFindingDeleted,

@@ -31,10 +31,10 @@ const updateDiscussionSchema = z.object({
 });
 
 const listDiscussionsSchema = z.object({
-  reviewId: z.string(),
+  reviewId: z.string().optional(),
   includeResolved: z.boolean().default(false),
   page: z.number().min(1).default(1),
-  pageSize: z.number().min(1).max(50).default(20),
+  pageSize: z.number().min(1).max(100).default(20),
 });
 
 // =============================================================================
@@ -128,7 +128,6 @@ async function notifyMentions(
  * - Oversight roles: No filter (see all teams)
  * - Team members: Filter by their assigned team(s)
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function getTeamFilter(
   db: PrismaClient | Prisma.TransactionClient,
   userId: string,
@@ -208,7 +207,6 @@ async function getTeamFilter(
  * - Team members have access to reviews they're assigned to
  * - Users in the same regional team have access
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function verifyReviewAccess(
   db: PrismaClient | Prisma.TransactionClient,
   userId: string,
@@ -275,33 +273,44 @@ export const reviewDiscussionRouter = router({
   list: protectedProcedure
     .input(listDiscussionsSchema)
     .query(async ({ ctx, input }) => {
-      const { reviewId, includeResolved, page, pageSize } = input;
       const { user } = ctx.session;
+      const userId = user.id;
+      const userRole = user.role;
 
-      // Check access
-      const hasAccess = await checkReviewAccess(ctx.db, reviewId, user.id);
-      if (!hasAccess) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "You do not have access to this review's discussions",
-        });
+      // Get team-based filter
+      const teamFilter = await getTeamFilter(ctx.db, userId, userRole);
+
+      // If specific reviewId provided, verify access
+      if (input.reviewId) {
+        const hasAccess = await verifyReviewAccess(
+          ctx.db,
+          userId,
+          userRole,
+          input.reviewId
+        );
+
+        if (!hasAccess) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You do not have access to this review's discussions",
+          });
+        }
       }
-
-      const skip = (page - 1) * pageSize;
 
       // Build where clause - only top-level discussions
       const where: Prisma.ReviewDiscussionWhereInput = {
-        reviewId,
+        ...(teamFilter || {}),
+        ...(input.reviewId && { reviewId: input.reviewId }),
         parentId: null, // Only top-level
         isDeleted: false,
-        ...(includeResolved ? {} : { isResolved: false }),
+        ...(!input.includeResolved && { isResolved: false }),
       };
 
-      const [items, total] = await Promise.all([
+      const [discussions, total] = await Promise.all([
         ctx.db.reviewDiscussion.findMany({
           where,
-          skip,
-          take: pageSize,
+          skip: (input.page - 1) * input.pageSize,
+          take: input.pageSize,
           orderBy: { createdAt: "desc" },
           include: {
             author: {
@@ -310,6 +319,19 @@ export const reviewDiscussionRouter = router({
                 firstName: true,
                 lastName: true,
                 email: true,
+              },
+            },
+            review: {
+              select: {
+                id: true,
+                referenceNumber: true,
+                hostOrganization: {
+                  select: {
+                    regionalTeam: {
+                      select: { id: true, nameEn: true, nameFr: true },
+                    },
+                  },
+                },
               },
             },
             resolvedBy: {
@@ -322,6 +344,7 @@ export const reviewDiscussionRouter = router({
             replies: {
               where: { isDeleted: false },
               orderBy: { createdAt: "asc" },
+              take: 3, // Preview of recent replies
               include: {
                 author: {
                   select: {
@@ -346,11 +369,13 @@ export const reviewDiscussionRouter = router({
       ]);
 
       return {
-        items,
-        total,
-        page,
-        pageSize,
-        totalPages: Math.ceil(total / pageSize),
+        discussions,
+        pagination: {
+          page: input.page,
+          pageSize: input.pageSize,
+          total,
+          totalPages: Math.ceil(total / input.pageSize),
+        },
       };
     }),
 

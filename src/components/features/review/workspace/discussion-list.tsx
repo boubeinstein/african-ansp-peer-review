@@ -113,11 +113,11 @@ export function DiscussionList({
       {/* Discussion list */}
       {isLoading ? (
         <DiscussionListSkeleton />
-      ) : data?.items.length === 0 ? (
+      ) : data?.discussions.length === 0 ? (
         <EmptyDiscussions onCreateClick={() => setShowCreateDialog(true)} />
       ) : (
         <div className="space-y-3">
-          {data?.items.map((discussion) => (
+          {data?.discussions.map((discussion) => (
             <DiscussionCard
               key={discussion.id}
               discussion={discussion}
@@ -131,7 +131,7 @@ export function DiscussionList({
       )}
 
       {/* Pagination */}
-      {data && data.totalPages > 1 && (
+      {data && data.pagination.totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 pt-4">
           <Button
             variant="outline"
@@ -142,13 +142,13 @@ export function DiscussionList({
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <span className="text-sm text-muted-foreground px-2">
-            {t("pagination.page", { page, totalPages: data.totalPages })}
+            {t("pagination.page", { page, totalPages: data.pagination.totalPages })}
           </span>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))}
-            disabled={page >= data.totalPages}
+            onClick={() => setPage((p) => Math.min(data.pagination.totalPages, p + 1))}
+            disabled={page >= data.pagination.totalPages}
           >
             <ChevronRight className="h-4 w-4" />
           </Button>

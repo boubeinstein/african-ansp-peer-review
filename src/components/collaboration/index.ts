@@ -14,3 +14,9 @@ export {
   OnlineIndicator,
 } from "./presence-avatars";
 export { TypingIndicator } from "./typing-indicator";
+export {
+  LiveCursors,
+  useCursorTracking,
+  SelectionHighlight,
+} from "./live-cursors";
+export { CollaborativeContainer } from "./collaborative-container";

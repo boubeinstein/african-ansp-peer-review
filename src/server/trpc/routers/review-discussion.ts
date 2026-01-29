@@ -454,20 +454,28 @@ export const reviewDiscussionRouter = router({
     }),
 
   // ===========================================================================
-  // CREATE - Create new discussion or reply
+  // CREATE - Create new discussion
   // ===========================================================================
 
   create: protectedProcedure
     .input(createDiscussionSchema)
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx.session;
+      const userId = user.id;
+      const userRole = user.role;
 
-      // Check access
-      const hasAccess = await checkReviewAccess(ctx.db, input.reviewId, user.id);
+      // Verify user has access to this review
+      const hasAccess = await verifyReviewAccess(
+        ctx.db,
+        userId,
+        userRole,
+        input.reviewId
+      );
+
       if (!hasAccess) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "You do not have access to this review",
+          message: "You do not have access to create discussions for this review",
         });
       }
 
@@ -502,7 +510,7 @@ export const reviewDiscussionRouter = router({
       const discussion = await ctx.db.reviewDiscussion.create({
         data: {
           reviewId: input.reviewId,
-          authorId: user.id,
+          authorId: userId,
           parentId: input.parentId,
           subject: input.parentId ? null : input.subject, // Subject only for top-level
           content: input.content,
@@ -526,7 +534,7 @@ export const reviewDiscussionRouter = router({
       await notifyMentions(
         ctx.db,
         discussion.id,
-        user.id,
+        userId,
         authorName,
         input.mentions,
         input.reviewId,
@@ -534,6 +542,93 @@ export const reviewDiscussionRouter = router({
       );
 
       return discussion;
+    }),
+
+  // ===========================================================================
+  // ADD REPLY - Add a reply to an existing discussion
+  // ===========================================================================
+
+  addReply: protectedProcedure
+    .input(
+      z.object({
+        discussionId: z.string(),
+        content: z.string().min(1),
+        mentions: z.array(z.string()).default([]),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+      const userId = user.id;
+      const userRole = user.role;
+
+      // Get parent discussion to find reviewId
+      const parentDiscussion = await ctx.db.reviewDiscussion.findUnique({
+        where: { id: input.discussionId },
+        select: { reviewId: true, isDeleted: true },
+      });
+
+      if (!parentDiscussion || parentDiscussion.isDeleted) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Discussion not found",
+        });
+      }
+
+      // Verify access to the review
+      const hasAccess = await verifyReviewAccess(
+        ctx.db,
+        userId,
+        userRole,
+        parentDiscussion.reviewId
+      );
+
+      if (!hasAccess) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have access to reply to this discussion",
+        });
+      }
+
+      // Get review for notifications
+      const review = await ctx.db.review.findUnique({
+        where: { id: parentDiscussion.reviewId },
+        select: { referenceNumber: true },
+      });
+
+      // Create reply as a ReviewDiscussion with parentId
+      const reply = await ctx.db.reviewDiscussion.create({
+        data: {
+          reviewId: parentDiscussion.reviewId,
+          authorId: userId,
+          parentId: input.discussionId,
+          content: input.content,
+          mentions: input.mentions,
+        },
+        include: {
+          author: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      // Send mention notifications
+      const authorName = `${reply.author.firstName} ${reply.author.lastName}`;
+      await notifyMentions(
+        ctx.db,
+        reply.id,
+        userId,
+        authorName,
+        input.mentions,
+        parentDiscussion.reviewId,
+        review?.referenceNumber || ""
+      );
+
+      return reply;
     }),
 
   // ===========================================================================

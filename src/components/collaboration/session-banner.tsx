@@ -11,16 +11,48 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Users, Play, LogIn, Radio, Wifi, WifiOff } from "lucide-react";
+import {
+  Users,
+  Play,
+  LogIn,
+  Radio,
+  Wifi,
+  WifiOff,
+  AlertCircle,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { StartSessionDialog } from "./start-session-dialog";
 import { usePresence } from "@/hooks/use-presence";
+import { isPusherAvailable } from "@/lib/pusher/client";
 
 interface SessionBannerProps {
   reviewId: string;
   reviewReference: string;
   userId?: string; // Pass from server component - no need for SessionProvider
   className?: string;
+}
+
+// Generate a consistent color from user ID
+function generateColor(userId: string): string {
+  const colors = [
+    "#ef4444",
+    "#f97316",
+    "#f59e0b",
+    "#84cc16",
+    "#22c55e",
+    "#14b8a6",
+    "#06b6d4",
+    "#3b82f6",
+    "#6366f1",
+    "#8b5cf6",
+    "#a855f7",
+    "#d946ef",
+  ];
+  let hash = 0;
+  for (let i = 0; i < userId.length; i++) {
+    hash = userId.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return colors[Math.abs(hash) % colors.length];
 }
 
 export function SessionBanner({
@@ -30,28 +62,67 @@ export function SessionBanner({
   className,
 }: SessionBannerProps) {
   const [showStartDialog, setShowStartDialog] = useState(false);
+  const pusherAvailable = isPusherAvailable();
 
-  // Get active session (only if authenticated)
-  const { data: activeSession, refetch } = trpc.collaboration.getActiveSession.useQuery(
-    { reviewId },
-    {
-      enabled: !!userId,
-      refetchInterval: 30000, // Refresh every 30s
-    }
-  );
+  // Get active session from database
+  const { data: activeSession, refetch } =
+    trpc.collaboration.getActiveSession.useQuery(
+      { reviewId },
+      {
+        enabled: !!userId && !!reviewId,
+        refetchInterval: pusherAvailable ? 30000 : 10000, // Poll more frequently without Pusher
+      }
+    );
 
   // Join session mutation
   const joinSession = trpc.collaboration.joinSession.useMutation({
-    onSuccess: () => {
-      refetch();
-    },
+    onSuccess: () => refetch(),
   });
 
-  // Presence hook - pass userId to avoid needing SessionProvider
+  // Convert DB participants for usePresence fallback
+  const dbParticipants = activeSession?.participants?.map(
+    (p: {
+      id: string;
+      odId?: string;
+      user: { id: string; firstName: string; lastName: string; email: string };
+    }) => ({
+      id: p.id,
+      odId: p.odId || "",
+      user: p.user,
+    })
+  );
+
+  // Presence hook with database fallback
   const { members, isConnected } = usePresence({
     reviewId,
     userId,
+    dbParticipants,
   });
+
+  // Use database participant count when Pusher unavailable
+  const displayMembers =
+    pusherAvailable && isConnected
+      ? members
+      : (activeSession?.participants || []).map(
+          (p: {
+            user: {
+              id: string;
+              firstName: string;
+              lastName: string;
+              email: string;
+            };
+            isOnline?: boolean;
+          }) => ({
+            id: p.user.id,
+            name: `${p.user.firstName} ${p.user.lastName}`,
+            email: p.user.email,
+            role: "Participant",
+            avatar: `${p.user.firstName?.[0] || ""}${p.user.lastName?.[0] || ""}`.toUpperCase(),
+            color: generateColor(p.user.id),
+            isOnline: p.isOnline ?? true,
+            lastSeenAt: new Date(),
+          })
+        );
 
   const isInSession = activeSession?.participants.some(
     (p: { userId: string }) => p.userId === userId
@@ -124,30 +195,46 @@ export function SessionBanner({
         {/* Session info */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Radio className="h-4 w-4" />
-          <span>{activeSession.title || activeSession.sessionType}</span>
+          <span>
+            {activeSession.title ||
+              activeSession.sessionType.replace(/_/g, " ")}
+          </span>
         </div>
 
         {/* Connection status */}
-        <Badge
-          variant={isConnected ? "default" : "secondary"}
-          className="gap-1"
-        >
-          {isConnected ? (
-            <Wifi className="h-3 w-3" />
-          ) : (
-            <WifiOff className="h-3 w-3" />
-          )}
-          {isConnected ? "Connected" : "Connecting..."}
-        </Badge>
+        {pusherAvailable ? (
+          <Badge
+            variant={isConnected ? "default" : "secondary"}
+            className="gap-1"
+          >
+            {isConnected ? (
+              <Wifi className="h-3 w-3" />
+            ) : (
+              <WifiOff className="h-3 w-3" />
+            )}
+            {isConnected ? "Connected" : "Connecting..."}
+          </Badge>
+        ) : (
+          <Badge
+            variant="outline"
+            className="gap-1 text-yellow-600 border-yellow-300"
+          >
+            <AlertCircle className="h-3 w-3" />
+            Offline Mode
+          </Badge>
+        )}
       </div>
 
       <div className="flex items-center gap-4">
-        {/* Online members */}
+        {/* Members from DB or real-time */}
         <TooltipProvider>
           <div className="flex items-center gap-1">
             <Users className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground mr-1">
+              {displayMembers.length}
+            </span>
             <div className="flex -space-x-2">
-              {members.slice(0, 5).map((member) => (
+              {displayMembers.slice(0, 5).map((member) => (
                 <Tooltip key={member.id}>
                   <TooltipTrigger asChild>
                     <Avatar
@@ -164,14 +251,16 @@ export function SessionBanner({
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>{member.name}</p>
-                    <p className="text-xs text-muted-foreground">{member.role}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {member.isOnline ? "Online" : "Offline"}
+                    </p>
                   </TooltipContent>
                 </Tooltip>
               ))}
-              {members.length > 5 && (
+              {displayMembers.length > 5 && (
                 <Avatar className="h-7 w-7 border-2 border-background">
                   <AvatarFallback className="text-xs bg-muted">
-                    +{members.length - 5}
+                    +{displayMembers.length - 5}
                   </AvatarFallback>
                 </Avatar>
               )}
@@ -179,7 +268,7 @@ export function SessionBanner({
           </div>
         </TooltipProvider>
 
-        {/* Join/Leave button */}
+        {/* Join button */}
         {!isInSession ? (
           <Button
             variant="default"

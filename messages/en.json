@@ -6069,7 +6069,8 @@
         "removeAdoption": "Remove Adoption",
         "adoptSuccess": "Successfully adopted this best practice!",
         "removeSuccess": "Adoption removed successfully",
-        "oversightRoleMessage": "As a programme administrator, you can view and manage best practices but adoption is done by ANSP organizations.",
+        "oversightRoleMessage": "As a Programme Coordinator or Administrator, you oversee the programme but do not represent a specific ANSP. Best practice adoption is performed by ANSP organization members.",
+        "noOrganization": "You must be a member of an ANSP organization to adopt best practices.",
         "adoptDialog": {
           "title": "Adopt Best Practice",
           "description": "Add this best practice to your organization's adopted practices. You can track your implementation progress over time.",

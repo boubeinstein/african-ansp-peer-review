@@ -6069,7 +6069,8 @@
         "removeAdoption": "Retirer l'adoption",
         "adoptSuccess": "Pratique adoptée avec succès !",
         "removeSuccess": "Adoption retirée avec succès",
-        "oversightRoleMessage": "En tant qu'administrateur du programme, vous pouvez consulter et gérer les meilleures pratiques, mais l'adoption est effectuée par les organisations ANSP.",
+        "oversightRoleMessage": "En tant que Coordinateur de Programme ou Administrateur, vous supervisez le programme mais ne représentez pas un ANSP spécifique. L'adoption des meilleures pratiques est effectuée par les membres de l'organisation ANSP.",
+        "noOrganization": "Vous devez être membre d'une organisation ANSP pour adopter les meilleures pratiques.",
         "adoptDialog": {
           "title": "Adopter la meilleure pratique",
           "description": "Ajoutez cette meilleure pratique aux pratiques adoptées par votre organisation. Vous pouvez suivre votre progression de mise en œuvre au fil du temps.",

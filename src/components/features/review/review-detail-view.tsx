@@ -10,6 +10,7 @@
  * - Logistics and contact details
  * - Linked assessments
  * - Review team members
+ * - Real-time collaboration features
  */
 
 import { useState } from "react";
@@ -28,6 +29,16 @@ import { ReviewTimeline } from "./review-timeline";
 import { FieldworkChecklistEnhanced } from "./fieldwork-checklist-enhanced";
 import { ReviewDocumentsEnhanced } from "./review-documents-enhanced";
 import { ReviewWorkspace } from "./review-workspace";
+
+// Collaboration Components
+import {
+  SessionBanner,
+  SessionPanel,
+  ActivityFeedButton,
+  CollaborativeContainer,
+  PresenceAvatars,
+} from "@/components/collaboration";
+import { useLiveSync } from "@/hooks/use-live-sync";
 
 // UI Components
 import { Button } from "@/components/ui/button";
@@ -166,7 +177,39 @@ export function ReviewDetailView({
     data: review,
     isLoading,
     error,
+    refetch: refetchReview,
   } = trpc.review.getById.useQuery({ id: reviewId });
+
+  // Fetch active collaboration session
+  const { data: activeSession } = trpc.collaboration.getActiveSession.useQuery(
+    { reviewId },
+    { refetchInterval: 30000 }
+  );
+
+  // Live sync hook - handles presence and live updates
+  const {
+    members,
+    isConnected,
+    updateFocus,
+    recentUpdates,
+  } = useLiveSync({
+    reviewId,
+    showToasts: true,
+    onFindingsChange: () => {
+      // Refetch review when remote changes occur
+      refetchReview();
+    },
+  });
+
+  // Check if current user is session host
+  const isHost = activeSession?.startedById === userId;
+  const isInSession = activeSession?.participants.some(
+    (p: { userId: string }) => p.userId === userId
+  );
+
+  // Count of recent updates for activity feed badge
+  // The useLiveSync hook already manages which updates are "recent"
+  const unreadActivityCount = recentUpdates.length;
 
   // Loading state
   if (isLoading) {
@@ -233,6 +276,7 @@ export function ReviewDetailView({
       : review.hostOrganization.nameEn;
 
   return (
+    <CollaborativeContainer reviewId={reviewId} showCursors={!!isInSession}>
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-start justify-between">
@@ -259,7 +303,41 @@ export function ReviewDetailView({
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
+          {/* Online members */}
+          {members.length > 0 && (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Online:</span>
+              <PresenceAvatars members={members} maxVisible={4} size="sm" />
+            </div>
+          )}
+
+          {/* Activity feed button */}
+          <ActivityFeedButton
+            activities={recentUpdates.map((u) => ({
+              id: u.id,
+              type: u.type as "member_joined" | "member_left" | "finding_created" | "finding_updated" | "finding_deleted" | "comment_added" | "document_uploaded" | "task_completed" | "focus_change",
+              user: {
+                id: "",
+                name: u.user,
+                color: "#6366f1",
+                avatar: u.user.slice(0, 2).toUpperCase(),
+              },
+              message: u.message.replace(u.user, "").trim(),
+              timestamp: u.timestamp,
+            }))}
+            unreadCount={unreadActivityCount}
+          />
+
+          {/* Session panel (if in session) */}
+          {activeSession && isInSession && (
+            <SessionPanel
+              reviewId={reviewId}
+              sessionId={activeSession.id}
+              isHost={!!isHost}
+            />
+          )}
+
           {/* Smart Action Button */}
           <ReviewActionButton
             reviewId={reviewId}
@@ -284,6 +362,20 @@ export function ReviewDetailView({
           )}
         </div>
       </div>
+
+      {/* Session banner */}
+      <SessionBanner
+        reviewId={reviewId}
+        reviewReference={review.referenceNumber}
+      />
+
+      {/* Connection status indicator */}
+      {activeSession && !isConnected && (
+        <div className="flex items-center gap-2 rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-2 text-sm text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950/30 dark:text-yellow-400">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-yellow-500" />
+          Reconnecting to collaboration session...
+        </div>
+      )}
 
       {/* Workflow Progress Panel - Always visible for management */}
       {canManageTeams && (
@@ -642,25 +734,29 @@ export function ReviewDetailView({
       {/* Fieldwork Checklist - shown for team members on active reviews */}
       {review.teamMembers.length > 0 &&
         ["APPROVED", "PLANNING", "SCHEDULED", "IN_PROGRESS", "REPORT_DRAFTING"].includes(review.status) && (
-        <FieldworkChecklistEnhanced
-          reviewId={reviewId}
-          locale={locale}
-          canEdit={
-            review.teamMembers.some((m) => m.user.id === userId) ||
-            canManageTeams
-          }
-          canOverride={["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(userRole || "")}
-        />
+        <div data-focus-id="checklist:fieldwork" onClick={() => updateFocus("checklist:fieldwork")}>
+          <FieldworkChecklistEnhanced
+            reviewId={reviewId}
+            locale={locale}
+            canEdit={
+              review.teamMembers.some((m) => m.user.id === userId) ||
+              canManageTeams
+            }
+            canOverride={["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(userRole || "")}
+          />
+        </div>
       )}
 
       {/* Team Workspace - shown for team members on active reviews */}
       {review.teamMembers.length > 0 &&
         ["APPROVED", "PLANNING", "SCHEDULED", "IN_PROGRESS", "REPORT_DRAFTING"].includes(review.status) && (
-        <ReviewWorkspace
-          reviewId={reviewId}
-          locale={locale}
-          userId={userId || ""}
-        />
+        <div data-focus-id="workspace:main" onClick={() => updateFocus("workspace:main")}>
+          <ReviewWorkspace
+            reviewId={reviewId}
+            locale={locale}
+            userId={userId || ""}
+          />
+        </div>
       )}
 
       {/* Document Manager */}
@@ -783,6 +879,7 @@ export function ReviewDetailView({
         canApproveCrossTeam={canApproveCrossTeam}
       />
     </div>
+    </CollaborativeContainer>
   );
 }
 

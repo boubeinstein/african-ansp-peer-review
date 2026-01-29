@@ -991,4 +991,155 @@ export const reviewDiscussionRouter = router({
 
       return uniqueUsers;
     }),
+
+  // ===========================================================================
+  // LIST ALL TEAMS - View discussions across all teams (oversight roles only)
+  // ===========================================================================
+
+  listAllTeams: protectedProcedure
+    .input(
+      z.object({
+        teamId: z.string().optional(),
+        includeResolved: z.boolean().default(false),
+        page: z.number().min(1).default(1),
+        pageSize: z.number().min(1).max(100).default(20),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { session } = ctx;
+      const userRole = session.user.role;
+
+      // Only oversight roles can use this endpoint
+      if (!OVERSIGHT_ROLES.includes(userRole as (typeof OVERSIGHT_ROLES)[number])) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only oversight roles can view all team discussions",
+        });
+      }
+
+      const where: Prisma.ReviewDiscussionWhereInput = {
+        parentId: null, // Only top-level discussions
+        isDeleted: false,
+        ...(input.teamId && {
+          review: { hostOrganization: { regionalTeamId: input.teamId } },
+        }),
+        ...(!input.includeResolved && { isResolved: false }),
+      };
+
+      const [discussions, total] = await Promise.all([
+        ctx.db.reviewDiscussion.findMany({
+          where,
+          include: {
+            author: {
+              select: { id: true, firstName: true, lastName: true },
+            },
+            review: {
+              select: {
+                id: true,
+                referenceNumber: true,
+                hostOrganization: {
+                  select: {
+                    regionalTeam: {
+                      select: { id: true, nameEn: true, nameFr: true, code: true },
+                    },
+                  },
+                },
+              },
+            },
+            _count: {
+              select: {
+                replies: { where: { isDeleted: false } },
+              },
+            },
+          },
+          orderBy: { createdAt: "desc" },
+          skip: (input.page - 1) * input.pageSize,
+          take: input.pageSize,
+        }),
+        ctx.db.reviewDiscussion.count({ where }),
+      ]);
+
+      return {
+        discussions,
+        pagination: {
+          page: input.page,
+          pageSize: input.pageSize,
+          total,
+          totalPages: Math.ceil(total / input.pageSize),
+        },
+      };
+    }),
+
+  // ===========================================================================
+  // GET STATS BY TEAM - Team-level discussion statistics (oversight roles only)
+  // ===========================================================================
+
+  getStatsByTeam: protectedProcedure.query(async ({ ctx }) => {
+    const { session } = ctx;
+    const userRole = session.user.role;
+
+    // Only oversight roles can use this endpoint
+    if (!OVERSIGHT_ROLES.includes(userRole as (typeof OVERSIGHT_ROLES)[number])) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Only oversight roles can view team statistics",
+      });
+    }
+
+    const teams = await ctx.db.regionalTeam.findMany({
+      where: { isActive: true },
+      select: {
+        id: true,
+        nameEn: true,
+        nameFr: true,
+        code: true,
+        memberOrganizations: {
+          select: {
+            _count: {
+              select: { reviewsAsHost: true },
+            },
+          },
+        },
+      },
+    });
+
+    const stats = await Promise.all(
+      teams.map(async (team) => {
+        const baseWhere: Prisma.ReviewDiscussionWhereInput = {
+          review: { hostOrganization: { regionalTeamId: team.id } },
+          parentId: null, // Only top-level discussions
+          isDeleted: false,
+        };
+
+        const [total, open, resolved] = await Promise.all([
+          ctx.db.reviewDiscussion.count({ where: baseWhere }),
+          ctx.db.reviewDiscussion.count({
+            where: { ...baseWhere, isResolved: false },
+          }),
+          ctx.db.reviewDiscussion.count({
+            where: { ...baseWhere, isResolved: true },
+          }),
+        ]);
+
+        // Sum review counts from member organizations
+        const reviewCount = team.memberOrganizations.reduce(
+          (sum, org) => sum + org._count.reviewsAsHost,
+          0
+        );
+
+        return {
+          team: {
+            id: team.id,
+            nameEn: team.nameEn,
+            nameFr: team.nameFr,
+            code: team.code,
+          },
+          reviewCount,
+          discussions: { total, open, resolved },
+        };
+      })
+    );
+
+    return stats;
+  }),
 });

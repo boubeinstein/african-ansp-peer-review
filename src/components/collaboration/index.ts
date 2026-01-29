@@ -4,10 +4,13 @@
  * Real-time collaboration UI components for peer review sessions.
  */
 
+// Session components
 export { SessionBanner } from "./session-banner";
 export { StartSessionDialog } from "./start-session-dialog";
 export { SessionPanel } from "./session-panel";
 export { SessionHistory } from "./session-history";
+
+// Presence components
 export {
   PresenceAvatars,
   PresenceAvatar,
@@ -20,3 +23,11 @@ export {
   SelectionHighlight,
 } from "./live-cursors";
 export { CollaborativeContainer } from "./collaborative-container";
+
+// Activity components
+export {
+  ActivityFeed,
+  ActivityFeedButton,
+  ActivityToast,
+} from "./activity-feed";
+export type { ActivityItem } from "./activity-feed";

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
 import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -46,6 +45,7 @@ import { cn } from "@/lib/utils";
 interface SessionPanelProps {
   reviewId: string;
   sessionId: string;
+  userId?: string; // Pass from server component - no need for SessionProvider
   isHost: boolean;
   className?: string;
 }
@@ -53,17 +53,17 @@ interface SessionPanelProps {
 export function SessionPanel({
   reviewId,
   sessionId,
+  userId,
   isHost,
   className,
 }: SessionPanelProps) {
-  const { data: authSession } = useSession();
   const [showEndDialog, setShowEndDialog] = useState(false);
   const [activeTab, setActiveTab] = useState<"members" | "activity">("members");
 
   const utils = trpc.useUtils();
 
   // Presence - pass userId to avoid needing SessionProvider
-  const { members } = usePresence({ reviewId, userId: authSession?.user?.id });
+  const { members } = usePresence({ reviewId, userId });
 
   // Session activities
   const { data: activitiesData } = trpc.collaboration.getSessionActivities.useQuery(
@@ -143,7 +143,7 @@ export function SessionPanel({
             {activeTab === "members" ? (
               <MembersList
                 members={members}
-                currentUserId={authSession?.user?.id}
+                currentUserId={userId}
               />
             ) : (
               <ActivityFeed activities={activitiesData?.activities || []} />

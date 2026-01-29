@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
 import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,15 +19,16 @@ import { usePresence } from "@/hooks/use-presence";
 interface SessionBannerProps {
   reviewId: string;
   reviewReference: string;
+  userId?: string; // Pass from server component - no need for SessionProvider
   className?: string;
 }
 
 export function SessionBanner({
   reviewId,
   reviewReference,
+  userId,
   className,
 }: SessionBannerProps) {
-  const { data: session } = useSession();
   const [showStartDialog, setShowStartDialog] = useState(false);
 
   // Get active session
@@ -47,11 +47,11 @@ export function SessionBanner({
   // Presence hook - pass userId to avoid needing SessionProvider
   const { members, isConnected } = usePresence({
     reviewId,
-    userId: session?.user?.id,
+    userId,
   });
 
   const isInSession = activeSession?.participants.some(
-    (p: { userId: string }) => p.userId === session?.user?.id
+    (p: { userId: string }) => p.userId === userId
   );
 
   const handleJoinSession = () => {

@@ -370,6 +370,7 @@ export function ReviewDetailView({
       <SessionBanner
         reviewId={reviewId}
         reviewReference={review.referenceNumber}
+        userId={userId}
       />
 
       {/* Connection status indicator */}

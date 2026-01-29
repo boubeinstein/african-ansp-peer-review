@@ -45,23 +45,32 @@ export function TaskList({ reviewId, locale, userId }: TaskListProps) {
   const [assigneeFilter, setAssigneeFilter] = useState<string>("ALL");
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
-  // Fetch tasks
-  const { data, isLoading, error, refetch } = trpc.reviewTask.list.useQuery({
-    reviewId,
-    page,
-    pageSize: 10,
-    status: statusFilter === "ALL" ? undefined : statusFilter,
-    priority: priorityFilter === "ALL" ? undefined : priorityFilter,
-    assignedToId: assigneeFilter === "ALL" ? undefined : assigneeFilter === "ME" ? userId : assigneeFilter,
-    sortBy: "dueDate",
-    sortOrder: "asc",
-  });
+  // Fetch tasks (only if authenticated)
+  const { data, isLoading, error, refetch } = trpc.reviewTask.list.useQuery(
+    {
+      reviewId,
+      page,
+      pageSize: 10,
+      status: statusFilter === "ALL" ? undefined : statusFilter,
+      priority: priorityFilter === "ALL" ? undefined : priorityFilter,
+      assignedToId: assigneeFilter === "ALL" ? undefined : assigneeFilter === "ME" ? userId : assigneeFilter,
+      sortBy: "dueDate",
+      sortOrder: "asc",
+    },
+    { enabled: !!userId }
+  );
 
-  // Fetch stats
-  const { data: stats } = trpc.reviewTask.getStats.useQuery({ reviewId });
+  // Fetch stats (only if authenticated)
+  const { data: stats } = trpc.reviewTask.getStats.useQuery(
+    { reviewId },
+    { enabled: !!userId }
+  );
 
-  // Fetch team members for filter
-  const { data: teamMembers } = trpc.reviewDiscussion.getTeamMembers.useQuery({ reviewId });
+  // Fetch team members for filter (only if authenticated)
+  const { data: teamMembers } = trpc.reviewDiscussion.getTeamMembers.useQuery(
+    { reviewId },
+    { enabled: !!userId }
+  );
 
   if (error) {
     return (

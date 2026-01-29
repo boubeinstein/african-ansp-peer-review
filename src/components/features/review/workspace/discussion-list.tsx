@@ -38,17 +38,23 @@ export function DiscussionList({
   const [includeResolved, setIncludeResolved] = useState(false);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
-  // Fetch discussions
+  // Fetch discussions (only if authenticated)
   const { data, isLoading, error, refetch } =
-    trpc.reviewDiscussion.list.useQuery({
-      reviewId,
-      includeResolved,
-      page,
-      pageSize: 10,
-    });
+    trpc.reviewDiscussion.list.useQuery(
+      {
+        reviewId,
+        includeResolved,
+        page,
+        pageSize: 10,
+      },
+      { enabled: !!userId }
+    );
 
-  // Fetch stats
-  const { data: stats } = trpc.reviewDiscussion.getStats.useQuery({ reviewId });
+  // Fetch stats (only if authenticated)
+  const { data: stats } = trpc.reviewDiscussion.getStats.useQuery(
+    { reviewId },
+    { enabled: !!userId }
+  );
 
   if (error) {
     return (

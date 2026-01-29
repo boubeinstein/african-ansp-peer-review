@@ -65,10 +65,13 @@ export function SessionPanel({
   // Presence - pass userId to avoid needing SessionProvider
   const { members } = usePresence({ reviewId, userId });
 
-  // Session activities
+  // Session activities (only if authenticated)
   const { data: activitiesData } = trpc.collaboration.getSessionActivities.useQuery(
     { sessionId, limit: 50 },
-    { refetchInterval: 10000 }
+    {
+      enabled: !!userId,
+      refetchInterval: 10000,
+    }
   );
 
   // Leave session

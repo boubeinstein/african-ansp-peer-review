@@ -25,12 +25,18 @@ export function ReviewWorkspace({
   const t = useTranslations("reviews.workspace");
   const [activeTab, setActiveTab] = useState(defaultTab);
 
-  // Fetch stats for badges
+  // Fetch stats for badges (only if authenticated)
   const { data: discussionStats, isLoading: loadingDiscussions } =
-    trpc.reviewDiscussion.getStats.useQuery({ reviewId });
+    trpc.reviewDiscussion.getStats.useQuery(
+      { reviewId },
+      { enabled: !!userId }
+    );
 
   const { data: taskStats, isLoading: loadingTasks } =
-    trpc.reviewTask.getStats.useQuery({ reviewId });
+    trpc.reviewTask.getStats.useQuery(
+      { reviewId },
+      { enabled: !!userId }
+    );
 
   return (
     <Card className="p-0 overflow-hidden">

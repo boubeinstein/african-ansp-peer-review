@@ -31,10 +31,13 @@ export function SessionBanner({
 }: SessionBannerProps) {
   const [showStartDialog, setShowStartDialog] = useState(false);
 
-  // Get active session
+  // Get active session (only if authenticated)
   const { data: activeSession, refetch } = trpc.collaboration.getActiveSession.useQuery(
     { reviewId },
-    { refetchInterval: 30000 } // Refresh every 30s
+    {
+      enabled: !!userId,
+      refetchInterval: 30000, // Refresh every 30s
+    }
   );
 
   // Join session mutation

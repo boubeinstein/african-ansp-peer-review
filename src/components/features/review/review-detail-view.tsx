@@ -180,10 +180,13 @@ export function ReviewDetailView({
     refetch: refetchReview,
   } = trpc.review.getById.useQuery({ id: reviewId });
 
-  // Fetch active collaboration session
+  // Fetch active collaboration session (only if authenticated)
   const { data: activeSession } = trpc.collaboration.getActiveSession.useQuery(
     { reviewId },
-    { refetchInterval: 30000 }
+    {
+      enabled: !!userId,
+      refetchInterval: 30000,
+    }
   );
 
   // Live sync hook - handles presence and live updates

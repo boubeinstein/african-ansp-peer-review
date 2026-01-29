@@ -31,7 +31,7 @@ import {
 import {
   isOversightRole,
   canRequestPeerReview,
-  canManagePeerReviews,
+  // canManagePeerReviews, // unused
 } from "@/lib/permissions";
 
 // Notification service imports

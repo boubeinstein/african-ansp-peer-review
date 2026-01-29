@@ -32,14 +32,12 @@ import {
   StopCircle,
   Clock,
   Eye,
-  FileText,
-  MessageSquare,
-  CheckSquare,
-  AlertTriangle,
+  AlertCircle,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
-import { usePresence, type PresenceMember } from "@/hooks/use-presence";
+import { usePresence } from "@/hooks/use-presence";
+import { isPusherAvailable } from "@/lib/pusher/client";
 import { cn } from "@/lib/utils";
 
 interface SessionPanelProps {
@@ -48,6 +46,29 @@ interface SessionPanelProps {
   userId?: string; // Pass from server component - no need for SessionProvider
   isHost: boolean;
   className?: string;
+}
+
+// Generate a consistent color from user ID
+function generateColor(userId: string): string {
+  const colors = [
+    "#ef4444",
+    "#f97316",
+    "#f59e0b",
+    "#84cc16",
+    "#22c55e",
+    "#14b8a6",
+    "#06b6d4",
+    "#3b82f6",
+    "#6366f1",
+    "#8b5cf6",
+    "#a855f7",
+    "#d946ef",
+  ];
+  let hash = 0;
+  for (let i = 0; i < userId.length; i++) {
+    hash = userId.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return colors[Math.abs(hash) % colors.length];
 }
 
 export function SessionPanel({
@@ -59,20 +80,63 @@ export function SessionPanel({
 }: SessionPanelProps) {
   const [showEndDialog, setShowEndDialog] = useState(false);
   const [activeTab, setActiveTab] = useState<"members" | "activity">("members");
+  const pusherAvailable = isPusherAvailable();
 
   const utils = trpc.useUtils();
 
-  // Presence - pass userId to avoid needing SessionProvider
-  const { members } = usePresence({ reviewId, userId });
-
-  // Session activities (only if authenticated)
-  const { data: activitiesData } = trpc.collaboration.getSessionActivities.useQuery(
-    { sessionId, limit: 50 },
+  // Get session with participants from database
+  const { data: activeSession } = trpc.collaboration.getActiveSession.useQuery(
+    { reviewId },
     {
-      enabled: !!userId,
-      refetchInterval: 10000,
+      enabled: !!userId && !!reviewId,
+      refetchInterval: pusherAvailable ? 30000 : 5000,
     }
   );
+
+  // Presence (real-time when available)
+  const { members: realtimeMembers, isConnected } = usePresence({
+    reviewId,
+    userId,
+  });
+
+  // Use real-time members if connected, otherwise database participants
+  const displayMembers =
+    pusherAvailable && isConnected && realtimeMembers.length > 0
+      ? realtimeMembers
+      : (activeSession?.participants || []).map(
+          (p: {
+            user: {
+              id: string;
+              firstName: string;
+              lastName: string;
+              email: string;
+            };
+            role?: string;
+            isOnline?: boolean;
+            currentFocus?: string | null;
+            lastSeenAt?: Date | string | null;
+          }) => ({
+            id: p.user.id,
+            name: `${p.user.firstName} ${p.user.lastName}`,
+            email: p.user.email,
+            role: p.role || "PARTICIPANT",
+            avatar: `${p.user.firstName?.[0] || ""}${p.user.lastName?.[0] || ""}`.toUpperCase(),
+            color: generateColor(p.user.id),
+            isOnline: p.isOnline ?? true,
+            currentFocus: p.currentFocus,
+            lastSeenAt: p.lastSeenAt ? new Date(p.lastSeenAt) : new Date(),
+          })
+        );
+
+  // Session activities (only if authenticated)
+  const { data: activitiesData } =
+    trpc.collaboration.getSessionActivities.useQuery(
+      { sessionId, limit: 50 },
+      {
+        enabled: !!userId && !!sessionId,
+        refetchInterval: 10000,
+      }
+    );
 
   // Leave session
   const leaveSession = trpc.collaboration.leaveSession.useMutation({
@@ -108,14 +172,27 @@ export function SessionPanel({
         <SheetTrigger asChild>
           <Button variant="outline" size="sm" className={className}>
             <Users className="mr-2 h-4 w-4" />
-            Session ({members.length})
+            Session ({displayMembers.length})
           </Button>
         </SheetTrigger>
         <SheetContent className="w-[400px] sm:w-[540px]">
           <SheetHeader>
-            <SheetTitle>Collaboration Session</SheetTitle>
+            <SheetTitle className="flex items-center gap-2">
+              Collaboration Session
+              {!pusherAvailable && (
+                <Badge
+                  variant="outline"
+                  className="text-yellow-600 border-yellow-300"
+                >
+                  <AlertCircle className="h-3 w-3 mr-1" />
+                  Offline
+                </Badge>
+              )}
+            </SheetTitle>
             <SheetDescription>
-              Manage participants and view session activity
+              {pusherAvailable && isConnected
+                ? "Real-time collaboration active"
+                : "Viewing session participants (real-time updates unavailable)"}
             </SheetDescription>
           </SheetHeader>
 
@@ -127,7 +204,7 @@ export function SessionPanel({
               onClick={() => setActiveTab("members")}
             >
               <Users className="mr-2 h-4 w-4" />
-              Members ({members.length})
+              Members ({displayMembers.length})
             </Button>
             <Button
               variant={activeTab === "activity" ? "default" : "outline"}
@@ -144,10 +221,7 @@ export function SessionPanel({
           {/* Content */}
           <ScrollArea className="h-[calc(100vh-280px)]">
             {activeTab === "members" ? (
-              <MembersList
-                members={members}
-                currentUserId={userId}
-              />
+              <MembersList members={displayMembers} currentUserId={userId} />
             ) : (
               <ActivityFeed activities={activitiesData?.activities || []} />
             )}
@@ -184,8 +258,9 @@ export function SessionPanel({
           <AlertDialogHeader>
             <AlertDialogTitle>End Collaboration Session?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will end the session for all {members.length} participants.
-              All activities have been recorded for the audit trail.
+              This will end the session for all {displayMembers.length}{" "}
+              participants. All activities have been recorded for the audit
+              trail.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -204,11 +279,23 @@ export function SessionPanel({
 }
 
 // Members List Component
+interface DisplayMember {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  avatar: string;
+  color: string;
+  isOnline: boolean;
+  currentFocus?: string | null;
+  lastSeenAt: Date;
+}
+
 function MembersList({
   members,
   currentUserId,
 }: {
-  members: PresenceMember[];
+  members: DisplayMember[];
   currentUserId?: string;
 }) {
   return (
@@ -250,18 +337,24 @@ function MembersList({
                 {formatFocus(member.currentFocus)}
               </Badge>
             )}
-            {/* Online indicator */}
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
-            </span>
+            {/* Online/Offline indicator */}
+            {member.isOnline ? (
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+              </span>
+            ) : (
+              <span className="text-xs text-muted-foreground">
+                {formatDistanceToNow(member.lastSeenAt, { addSuffix: true })}
+              </span>
+            )}
           </div>
         </div>
       ))}
 
       {members.length === 0 && (
         <div className="py-8 text-center text-muted-foreground">
-          No members currently online
+          No members in session
         </div>
       )}
     </div>
@@ -278,22 +371,19 @@ function ActivityFeed({
     targetType?: string | null;
     timestamp: Date;
     user: { id: string; firstName: string; lastName: string };
-    data?: unknown;
   }>;
 }) {
   return (
     <div className="space-y-3">
       {activities.map((activity) => (
         <div key={activity.id} className="flex gap-3 text-sm">
-          <div className="mt-1">
-            <ActivityIcon type={activity.activityType} />
-          </div>
+          <Clock className="h-4 w-4 mt-1 text-muted-foreground" />
           <div className="flex-1">
             <p>
               <span className="font-medium">
                 {activity.user.firstName} {activity.user.lastName}
               </span>{" "}
-              {formatActivityMessage(activity)}
+              {formatActivityMessage(activity.activityType)}
             </p>
             <p className="text-xs text-muted-foreground">
               {formatDistanceToNow(new Date(activity.timestamp), {
@@ -322,7 +412,7 @@ function formatFocus(focus: string): string {
     case "finding":
       return `Finding ...${shortId}`;
     case "document":
-      return `Document ...${shortId}`;
+      return `Doc ...${shortId}`;
     case "cap":
       return `CAP ...${shortId}`;
     default:
@@ -330,61 +420,14 @@ function formatFocus(focus: string): string {
   }
 }
 
-function ActivityIcon({ type }: { type: string }) {
-  const iconClass = "h-4 w-4 text-muted-foreground";
-
-  switch (type) {
-    case "SESSION_JOIN":
-    case "SESSION_LEAVE":
-      return <Users className={iconClass} />;
-    case "FINDING_CREATE":
-    case "FINDING_EDIT":
-    case "FINDING_DELETE":
-      return <AlertTriangle className={iconClass} />;
-    case "COMMENT_ADD":
-      return <MessageSquare className={iconClass} />;
-    case "DOCUMENT_VIEW":
-    case "DOCUMENT_UPLOAD":
-      return <FileText className={iconClass} />;
-    case "TASK_UPDATE":
-    case "TASK_COMPLETE":
-      return <CheckSquare className={iconClass} />;
-    default:
-      return <Clock className={iconClass} />;
-  }
-}
-
-function formatActivityMessage(activity: {
-  activityType: string;
-  targetType?: string | null;
-  data?: unknown;
-}): string {
-  switch (activity.activityType) {
-    case "SESSION_JOIN":
-      return "joined the session";
-    case "SESSION_LEAVE":
-      return "left the session";
-    case "FINDING_CREATE":
-      return `created a finding`;
-    case "FINDING_EDIT":
-      return "edited a finding";
-    case "FINDING_DELETE":
-      return "deleted a finding";
-    case "COMMENT_ADD":
-      return `added a comment`;
-    case "DOCUMENT_VIEW":
-      return "viewed a document";
-    case "DOCUMENT_UPLOAD":
-      return "uploaded a document";
-    case "TASK_UPDATE":
-      return "updated a task";
-    case "TASK_COMPLETE":
-      return "completed a task";
-    case "FOCUS_CHANGE": {
-      const data = activity.data as { focus?: string } | undefined;
-      return `is viewing ${data?.focus || "item"}`;
-    }
-    default:
-      return activity.activityType.toLowerCase().replace(/_/g, " ");
-  }
+function formatActivityMessage(type: string): string {
+  const messages: Record<string, string> = {
+    SESSION_JOIN: "joined the session",
+    SESSION_LEAVE: "left the session",
+    FINDING_CREATE: "created a finding",
+    FINDING_EDIT: "edited a finding",
+    COMMENT_ADD: "added a comment",
+    FOCUS_CHANGE: "changed focus",
+  };
+  return messages[type] || type.toLowerCase().replace(/_/g, " ");
 }

@@ -3797,6 +3797,26 @@
         "deleteConfirmDescription": "Cette action est irréversible. Cela supprimera définitivement la revue et toutes les données associées, y compris les constatations, les documents et les rapports.",
         "cancel": "Annuler",
         "confirmDelete": "Supprimer la revue"
+      },
+      "keyboard": {
+        "title": "Raccourcis clavier",
+        "description": "Utilisez ces raccourcis pour naviguer rapidement",
+        "navigation": "Navigation",
+        "goToOverview": "Aller à l'aperçu",
+        "goToWorkspace": "Aller à l'espace de travail",
+        "goToDocuments": "Aller aux documents",
+        "goToFindings": "Aller aux constatations",
+        "goToReport": "Aller au rapport",
+        "goToSettings": "Aller aux paramètres",
+        "actions": "Actions",
+        "newItem": "Nouvel élément (contextuel)",
+        "edit": "Modifier l'élément actuel",
+        "showShortcuts": "Afficher les raccourcis",
+        "closeDialog": "Fermer / Retour",
+        "global": "Global",
+        "quickSearch": "Recherche rapide",
+        "save": "Enregistrer",
+        "altShortcuts": "Astuce : Vous pouvez aussi utiliser Alt + numéro pour accéder directement aux onglets"
       }
     }
   },

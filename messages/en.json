@@ -3797,6 +3797,26 @@
         "deleteConfirmDescription": "This action cannot be undone. This will permanently delete the review and all associated data including findings, documents, and reports.",
         "cancel": "Cancel",
         "confirmDelete": "Delete Review"
+      },
+      "keyboard": {
+        "title": "Keyboard Shortcuts",
+        "description": "Use these shortcuts to navigate quickly",
+        "navigation": "Navigation",
+        "goToOverview": "Go to Overview",
+        "goToWorkspace": "Go to Workspace",
+        "goToDocuments": "Go to Documents",
+        "goToFindings": "Go to Findings",
+        "goToReport": "Go to Report",
+        "goToSettings": "Go to Settings",
+        "actions": "Actions",
+        "newItem": "New item (context-aware)",
+        "edit": "Edit current item",
+        "showShortcuts": "Show keyboard shortcuts",
+        "closeDialog": "Close dialog / Go back",
+        "global": "Global",
+        "quickSearch": "Quick search",
+        "save": "Save changes",
+        "altShortcuts": "Tip: You can also use Alt + number for direct tab access"
       }
     }
   },

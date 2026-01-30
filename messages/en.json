@@ -6214,5 +6214,62 @@
       "title": "Status History",
       "empty": "No history available"
     }
+  },
+  "documentManagement": {
+    "versions": {
+      "title": "Version History",
+      "locked": "Version locked successfully",
+      "lockedTooltip": "This version is locked and cannot be modified",
+      "verify": "Verify integrity",
+      "lock": "Lock version",
+      "download": "Download",
+      "integrityValid": "Integrity verified successfully",
+      "integrityInvalid": "Integrity check failed - file may have been tampered",
+      "noVersions": "No versions available"
+    },
+    "evidence": {
+      "title": "Evidence Links",
+      "add": "Add Evidence",
+      "addTitle": "Link Evidence Document",
+      "selectDocument": "Select a document to link as evidence",
+      "empty": "No evidence documents linked",
+      "verified": "Evidence link verified",
+      "deleted": "Evidence link removed",
+      "verifiedBadge": "verified",
+      "relevance": "Relevance",
+      "verifyLink": "Verify this evidence link",
+      "viewDocument": "View document",
+      "deleteLink": "Remove link"
+    },
+    "sharing": {
+      "title": "Share Links",
+      "active": "active",
+      "create": "Create Link",
+      "createTitle": "Create Share Link",
+      "expiresIn": "Expires in (hours)",
+      "expiresInHelp": "Link will expire after this many hours (1-720)",
+      "maxAccesses": "Maximum accesses",
+      "maxAccessesHelp": "Leave empty for unlimited accesses",
+      "unlimitedAccesses": "Unlimited",
+      "recipientEmail": "Recipient Email (optional)",
+      "recipientName": "Recipient Name (optional)",
+      "recipientNamePlaceholder": "e.g., John Smith",
+      "purpose": "Purpose (optional)",
+      "purposePlaceholder": "e.g., External audit review",
+      "createLink": "Create Link",
+      "cancel": "Cancel",
+      "created": "Share link created",
+      "copiedToClipboard": "Link copied to clipboard",
+      "revoked": "Share link revoked",
+      "noActiveLinks": "No active share links",
+      "copyLink": "Copy link",
+      "revokeLink": "Revoke link",
+      "activeLinks": "Active",
+      "expiredLinks": "Expired",
+      "totalAccesses": "Total Accesses",
+      "recipients": "Recipients",
+      "expiredOrRevoked": "Expired or Revoked",
+      "expired": "Expired"
+    }
   }
 }

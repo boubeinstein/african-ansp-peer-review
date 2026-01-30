@@ -6214,5 +6214,62 @@
       "title": "Historique des statuts",
       "empty": "Aucun historique disponible"
     }
+  },
+  "documentManagement": {
+    "versions": {
+      "title": "Historique des versions",
+      "locked": "Version verrouillée avec succès",
+      "lockedTooltip": "Cette version est verrouillée et ne peut pas être modifiée",
+      "verify": "Vérifier l'intégrité",
+      "lock": "Verrouiller la version",
+      "download": "Télécharger",
+      "integrityValid": "Intégrité vérifiée avec succès",
+      "integrityInvalid": "Échec de la vérification - le fichier peut avoir été altéré",
+      "noVersions": "Aucune version disponible"
+    },
+    "evidence": {
+      "title": "Documents probants",
+      "add": "Ajouter une preuve",
+      "addTitle": "Lier un document probant",
+      "selectDocument": "Sélectionnez un document à lier comme preuve",
+      "empty": "Aucun document probant lié",
+      "verified": "Lien de preuve vérifié",
+      "deleted": "Lien de preuve supprimé",
+      "verifiedBadge": "vérifié",
+      "relevance": "Pertinence",
+      "verifyLink": "Vérifier ce lien de preuve",
+      "viewDocument": "Voir le document",
+      "deleteLink": "Supprimer le lien"
+    },
+    "sharing": {
+      "title": "Liens de partage",
+      "active": "actif",
+      "create": "Créer un lien",
+      "createTitle": "Créer un lien de partage",
+      "expiresIn": "Expire dans (heures)",
+      "expiresInHelp": "Le lien expirera après ce nombre d'heures (1-720)",
+      "maxAccesses": "Nombre maximum d'accès",
+      "maxAccessesHelp": "Laissez vide pour un accès illimité",
+      "unlimitedAccesses": "Illimité",
+      "recipientEmail": "Email du destinataire (optionnel)",
+      "recipientName": "Nom du destinataire (optionnel)",
+      "recipientNamePlaceholder": "ex., Jean Dupont",
+      "purpose": "Objet (optionnel)",
+      "purposePlaceholder": "ex., Revue d'audit externe",
+      "createLink": "Créer le lien",
+      "cancel": "Annuler",
+      "created": "Lien de partage créé",
+      "copiedToClipboard": "Lien copié dans le presse-papiers",
+      "revoked": "Lien de partage révoqué",
+      "noActiveLinks": "Aucun lien de partage actif",
+      "copyLink": "Copier le lien",
+      "revokeLink": "Révoquer le lien",
+      "activeLinks": "Actifs",
+      "expiredLinks": "Expirés",
+      "totalAccesses": "Total des accès",
+      "recipients": "Destinataires",
+      "expiredOrRevoked": "Expirés ou révoqués",
+      "expired": "Expiré"
+    }
   }
 }

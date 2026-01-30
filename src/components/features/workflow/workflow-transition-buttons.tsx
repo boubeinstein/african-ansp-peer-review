@@ -60,11 +60,20 @@ export function WorkflowTransitionButtons({
   });
   const [executing, setExecuting] = useState<string | null>(null);
 
+  // Only query when we have both required props
+  const hasValidInput = !!entityType && !!entityId;
+
   const { data: transitions, isLoading } =
-    trpc.workflow.getAvailableTransitions.useQuery({
-      entityType,
-      entityId,
-    });
+    trpc.workflow.getAvailableTransitions.useQuery(
+      {
+        entityType,
+        entityId,
+      },
+      {
+        enabled: hasValidInput,
+        retry: false,
+      }
+    );
 
   const executeMutation = trpc.workflow.executeTransition.useMutation({
     onSuccess: (result) => {
@@ -116,6 +125,11 @@ export function WorkflowTransitionButtons({
         return "default";
     }
   };
+
+  // Early return if missing required props
+  if (!hasValidInput) {
+    return null;
+  }
 
   if (isLoading) {
     return (

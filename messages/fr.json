@@ -3232,7 +3232,10 @@
         "title": "Discussions d'équipe",
         "stats": {
           "unresolved": "{count, plural, =0 {Aucune ouverte} =1 {1 ouverte} other {# ouvertes}}",
-          "resolved": "{count, plural, =0 {Aucune résolue} =1 {1 résolue} other {# résolues}}"
+          "resolved": "Résolu",
+          "open": "Ouvert",
+          "total": "Total",
+          "mine": "Mes discussions"
         },
         "filters": {
           "showResolved": "Afficher les résolues"
@@ -6166,6 +6169,34 @@
         "saveDraft": "Enregistrer comme brouillon",
         "addTag": "Ajouter"
       }
+    }
+  },
+  "workflow": {
+    "sla": {
+      "dashboard": "Tableau de bord SLA",
+      "overview": "Aperçu SLA",
+      "running": "En cours",
+      "completed": "Terminés",
+      "breached": "Dépassés",
+      "breachRate": "Taux de respect",
+      "avgCompletion": "Moy. achèvement",
+      "days": "jours",
+      "approachingDeadlines": "Échéances à venir",
+      "noApproaching": "Aucune échéance dans les 7 prochains jours",
+      "daysLeft": "jours restants",
+      "allEntities": "Tous",
+      "caps": "PAC",
+      "findings": "Constatations",
+      "refresh": "Actualiser",
+      "totalTracked": "Total suivi",
+      "activeNow": "Actifs maintenant",
+      "capSummary": "Performance PAC",
+      "findingSummary": "Performance Constatations",
+      "totalCaps": "Total des PAC",
+      "totalFindings": "Total des Constatations",
+      "avgDays": "Temps moyen d'achèvement",
+      "onTimeRate": "Taux de respect",
+      "noData": "Aucune donnée disponible"
     }
   }
 }

@@ -3232,7 +3232,10 @@
         "title": "Team Discussions",
         "stats": {
           "unresolved": "{count, plural, =0 {No open} =1 {1 open} other {# open}}",
-          "resolved": "{count, plural, =0 {None resolved} =1 {1 resolved} other {# resolved}}"
+          "resolved": "Resolved",
+          "open": "Open",
+          "total": "Total",
+          "mine": "My Discussions"
         },
         "filters": {
           "showResolved": "Show resolved"
@@ -6166,6 +6169,34 @@
         "saveDraft": "Save as Draft",
         "addTag": "Add"
       }
+    }
+  },
+  "workflow": {
+    "sla": {
+      "dashboard": "SLA Dashboard",
+      "overview": "SLA Overview",
+      "running": "Running",
+      "completed": "Completed",
+      "breached": "Breached",
+      "breachRate": "On-Time Rate",
+      "avgCompletion": "Avg. Completion",
+      "days": "days",
+      "approachingDeadlines": "Approaching Deadlines",
+      "noApproaching": "No deadlines approaching within the next 7 days",
+      "daysLeft": "days left",
+      "allEntities": "All",
+      "caps": "CAPs",
+      "findings": "Findings",
+      "refresh": "Refresh",
+      "totalTracked": "Total Tracked",
+      "activeNow": "Active Now",
+      "capSummary": "CAP Performance",
+      "findingSummary": "Finding Performance",
+      "totalCaps": "Total CAPs",
+      "totalFindings": "Total Findings",
+      "avgDays": "Avg. Completion Time",
+      "onTimeRate": "On-Time Rate",
+      "noData": "No data available"
     }
   }
 }

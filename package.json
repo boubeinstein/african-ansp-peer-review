@@ -49,7 +49,8 @@
     "db:seed:cleanup": "npx tsx prisma/seed-cleanup-demo.ts",
     "db:seed:teams:reseed": "npx tsx prisma/seed-teams-and-orgs.ts cleanup && npx tsx prisma/seed-teams-and-orgs.ts",
     "db:seed:fresh": "npx tsx prisma/seed-cleanup-demo.ts && npx tsx prisma/seed-teams-and-orgs.ts && npx tsx prisma/seed-fix-org-codes.ts && npx tsx prisma/seed-ansp-admins.ts && npx tsx prisma/seed-training-demo-all.ts",
-    "db:seed:all": "npx tsx prisma/seed.ts && npx tsx prisma/seed-dev-users.ts && npx tsx prisma/seed-training.ts"
+    "db:seed:all": "npx tsx prisma/seed.ts && npx tsx prisma/seed-dev-users.ts && npx tsx prisma/seed-training.ts",
+    "db:seed:workflows": "npx tsx prisma/seeds/seed-workflows.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",

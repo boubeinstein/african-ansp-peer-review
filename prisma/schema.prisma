@@ -122,6 +122,10 @@ model User {
   workflowsCreated         WorkflowDefinition[]   @relation("WorkflowCreator")
   workflowActions          WorkflowHistory[]      @relation("WorkflowActor")
 
+  // Notification preferences
+  notificationPreference   NotificationPreference?
+  notificationDigests      NotificationDigest[]
+
   @@map("users")
 }
 
@@ -1023,6 +1027,52 @@ model Notification {
   @@index([userId, createdAt(sort: Desc)])
   @@index([entityType, entityId])
   @@map("notifications")
+}
+
+model NotificationPreference {
+  id                String              @id @default(cuid())
+  userId            String              @unique @map("user_id")
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Global settings
+  emailEnabled      Boolean             @default(true) @map("email_enabled")
+  inAppEnabled      Boolean             @default(true) @map("in_app_enabled")
+  digestFrequency   DigestFrequency     @default(IMMEDIATE) @map("digest_frequency")
+
+  // Type-specific settings (JSON map of NotificationType -> boolean)
+  typeSettings      Json                @default("{}") @map("type_settings")
+
+  // Quiet hours (UTC)
+  quietHoursStart   String?             @map("quiet_hours_start")
+  quietHoursEnd     String?             @map("quiet_hours_end")
+  timezone          String              @default("UTC")
+
+  // Frequency capping
+  maxPerHour        Int                 @default(10) @map("max_per_hour")
+  maxPerDay         Int                 @default(50) @map("max_per_day")
+
+  createdAt         DateTime            @default(now()) @map("created_at")
+  updatedAt         DateTime            @updatedAt @map("updated_at")
+
+  @@map("notification_preferences")
+}
+
+model NotificationDigest {
+  id                String              @id @default(cuid())
+  userId            String              @map("user_id")
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  frequency         DigestFrequency
+  scheduledFor      DateTime            @map("scheduled_for")
+  sentAt            DateTime?           @map("sent_at")
+
+  // Aggregated notification IDs
+  notificationIds   String[]            @map("notification_ids")
+
+  createdAt         DateTime            @default(now()) @map("created_at")
+
+  @@index([userId, frequency, scheduledFor])
+  @@map("notification_digests")
 }
 
 model AuditLog {

@@ -32,6 +32,7 @@ import { reviewDiscussionRouter } from "./review-discussion";
 import { reviewTaskRouter } from "./review-task";
 import { collaborationRouter } from "./collaboration";
 import { workflowRouter } from "./workflow";
+import { documentEnhancedRouter } from "./document-enhanced";
 
 /**
  * Main app router combining all sub-routers
@@ -70,6 +71,7 @@ export const appRouter = router({
   reviewTask: reviewTaskRouter,
   collaboration: collaborationRouter,
   workflow: workflowRouter,
+  documentEnhanced: documentEnhancedRouter,
 });
 
 /**

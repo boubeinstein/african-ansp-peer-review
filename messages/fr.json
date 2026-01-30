@@ -3604,6 +3604,32 @@
             }
           }
         }
+      },
+      "documents": {
+        "title": "Documents",
+        "upload": "Téléverser",
+        "search": "Rechercher des documents...",
+        "filterCategory": "Filtrer par catégorie",
+        "allCategories": "Toutes les catégories",
+        "noResults": "Aucun document trouvé",
+        "tryDifferent": "Essayez d'ajuster votre recherche ou filtre",
+        "empty": {
+          "title": "Aucun document",
+          "description": "Téléversez des documents à partager avec votre équipe"
+        },
+        "view": "Voir",
+        "download": "Télécharger",
+        "delete": "Supprimer",
+        "categories": {
+          "PRE_VISIT_REQUEST": "Demande pré-visite",
+          "HOST_SUBMISSION": "Soumission hôte",
+          "EVIDENCE": "Preuve",
+          "INTERVIEW_NOTES": "Notes d'entrevue",
+          "DRAFT_REPORT": "Rapport provisoire",
+          "FINAL_REPORT": "Rapport final",
+          "CORRESPONDENCE": "Correspondance",
+          "OTHER": "Autre"
+        }
       }
     }
   },

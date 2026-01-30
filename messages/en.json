@@ -3604,6 +3604,32 @@
             }
           }
         }
+      },
+      "documents": {
+        "title": "Documents",
+        "upload": "Upload",
+        "search": "Search documents...",
+        "filterCategory": "Filter by category",
+        "allCategories": "All categories",
+        "noResults": "No documents found",
+        "tryDifferent": "Try adjusting your search or filter",
+        "empty": {
+          "title": "No documents yet",
+          "description": "Upload documents to share with your review team"
+        },
+        "view": "View",
+        "download": "Download",
+        "delete": "Delete",
+        "categories": {
+          "PRE_VISIT_REQUEST": "Pre-Visit Request",
+          "HOST_SUBMISSION": "Host Submission",
+          "EVIDENCE": "Evidence",
+          "INTERVIEW_NOTES": "Interview Notes",
+          "DRAFT_REPORT": "Draft Report",
+          "FINAL_REPORT": "Final Report",
+          "CORRESPONDENCE": "Correspondence",
+          "OTHER": "Other"
+        }
       }
     }
   },

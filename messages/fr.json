@@ -3607,7 +3607,7 @@
       },
       "documents": {
         "title": "Documents",
-        "upload": "Téléverser",
+        "uploadButton": "Téléverser",
         "search": "Rechercher des documents...",
         "filterCategory": "Filtrer par catégorie",
         "allCategories": "Toutes les catégories",
@@ -3629,6 +3629,20 @@
           "FINAL_REPORT": "Rapport final",
           "CORRESPONDENCE": "Correspondance",
           "OTHER": "Autre"
+        },
+        "upload": {
+          "title": "Téléverser des documents",
+          "description": "Téléversez des fichiers à partager avec votre équipe",
+          "category": "Catégorie",
+          "dragOrClick": "Glissez des fichiers ici ou cliquez pour parcourir",
+          "dropHere": "Déposez les fichiers ici...",
+          "maxSize": "Taille max : 10 Mo",
+          "fileTooLarge": "{name} est trop volumineux",
+          "invalidType": "{name} a un type de fichier invalide",
+          "uploadFailed": "Échec du téléversement",
+          "uploadSuccess": "{count} fichier(s) téléversé(s) avec succès",
+          "cancel": "Annuler",
+          "uploadButton": "Téléverser {count} fichier(s)"
         }
       }
     }

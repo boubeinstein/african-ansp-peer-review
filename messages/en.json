@@ -3607,7 +3607,7 @@
       },
       "documents": {
         "title": "Documents",
-        "upload": "Upload",
+        "uploadButton": "Upload",
         "search": "Search documents...",
         "filterCategory": "Filter by category",
         "allCategories": "All categories",
@@ -3629,6 +3629,20 @@
           "FINAL_REPORT": "Final Report",
           "CORRESPONDENCE": "Correspondence",
           "OTHER": "Other"
+        },
+        "upload": {
+          "title": "Upload Documents",
+          "description": "Upload files to share with your review team",
+          "category": "Category",
+          "dragOrClick": "Drag files here or click to browse",
+          "dropHere": "Drop files here...",
+          "maxSize": "Max file size: 10MB",
+          "fileTooLarge": "{name} is too large",
+          "invalidType": "{name} has an invalid file type",
+          "uploadFailed": "Upload failed",
+          "uploadSuccess": "{count} file(s) uploaded successfully",
+          "cancel": "Cancel",
+          "uploadButton": "Upload {count} file(s)"
         }
       }
     }

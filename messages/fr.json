@@ -3526,11 +3526,22 @@
           }
         },
         "tasksList": {
+          "search": "Rechercher des tâches...",
+          "filterPriority": "Filtrer par priorité",
+          "filterAll": "Toutes les priorités",
+          "noResults": "Aucune tâche trouvée",
+          "viewBoard": "Vue tableau",
+          "viewList": "Vue liste",
           "columns": {
-            "todo": "À faire",
+            "pending": "En attente",
             "inProgress": "En cours",
-            "inReview": "En révision",
-            "done": "Terminé"
+            "completed": "Terminée"
+          },
+          "priorities": {
+            "URGENT": "Urgent",
+            "HIGH": "Haute",
+            "MEDIUM": "Moyenne",
+            "LOW": "Basse"
           },
           "emptyColumn": "Aucune tâche",
           "new": {

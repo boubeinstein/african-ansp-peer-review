@@ -3643,7 +3643,14 @@
           "uploadSuccess": "{count} fichier(s) téléversé(s) avec succès",
           "cancel": "Annuler",
           "uploadButton": "Téléverser {count} fichier(s)"
-        }
+        },
+        "count": "{count} documents",
+        "deleteSuccess": "Document supprimé",
+        "deleteError": "Échec de la suppression",
+        "deleteConfirmTitle": "Supprimer le document ?",
+        "deleteConfirmDescription": "Êtes-vous sûr de vouloir supprimer \"{name}\" ? Cette action est irréversible.",
+        "cancelDelete": "Annuler",
+        "confirmDelete": "Supprimer"
       }
     }
   },

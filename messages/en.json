@@ -3643,7 +3643,14 @@
           "uploadSuccess": "{count} file(s) uploaded successfully",
           "cancel": "Cancel",
           "uploadButton": "Upload {count} file(s)"
-        }
+        },
+        "count": "{count} documents",
+        "deleteSuccess": "Document deleted",
+        "deleteError": "Failed to delete document",
+        "deleteConfirmTitle": "Delete Document?",
+        "deleteConfirmDescription": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+        "cancelDelete": "Cancel",
+        "confirmDelete": "Delete"
       }
     }
   },

@@ -6197,6 +6197,19 @@
       "avgDays": "Avg. Completion Time",
       "onTimeRate": "On-Time Rate",
       "noData": "No data available"
+    },
+    "transitions": {
+      "success": "Status updated successfully",
+      "error": "Failed to update status",
+      "confirmTitle": "Confirm Action",
+      "commentOptional": "Comment (optional)",
+      "commentPlaceholder": "Add a comment about this action...",
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    },
+    "history": {
+      "title": "Status History",
+      "empty": "No history available"
     }
   }
 }

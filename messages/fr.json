@@ -3443,6 +3443,22 @@
           "open": "ouvertes",
           "discussions": "Discussions",
           "active": "actives"
+        },
+        "activity": {
+          "title": "Activité récente",
+          "empty": "Aucune activité récente",
+          "viewAll": "Voir toute l'activité"
+        },
+        "attention": {
+          "title": "Attention requise",
+          "allClear": "Tout est en ordre - aucun élément ne nécessite d'attention",
+          "andMore": "et {count} autres éléments..."
+        },
+        "team": {
+          "title": "Équipe d'examen",
+          "leadReviewer": "Examinateur principal",
+          "reviewers": "examinateurs",
+          "viewAll": "Voir l'équipe complète"
         }
       }
     }

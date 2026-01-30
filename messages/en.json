@@ -3443,6 +3443,22 @@
           "open": "open",
           "discussions": "Discussions",
           "active": "active"
+        },
+        "activity": {
+          "title": "Recent Activity",
+          "empty": "No recent activity",
+          "viewAll": "View All Activity"
+        },
+        "attention": {
+          "title": "Needs Attention",
+          "allClear": "All clear - no items need attention",
+          "andMore": "and {count} more items..."
+        },
+        "team": {
+          "title": "Review Team",
+          "leadReviewer": "Lead Reviewer",
+          "reviewers": "reviewers",
+          "viewAll": "View Full Team"
         }
       }
     }

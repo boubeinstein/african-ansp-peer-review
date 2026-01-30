@@ -76,7 +76,9 @@
     "joinRequests": "Demandes d'Adhésion",
     "administration": "Administration",
     "adminUsers": "Utilisateurs",
-    "adminRoles": "Rôles"
+    "adminRoles": "Rôles",
+    "notifications": "Alertes",
+    "profile": "Profil"
   },
   "auth": {
     "hero": {

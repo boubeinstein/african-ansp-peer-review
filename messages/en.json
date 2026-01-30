@@ -76,7 +76,9 @@
     "joinRequests": "Join Requests",
     "administration": "Administration",
     "adminUsers": "Users",
-    "adminRoles": "Roles"
+    "adminRoles": "Roles",
+    "notifications": "Alerts",
+    "profile": "Profile"
   },
   "auth": {
     "hero": {

@@ -3655,6 +3655,7 @@
       "findings": {
         "title": "Constatations",
         "addFinding": "Ajouter une constatation",
+        "summary": "{total} constatations • {critical} critiques • {major} majeures • {open} ouvertes",
         "search": "Rechercher des constatations...",
         "filterSeverity": "Filtrer par gravité",
         "filterStatus": "Filtrer par statut",

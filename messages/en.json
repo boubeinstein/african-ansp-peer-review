@@ -3655,6 +3655,7 @@
       "findings": {
         "title": "Findings",
         "addFinding": "Add Finding",
+        "summary": "{total} findings • {critical} critical • {major} major • {open} open",
         "search": "Search findings...",
         "filterSeverity": "Filter by severity",
         "filterStatus": "Filter by status",

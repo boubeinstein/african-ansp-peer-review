@@ -3671,9 +3671,37 @@
         },
         "status": {
           "OPEN": "Ouvert",
+          "CAP_REQUIRED": "PAC requis",
+          "CAP_SUBMITTED": "PAC soumis",
+          "CAP_ACCEPTED": "PAC accepté",
           "IN_PROGRESS": "En cours",
+          "VERIFICATION": "Vérification",
           "CLOSED": "Clôturé",
-          "VERIFIED": "Vérifié"
+          "DEFERRED": "Différé"
+        },
+        "detail": {
+          "back": "Retour aux constatations",
+          "notFound": "Constatation introuvable",
+          "edit": "Modifier",
+          "description": "Description",
+          "evidence": "Preuves",
+          "findingType": "Type",
+          "criticalElement": "Élément critique",
+          "icaoReference": "Référence OACI",
+          "assignee": "Assigné à",
+          "targetDate": "Date cible",
+          "created": "Créée",
+          "updated": "Mise à jour",
+          "statusUpdated": "Statut mis à jour",
+          "updateError": "Échec de la mise à jour",
+          "correctiveActionPlan": "Plan d'action corrective",
+          "capTitle": "Plan d'action corrective",
+          "capStatus": "Statut",
+          "capDueDate": "Date d'échéance",
+          "viewCap": "Voir le PAC",
+          "noCapLinked": "Aucun plan d'action corrective lié",
+          "createCap": "Créer un PAC",
+          "evidenceDocuments": "Documents de preuve"
         },
         "empty": {
           "title": "Aucune constatation",

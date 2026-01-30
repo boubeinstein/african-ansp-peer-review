@@ -3675,9 +3675,37 @@
         },
         "status": {
           "OPEN": "Open",
+          "CAP_REQUIRED": "CAP Required",
+          "CAP_SUBMITTED": "CAP Submitted",
+          "CAP_ACCEPTED": "CAP Accepted",
           "IN_PROGRESS": "In Progress",
+          "VERIFICATION": "Verification",
           "CLOSED": "Closed",
-          "VERIFIED": "Verified"
+          "DEFERRED": "Deferred"
+        },
+        "detail": {
+          "back": "Back to findings",
+          "notFound": "Finding not found",
+          "edit": "Edit Finding",
+          "description": "Description",
+          "evidence": "Evidence",
+          "findingType": "Type",
+          "criticalElement": "Critical Element",
+          "icaoReference": "ICAO Reference",
+          "assignee": "Assignee",
+          "targetDate": "Target Date",
+          "created": "Created",
+          "updated": "Updated",
+          "statusUpdated": "Status updated",
+          "updateError": "Failed to update",
+          "correctiveActionPlan": "Corrective Action Plan",
+          "capTitle": "Corrective Action Plan",
+          "capStatus": "Status",
+          "capDueDate": "Due Date",
+          "viewCap": "View CAP",
+          "noCapLinked": "No corrective action plan linked",
+          "createCap": "Create CAP",
+          "evidenceDocuments": "Evidence Documents"
         }
       }
     }

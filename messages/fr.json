@@ -3534,7 +3534,32 @@
           },
           "emptyColumn": "Aucune tâche",
           "new": {
-            "title": "Nouvelle tâche"
+            "title": "Créer une nouvelle tâche",
+            "description": "Ajouter une tâche pour suivre le travail de cette revue"
+          },
+          "form": {
+            "title": "Titre",
+            "titlePlaceholder": "Que faut-il faire ?",
+            "description": "Description",
+            "descriptionPlaceholder": "Ajouter plus de détails...",
+            "priority": "Priorité",
+            "dueDate": "Date d'échéance",
+            "dueDatePlaceholder": "Sélectionner une date",
+            "assignee": "Assigné à",
+            "unassigned": "Non assigné",
+            "cancel": "Annuler",
+            "create": "Créer la tâche",
+            "update": "Mettre à jour",
+            "createSuccess": "Tâche créée avec succès",
+            "createError": "Échec de la création de la tâche",
+            "updateSuccess": "Tâche mise à jour avec succès",
+            "updateError": "Échec de la mise à jour de la tâche",
+            "priorities": {
+              "URGENT": "Urgent",
+              "HIGH": "Haute",
+              "MEDIUM": "Moyenne",
+              "LOW": "Basse"
+            }
           }
         }
       }

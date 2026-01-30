@@ -3534,7 +3534,32 @@
           },
           "emptyColumn": "No tasks",
           "new": {
-            "title": "New Task"
+            "title": "Create New Task",
+            "description": "Add a task to track work for this review"
+          },
+          "form": {
+            "title": "Title",
+            "titlePlaceholder": "What needs to be done?",
+            "description": "Description",
+            "descriptionPlaceholder": "Add more details...",
+            "priority": "Priority",
+            "dueDate": "Due Date",
+            "dueDatePlaceholder": "Select a date",
+            "assignee": "Assignee",
+            "unassigned": "Unassigned",
+            "cancel": "Cancel",
+            "create": "Create Task",
+            "update": "Update Task",
+            "createSuccess": "Task created successfully",
+            "createError": "Failed to create task",
+            "updateSuccess": "Task updated successfully",
+            "updateError": "Failed to update task",
+            "priorities": {
+              "URGENT": "Urgent",
+              "HIGH": "High",
+              "MEDIUM": "Medium",
+              "LOW": "Low"
+            }
           }
         }
       }

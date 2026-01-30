@@ -3488,8 +3488,41 @@
             "CLOSED": "Closed"
           },
           "replies": "replies",
+          "search": "Search discussions...",
+          "filterStatus": "Filter by status",
+          "filterAll": "All statuses",
+          "noResults": "No discussions found",
+          "tryDifferent": "Try adjusting your search or filter",
           "new": {
-            "title": "New Discussion"
+            "title": "Start a New Discussion",
+            "description": "Create a discussion thread to collaborate with your review team"
+          },
+          "form": {
+            "title": "Subject",
+            "titlePlaceholder": "What would you like to discuss?",
+            "content": "Content",
+            "contentPlaceholder": "Provide details for your discussion...",
+            "cancel": "Cancel",
+            "submit": "Start Discussion",
+            "success": "Discussion created successfully",
+            "error": "Failed to create discussion"
+          },
+          "detail": {
+            "back": "Back to discussions",
+            "notFound": "Discussion not found",
+            "replies": "{count} replies",
+            "replyPlaceholder": "Write a reply...",
+            "sendReply": "Send Reply",
+            "replySent": "Reply sent",
+            "replyError": "Failed to send reply",
+            "markClosed": "Mark as Closed",
+            "reopen": "Reopen Discussion",
+            "statusUpdated": "Status updated",
+            "closedMessage": "This discussion is closed. Reopen it to add replies.",
+            "status": {
+              "OPEN": "Open",
+              "CLOSED": "Closed"
+            }
           }
         },
         "tasksList": {

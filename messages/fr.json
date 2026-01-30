@@ -3488,8 +3488,41 @@
             "CLOSED": "Fermée"
           },
           "replies": "réponses",
+          "search": "Rechercher des discussions...",
+          "filterStatus": "Filtrer par statut",
+          "filterAll": "Tous les statuts",
+          "noResults": "Aucune discussion trouvée",
+          "tryDifferent": "Essayez d'ajuster votre recherche ou filtre",
           "new": {
-            "title": "Nouvelle discussion"
+            "title": "Nouvelle discussion",
+            "description": "Créez un fil de discussion pour collaborer avec votre équipe d'examen"
+          },
+          "form": {
+            "title": "Sujet",
+            "titlePlaceholder": "De quoi souhaitez-vous discuter ?",
+            "content": "Contenu",
+            "contentPlaceholder": "Fournissez les détails de votre discussion...",
+            "cancel": "Annuler",
+            "submit": "Démarrer la discussion",
+            "success": "Discussion créée avec succès",
+            "error": "Échec de la création de la discussion"
+          },
+          "detail": {
+            "back": "Retour aux discussions",
+            "notFound": "Discussion introuvable",
+            "replies": "{count} réponses",
+            "replyPlaceholder": "Écrire une réponse...",
+            "sendReply": "Envoyer",
+            "replySent": "Réponse envoyée",
+            "replyError": "Échec de l'envoi de la réponse",
+            "markClosed": "Marquer comme fermée",
+            "reopen": "Rouvrir la discussion",
+            "statusUpdated": "Statut mis à jour",
+            "closedMessage": "Cette discussion est fermée. Rouvrez-la pour ajouter des réponses.",
+            "status": {
+              "OPEN": "Ouverte",
+              "CLOSED": "Fermée"
+            }
           }
         },
         "tasksList": {

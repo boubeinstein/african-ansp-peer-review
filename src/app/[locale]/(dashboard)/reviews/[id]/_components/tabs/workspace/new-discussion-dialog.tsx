@@ -1,7 +1,14 @@
 "use client";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useTranslations } from "next-intl";
+import { DiscussionForm } from "./discussion-form";
 
 interface NewDiscussionDialogProps {
   open: boolean;
@@ -9,18 +16,21 @@ interface NewDiscussionDialogProps {
   reviewId: string;
 }
 
-export function NewDiscussionDialog({ open, onOpenChange, reviewId: _reviewId }: NewDiscussionDialogProps) {
-  const t = useTranslations("reviews.detail.workspace.discussionsList");
+export function NewDiscussionDialog({ open, onOpenChange, reviewId }: NewDiscussionDialogProps) {
+  const t = useTranslations("reviews.detail.workspace.discussionsList.new");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>{t("new.title")}</DialogTitle>
+          <DialogTitle>{t("title")}</DialogTitle>
+          <DialogDescription>{t("description")}</DialogDescription>
         </DialogHeader>
-        <p className="text-muted-foreground">
-          Discussion form to be integrated from existing discussion components.
-        </p>
+        <DiscussionForm
+          reviewId={reviewId}
+          onSuccess={() => onOpenChange(false)}
+          onCancel={() => onOpenChange(false)}
+        />
       </DialogContent>
     </Dialog>
   );

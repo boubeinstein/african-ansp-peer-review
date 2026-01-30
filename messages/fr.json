@@ -3414,7 +3414,8 @@
         "submit": "Soumettre",
         "download": "Télécharger",
         "upload": "Téléverser",
-        "cancel": "Annuler l'examen"
+        "cancel": "Annuler l'examen",
+        "keyboardShortcuts": "Raccourcis clavier"
       },
       "overview": {
         "progress": {

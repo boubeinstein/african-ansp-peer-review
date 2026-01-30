@@ -1,30 +1,35 @@
 "use client";
 
 import { Suspense } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 import type { ReviewTab } from "../_types";
+import {
+  OverviewTabSkeleton,
+  WorkspaceTabSkeleton,
+  DocumentsTabSkeleton,
+  FindingsTabSkeleton,
+  ReportTabSkeleton,
+  SettingsTabSkeleton,
+} from "./skeletons";
 
 interface TabContentProps {
   tab: ReviewTab;
   children: React.ReactNode;
 }
 
-function TabSkeleton() {
-  return (
-    <div className="p-6 space-y-4">
-      <Skeleton className="h-8 w-48" />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Skeleton className="h-32" />
-        <Skeleton className="h-32" />
-      </div>
-      <Skeleton className="h-64" />
-    </div>
-  );
-}
+const skeletonMap: Record<ReviewTab, React.ComponentType> = {
+  overview: OverviewTabSkeleton,
+  workspace: WorkspaceTabSkeleton,
+  documents: DocumentsTabSkeleton,
+  findings: FindingsTabSkeleton,
+  report: ReportTabSkeleton,
+  settings: SettingsTabSkeleton,
+};
 
 export function TabContent({ tab, children }: TabContentProps) {
+  const Skeleton = skeletonMap[tab] || OverviewTabSkeleton;
+
   return (
-    <Suspense fallback={<TabSkeleton />}>
+    <Suspense fallback={<Skeleton />}>
       <div
         role="tabpanel"
         aria-labelledby={`tab-${tab}`}

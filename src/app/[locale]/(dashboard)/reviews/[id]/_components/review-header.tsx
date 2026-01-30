@@ -17,8 +17,14 @@ import {
   Send,
   Upload,
   Calendar,
-  Building2
+  Building2,
+  Keyboard,
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { format } from "date-fns";
@@ -125,6 +131,25 @@ export function ReviewHeader({ review }: ReviewHeaderProps) {
               <Send className="h-4 w-4 mr-1.5" />
               {t("actions.submit")}
             </Button>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="hidden md:flex"
+                  onClick={() => {
+                    window.dispatchEvent(new CustomEvent("show-keyboard-shortcuts"));
+                  }}
+                >
+                  <Keyboard className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t("actions.keyboardShortcuts")}</p>
+                <p className="text-xs text-muted-foreground">Press ? for help</p>
+              </TooltipContent>
+            </Tooltip>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

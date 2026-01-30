@@ -3414,7 +3414,8 @@
         "submit": "Submit",
         "download": "Download",
         "upload": "Upload",
-        "cancel": "Cancel Review"
+        "cancel": "Cancel Review",
+        "keyboardShortcuts": "Keyboard Shortcuts"
       },
       "overview": {
         "progress": {

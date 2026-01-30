@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Montserrat, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 
@@ -20,7 +20,6 @@ export const metadata: Metadata = {
   title: "African ANSP Peer Review",
   description: "Collaborative Excellence in Aviation Safety",
   manifest: "/manifest.json",
-  themeColor: "#1e40af",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -34,6 +33,13 @@ export const metadata: Metadata = {
     "msapplication-TileColor": "#1e40af",
     "msapplication-tap-highlight": "no",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+  ],
 };
 
 export default function RootLayout({

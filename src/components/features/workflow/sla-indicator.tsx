@@ -20,15 +20,20 @@ interface SLAIndicatorProps {
 export function SLAIndicator({ entityType, entityId }: SLAIndicatorProps) {
   const t = useTranslations("workflow.sla");
 
+  // Only query when we have both required props
+  const hasValidInput = !!entityType && !!entityId;
+
   const { data: sla } = trpc.workflow.getCurrentSLA.useQuery(
     { entityType, entityId },
     {
+      enabled: hasValidInput,
       // Don't error if no SLA exists
       retry: false,
     }
   );
 
-  if (!sla) return null;
+  // Early return if missing required props or no SLA
+  if (!hasValidInput || !sla) return null;
 
   const getVariant = (): "destructive" | "secondary" | "outline" => {
     if (sla.isBreached) return "destructive";

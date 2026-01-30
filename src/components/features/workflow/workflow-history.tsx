@@ -25,10 +25,24 @@ export function WorkflowHistory({
   const locale = useLocale();
   const dateLocale = locale === "fr" ? fr : enUS;
 
-  const { data: history, isLoading } = trpc.workflow.getHistory.useQuery({
-    entityType,
-    entityId,
-  });
+  // Only query when we have both required props
+  const hasValidInput = !!entityType && !!entityId;
+
+  const { data: history, isLoading } = trpc.workflow.getHistory.useQuery(
+    {
+      entityType,
+      entityId,
+    },
+    {
+      enabled: hasValidInput,
+      retry: false,
+    }
+  );
+
+  // Early return if missing required props
+  if (!hasValidInput) {
+    return null;
+  }
 
   if (isLoading) {
     return (

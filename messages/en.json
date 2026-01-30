@@ -6271,5 +6271,14 @@
       "expiredOrRevoked": "Expired or Revoked",
       "expired": "Expired"
     }
+  },
+  "pwa": {
+    "installTitle": "Install AAPRP App",
+    "installDescription": "Add to your home screen for quick access and offline features",
+    "install": "Install",
+    "notNow": "Not now",
+    "offlineReady": "App is ready for offline use",
+    "updateAvailable": "A new version is available",
+    "update": "Update"
   }
 }

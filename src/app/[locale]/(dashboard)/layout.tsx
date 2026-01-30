@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { AppShell } from "@/components/layout/app-shell";
 import { DashboardProviders } from "@/components/providers/dashboard-providers";
+import { InstallPrompt } from "@/components/pwa/install-prompt";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -42,6 +43,7 @@ export default async function DashboardLayout({
       <AppShell locale={locale} user={user}>
         {children}
       </AppShell>
+      <InstallPrompt />
     </DashboardProviders>
   );
 }

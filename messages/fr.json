@@ -6271,5 +6271,14 @@
       "expiredOrRevoked": "Expirés ou révoqués",
       "expired": "Expiré"
     }
+  },
+  "pwa": {
+    "installTitle": "Installer l'application AAPRP",
+    "installDescription": "Ajoutez à votre écran d'accueil pour un accès rapide et hors ligne",
+    "install": "Installer",
+    "notNow": "Plus tard",
+    "offlineReady": "L'application est prête pour une utilisation hors ligne",
+    "updateAvailable": "Une nouvelle version est disponible",
+    "update": "Mettre à jour"
   }
 }

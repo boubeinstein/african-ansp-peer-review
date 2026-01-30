@@ -19,6 +19,21 @@ const sourceSans = Source_Sans_3({
 export const metadata: Metadata = {
   title: "African ANSP Peer Review",
   description: "Collaborative Excellence in Aviation Safety",
+  manifest: "/manifest.json",
+  themeColor: "#1e40af",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "AAPRP",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+    "msapplication-TileColor": "#1e40af",
+    "msapplication-tap-highlight": "no",
+  },
 };
 
 export default function RootLayout({
@@ -28,6 +43,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+      </head>
       <body
         className={`${montserrat.variable} ${sourceSans.variable} font-sans antialiased`}
         suppressHydrationWarning

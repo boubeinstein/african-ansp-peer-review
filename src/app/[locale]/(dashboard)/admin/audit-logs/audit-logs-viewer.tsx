@@ -117,6 +117,9 @@ function ActionBadge({ action }: { action: AuditAction }) {
     LOGOUT: "bg-gray-100 text-gray-800 border-gray-200",
     EXPORT: "bg-yellow-100 text-yellow-800 border-yellow-200",
     VIEW_SENSITIVE: "bg-pink-100 text-pink-800 border-pink-200",
+    INTEGRITY_CHECK: "bg-sky-100 text-sky-800 border-sky-200",
+    VERSION_LOCK: "bg-amber-100 text-amber-800 border-amber-200",
+    VERSION_UNLOCK: "bg-lime-100 text-lime-800 border-lime-200",
   };
 
   return (

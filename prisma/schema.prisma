@@ -2005,6 +2005,9 @@ enum AuditAction {
   LOGOUT
   EXPORT
   VIEW_SENSITIVE
+  INTEGRITY_CHECK
+  VERSION_LOCK
+  VERSION_UNLOCK
 }
 
 // =============================================================================

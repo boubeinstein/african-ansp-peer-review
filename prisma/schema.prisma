@@ -126,6 +126,13 @@ model User {
   notificationPreference   NotificationPreference?
   notificationDigests      NotificationDigest[]
 
+  // Evidence-grade documents
+  documentVersionsCreated  DocumentVersion[]     @relation("VersionCreator")
+  documentVersionsLocked   DocumentVersion[]     @relation("VersionLocker")
+  evidenceLinksVerified    EvidenceLink[]        @relation("EvidenceVerifier")
+  evidenceLinksCreated     EvidenceLink[]        @relation("EvidenceLinkCreator")
+  documentTokensCreated    DocumentAccessToken[] @relation("TokenCreator")
+
   @@map("users")
 }
 
@@ -980,9 +987,123 @@ model Document {
   // Collaborative annotations
   annotations    DocumentAnnotation[]
 
+  // Evidence-grade enhancements
+  classification    DocumentClassification @default(SUPPORTING)
+  expiresAt         DateTime?              @map("expires_at")
+  expiryNotified    Boolean                @default(false) @map("expiry_notified")
+  currentVersionId  String?                @map("current_version_id")
+
+  // Version and evidence relations
+  versions          DocumentVersion[]
+  evidenceLinks     EvidenceLink[]
+  accessTokens      DocumentAccessToken[]
+
   @@index([organizationId, isDeleted])
   @@index([assessmentId])
+  @@index([expiresAt])
   @@map("documents")
+}
+
+model DocumentVersion {
+  id            String        @id @default(cuid())
+  documentId    String        @map("document_id")
+  document      Document      @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  // Version info
+  versionNumber Int           @map("version_number")
+
+  // File storage
+  fileUrl       String        @map("file_url")
+  fileName      String        @map("file_name")
+  fileSize      Int           @map("file_size")
+  mimeType      String        @map("mime_type")
+
+  // Integrity
+  hashAlgorithm HashAlgorithm @default(SHA256) @map("hash_algorithm")
+  fileHash      String        @map("file_hash")
+
+  // Metadata
+  changeNotes   String?       @map("change_notes") @db.Text
+
+  // Audit
+  createdAt     DateTime      @default(now()) @map("created_at")
+  createdById   String        @map("created_by_id")
+  createdBy     User          @relation("VersionCreator", fields: [createdById], references: [id])
+
+  // Immutability flag
+  isLocked      Boolean       @default(false) @map("is_locked")
+  lockedAt      DateTime?     @map("locked_at")
+  lockedById    String?       @map("locked_by_id")
+  lockedBy      User?         @relation("VersionLocker", fields: [lockedById], references: [id])
+
+  @@unique([documentId, versionNumber])
+  @@index([documentId])
+  @@map("document_versions")
+}
+
+model EvidenceLink {
+  id             String    @id @default(cuid())
+  documentId     String    @map("document_id")
+  document       Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  // Link target
+  entityType     String    @map("entity_type") // FINDING, CAP, ASSESSMENT_RESPONSE
+  entityId       String    @map("entity_id")
+
+  // Link metadata
+  linkType       String    @default("SUPPORTS") @map("link_type") // SUPPORTS, PROVES, REFERENCES
+  relevanceScore Float?    @map("relevance_score") // 0-1, for AI-suggested links
+
+  // Verification
+  isVerified     Boolean   @default(false) @map("is_verified")
+  verifiedAt     DateTime? @map("verified_at")
+  verifiedById   String?   @map("verified_by_id")
+  verifiedBy     User?     @relation("EvidenceVerifier", fields: [verifiedById], references: [id])
+
+  // Notes
+  notesEn        String?   @map("notes_en") @db.Text
+  notesFr        String?   @map("notes_fr") @db.Text
+
+  createdAt      DateTime  @default(now()) @map("created_at")
+  createdById    String    @map("created_by_id")
+  createdBy      User      @relation("EvidenceLinkCreator", fields: [createdById], references: [id])
+
+  @@unique([documentId, entityType, entityId])
+  @@index([entityType, entityId])
+  @@map("evidence_links")
+}
+
+model DocumentAccessToken {
+  id             String    @id @default(cuid())
+  documentId     String    @map("document_id")
+  document       Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  // Token
+  token          String    @unique
+
+  // Access control
+  permissions    String[]  @default(["VIEW"]) // VIEW, DOWNLOAD
+
+  // Validity
+  expiresAt      DateTime  @map("expires_at")
+  maxAccesses    Int?      @map("max_accesses")
+  accessCount    Int       @default(0) @map("access_count")
+
+  // Recipient info
+  recipientEmail String?   @map("recipient_email")
+  recipientName  String?   @map("recipient_name")
+  purpose        String?
+
+  // Audit
+  createdAt      DateTime  @default(now()) @map("created_at")
+  createdById    String    @map("created_by_id")
+  createdBy      User      @relation("TokenCreator", fields: [createdById], references: [id])
+  lastAccessedAt DateTime? @map("last_accessed_at")
+  revokedAt      DateTime? @map("revoked_at")
+
+  @@index([token])
+  @@index([expiresAt])
+  @@map("document_access_tokens")
 }
 
 model ResponseDocument {
@@ -1788,6 +1909,21 @@ enum DocumentStatus {
   PENDING_APPROVAL
   APPROVED
   REJECTED
+}
+
+enum DocumentClassification {
+  EVIDENCE
+  SUPPORTING
+  REFERENCE
+  DRAFT
+  TEMPLATE
+  CORRESPONDENCE
+}
+
+enum HashAlgorithm {
+  SHA256
+  SHA512
+  MD5
 }
 
 enum EventType {

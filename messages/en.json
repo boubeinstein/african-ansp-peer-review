@@ -3753,6 +3753,50 @@
         "cancel": "Cancel",
         "generate": "Generate",
         "submit": "Submit"
+      },
+      "settings": {
+        "title": "Settings",
+        "description": "Review configuration and details",
+        "editReview": "Edit Review",
+        "reviewDetails": "Review Details",
+        "reviewNumber": "Review Number",
+        "reviewType": "Review Type",
+        "status": "Status",
+        "phase": "Phase",
+        "created": "Created",
+        "updated": "Last Updated",
+        "objectives": "Objectives",
+        "hostOrganization": "Host Organization",
+        "viewOrganization": "View Organization",
+        "primaryContact": "Primary Contact",
+        "scheduleLogistics": "Schedule & Logistics",
+        "plannedPeriod": "Planned Period",
+        "actualPeriod": "Actual Period",
+        "locationType": "Location Type",
+        "notScheduled": "Not scheduled",
+        "location": {
+          "ON_SITE": "On-site",
+          "REMOTE": "Remote",
+          "HYBRID": "Hybrid"
+        },
+        "reviewTeam": "Review Team",
+        "leadReviewer": "Lead Reviewer",
+        "roles": {
+          "LEAD_REVIEWER": "Lead Reviewer",
+          "PEER_REVIEWER": "Peer Reviewer",
+          "OBSERVER": "Observer",
+          "TECHNICAL_EXPERT": "Technical Expert"
+        },
+        "noTeamMembers": "No team members assigned",
+        "linkedAssessments": "Linked Assessments",
+        "noLinkedAssessments": "No assessments linked to this review",
+        "dangerZone": "Danger Zone",
+        "dangerZoneDescription": "Irreversible and destructive actions",
+        "deleteReview": "Delete Review",
+        "deleteConfirmTitle": "Delete this review?",
+        "deleteConfirmDescription": "This action cannot be undone. This will permanently delete the review and all associated data including findings, documents, and reports.",
+        "cancel": "Cancel",
+        "confirmDelete": "Delete Review"
       }
     }
   },

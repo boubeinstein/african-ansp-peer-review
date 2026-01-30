@@ -3753,6 +3753,50 @@
         "cancel": "Annuler",
         "generate": "Générer",
         "submit": "Soumettre"
+      },
+      "settings": {
+        "title": "Paramètres",
+        "description": "Configuration et détails de la revue",
+        "editReview": "Modifier la revue",
+        "reviewDetails": "Détails de la revue",
+        "reviewNumber": "Numéro de revue",
+        "reviewType": "Type de revue",
+        "status": "Statut",
+        "phase": "Phase",
+        "created": "Créée le",
+        "updated": "Dernière modification",
+        "objectives": "Objectifs",
+        "hostOrganization": "Organisation hôte",
+        "viewOrganization": "Voir l'organisation",
+        "primaryContact": "Contact principal",
+        "scheduleLogistics": "Calendrier et logistique",
+        "plannedPeriod": "Période prévue",
+        "actualPeriod": "Période réelle",
+        "locationType": "Type de lieu",
+        "notScheduled": "Non programmé",
+        "location": {
+          "ON_SITE": "Sur site",
+          "REMOTE": "À distance",
+          "HYBRID": "Hybride"
+        },
+        "reviewTeam": "Équipe de revue",
+        "leadReviewer": "Réviseur principal",
+        "roles": {
+          "LEAD_REVIEWER": "Réviseur principal",
+          "PEER_REVIEWER": "Réviseur pair",
+          "OBSERVER": "Observateur",
+          "TECHNICAL_EXPERT": "Expert technique"
+        },
+        "noTeamMembers": "Aucun membre d'équipe assigné",
+        "linkedAssessments": "Évaluations liées",
+        "noLinkedAssessments": "Aucune évaluation liée à cette revue",
+        "dangerZone": "Zone de danger",
+        "dangerZoneDescription": "Actions irréversibles et destructives",
+        "deleteReview": "Supprimer la revue",
+        "deleteConfirmTitle": "Supprimer cette revue ?",
+        "deleteConfirmDescription": "Cette action est irréversible. Cela supprimera définitivement la revue et toutes les données associées, y compris les constatations, les documents et les rapports.",
+        "cancel": "Annuler",
+        "confirmDelete": "Supprimer la revue"
       }
     }
   },

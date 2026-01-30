@@ -3708,6 +3708,51 @@
           "createCap": "Create CAP",
           "evidenceDocuments": "Evidence Documents"
         }
+      },
+      "report": {
+        "title": "Review Report",
+        "description": "Generate and manage the peer review report",
+        "currentReport": "Current Report",
+        "noReport": "No report generated",
+        "noReportDescription": "Generate a report once all prerequisites are met",
+        "version": "Version",
+        "generatedAt": "Generated {date}",
+        "preview": "Preview",
+        "download": "Download",
+        "generateReport": "Generate Report",
+        "regenerate": "Regenerate",
+        "submitForApproval": "Submit for Approval",
+        "generateSuccess": "Report generated successfully",
+        "generateError": "Failed to generate report",
+        "submitSuccess": "Report submitted for approval",
+        "submitError": "Failed to submit report",
+        "status": {
+          "DRAFT": "Draft",
+          "UNDER_REVIEW": "Under Review",
+          "FINALIZED": "Finalized"
+        },
+        "prerequisites": {
+          "title": "Prerequisites",
+          "description": "The following conditions should be met before generating the report",
+          "required": "Required",
+          "notMet": "Required prerequisites must be met before generating the report",
+          "findingsDocumented": "All findings documented",
+          "findingsDetail": "{count} findings recorded",
+          "capsSubmitted": "CAPs submitted for critical/major findings",
+          "capsDetail": "{submitted} of {total} CAPs submitted",
+          "reviewStatus": "Review in progress or completed",
+          "reviewDetail": "Current status: {status}"
+        },
+        "versionHistory": "Version History",
+        "generateConfirmTitle": "Generate Report?",
+        "generateConfirmDescription": "This will generate a new peer review report based on current data.",
+        "regenerateConfirmTitle": "Regenerate Report?",
+        "regenerateConfirmDescription": "This will create a new version of the report. The previous version will be kept in history.",
+        "submitConfirmTitle": "Submit Report?",
+        "submitConfirmDescription": "Once submitted, the report will be sent for approval. You can still regenerate if needed.",
+        "cancel": "Cancel",
+        "generate": "Generate",
+        "submit": "Submit"
       }
     }
   },

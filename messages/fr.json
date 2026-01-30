@@ -3708,6 +3708,51 @@
           "title": "Aucune constatation",
           "description": "Aucune constatation n'a encore été enregistrée pour cette revue"
         }
+      },
+      "report": {
+        "title": "Rapport d'examen",
+        "description": "Générer et gérer le rapport d'examen par les pairs",
+        "currentReport": "Rapport actuel",
+        "noReport": "Aucun rapport généré",
+        "noReportDescription": "Générez un rapport une fois tous les prérequis remplis",
+        "version": "Version",
+        "generatedAt": "Généré le {date}",
+        "preview": "Aperçu",
+        "download": "Télécharger",
+        "generateReport": "Générer le rapport",
+        "regenerate": "Régénérer",
+        "submitForApproval": "Soumettre pour approbation",
+        "generateSuccess": "Rapport généré avec succès",
+        "generateError": "Échec de la génération du rapport",
+        "submitSuccess": "Rapport soumis pour approbation",
+        "submitError": "Échec de la soumission",
+        "status": {
+          "DRAFT": "Brouillon",
+          "UNDER_REVIEW": "En cours de révision",
+          "FINALIZED": "Finalisé"
+        },
+        "prerequisites": {
+          "title": "Prérequis",
+          "description": "Les conditions suivantes doivent être remplies avant de générer le rapport",
+          "required": "Requis",
+          "notMet": "Les prérequis requis doivent être remplis avant de générer le rapport",
+          "findingsDocumented": "Toutes les constatations documentées",
+          "findingsDetail": "{count} constatations enregistrées",
+          "capsSubmitted": "PAC soumis pour constatations critiques/majeures",
+          "capsDetail": "{submitted} sur {total} PAC soumis",
+          "reviewStatus": "Examen en cours ou terminé",
+          "reviewDetail": "Statut actuel : {status}"
+        },
+        "versionHistory": "Historique des versions",
+        "generateConfirmTitle": "Générer le rapport ?",
+        "generateConfirmDescription": "Cela générera un nouveau rapport basé sur les données actuelles.",
+        "regenerateConfirmTitle": "Régénérer le rapport ?",
+        "regenerateConfirmDescription": "Cela créera une nouvelle version. La version précédente sera conservée dans l'historique.",
+        "submitConfirmTitle": "Soumettre le rapport ?",
+        "submitConfirmDescription": "Une fois soumis, le rapport sera envoyé pour approbation. Vous pouvez toujours régénérer si nécessaire.",
+        "cancel": "Annuler",
+        "generate": "Générer",
+        "submit": "Soumettre"
       }
     }
   },

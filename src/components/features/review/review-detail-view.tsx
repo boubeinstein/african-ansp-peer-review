@@ -29,6 +29,9 @@ import { ReviewTimeline } from "./review-timeline";
 import { FieldworkChecklistEnhanced } from "./fieldwork-checklist-enhanced";
 import { ReviewDocumentsEnhanced } from "./review-documents-enhanced";
 import { ReviewWorkspace } from "./review-workspace";
+import { WorkflowTransitionButtons } from "../workflow/workflow-transition-buttons";
+import { WorkflowHistory } from "../workflow/workflow-history";
+import { SLAIndicator } from "../workflow/sla-indicator";
 
 // Collaboration Components
 import {
@@ -297,6 +300,7 @@ export function ReviewDetailView({
               <StatusIcon className="h-3 w-3 mr-1" />
               {t(`status.${review.status.toLowerCase()}`)}
             </Badge>
+            <SLAIndicator entityType="REVIEW" entityId={reviewId} />
           </div>
 
           <p className="text-muted-foreground mt-1">
@@ -340,6 +344,16 @@ export function ReviewDetailView({
               isHost={!!isHost}
             />
           )}
+
+          {/* Workflow Transition Buttons */}
+          <WorkflowTransitionButtons
+            entityType="REVIEW"
+            entityId={reviewId}
+            onTransitionComplete={() => {
+              refetchReview();
+            }}
+            size="sm"
+          />
 
           {/* Smart Action Button */}
           <ReviewActionButton
@@ -441,6 +455,9 @@ export function ReviewDetailView({
           </CollapsibleContent>
         </Card>
       </Collapsible>
+
+      {/* Workflow History */}
+      <WorkflowHistory entityType="REVIEW" entityId={reviewId} maxItems={5} />
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Host Organization */}

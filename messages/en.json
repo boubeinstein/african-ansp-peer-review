@@ -6196,7 +6196,10 @@
       "totalFindings": "Total Findings",
       "avgDays": "Avg. Completion Time",
       "onTimeRate": "On-Time Rate",
-      "noData": "No data available"
+      "noData": "No data available",
+      "target": "Target",
+      "progress": "Progress",
+      "breachedMessage": "SLA has been breached"
     },
     "transitions": {
       "success": "Status updated successfully",

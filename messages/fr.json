@@ -6196,7 +6196,10 @@
       "totalFindings": "Total des Constatations",
       "avgDays": "Temps moyen d'achèvement",
       "onTimeRate": "Taux de respect",
-      "noData": "Aucune donnée disponible"
+      "noData": "Aucune donnée disponible",
+      "target": "Objectif",
+      "progress": "Progression",
+      "breachedMessage": "Le SLA a été dépassé"
     },
     "transitions": {
       "success": "Statut mis à jour avec succès",

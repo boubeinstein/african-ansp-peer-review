@@ -54,6 +54,9 @@ import { CAPTimeline } from "./cap-timeline";
 import { CAPStatusBadge } from "./cap-status-badge";
 import { CAPVerificationForm } from "./cap-verification-form";
 import { FindingSeverityBadge } from "../finding/finding-severity-badge";
+import { WorkflowTransitionButtons } from "../workflow/workflow-transition-buttons";
+import { WorkflowHistory } from "../workflow/workflow-history";
+import { SLAIndicator } from "../workflow/sla-indicator";
 
 // =============================================================================
 // TYPES
@@ -321,6 +324,7 @@ export function CAPDetailView({ cap, userRole, onStatusChange }: CAPDetailViewPr
               {t("view")}
             </h1>
             <CAPStatusBadge status={cap.status} />
+            <SLAIndicator entityType="CAP" entityId={cap.id} />
             {isOverdue && (
               <Badge variant="destructive" className="flex items-center gap-1">
                 <AlertTriangle className="w-3 h-3" />
@@ -340,6 +344,12 @@ export function CAPDetailView({ cap, userRole, onStatusChange }: CAPDetailViewPr
               {t("detail.backToFinding")}
             </Link>
           </Button>
+          <WorkflowTransitionButtons
+            entityType="CAP"
+            entityId={cap.id}
+            onTransitionComplete={() => onStatusChange?.()}
+            size="default"
+          />
           <CAPActionButtons
             capId={cap.id}
             findingId={cap.findingId}
@@ -480,6 +490,9 @@ export function CAPDetailView({ cap, userRole, onStatusChange }: CAPDetailViewPr
               />
             </CardContent>
           </Card>
+
+          {/* Workflow History */}
+          <WorkflowHistory entityType="CAP" entityId={cap.id} maxItems={5} />
         </div>
 
         {/* Sidebar (1/3) */}

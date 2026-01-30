@@ -51,6 +51,9 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { PublishBestPracticeButton } from "./_components/publish-best-practice-button";
+import { WorkflowTransitionButtons } from "@/components/features/workflow/workflow-transition-buttons";
+import { WorkflowHistory } from "@/components/features/workflow/workflow-history";
+import { SLAIndicator } from "@/components/features/workflow/sla-indicator";
 import type { FindingStatus, FindingSeverity, FindingType } from "@prisma/client";
 
 interface FindingDetailClientProps {
@@ -188,6 +191,12 @@ export function FindingDetailClient({ findingId }: FindingDetailClientProps) {
         </Link>
 
         <div className="flex items-center gap-2">
+          <WorkflowTransitionButtons
+            entityType="FINDING"
+            entityId={findingId}
+            onTransitionComplete={() => findingQuery.refetch()}
+            size="default"
+          />
           <Button variant="outline" asChild>
             <Link href={`/${locale}/findings/${findingId}/edit`}>
               <Edit className="h-4 w-4 mr-2" />
@@ -266,12 +275,15 @@ export function FindingDetailClient({ findingId }: FindingDetailClientProps) {
                   </div>
                   <CardTitle className="text-xl">{title}</CardTitle>
                 </div>
-                <Badge
-                  {...STATUS_STYLES[finding.status]}
-                  className={STATUS_STYLES[finding.status].className}
-                >
-                  {t(`status.${finding.status}`)}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge
+                    {...STATUS_STYLES[finding.status]}
+                    className={STATUS_STYLES[finding.status].className}
+                  >
+                    {t(`status.${finding.status}`)}
+                  </Badge>
+                  <SLAIndicator entityType="FINDING" entityId={findingId} />
+                </div>
               </div>
             </CardHeader>
             <CardContent>
@@ -535,6 +547,9 @@ export function FindingDetailClient({ findingId }: FindingDetailClientProps) {
               />
             </CardContent>
           </Card>
+
+          {/* Workflow History */}
+          <WorkflowHistory entityType="FINDING" entityId={findingId} maxItems={5} />
         </div>
       </div>
     </div>

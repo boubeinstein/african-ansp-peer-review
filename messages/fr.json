@@ -3651,6 +3651,34 @@
         "deleteConfirmDescription": "Êtes-vous sûr de vouloir supprimer \"{name}\" ? Cette action est irréversible.",
         "cancelDelete": "Annuler",
         "confirmDelete": "Supprimer"
+      },
+      "findings": {
+        "title": "Constatations",
+        "addFinding": "Ajouter une constatation",
+        "search": "Rechercher des constatations...",
+        "filterSeverity": "Filtrer par gravité",
+        "filterStatus": "Filtrer par statut",
+        "allSeverities": "Toutes les gravités",
+        "allStatuses": "Tous les statuts",
+        "noResults": "Aucune constatation trouvée",
+        "tryDifferent": "Essayez des termes de recherche ou des filtres différents",
+        "capLinked": "PAC lié",
+        "severity": {
+          "CRITICAL": "Critique",
+          "MAJOR": "Majeur",
+          "MINOR": "Mineur",
+          "OBSERVATION": "Observation"
+        },
+        "status": {
+          "OPEN": "Ouvert",
+          "IN_PROGRESS": "En cours",
+          "CLOSED": "Clôturé",
+          "VERIFIED": "Vérifié"
+        },
+        "empty": {
+          "title": "Aucune constatation",
+          "description": "Aucune constatation n'a encore été enregistrée pour cette revue"
+        }
       }
     }
   },

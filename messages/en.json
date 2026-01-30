@@ -3651,6 +3651,34 @@
         "deleteConfirmDescription": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
         "cancelDelete": "Cancel",
         "confirmDelete": "Delete"
+      },
+      "findings": {
+        "title": "Findings",
+        "addFinding": "Add Finding",
+        "search": "Search findings...",
+        "filterSeverity": "Filter by severity",
+        "filterStatus": "Filter by status",
+        "allSeverities": "All severities",
+        "allStatuses": "All statuses",
+        "noResults": "No findings found",
+        "tryDifferent": "Try adjusting your search or filters",
+        "empty": {
+          "title": "No findings yet",
+          "description": "Findings will appear here as the review progresses"
+        },
+        "capLinked": "CAP linked",
+        "severity": {
+          "CRITICAL": "Critical",
+          "MAJOR": "Major",
+          "MINOR": "Minor",
+          "OBSERVATION": "Observation"
+        },
+        "status": {
+          "OPEN": "Open",
+          "IN_PROGRESS": "In Progress",
+          "CLOSED": "Closed",
+          "VERIFIED": "Verified"
+        }
       }
     }
   },

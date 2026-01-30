@@ -2008,6 +2008,10 @@ enum AuditAction {
   INTEGRITY_CHECK
   VERSION_LOCK
   VERSION_UNLOCK
+  TOKEN_CREATE
+  TOKEN_ACCESS
+  TOKEN_REVOKE
+  TOKEN_REVOKE_ALL
 }
 
 // =============================================================================

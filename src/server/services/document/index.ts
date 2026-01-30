@@ -15,6 +15,11 @@ export {
   VALID_LINK_TYPES,
 } from "./evidence-service";
 
+export {
+  documentSharingService,
+  DocumentSharingService,
+} from "./sharing-service";
+
 export type { HashResult, IntegrityCheckResult } from "./integrity-service";
 
 export type {
@@ -29,3 +34,10 @@ export type {
   EvidenceLinkInfo,
   EvidenceStats,
 } from "./evidence-service";
+
+export type {
+  CreateTokenInput,
+  TokenInfo,
+  AccessResult,
+  TokenListOptions,
+} from "./sharing-service";

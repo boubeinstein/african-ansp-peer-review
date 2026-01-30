@@ -120,6 +120,10 @@ function ActionBadge({ action }: { action: AuditAction }) {
     INTEGRITY_CHECK: "bg-sky-100 text-sky-800 border-sky-200",
     VERSION_LOCK: "bg-amber-100 text-amber-800 border-amber-200",
     VERSION_UNLOCK: "bg-lime-100 text-lime-800 border-lime-200",
+    TOKEN_CREATE: "bg-violet-100 text-violet-800 border-violet-200",
+    TOKEN_ACCESS: "bg-fuchsia-100 text-fuchsia-800 border-fuchsia-200",
+    TOKEN_REVOKE: "bg-rose-100 text-rose-800 border-rose-200",
+    TOKEN_REVOKE_ALL: "bg-red-100 text-red-800 border-red-200",
   };
 
   return (

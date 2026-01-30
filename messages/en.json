@@ -3459,6 +3459,18 @@
           "leadReviewer": "Lead Reviewer",
           "reviewers": "reviewers",
           "viewAll": "View Full Team"
+        },
+        "schedule": {
+          "title": "Schedule",
+          "scheduled": "Scheduled Period",
+          "onSite": "On-Site Visit",
+          "location": "Location",
+          "notScheduled": "Not scheduled"
+        },
+        "host": {
+          "title": "Host Organization",
+          "primaryContact": "Primary Contact",
+          "viewProfile": "View Organization"
         }
       }
     }

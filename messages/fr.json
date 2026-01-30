@@ -3459,6 +3459,18 @@
           "leadReviewer": "Examinateur principal",
           "reviewers": "examinateurs",
           "viewAll": "Voir l'équipe complète"
+        },
+        "schedule": {
+          "title": "Calendrier",
+          "scheduled": "Période prévue",
+          "onSite": "Visite sur site",
+          "location": "Lieu",
+          "notScheduled": "Non planifié"
+        },
+        "host": {
+          "title": "Organisation hôte",
+          "primaryContact": "Contact principal",
+          "viewProfile": "Voir l'organisation"
         }
       }
     }

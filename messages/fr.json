@@ -3818,6 +3818,13 @@
         "quickSearch": "Recherche rapide",
         "save": "Enregistrer",
         "altShortcuts": "Astuce : Vous pouvez aussi utiliser Alt + numéro pour accéder directement aux onglets"
+      },
+      "accessibility": {
+        "skipToContent": "Aller au contenu principal",
+        "tabNavigation": "Sections de l'examen"
+      },
+      "breadcrumb": {
+        "reviews": "Examens"
       }
     }
   },

@@ -3818,6 +3818,13 @@
         "quickSearch": "Quick search",
         "save": "Save changes",
         "altShortcuts": "Tip: You can also use Alt + number for direct tab access"
+      },
+      "accessibility": {
+        "skipToContent": "Skip to main content",
+        "tabNavigation": "Review sections"
+      },
+      "breadcrumb": {
+        "reviews": "Reviews"
       }
     }
   },

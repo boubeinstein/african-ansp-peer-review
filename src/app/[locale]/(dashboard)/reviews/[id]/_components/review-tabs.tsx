@@ -37,8 +37,11 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Settings,
 };
 
+const TAB_ORDER: ReviewTab[] = ["overview", "workspace", "documents", "findings", "report", "settings"];
+
 export function ReviewTabs({ currentTab, onTabChange, counts }: ReviewTabsProps) {
   const t = useTranslations("reviews.detail.tabs");
+  const tA11y = useTranslations("reviews.detail.accessibility");
 
   const getTabBadge = (tabId: ReviewTab): { count: number; variant: "default" | "destructive" | "secondary" } | null => {
     switch (tabId) {
@@ -57,10 +60,34 @@ export function ReviewTabs({ currentTab, onTabChange, counts }: ReviewTabsProps)
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent, tabId: ReviewTab) => {
+    const currentIndex = TAB_ORDER.indexOf(tabId);
+
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      const nextTab = TAB_ORDER[(currentIndex + 1) % TAB_ORDER.length];
+      onTabChange(nextTab);
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      const prevTab = TAB_ORDER[(currentIndex - 1 + TAB_ORDER.length) % TAB_ORDER.length];
+      onTabChange(prevTab);
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      onTabChange(TAB_ORDER[0]);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      onTabChange(TAB_ORDER[TAB_ORDER.length - 1]);
+    }
+  };
+
   return (
     <div className="sticky top-[73px] z-30 bg-background border-b">
       <div className="px-4 md:px-6">
-        <nav className="flex gap-1 overflow-x-auto scrollbar-hide -mb-px" role="tablist">
+        <nav
+          className="flex gap-1 overflow-x-auto scrollbar-hide -mb-px"
+          role="tablist"
+          aria-label={tA11y("tabNavigation")}
+        >
           {REVIEW_TABS.map((tab) => {
             const Icon = iconMap[tab.icon];
             const badge = getTabBadge(tab.id);
@@ -70,10 +97,15 @@ export function ReviewTabs({ currentTab, onTabChange, counts }: ReviewTabsProps)
               <button
                 key={tab.id}
                 role="tab"
+                id={`tab-${tab.id}`}
                 aria-selected={isActive}
+                aria-controls={`tabpanel-${tab.id}`}
+                tabIndex={isActive ? 0 : -1}
                 onClick={() => onTabChange(tab.id)}
+                onKeyDown={(e) => handleKeyDown(e, tab.id)}
                 className={cn(
                   "flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                   isActive
                     ? "border-primary text-primary"
                     : "border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30"

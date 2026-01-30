@@ -11,7 +11,8 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure } from "../trpc";
-import { NotificationType, NotificationPriority } from "@prisma/client";
+import { NotificationType, NotificationPriority, DigestFrequency } from "@prisma/client";
+import { notificationPreferenceService } from "@/server/services/notification";
 
 // =============================================================================
 // INPUT SCHEMAS
@@ -353,5 +354,73 @@ export const notificationRouter = router({
         {} as Record<NotificationPriority, number>
       ),
     };
+  }),
+
+  // ===========================================================================
+  // NOTIFICATION PREFERENCES
+  // ===========================================================================
+
+  /**
+   * Get user's notification preferences
+   */
+  getPreferences: protectedProcedure.query(async ({ ctx }) => {
+    return notificationPreferenceService.getPreferences(ctx.session.user.id);
+  }),
+
+  /**
+   * Update user's notification preferences
+   */
+  updatePreferences: protectedProcedure
+    .input(
+      z.object({
+        emailEnabled: z.boolean().optional(),
+        inAppEnabled: z.boolean().optional(),
+        digestFrequency: z.nativeEnum(DigestFrequency).optional(),
+        typeSettings: z.record(z.string(), z.boolean()).optional(),
+        quietHoursStart: z.string().nullable().optional(),
+        quietHoursEnd: z.string().nullable().optional(),
+        timezone: z.string().optional(),
+        maxPerHour: z.number().min(1).max(100).optional(),
+        maxPerDay: z.number().min(1).max(500).optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      await notificationPreferenceService.updatePreferences(
+        ctx.session.user.id,
+        input
+      );
+      return { success: true };
+    }),
+
+  /**
+   * Toggle a specific notification type on/off
+   */
+  toggleType: protectedProcedure
+    .input(
+      z.object({
+        type: z.nativeEnum(NotificationType),
+        enabled: z.boolean(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      await notificationPreferenceService.toggleType(
+        ctx.session.user.id,
+        input.type,
+        input.enabled
+      );
+      return { success: true };
+    }),
+
+  /**
+   * Delete all notifications (read and unread)
+   */
+  deleteAll: protectedProcedure.mutation(async ({ ctx }) => {
+    const { user } = ctx.session;
+
+    const result = await ctx.db.notification.deleteMany({
+      where: { userId: user.id },
+    });
+
+    return { success: true, count: result.count };
   }),
 });

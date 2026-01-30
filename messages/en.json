@@ -6289,5 +6289,32 @@
     "syncComplete": "All changes synced",
     "syncFailed": "Some changes failed to sync",
     "retry": "Retry sync"
+  },
+  "fieldwork": {
+    "checklist": {
+      "progress": "Progress",
+      "offlineMode": "Offline Mode",
+      "itemUpdated": "Item updated",
+      "updateFailed": "Failed to update item",
+      "evidence": "Evidence",
+      "notes": "Notes",
+      "capturePhoto": "Capture",
+      "selectPhoto": "Gallery",
+      "evidenceCaptured": "Evidence captured",
+      "evidenceFailed": "Failed to capture evidence",
+      "evidenceDeleted": "Evidence deleted",
+      "deleteFailed": "Failed to delete evidence",
+      "notesPlaceholder": "Add notes...",
+      "deleteEvidenceTitle": "Delete Evidence",
+      "deleteEvidenceDescription": "Are you sure you want to delete this evidence? This action cannot be undone.",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "status": {
+        "NOT_STARTED": "Not Started",
+        "IN_PROGRESS": "In Progress",
+        "COMPLETED": "Completed",
+        "NOT_APPLICABLE": "N/A"
+      }
+    }
   }
 }

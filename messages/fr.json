@@ -6289,5 +6289,32 @@
     "syncComplete": "Toutes les modifications sont synchronisées",
     "syncFailed": "Certaines modifications n'ont pas pu être synchronisées",
     "retry": "Réessayer"
+  },
+  "fieldwork": {
+    "checklist": {
+      "progress": "Progression",
+      "offlineMode": "Mode hors ligne",
+      "itemUpdated": "Élément mis à jour",
+      "updateFailed": "Échec de la mise à jour",
+      "evidence": "Preuves",
+      "notes": "Notes",
+      "capturePhoto": "Capturer",
+      "selectPhoto": "Galerie",
+      "evidenceCaptured": "Preuve capturée",
+      "evidenceFailed": "Échec de la capture",
+      "evidenceDeleted": "Preuve supprimée",
+      "deleteFailed": "Échec de la suppression",
+      "notesPlaceholder": "Ajouter des notes...",
+      "deleteEvidenceTitle": "Supprimer la preuve",
+      "deleteEvidenceDescription": "Êtes-vous sûr de vouloir supprimer cette preuve ? Cette action est irréversible.",
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "status": {
+        "NOT_STARTED": "Non commencé",
+        "IN_PROGRESS": "En cours",
+        "COMPLETED": "Terminé",
+        "NOT_APPLICABLE": "N/A"
+      }
+    }
   }
 }

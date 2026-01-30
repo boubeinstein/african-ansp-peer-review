@@ -3379,6 +3379,42 @@
           "dueTomorrow": "Échéance demain"
         }
       }
+    },
+    "detail": {
+      "tabs": {
+        "overview": "Aperçu",
+        "workspace": "Espace de travail",
+        "documents": "Documents",
+        "findings": "Constatations",
+        "report": "Rapport",
+        "settings": "Paramètres"
+      },
+      "status": {
+        "DRAFT": "Brouillon",
+        "REQUESTED": "Demandée",
+        "SUBMITTED": "Soumis",
+        "APPROVED": "Approuvé",
+        "PLANNING": "Planification",
+        "SCHEDULED": "Planifié",
+        "IN_PROGRESS": "En cours",
+        "REPORT_DRAFTING": "Rédaction du rapport",
+        "REPORT_REVIEW": "Examen du rapport",
+        "COMPLETED": "Terminé",
+        "CANCELLED": "Annulé"
+      },
+      "type": {
+        "FULL": "Examen complet",
+        "FOCUSED": "Examen ciblé",
+        "FOLLOW_UP": "Examen de suivi",
+        "SURVEILLANCE": "Examen de surveillance"
+      },
+      "actions": {
+        "edit": "Modifier",
+        "submit": "Soumettre",
+        "download": "Télécharger",
+        "upload": "Téléverser",
+        "cancel": "Annuler l'examen"
+      }
     }
   },
   "finding": {

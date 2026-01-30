@@ -3379,6 +3379,42 @@
           "dueTomorrow": "Due tomorrow"
         }
       }
+    },
+    "detail": {
+      "tabs": {
+        "overview": "Overview",
+        "workspace": "Workspace",
+        "documents": "Documents",
+        "findings": "Findings",
+        "report": "Report",
+        "settings": "Settings"
+      },
+      "status": {
+        "DRAFT": "Draft",
+        "REQUESTED": "Requested",
+        "SUBMITTED": "Submitted",
+        "APPROVED": "Approved",
+        "PLANNING": "Planning",
+        "SCHEDULED": "Scheduled",
+        "IN_PROGRESS": "In Progress",
+        "REPORT_DRAFTING": "Report Drafting",
+        "REPORT_REVIEW": "Report Review",
+        "COMPLETED": "Completed",
+        "CANCELLED": "Cancelled"
+      },
+      "type": {
+        "FULL": "Full Review",
+        "FOCUSED": "Focused Review",
+        "FOLLOW_UP": "Follow-up Review",
+        "SURVEILLANCE": "Surveillance Review"
+      },
+      "actions": {
+        "edit": "Edit",
+        "submit": "Submit",
+        "download": "Download",
+        "upload": "Upload",
+        "cancel": "Cancel Review"
+      }
     }
   },
   "finding": {

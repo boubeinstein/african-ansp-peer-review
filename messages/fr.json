@@ -3381,6 +3381,7 @@
       }
     },
     "detail": {
+      "title": "Détails de l'examen",
       "tabs": {
         "overview": "Aperçu",
         "workspace": "Espace de travail",

@@ -3381,6 +3381,7 @@
       }
     },
     "detail": {
+      "title": "Review Details",
       "tabs": {
         "overview": "Overview",
         "workspace": "Workspace",

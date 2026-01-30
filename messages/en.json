@@ -3472,6 +3472,38 @@
           "primaryContact": "Primary Contact",
           "viewProfile": "View Organization"
         }
+      },
+      "workspace": {
+        "discussions": "Discussions",
+        "tasks": "Tasks",
+        "newDiscussion": "New Discussion",
+        "newTask": "New Task",
+        "discussionsList": {
+          "empty": {
+            "title": "No discussions yet",
+            "description": "Start a discussion to collaborate with your team"
+          },
+          "status": {
+            "OPEN": "Open",
+            "CLOSED": "Closed"
+          },
+          "replies": "replies",
+          "new": {
+            "title": "New Discussion"
+          }
+        },
+        "tasksList": {
+          "columns": {
+            "todo": "To Do",
+            "inProgress": "In Progress",
+            "inReview": "In Review",
+            "done": "Done"
+          },
+          "emptyColumn": "No tasks",
+          "new": {
+            "title": "New Task"
+          }
+        }
       }
     }
   },

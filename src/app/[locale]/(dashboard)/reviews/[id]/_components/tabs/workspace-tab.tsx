@@ -1,15 +1,141 @@
 "use client";
 
+import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Plus, MessageSquare, CheckSquare } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { ReviewData } from "../../_lib/fetch-review-data";
+import { DiscussionsList } from "./workspace/discussions-list";
+import { TasksBoard } from "./workspace/tasks-board";
+import { NewDiscussionDialog } from "./workspace/new-discussion-dialog";
+import { NewTaskDialog } from "./workspace/new-task-dialog";
 
 interface WorkspaceTabProps {
   review: ReviewData;
 }
 
-export function WorkspaceTab(_props: WorkspaceTabProps) {
+export function WorkspaceTab({ review }: WorkspaceTabProps) {
+  const t = useTranslations("reviews.detail.workspace");
+  const searchParams = useSearchParams();
+
+  const [showNewDiscussion, setShowNewDiscussion] = useState(
+    searchParams.get("action") === "discussion"
+  );
+  const [showNewTask, setShowNewTask] = useState(
+    searchParams.get("action") === "task"
+  );
+
+  // Transform discussions for the list component
+  // The actual data will come from the review object or be fetched separately
+  const discussions: Array<{
+    id: string;
+    title: string;
+    status: string;
+    createdAt: Date;
+    author: { id: string; name: string; image: string | null };
+    _count: { replies: number };
+  }> = review.discussions.map(d => ({
+    id: d.id,
+    title: d.isResolved ? "Resolved Discussion" : "Open Discussion",
+    status: d.isResolved ? "CLOSED" : "OPEN",
+    createdAt: new Date(),
+    author: { id: "unknown", name: "Team Member", image: null },
+    _count: { replies: 0 },
+  }));
+
+  // Transform tasks for the board component
+  const tasks: Array<{
+    id: string;
+    title: string;
+    status: string;
+    priority: string;
+    dueDate: Date | null;
+    assignee: { id: string; name: string; image: string | null } | null;
+  }> = review.tasks.map(t => ({
+    id: t.id,
+    title: "Task",
+    status: t.status,
+    priority: "MEDIUM",
+    dueDate: null,
+    assignee: null,
+  }));
+
+  const openDiscussions = discussions.filter(d => d.status === "OPEN").length;
+  const openTasks = tasks.filter(t => t.status !== "DONE" && t.status !== "CANCELLED").length;
+
   return (
-    <div className="p-6">
-      <p className="text-muted-foreground">Workspace tab - to be implemented</p>
+    <div className="p-4 md:p-6">
+      <Tabs defaultValue="discussions" className="space-y-4">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <TabsList>
+            <TabsTrigger value="discussions" className="gap-2">
+              <MessageSquare className="h-4 w-4" />
+              {t("discussions")}
+              {openDiscussions > 0 && (
+                <Badge variant="secondary" className="ml-1">
+                  {openDiscussions}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="tasks" className="gap-2">
+              <CheckSquare className="h-4 w-4" />
+              {t("tasks")}
+              {openTasks > 0 && (
+                <Badge variant="secondary" className="ml-1">
+                  {openTasks}
+                </Badge>
+              )}
+            </TabsTrigger>
+          </TabsList>
+
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setShowNewDiscussion(true)}
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              {t("newDiscussion")}
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => setShowNewTask(true)}
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              {t("newTask")}
+            </Button>
+          </div>
+        </div>
+
+        <TabsContent value="discussions" className="mt-4">
+          <DiscussionsList
+            discussions={discussions}
+            reviewId={review.id}
+          />
+        </TabsContent>
+
+        <TabsContent value="tasks" className="mt-4">
+          <TasksBoard
+            tasks={tasks}
+            reviewId={review.id}
+          />
+        </TabsContent>
+      </Tabs>
+
+      <NewDiscussionDialog
+        open={showNewDiscussion}
+        onOpenChange={setShowNewDiscussion}
+        reviewId={review.id}
+      />
+
+      <NewTaskDialog
+        open={showNewTask}
+        onOpenChange={setShowNewTask}
+        reviewId={review.id}
+      />
     </div>
   );
 }

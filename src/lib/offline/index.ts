@@ -5,3 +5,5 @@ export { offlineService, OfflineService } from "./offline-service";
 export type { SyncQueueItem } from "./offline-service";
 
 export { useOfflineStore } from "./store";
+
+export { syncService, SyncService } from "./sync-service";

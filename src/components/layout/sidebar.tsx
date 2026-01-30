@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -25,24 +25,41 @@ interface SidebarProps {
 export function Sidebar({ locale, userRole }: SidebarProps) {
   const pathname = usePathname();
   const t = useTranslations("navigation");
+  
+  // Hydration-safe state: always start expanded (false) on both server and client
   const [collapsed, setCollapsed] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
+
+  // After hydration, we can safely read from localStorage
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional hydration pattern
+    setHasMounted(true);
+    const saved = localStorage.getItem("sidebar-collapsed");
+    if (saved === "true") {
+      setCollapsed(true);
+    }
+  }, []);
+
+  // Persist collapsed state to localStorage
+  useEffect(() => {
+    if (hasMounted) {
+      localStorage.setItem("sidebar-collapsed", String(collapsed));
+    }
+  }, [collapsed, hasMounted]);
 
   // Fetch user preferences for conditional nav items
   const { data: preferences } = trpc.settings.getPreferences.useQuery(
     undefined,
     {
-      staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+      staleTime: 5 * 60 * 1000,
     }
   );
 
   // Get navigation items based on user role and preferences
   const navItems = useMemo(() => {
     const roleNavItems = getNavigationForRole(userRole);
-
-    // Filter based on preferences (e.g., training module)
     return roleNavItems.filter((item) => {
       if (item.name === "training") {
-        // Default to true if preferences haven't loaded yet
         return preferences?.showTrainingModule ?? true;
       }
       return true;
@@ -74,150 +91,123 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
 
       <ScrollArea className="flex-1 px-3 py-4">
         <nav className="flex flex-col gap-1">
-            {/* Main navigation items */}
-            {navItems
-              .filter((item) => item.section !== "admin")
-              .map((item) => {
-                const fullHref =
-                  item.href === "/" ? `/${locale}` : `/${locale}${item.href}`;
-                const isActive =
-                  item.href === "/"
-                    ? pathname === `/${locale}` || pathname === `/${locale}/`
-                    : pathname.startsWith(fullHref);
+          {navItems
+            .filter((item) => item.section !== "admin")
+            .map((item) => {
+              const isActive = pathname.startsWith(`/${locale}${item.href}`);
+              const Icon = item.icon;
 
-                const Icon = item.icon;
-
-                const navLinkContent = (
-                  <>
-                    <Icon
-                      className={cn("h-4 w-4 shrink-0", isActive && "text-primary")}
-                    />
-                    {!collapsed && <span>{t(item.name)}</span>}
-                  </>
-                );
-
-                const linkClassName = cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
-                  isActive
-                    ? "bg-primary/10 text-primary font-medium border-l-2 border-primary ml-[-2px]"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                  collapsed && "justify-center px-2"
-                );
-
-                const navLink = (
-                  <Link href={fullHref} className={linkClassName}>
-                    {navLinkContent}
-                  </Link>
-                );
-
-                // Show tooltip only when collapsed
-                if (collapsed) {
-                  return (
-                    <Tooltip key={item.name}>
-                      <TooltipTrigger asChild>{navLink}</TooltipTrigger>
-                      <TooltipContent
-                        side="right"
-                        className="flex items-center gap-2"
-                      >
-                        <span>{t(item.name)}</span>
-                        {isActive && (
-                          <span className="text-xs text-muted-foreground">
-                            (current)
-                          </span>
+              if (collapsed) {
+                return (
+                  <Tooltip key={item.name} delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      <Link
+                        href={`/${locale}${item.href}`}
+                        className={cn(
+                          "flex h-10 w-10 items-center justify-center rounded-lg transition-colors",
+                          isActive
+                            ? "bg-primary text-primary-foreground"
+                            : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                         )}
-                      </TooltipContent>
-                    </Tooltip>
-                  );
-                }
-
-                return <div key={item.name}>{navLink}</div>;
-              })}
-
-            {/* Admin section - only for system administrators */}
-            {navItems.some((item) => item.section === "admin") && (
-              <>
-                {/* Section divider */}
-                <div className="my-3 border-t" />
-
-                {/* Admin section header */}
-                {!collapsed && (
-                  <div className="px-3 py-2">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      {t("administration")}
-                    </span>
-                  </div>
-                )}
-
-                {/* Admin navigation items */}
-                {navItems
-                  .filter((item) => item.section === "admin")
-                  .map((item) => {
-                    const fullHref = `/${locale}${item.href}`;
-                    const isActive = pathname.startsWith(fullHref);
-
-                    const Icon = item.icon;
-
-                    const navLinkContent = (
-                      <>
-                        <Icon
-                          className={cn("h-4 w-4 shrink-0", isActive && "text-primary")}
-                        />
-                        {!collapsed && <span>{t(item.name)}</span>}
-                      </>
-                    );
-
-                    const linkClassName = cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
-                      isActive
-                        ? "bg-primary/10 text-primary font-medium border-l-2 border-primary ml-[-2px]"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                      collapsed && "justify-center px-2"
-                    );
-
-                    const navLink = (
-                      <Link href={fullHref} className={linkClassName}>
-                        {navLinkContent}
+                      >
+                        <Icon className="h-5 w-5" />
                       </Link>
-                    );
+                    </TooltipTrigger>
+                    <TooltipContent side="right">{t(item.name)}</TooltipContent>
+                  </Tooltip>
+                );
+              }
 
-                    if (collapsed) {
-                      return (
-                        <Tooltip key={item.name}>
-                          <TooltipTrigger asChild>{navLink}</TooltipTrigger>
-                          <TooltipContent
-                            side="right"
-                            className="flex items-center gap-2"
-                          >
-                            <span>{t(item.name)}</span>
-                            {isActive && (
-                              <span className="text-xs text-muted-foreground">
-                                (current)
-                              </span>
+              return (
+                <Link
+                  key={item.name}
+                  href={`/${locale}${item.href}`}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
+                    isActive
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  )}
+                >
+                  <Icon className="h-5 w-5" />
+                  <span className="text-sm font-medium">{t(item.name)}</span>
+                </Link>
+              );
+            })}
+
+          {navItems.some((item) => item.section === "admin") && (
+            <>
+              <div className="my-2 border-t" />
+              {!collapsed && (
+                <span className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  {t("admin")}
+                </span>
+              )}
+              {navItems
+                .filter((item) => item.section === "admin")
+                .map((item) => {
+                  const isActive = pathname.startsWith(`/${locale}${item.href}`);
+                  const Icon = item.icon;
+
+                  if (collapsed) {
+                    return (
+                      <Tooltip key={item.name} delayDuration={0}>
+                        <TooltipTrigger asChild>
+                          <Link
+                            href={`/${locale}${item.href}`}
+                            className={cn(
+                              "flex h-10 w-10 items-center justify-center rounded-lg transition-colors",
+                              isActive
+                                ? "bg-primary text-primary-foreground"
+                                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                             )}
-                          </TooltipContent>
-                        </Tooltip>
-                      );
-                    }
+                          >
+                            <Icon className="h-5 w-5" />
+                          </Link>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">{t(item.name)}</TooltipContent>
+                      </Tooltip>
+                    );
+                  }
 
-                    return <div key={item.name}>{navLink}</div>;
-                  })}
-              </>
-            )}
-          </nav>
+                  return (
+                    <Link
+                      key={item.name}
+                      href={`/${locale}${item.href}`}
+                      className={cn(
+                        "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
+                        isActive
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                      )}
+                    >
+                      <Icon className="h-5 w-5" />
+                      <span className="text-sm font-medium">{t(item.name)}</span>
+                    </Link>
+                  );
+                })}
+            </>
+          )}
+        </nav>
       </ScrollArea>
 
-      <Button
-        variant="ghost"
-        size="icon"
-        className="absolute -right-3 top-20 h-6 w-6 rounded-full border bg-background"
-        onClick={() => setCollapsed(!collapsed)}
-      >
-        {collapsed ? (
-          <ChevronRight className="h-3 w-3" />
-        ) : (
-          <ChevronLeft className="h-3 w-3" />
-        )}
-      </Button>
+      <div className="border-t p-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setCollapsed(!collapsed)}
+          className={cn("w-full justify-center", collapsed ? "px-2" : "px-3")}
+        >
+          {collapsed ? (
+            <ChevronRight className="h-4 w-4" />
+          ) : (
+            <>
+              <ChevronLeft className="h-4 w-4 mr-2" />
+              <span className="text-xs">Collapse</span>
+            </>
+          )}
+        </Button>
+      </div>
     </div>
   );
 }

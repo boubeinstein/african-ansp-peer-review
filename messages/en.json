@@ -6280,5 +6280,14 @@
     "offlineReady": "App is ready for offline use",
     "updateAvailable": "A new version is available",
     "update": "Update"
+  },
+  "offline": {
+    "offline": "Offline",
+    "pending": "pending",
+    "offlineTooltip": "You are currently offline. Changes will be saved locally.",
+    "pendingTooltip": "{count} changes waiting to sync",
+    "syncComplete": "All changes synced",
+    "syncFailed": "Some changes failed to sync",
+    "retry": "Retry sync"
   }
 }

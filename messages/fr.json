@@ -6280,5 +6280,14 @@
     "offlineReady": "L'application est prête pour une utilisation hors ligne",
     "updateAvailable": "Une nouvelle version est disponible",
     "update": "Mettre à jour"
+  },
+  "offline": {
+    "offline": "Hors ligne",
+    "pending": "en attente",
+    "offlineTooltip": "Vous êtes hors ligne. Les modifications seront enregistrées localement.",
+    "pendingTooltip": "{count} modifications en attente de synchronisation",
+    "syncComplete": "Toutes les modifications sont synchronisées",
+    "syncFailed": "Certaines modifications n'ont pas pu être synchronisées",
+    "retry": "Réessayer"
   }
 }

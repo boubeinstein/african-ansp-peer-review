@@ -27,6 +27,7 @@ import { NotificationBell } from "@/components/features/notifications/notificati
 import { CommandPalette } from "@/components/features/command-palette";
 import { KeyboardShortcutsDialog, ShortcutIndicator } from "@/components/features/keyboard-shortcuts";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
+import { OfflineIndicator } from "@/components/pwa/offline-indicator";
 
 interface HeaderProps {
   locale: string;
@@ -136,6 +137,9 @@ export function Header({ locale, user }: HeaderProps) {
               </Tooltip>
 
               <NotificationBell locale={locale} />
+
+              {/* Offline Indicator */}
+              <OfflineIndicator />
 
               {/* User Menu */}
               <DropdownMenu>

@@ -3415,6 +3415,35 @@
         "download": "Télécharger",
         "upload": "Téléverser",
         "cancel": "Annuler l'examen"
+      },
+      "overview": {
+        "progress": {
+          "title": "Progression de l'examen",
+          "fieldwork": "Liste de contrôle terrain",
+          "phase": {
+            "PLANNING": "Planification",
+            "PREPARATION": "Préparation",
+            "ON_SITE": "Sur site",
+            "POST_REVIEW": "Post-examen"
+          }
+        },
+        "quickActions": {
+          "title": "Actions rapides",
+          "addFinding": "Ajouter une constatation",
+          "uploadDocument": "Téléverser un document",
+          "newDiscussion": "Nouvelle discussion",
+          "createTask": "Créer une tâche"
+        },
+        "stats": {
+          "title": "En un coup d'oeil",
+          "findings": "Constatations",
+          "critical": "critiques",
+          "documents": "Documents",
+          "tasks": "Tâches",
+          "open": "ouvertes",
+          "discussions": "Discussions",
+          "active": "actives"
+        }
       }
     }
   },

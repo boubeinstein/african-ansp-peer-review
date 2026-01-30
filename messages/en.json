@@ -3415,6 +3415,35 @@
         "download": "Download",
         "upload": "Upload",
         "cancel": "Cancel Review"
+      },
+      "overview": {
+        "progress": {
+          "title": "Review Progress",
+          "fieldwork": "Fieldwork Checklist",
+          "phase": {
+            "PLANNING": "Planning",
+            "PREPARATION": "Preparation",
+            "ON_SITE": "On-Site",
+            "POST_REVIEW": "Post-Review"
+          }
+        },
+        "quickActions": {
+          "title": "Quick Actions",
+          "addFinding": "Add Finding",
+          "uploadDocument": "Upload Document",
+          "newDiscussion": "New Discussion",
+          "createTask": "Create Task"
+        },
+        "stats": {
+          "title": "At a Glance",
+          "findings": "Findings",
+          "critical": "critical",
+          "documents": "Documents",
+          "tasks": "Tasks",
+          "open": "open",
+          "discussions": "Discussions",
+          "active": "active"
+        }
       }
     }
   },

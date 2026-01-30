@@ -3560,6 +3560,37 @@
               "MEDIUM": "Moyenne",
               "LOW": "Basse"
             }
+          },
+          "detail": {
+            "back": "Retour aux tâches",
+            "notFound": "Tâche introuvable",
+            "created": "Créée",
+            "createdBy": "Créée par",
+            "completedBy": "Complétée par",
+            "priority": "Priorité",
+            "dueDate": "Date d'échéance",
+            "noDueDate": "Pas de date d'échéance",
+            "assignee": "Assigné à",
+            "unassigned": "Non assigné",
+            "linkedDiscussion": "Discussion liée",
+            "statusUpdated": "Statut mis à jour",
+            "updateError": "Échec de la mise à jour",
+            "edit": "Modifier la tâche",
+            "editTask": "Modifier la tâche",
+            "cancelEdit": "Annuler",
+            "delete": "Supprimer la tâche",
+            "deleted": "Tâche supprimée",
+            "deleteError": "Échec de la suppression",
+            "deleteConfirmTitle": "Supprimer la tâche ?",
+            "deleteConfirmDescription": "Cette action est irréversible. La tâche sera définitivement supprimée.",
+            "cancelDelete": "Annuler",
+            "confirmDelete": "Supprimer",
+            "status": {
+              "PENDING": "En attente",
+              "IN_PROGRESS": "En cours",
+              "COMPLETED": "Terminée",
+              "CANCELLED": "Annulée"
+            }
           }
         }
       }

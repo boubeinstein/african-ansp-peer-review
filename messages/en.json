@@ -3560,6 +3560,37 @@
               "MEDIUM": "Medium",
               "LOW": "Low"
             }
+          },
+          "detail": {
+            "back": "Back to tasks",
+            "notFound": "Task not found",
+            "created": "Created",
+            "createdBy": "Created by",
+            "completedBy": "Completed by",
+            "priority": "Priority",
+            "dueDate": "Due Date",
+            "noDueDate": "No due date",
+            "assignee": "Assignee",
+            "unassigned": "Unassigned",
+            "linkedDiscussion": "Linked Discussion",
+            "statusUpdated": "Status updated",
+            "updateError": "Failed to update",
+            "edit": "Edit Task",
+            "editTask": "Edit Task",
+            "cancelEdit": "Cancel",
+            "delete": "Delete Task",
+            "deleted": "Task deleted",
+            "deleteError": "Failed to delete",
+            "deleteConfirmTitle": "Delete Task?",
+            "deleteConfirmDescription": "This action cannot be undone. The task will be permanently deleted.",
+            "cancelDelete": "Cancel",
+            "confirmDelete": "Delete",
+            "status": {
+              "PENDING": "Pending",
+              "IN_PROGRESS": "In Progress",
+              "COMPLETED": "Completed",
+              "CANCELLED": "Cancelled"
+            }
           }
         }
       }

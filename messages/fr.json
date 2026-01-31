@@ -79,6 +79,13 @@
       "readyToProceed": "Vous pouvez maintenant procéder à l'action suivante"
     }
   },
+  "accessibility": {
+    "skipLinks": {
+      "mainContent": "Aller au contenu principal",
+      "navigation": "Aller à la navigation",
+      "search": "Aller à la recherche"
+    }
+  },
   "navigation": {
     "dashboard": "Tableau de bord",
     "analytics": "Analyses",

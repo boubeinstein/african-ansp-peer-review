@@ -79,6 +79,13 @@
       "readyToProceed": "You can now proceed with the next action"
     }
   },
+  "accessibility": {
+    "skipLinks": {
+      "mainContent": "Skip to main content",
+      "navigation": "Skip to navigation",
+      "search": "Skip to search"
+    }
+  },
   "navigation": {
     "dashboard": "Dashboard",
     "analytics": "Analytics",

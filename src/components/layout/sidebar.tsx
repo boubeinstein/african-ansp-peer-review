@@ -133,7 +133,7 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
       </div>
 
       <ScrollArea className="flex-1 px-3 py-4">
-        <nav className="flex flex-col gap-1">
+        <nav id="navigation" className="flex flex-col gap-1" tabIndex={-1}>
           {navItems
             .filter((item) => item.section !== "admin")
             .map((item) => {

@@ -88,6 +88,7 @@ export function Header({ locale, user }: HeaderProps) {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
+                    id="search"
                     variant="ghost"
                     size="icon"
                     onClick={() => setCommandOpen(true)}

@@ -491,9 +491,9 @@
         "capOverdue": "PAC en retard"
       },
       "messages": {
-        "reviewCreated": "Nouvel évaluation par les pairs programmé pour {org}",
-        "reviewStarted": "Évaluation par les pairs démarré à {org}",
-        "reviewCompleted": "Évaluation par les pairs terminé à {org}",
+        "reviewCreated": "Nouvelle évaluation par les pairs programmée pour {org}",
+        "reviewStarted": "Évaluation par les pairs démarrée à {org}",
+        "reviewCompleted": "Évaluation par les pairs terminée à {org}",
         "findingRaised": "Constatation {severity} émise pour {org}",
         "findingClosed": "Constatation fermée pour {org}",
         "capSubmitted": "Plan d'action corrective soumis par {org}",
@@ -3413,8 +3413,8 @@
         "CANCELLED": "Annulé"
       },
       "type": {
-        "FULL": "Évaluation complet",
-        "FOCUSED": "Évaluation ciblé",
+        "FULL": "Évaluation complète",
+        "FOCUSED": "Évaluation ciblée",
         "FOLLOW_UP": "Évaluation de suivi",
         "SURVEILLANCE": "Évaluation de surveillance"
       },
@@ -3753,7 +3753,7 @@
           "findingsDetail": "{count} constatations enregistrées",
           "capsSubmitted": "PAC soumis pour constatations critiques/majeures",
           "capsDetail": "{submitted} sur {total} PAC soumis",
-          "reviewStatus": "Évaluation en cours ou terminé",
+          "reviewStatus": "Évaluation en cours ou terminée",
           "reviewDetail": "Statut actuel : {status}"
         },
         "versionHistory": "Historique des versions",
@@ -6331,7 +6331,7 @@
       "settings": "Paramètres"
     },
     "create": {
-      "newReview": "Nouvel évaluation",
+      "newReview": "Nouvelle évaluation",
       "newFinding": "Nouvelle constatation",
       "newAssessment": "Nouvelle évaluation"
     },
@@ -6365,7 +6365,7 @@
       "settings": "Aller aux paramètres"
     },
     "actions": {
-      "newReview": "Créer un nouvel évaluation",
+      "newReview": "Créer un nouvelle évaluation",
       "newFinding": "Créer une constatation",
       "newAssessment": "Démarrer une évaluation"
     },
@@ -6383,7 +6383,7 @@
       "reviewers": "Aller aux évaluateurs",
       "analytics": "Aller aux analyses",
       "settings": "Aller aux paramètres",
-      "newReview": "Créer un nouvel évaluation",
+      "newReview": "Créer un nouvelle évaluation",
       "showShortcuts": "Afficher les raccourcis clavier"
     },
     "descriptions": {
@@ -6395,7 +6395,7 @@
       "reviewers": "Parcourir les profils d'évaluateurs",
       "analytics": "Voir les analyses et rapports",
       "settings": "Gérer vos paramètres",
-      "newReview": "Démarrer un nouvel évaluation",
+      "newReview": "Démarrer un nouvelle évaluation",
       "showShortcuts": "Voir tous les raccourcis clavier"
     },
     "footer": {

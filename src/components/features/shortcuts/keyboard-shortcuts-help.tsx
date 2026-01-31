@@ -114,7 +114,7 @@ function getShortcutCategories(locale: string): ShortcutCategory[] {
       shortcuts: [
         {
           keys: "N R",
-          description: isFr ? "Nouvel évaluation" : "New Review",
+          description: isFr ? "Nouvelle évaluation" : "New Review",
         },
         {
           keys: "N F",

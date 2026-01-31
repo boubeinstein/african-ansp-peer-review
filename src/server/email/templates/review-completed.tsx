@@ -94,12 +94,12 @@ const content = {
     signature: "The AAPRP Coordination Team",
   },
   fr: {
-    subject: (ref: string) => `Évaluation par les pairs terminé - ${ref}`,
-    preview: (org: string) => `L'évaluation par les pairs de ${org} est terminé`,
+    subject: (ref: string) => `Évaluation par les pairs terminée - ${ref}`,
+    preview: (org: string) => `L'évaluation par les pairs de ${org} est terminée`,
     greeting: (name: string) => `Cher/Chère ${name},`,
     intro: (org: string) =>
-      `Nous avons le plaisir de vous informer que l'évaluation par les pairs de ${org} est terminé. Merci de votre participation et de votre coopération tout au long du processus d'évaluation.`,
-    completionBadge: "EXAMEN TERMINÉ",
+      `Nous avons le plaisir de vous informer que l'évaluation par les pairs de ${org} est terminée. Merci de votre participation et de votre coopération tout au long du processus d'évaluation.`,
+    completionBadge: "ÉVALUATION TERMINÉE",
     details: "Résumé de l'évaluation",
     reference: "Référence de l'évaluation",
     organization: "Organisation",

@@ -93,6 +93,12 @@ export const notificationRouter = router({
     .query(async ({ ctx, input }) => {
       const { user } = ctx.session;
 
+      console.log("[Notification.getRecent] Fetching for user:", {
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+      });
+
       try {
         // Run both queries in parallel for better performance
         const [notifications, unreadCount] = await Promise.all([
@@ -120,6 +126,12 @@ export const notificationRouter = router({
             },
           }),
         ]);
+
+        console.log("[Notification.getRecent] Found:", {
+          total: notifications.length,
+          unread: unreadCount,
+          types: notifications.map((n) => n.type),
+        });
 
         return {
           notifications,

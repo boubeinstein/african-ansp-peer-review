@@ -60,6 +60,10 @@ interface NotificationBellProps {
 }
 
 export function NotificationBell({ locale }: NotificationBellProps) {
+  // ==========================================
+  // ALL HOOKS MUST BE AT THE TOP - NO EXCEPTIONS
+  // React requires hooks to be called in the same order every render
+  // ==========================================
   const t = useTranslations("notifications");
   const [isOpen, setIsOpen] = useState(false);
   const utils = trpc.useUtils();
@@ -75,15 +79,7 @@ export function NotificationBell({ locale }: NotificationBellProps) {
     }
   );
 
-  // Handle connection errors silently - show bell without count
-  if (error) {
-    return (
-      <Button variant="ghost" size="icon" className="relative" disabled>
-        <Bell className="h-4 w-4 text-muted-foreground" />
-      </Button>
-    );
-  }
-
+  // Mutation hooks must be called unconditionally (before any returns)
   const markAsReadMutation = trpc.notification.markAsRead.useMutation({
     onSuccess: () => {
       utils.notification.getRecent.invalidate();
@@ -97,6 +93,19 @@ export function NotificationBell({ locale }: NotificationBellProps) {
       utils.notification.getUnreadCount.invalidate();
     },
   });
+
+  // ==========================================
+  // CONDITIONAL LOGIC AFTER ALL HOOKS
+  // ==========================================
+
+  // Handle connection errors silently - show bell without count
+  if (error) {
+    return (
+      <Button variant="ghost" size="icon" className="relative" disabled>
+        <Bell className="h-4 w-4 text-muted-foreground" />
+      </Button>
+    );
+  }
 
   const notifications = recentData?.notifications ?? [];
   const unreadCount = recentData?.unreadCount ?? 0;

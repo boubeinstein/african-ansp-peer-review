@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { trpc } from "@/lib/trpc/client";
@@ -214,7 +214,7 @@ export function BestPracticeForm({
     );
   };
 
-  const tags = form.watch("tags");
+  const tags = useWatch({ control: form.control, name: "tags", defaultValue: [] });
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">

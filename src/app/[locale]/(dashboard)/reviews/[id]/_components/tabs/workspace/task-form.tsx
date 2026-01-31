@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -73,7 +73,7 @@ export function TaskForm({
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<TaskFormData>({
@@ -127,9 +127,9 @@ export function TaskForm({
     }
   };
 
-  const priority = watch("priority");
-  const dueDate = watch("dueDate");
-  const assignedToId = watch("assignedToId");
+  const priority = useWatch({ control, name: "priority" });
+  const dueDate = useWatch({ control, name: "dueDate" });
+  const assignedToId = useWatch({ control, name: "assignedToId" });
   const selectedAssignee = teamMembers.find((m) => m.id === assignedToId);
 
   const getInitials = (name: string) =>

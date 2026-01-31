@@ -6307,6 +6307,12 @@
     "autoTranslated": "Traduit automatiquement",
     "autoTranslatedTooltip": "Ce contenu a été traduit automatiquement. Vérifiez avant de publier."
   },
+  "navSidebar": {
+    "collapse": "Réduire",
+    "expand": "Développer",
+    "collapseSidebar": "Réduire la barre latérale",
+    "expandSidebar": "Développer la barre latérale"
+  },
   "shortcuts": {
     "title": "Raccourcis clavier",
     "description": "Maîtrisez ces raccourcis pour naviguer rapidement.",
@@ -6315,6 +6321,7 @@
     "groups": {
       "essential": "Essentiels",
       "navigation": "Navigation",
+      "sidebar": "Barre latérale",
       "create": "Créer"
     },
     "essential": {
@@ -6331,6 +6338,10 @@
       "assessments": "Évaluations",
       "bestPractices": "Meilleures pratiques",
       "settings": "Paramètres"
+    },
+    "sidebar": {
+      "collapse": "Réduire la barre latérale",
+      "expand": "Développer la barre latérale"
     },
     "create": {
       "newReview": "Nouvelle évaluation",

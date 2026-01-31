@@ -25,7 +25,8 @@ interface SidebarProps {
 export function Sidebar({ locale, userRole }: SidebarProps) {
   const pathname = usePathname();
   const t = useTranslations("navigation");
-  
+  const tSidebar = useTranslations("navSidebar");
+
   // Hydration-safe state: always start expanded (false) on both server and client
   // This prevents mismatch between SSR and initial client render
   const [collapsed, setCollapsed] = useState(false);
@@ -38,6 +39,32 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
     if (stored !== null) {
       setCollapsed(stored === "true");
     }
+  }, []);
+
+  // Keyboard shortcuts: [ to collapse, ] to expand
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger if user is typing in an input/textarea or contenteditable
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        (e.target instanceof HTMLElement && e.target.isContentEditable)
+      ) {
+        return;
+      }
+
+      if (e.key === "[" && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        setCollapsed(true);
+      }
+      if (e.key === "]" && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        setCollapsed(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   // Persist collapsed state to localStorage (only after initial mount)
@@ -192,21 +219,38 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
       </ScrollArea>
 
       <div className="border-t p-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setCollapsed(!collapsed)}
-          className={cn("w-full justify-center", collapsed ? "px-2" : "px-3")}
-        >
-          {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <>
-              <ChevronLeft className="h-4 w-4 mr-2" />
-              <span className="text-xs">Collapse</span>
-            </>
-          )}
-        </Button>
+        <Tooltip delayDuration={0}>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setCollapsed(!collapsed)}
+              className={cn("w-full justify-center", collapsed ? "px-2" : "px-3")}
+              aria-label={collapsed ? tSidebar("expandSidebar") : tSidebar("collapseSidebar")}
+              aria-expanded={!collapsed}
+            >
+              {collapsed ? (
+                <ChevronRight className="h-4 w-4" />
+              ) : (
+                <>
+                  <ChevronLeft className="h-4 w-4 mr-2" />
+                  <span className="text-xs">{tSidebar("collapse")}</span>
+                  <kbd className="ml-2 px-1 py-0.5 text-[10px] bg-muted rounded border text-muted-foreground">
+                    [
+                  </kbd>
+                </>
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="right">
+            <span className="flex items-center gap-2">
+              {collapsed ? tSidebar("expand") : tSidebar("collapse")}
+              <kbd className="px-1.5 py-0.5 text-xs bg-muted rounded border">
+                {collapsed ? "]" : "["}
+              </kbd>
+            </span>
+          </TooltipContent>
+        </Tooltip>
       </div>
     </div>
   );

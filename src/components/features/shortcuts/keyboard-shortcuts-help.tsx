@@ -122,6 +122,20 @@ function getShortcutCategories(locale: string): ShortcutCategory[] {
         },
       ],
     },
+    {
+      id: "sidebar",
+      title: isFr ? "Barre latérale" : "Sidebar",
+      shortcuts: [
+        {
+          keys: "[",
+          description: isFr ? "Réduire la barre latérale" : "Collapse sidebar",
+        },
+        {
+          keys: "]",
+          description: isFr ? "Développer la barre latérale" : "Expand sidebar",
+        },
+      ],
+    },
   ];
 }
 

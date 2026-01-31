@@ -6307,6 +6307,12 @@
     "autoTranslated": "Auto-translated",
     "autoTranslatedTooltip": "This content was auto-translated. Review before publishing."
   },
+  "navSidebar": {
+    "collapse": "Collapse",
+    "expand": "Expand",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar"
+  },
   "shortcuts": {
     "title": "Keyboard Shortcuts",
     "description": "Master these shortcuts to navigate quickly.",
@@ -6315,6 +6321,7 @@
     "groups": {
       "essential": "Essential",
       "navigation": "Navigation",
+      "sidebar": "Sidebar",
       "create": "Create New"
     },
     "essential": {
@@ -6331,6 +6338,10 @@
       "assessments": "Assessments",
       "bestPractices": "Best Practices",
       "settings": "Settings"
+    },
+    "sidebar": {
+      "collapse": "Collapse sidebar",
+      "expand": "Expand sidebar"
     },
     "create": {
       "newReview": "New Review",

@@ -72,6 +72,14 @@ html, body {
   --sidebar-accent-foreground: oklch(0.25 0.05 240);
   --sidebar-border: oklch(0.928 0.006 264.531);
   --sidebar-ring: oklch(0.55 0.15 240);
+
+  /* Status colors - Light theme (WCAG AA compliant) */
+  --success: oklch(0.52 0.17 145);
+  --success-foreground: oklch(1 0 0);
+  --warning: oklch(0.75 0.18 85);
+  --warning-foreground: oklch(0.25 0.05 85);
+  --info: oklch(0.55 0.15 240);
+  --info-foreground: oklch(1 0 0);
 }
 
 .dark {
@@ -107,6 +115,14 @@ html, body {
   --sidebar-accent-foreground: oklch(0.985 0.002 247.839);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.58 0.16 240);
+
+  /* Status colors - Dark theme (brighter for visibility, WCAG AA) */
+  --success: oklch(0.65 0.19 145);
+  --success-foreground: oklch(0.18 0.04 145);
+  --warning: oklch(0.78 0.16 85);
+  --warning-foreground: oklch(0.22 0.05 85);
+  --info: oklch(0.65 0.17 240);
+  --info-foreground: oklch(0.18 0.04 240);
 }
 
 /* ============================================
@@ -165,6 +181,15 @@ html, body {
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-destructive: var(--destructive);
+
+  /* Status colors */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-popover-foreground: var(--popover-foreground);

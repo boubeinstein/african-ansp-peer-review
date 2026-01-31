@@ -3686,9 +3686,12 @@
           "CAP_SUBMITTED": "PAC soumis",
           "CAP_ACCEPTED": "PAC accepté",
           "IN_PROGRESS": "En cours",
+          "PENDING_VERIFICATION": "En Attente de Vérification",
           "VERIFICATION": "Vérification",
+          "VERIFIED": "Vérifié",
           "CLOSED": "Clôturé",
-          "DEFERRED": "Différé"
+          "DEFERRED": "Différé",
+          "CANCELLED": "Annulé"
         },
         "detail": {
           "back": "Retour aux constatations",

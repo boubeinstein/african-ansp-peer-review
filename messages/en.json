@@ -3690,9 +3690,12 @@
           "CAP_SUBMITTED": "CAP Submitted",
           "CAP_ACCEPTED": "CAP Accepted",
           "IN_PROGRESS": "In Progress",
+          "PENDING_VERIFICATION": "Pending Verification",
           "VERIFICATION": "Verification",
+          "VERIFIED": "Verified",
           "CLOSED": "Closed",
-          "DEFERRED": "Deferred"
+          "DEFERRED": "Deferred",
+          "CANCELLED": "Cancelled"
         },
         "detail": {
           "back": "Back to findings",

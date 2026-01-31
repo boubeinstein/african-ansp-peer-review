@@ -112,11 +112,11 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
   return (
     <div
       className={cn(
-        "relative flex flex-col border-r bg-background transition-all duration-300",
+        "relative hidden md:flex flex-col h-full flex-shrink-0 border-r bg-background transition-all duration-300 overflow-hidden",
         collapsed ? "w-16" : "w-64"
       )}
     >
-      <div className="flex h-16 items-center justify-center border-b px-4">
+      <div className="flex-shrink-0 flex h-16 items-center justify-center border-b px-4">
         {!collapsed && (
           <Link href={`/${locale}`} className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
@@ -241,7 +241,8 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
         </nav>
       </ScrollArea>
 
-      <div className="border-t p-2">
+      {/* Footer - always stays at bottom */}
+      <div className="flex-shrink-0 border-t p-2 bg-background" data-tour="keyboard-hint">
         <Tooltip delayDuration={0}>
           <TooltipTrigger asChild>
             <Button

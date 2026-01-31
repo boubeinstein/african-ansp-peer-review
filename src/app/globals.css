@@ -5,6 +5,35 @@
 @plugin "tailwindcss-animate";
 
 /* ============================================
+   PWA/STANDALONE APP VIEWPORT FIX
+   ============================================ */
+
+/* Use dynamic viewport height for PWA compatibility */
+:root {
+  --app-height: 100vh;
+  --app-height: 100dvh; /* Dynamic viewport height - fallback for older browsers above */
+}
+
+/* Prevent body scroll - only main content should scroll */
+html, body {
+  height: var(--app-height);
+  overflow: hidden;
+}
+
+/* Fix for standalone/PWA mode */
+@media all and (display-mode: standalone) {
+  html, body {
+    height: 100%;
+    height: -webkit-fill-available;
+  }
+
+  .app-container {
+    min-height: 100%;
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* ============================================
    Theme Color Variables
    Define these BEFORE @theme so values are available
    ============================================ */
@@ -552,6 +581,27 @@ body {
   .review-print-break {
     page-break-before: always;
   }
+}
+
+/* ===========================================
+   Scroll Container Utilities
+   =========================================== */
+
+/* Primary scroll container - use on the main scrollable area */
+.scroll-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* Content inside scroll container should NOT have its own scroll */
+.scroll-content {
+  overflow: visible;
+}
+
+/* Prevent nested scrollbars - use on child elements that shouldn't scroll */
+.no-scroll {
+  overflow: visible !important;
 }
 
 /* ===========================================

@@ -19,13 +19,13 @@ export function AppShell({ children, locale, user }: AppShellProps) {
   return (
     <>
       <SkipLinks />
-      <div className="flex h-screen overflow-hidden">
+      <div className="app-container flex h-[100dvh] overflow-hidden">
         <Sidebar locale={locale} userRole={user.role} />
-        <div className="flex flex-1 flex-col overflow-hidden">
+        <div className="flex flex-1 flex-col min-w-0 h-full overflow-hidden">
           <Header locale={locale} user={user} />
           <main
             id="main-content"
-            className="flex-1 overflow-auto bg-muted/30 p-6 pb-20 md:pb-6"
+            className="flex-1 overflow-y-auto overflow-x-hidden bg-muted/30 p-6 pb-20 md:pb-6"
             tabIndex={-1}
           >
             {children}

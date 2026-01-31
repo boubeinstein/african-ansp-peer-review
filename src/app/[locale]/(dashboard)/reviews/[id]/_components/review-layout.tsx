@@ -90,7 +90,7 @@ export function ReviewLayout({ review, children, counts }: ReviewLayoutProps) {
   }, []);
 
   return (
-    <div className="flex flex-col h-full min-h-0">
+    <div className="flex flex-col min-h-0">
       {/* Sticky Header */}
       <ReviewHeader review={review} />
 
@@ -101,8 +101,8 @@ export function ReviewLayout({ review, children, counts }: ReviewLayoutProps) {
         counts={counts}
       />
 
-      {/* Tab Content */}
-      <div className="flex-1 overflow-auto">{children}</div>
+      {/* Tab Content - no nested scroll, parent main handles scrolling */}
+      <div className="flex-1">{children}</div>
 
       {/* Keyboard Shortcuts Dialog */}
       <KeyboardShortcutsDialog

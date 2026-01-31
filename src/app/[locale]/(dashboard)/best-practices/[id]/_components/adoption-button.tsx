@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -15,30 +16,36 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { CheckCircle2, Info, Loader2, Plus, Trash2 } from "lucide-react";
+import { CheckCircle2, Loader2, Plus, Send, Trash2, TrendingUp } from "lucide-react";
 import { isOversightRole } from "@/lib/permissions";
 import { UserRole } from "@prisma/client";
+import { PromoteDialog } from "@/components/features/best-practices/promote-dialog";
 
 interface AdoptionButtonProps {
   practiceId: string;
+  practiceTitle: string;
   canAdopt: boolean;
   hasAdopted: boolean;
   isOwnOrg: boolean;
   userRole?: string;
+  adoptionCount?: number;
 }
 
 export function AdoptionButton({
   practiceId,
+  practiceTitle,
   canAdopt,
   hasAdopted,
   isOwnOrg,
   userRole,
+  adoptionCount = 0,
 }: AdoptionButtonProps) {
   const t = useTranslations("bestPractices.detail.adoption");
   const utils = trpc.useUtils();
 
   const [showAdoptDialog, setShowAdoptDialog] = useState(false);
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
+  const [showPromoteDialog, setShowPromoteDialog] = useState(false);
   const [notes, setNotes] = useState("");
 
   // Adopt mutation
@@ -79,13 +86,40 @@ export function AdoptionButton({
     removeMutation.mutate({ bestPracticeId: practiceId });
   };
 
-  // Oversight role - show informational message
+  // Oversight role - show stats and promote action
   if (userRole && isOversightRole(userRole as UserRole)) {
     return (
-      <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-md">
-        <Info className="h-4 w-4 inline mr-2" />
-        {t("oversightRoleMessage")}
-      </div>
+      <>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between text-sm">
+            <span className="flex items-center gap-2 text-muted-foreground">
+              <TrendingUp className="h-4 w-4" />
+              {t("totalAdoptions")}
+            </span>
+            <Badge variant="secondary" className="font-mono">
+              {adoptionCount}
+            </Badge>
+          </div>
+          <div className="pt-3 border-t">
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full"
+              onClick={() => setShowPromoteDialog(true)}
+            >
+              <Send className="h-4 w-4 mr-2" />
+              {t("promoteToANSPs")}
+            </Button>
+          </div>
+        </div>
+
+        <PromoteDialog
+          open={showPromoteDialog}
+          onOpenChange={setShowPromoteDialog}
+          bestPracticeId={practiceId}
+          bestPracticeTitle={practiceTitle}
+        />
+      </>
     );
   }
 

@@ -29,6 +29,8 @@ interface Adoption {
 
 interface Practice {
   id: string;
+  titleEn: string;
+  titleFr: string;
   organizationId: string;
   organization: Organization;
   adoptions: Adoption[];
@@ -62,6 +64,10 @@ export function BestPracticeSidebar({
     ? practice.organization.nameFr
     : practice.organization.nameEn;
 
+  const practiceTitle = locale === "fr"
+    ? practice.titleFr
+    : practice.titleEn;
+
   return (
     <div className="space-y-6">
       {/* Adoption Card */}
@@ -75,10 +81,12 @@ export function BestPracticeSidebar({
         <CardContent className="space-y-4">
           <AdoptionButton
             practiceId={practice.id}
+            practiceTitle={practiceTitle}
             canAdopt={canAdopt}
             hasAdopted={hasAdopted}
             isOwnOrg={isOwnOrg}
             userRole={userRole}
+            adoptionCount={practice._count.adoptions}
           />
 
           {isOwnOrg && (
@@ -109,6 +117,8 @@ export function BestPracticeSidebar({
               bestPracticeId={practice.id}
               targetOrgName={orgName}
               isOwnOrg={isOwnOrg}
+              userRole={userRole}
+              userOrgId={userOrgId}
             />
           </CardContent>
         </Card>

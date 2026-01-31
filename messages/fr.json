@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Revue par les Pairs ANSP Africains",
+    "appName": "Évaluation par les pairs ANSP Africains",
     "appTagline": "Excellence Collaborative en Sécurité Aéronautique",
     "save": "Enregistrer",
     "cancel": "Annuler",
@@ -63,7 +63,7 @@
     "analytics": "Analyses",
     "questionnaires": "Questionnaires",
     "assessments": "Évaluations",
-    "reviews": "Revues par les Pairs",
+    "reviews": "Évaluations par les pairs",
     "findings": "Constatations",
     "caps": "PAC",
     "bestPractices": "Meilleures Pratiques",
@@ -83,8 +83,8 @@
   "auth": {
     "hero": {
       "badge": "Programme Approuvé par l'OACI",
-      "title": "Programme Africain de Revue par les Pairs des ANSP",
-      "subtitle": "Amélioration collaborative de la sécurité aérienne par des revues systématiques entre les Fournisseurs de Services de Navigation Aérienne et les Autorités de l'Aviation Civile africains.",
+      "title": "Programme Africain de Évaluation par les pairs des ANSP",
+      "subtitle": "Amélioration collaborative de la sécurité aérienne par des évaluations systématiques entre les Fournisseurs de Services de Navigation Aérienne et les Autorités de l'Aviation Civile africains.",
       "tagline": "Renforcer la Sécurité Aérienne en Afrique par l'Excellence Collaborative",
       "stats": {
         "ansps": "ANSP/CAA",
@@ -94,7 +94,7 @@
       "partnership": "En partenariat avec l'OACI, CANSO & CAFAC"
     },
     "showcase": {
-      "header": "Programme Africain de Revue par les Pairs des ANSP en Chiffres",
+      "header": "Programme Africain de Évaluation par les pairs des ANSP en Chiffres",
       "stats": {
         "organizations": "Organisations Participantes",
         "reviewers": "Évaluateurs Sélectionnés",
@@ -117,8 +117,8 @@
     },
     "login": {
       "title": "Bienvenue",
-      "pageTitle": "Connexion - Revue par les Pairs AFI",
-      "pageDescription": "Connectez-vous au Programme de Revue par les Pairs des ANSP Africains",
+      "pageTitle": "Connexion - Évaluation par les pairs AFI",
+      "pageDescription": "Connectez-vous au Programme de Évaluation par les pairs des ANSP Africains",
       "description": "Connectez-vous à votre compte pour continuer",
       "email": "Adresse Email",
       "emailPlaceholder": "nom@organisation.aero",
@@ -247,7 +247,7 @@
       "networkError": "Erreur réseau. Veuillez vérifier votre connexion."
     },
     "footer": {
-      "copyright": "Programme Africain de Revue par les Pairs des ANSP. Tous droits réservés."
+      "copyright": "Programme Africain de Évaluation par les pairs des ANSP. Tous droits réservés."
     },
     "language": {
       "switch": "English"
@@ -292,9 +292,9 @@
   "dashboard": {
     "title": "Tableau de bord",
     "welcome": "Bon retour, {name}!",
-    "subtitle": "Voici un aperçu de vos activités de revue par les pairs.",
+    "subtitle": "Voici un aperçu de vos activités de évaluation par les pairs.",
     "newAssessment": "Nouvelle évaluation",
-    "newReview": "Nouvelle revue",
+    "newReview": "Nouvelle évaluation",
     "stats": {
       "totalAssessments": "Total des évaluations",
       "inProgress": "En cours",
@@ -312,25 +312,25 @@
       "requireAttention": "nécessitent attention",
       "overdueCAPs": "PAC en retard",
       "pastDeadline": "délai dépassé",
-      "reviewsCoordinating": "Revues coordonnées",
-      "totalReviews": "revues totales",
+      "reviewsCoordinating": "Évaluations coordonnées",
+      "totalReviews": "évaluations totales",
       "pendingTeamAssignments": "Affectations en attente",
       "needTeams": "équipes à constituer",
       "findingsUnderReview": "Constats en révision",
       "awaitingReview": "en attente de révision",
       "capsRequiringAction": "PAC nécessitant action",
       "needsAttention": "nécessite attention",
-      "myAssignedReviews": "Mes revues assignées",
+      "myAssignedReviews": "Mes évaluations assignées",
       "assignedToMe": "qui me sont assignées",
       "currentlyActive": "actuellement actives",
       "findingsRaised": "Constats soulevés",
       "byMe": "par moi",
-      "completedReviews": "Revues terminées",
+      "completedReviews": "Évaluations terminées",
       "ourAssessments": "Nos évaluations",
       "selfAssessments": "auto-évaluations",
       "latestEIScore": "Dernier score EI",
       "effectivenessIndex": "Mise en Œuvre Effective",
-      "fromReviews": "des revues",
+      "fromReviews": "des évaluations",
       "activeCAPs": "PAC actifs",
       "assessmentsSubmitted": "Évaluations soumises",
       "byOrganization": "par l'organisation",
@@ -364,15 +364,15 @@
       "manageUsers": "Gérer les utilisateurs",
       "manageUsersDesc": "Administrer les comptes et rôles utilisateurs",
       "assignTeams": "Affecter les équipes",
-      "assignTeamsDesc": "Affecter des évaluateurs aux revues en attente",
-      "scheduleReview": "Planifier une revue",
-      "scheduleReviewDesc": "Créer une nouvelle revue par les pairs",
+      "assignTeamsDesc": "Affecter des évaluateurs aux évaluations en attente",
+      "scheduleReview": "Planifier une évaluation",
+      "scheduleReviewDesc": "Créer une nouvelle évaluation par les pairs",
       "reviewFindings": "Réviser les constats",
       "reviewFindingsDesc": "Réviser et approuver les constats",
-      "myReviews": "Mes revues",
-      "myReviewsDesc": "Voir mes revues assignées",
+      "myReviews": "Mes évaluations",
+      "myReviewsDesc": "Voir mes évaluations assignées",
       "updateAvailability": "Mettre à jour la disponibilité",
-      "updateAvailabilityDesc": "Définir votre disponibilité pour les revues",
+      "updateAvailabilityDesc": "Définir votre disponibilité pour les évaluations",
       "startAssessment": "Commencer une évaluation",
       "startAssessmentDesc": "Démarrer une nouvelle auto-évaluation",
       "viewFindings": "Voir les constats",
@@ -414,8 +414,8 @@
       "rejected": "Rejeté",
       "overdue": "En retard",
       "onTrack": "Dans les délais",
-      "peerReviewSummary": "Résumé des revues par les pairs",
-      "reviewsReceived": "Revues reçues",
+      "peerReviewSummary": "Résumé des évaluations par les pairs",
+      "reviewsReceived": "Évaluations reçues",
       "totalFindings": "Total des constats",
       "overdueCaps": "PAC en retard",
       "viewProfile": "Voir le profil",
@@ -429,7 +429,7 @@
       "memberOrganizations": "Organisations membres",
       "reviewers": "examinateurs",
       "you": "Vous",
-      "reviewsCompleted": "Revues terminées",
+      "reviewsCompleted": "Évaluations terminées",
       "totalReviewers": "Total examinateurs",
       "capClosureRate": "Taux de clôture PAC",
       "performanceScore": "Performance",
@@ -450,7 +450,7 @@
       "totalTeams": "Équipes",
       "totalOrganizations": "Organisations",
       "totalReviewers": "Examinateurs",
-      "reviewsCompleted": "Revues terminées",
+      "reviewsCompleted": "Évaluations terminées",
       "openFindings": "Constats ouverts",
       "avgCapClosure": "Taux moyen clôture PAC",
       "performanceTab": "Performance",
@@ -504,13 +504,13 @@
   },
   "teams": {
     "title": "Équipes Régionales de Soutien par les Pairs",
-    "description": "Les 5 équipes coordonnant les revues par les pairs en Afrique",
+    "description": "Les 5 équipes coordonnant les évaluations par les pairs en Afrique",
     "yourTeam": "Votre Équipe",
     "viewYourTeam": "Voir Votre Équipe",
     "leadBy": "Dirigé par",
     "organizations": "Organisations",
     "reviewers": "Évaluateurs",
-    "reviews": "Revues",
+    "reviews": "Évaluations",
     "capClosureRate": "Taux de Clôture PAC",
     "viewTeam": "Voir les Détails de l'Équipe",
     "noTeams": "Aucune équipe disponible",
@@ -523,12 +523,12 @@
       "reviewers": "Évaluateurs",
       "leadQualified": "qualifié chef d'équipe",
       "available": "disponible",
-      "totalReviews": "Total des Revues",
+      "totalReviews": "Total des Évaluations",
       "completed": "terminées",
       "inProgress": "en cours",
       "capClosureRate": "Taux de Clôture PAC",
       "participationScore": "Score de Participation",
-      "scoreDescription": "Basé sur l'achèvement des revues, la clôture des PAC et la densité des évaluateurs",
+      "scoreDescription": "Basé sur l'achèvement des évaluations, la clôture des PAC et la densité des évaluateurs",
       "scoreExcellent": "Excellent",
       "scoreVeryGood": "Très Bien",
       "scoreGood": "Bien",
@@ -542,8 +542,8 @@
       "memberOrganizationsDesc": "{count} organisations dans cette équipe",
       "organization": "Organisation",
       "country": "Pays",
-      "reviewsHosted": "Revues Accueillies",
-      "reviewsParticipated": "Revues Participées",
+      "reviewsHosted": "Évaluations Accueillies",
+      "reviewsParticipated": "Évaluations Participées",
       "view": "Voir",
       "findingsSummary": "Résumé des Constats",
       "capsSummary": "Résumé des PAC",
@@ -809,14 +809,14 @@
     "types": {
       "SELF_ASSESSMENT": "Auto-évaluation",
       "GAP_ANALYSIS": "Analyse des écarts",
-      "PRE_REVIEW": "Évaluation pré-revue",
-      "MOCK_REVIEW": "Revue simulée"
+      "PRE_REVIEW": "Évaluation préparatoire",
+      "MOCK_REVIEW": "Évaluation simulée"
     },
     "typeDescription": {
       "SELF_ASSESSMENT": "Auto-évaluation initiale par rapport aux normes",
       "GAP_ANALYSIS": "Identifier les écarts entre l'état actuel et les exigences",
-      "PRE_REVIEW": "Évaluation préparatoire avant la revue formelle par les pairs",
-      "MOCK_REVIEW": "Évaluation pratique simulant une revue par les pairs"
+      "PRE_REVIEW": "Évaluation préparatoire avant l'évaluation formelle par les pairs",
+      "MOCK_REVIEW": "Évaluation pratique simulant une évaluation par les pairs"
     },
     "responses": {
       "SATISFACTORY": "Satisfaisant",
@@ -1655,27 +1655,27 @@
     },
     "programmeCoordinator": {
       "title": "Coordinateur du Programme",
-      "description": "Coordonne les activités de revue par les pairs, assigne les équipes de revue et gère le calendrier des revues.",
+      "description": "Coordonne les activités d'évaluation par les pairs, assigne les équipes d'évaluation et gère le calendrier des évaluations.",
       "typical1": "Coordinateur AAPRP"
     },
     "leadReviewer": {
-      "title": "Réviseur Principal",
-      "description": "Dirige les équipes de revue par les pairs, approuve les constats et assure la qualité des revues.",
+      "title": "Évaluateur principal",
+      "description": "Dirige les équipes de évaluation par les pairs, approuve les constats et assure la qualité des évaluations.",
       "typical1": "Expert Senior en Sécurité Aérienne"
     },
     "peerReviewer": {
-      "title": "Réviseur Pair",
-      "description": "Effectue des revues par les pairs, saisit les constats et participe aux équipes de revue.",
-      "typical1": "Réviseur Pair Certifié"
+      "title": "Pair évaluateur",
+      "description": "Effectue des évaluations par les pairs, saisit les constats et participe aux équipes d'évaluation.",
+      "typical1": "Pair évaluateur Certifié"
     },
     "observer": {
       "title": "Observateur",
-      "description": "Observe les revues par les pairs à des fins de formation. Accès en lecture seule aux revues assignées.",
-      "typical1": "Réviseur Stagiaire"
+      "description": "Observe les évaluations par les pairs à des fins de formation. Accès en lecture seule aux évaluations assignées.",
+      "typical1": "Évaluateur stagiaire"
     },
     "anspAdmin": {
       "title": "Administrateur ANSP",
-      "description": "Gère les utilisateurs de son organisation, les évaluations et la participation aux revues par les pairs.",
+      "description": "Gère les utilisateurs de son organisation, les évaluations et la participation aux évaluations par les pairs.",
       "typical1": "Point Focal ANSP"
     },
     "safetyManager": {
@@ -1726,7 +1726,7 @@
     "noResults": "Aucun résultat trouvé",
     "noQuestions": "Aucune question trouvée",
     "noAssessments": "Aucune évaluation trouvée",
-    "noReviews": "Aucune revue trouvée",
+    "noReviews": "Aucune évaluation trouvée",
     "noOrganizations": "Aucune organisation trouvée",
     "noUsers": "Aucun utilisateur trouvé",
     "noDocuments": "Aucun document trouvé",
@@ -1804,10 +1804,10 @@
           "bestFor": "Planification pré-amélioration et identification des domaines prioritaires"
         },
         "peer_review": {
-          "title": "Préparation à la revue par les pairs",
-          "short": "Pré-revue",
-          "description": "Préparez-vous à une prochaine revue par les pairs en effectuant une auto-évaluation approfondie.",
-          "bestFor": "Organisations se préparant à une revue externe par les pairs"
+          "title": "Préparation à la évaluation par les pairs",
+          "short": "Préparatoire",
+          "description": "Préparez-vous à une prochaine évaluation par les pairs en effectuant une auto-évaluation approfondie.",
+          "bestFor": "Organisations se préparant à une évaluation externe par les pairs"
         },
         "follow_up": {
           "title": "Évaluation de suivi",
@@ -2195,7 +2195,7 @@
       "biographyFr": "Biographie (Français)",
       "biographyPlaceholder": "Brief professional biography highlighting relevant experience...",
       "biographyPlaceholderFr": "Brève biographie professionnelle mettant en avant l'expérience pertinente...",
-      "biographyDescription": "Max 2000 caractères. Sera visible par les coordinateurs de revue par les pairs.",
+      "biographyDescription": "Max 2000 caractères. Sera visible par les coordinateurs de évaluation par les pairs.",
       "alternateEmail": "Email alternatif",
       "alternateEmailPlaceholder": "backup@example.com",
       "alternatePhone": "Téléphone alternatif",
@@ -2219,7 +2219,7 @@
       "contactSection": "Informations de contact"
     },
     "stats": {
-      "reviewsCompleted": "Revues effectuées",
+      "reviewsCompleted": "Évaluations effectuées",
       "yearsExperience": "Années d'expérience",
       "leadQualified": "Qualifié Lead"
     },
@@ -2251,7 +2251,7 @@
       "proficiency": "Niveau",
       "native": "Maternelle",
       "isNative": "Langue maternelle",
-      "canConduct": "Peut conduire des revues",
+      "canConduct": "Peut conduire des évaluations",
       "required": "Requis (EN & FR)",
       "requirementMet": "EN & FR présents",
       "requiredMissing": "L'anglais et le français sont requis pour les évaluateurs du Programme Africain",
@@ -2304,7 +2304,7 @@
       "editSlot": "Modifier la disponibilité",
       "more": "autres",
       "available": "disponible",
-      "reviewPeriodCoverage": "Couverture de la période de revue",
+      "reviewPeriodCoverage": "Couverture de la période d'évaluation",
       "daysAvailable": "{available} sur {total} jours disponibles",
       "type": {
         "AVAILABLE": "Disponible",
@@ -2327,7 +2327,7 @@
       "notes": "Notes",
       "notesPlaceholder": "Ajoutez des notes sur cette période...",
       "legend": {
-        "requestedPeriod": "Période de revue demandée"
+        "requestedPeriod": "Période d'évaluation demandée"
       },
       "save": "Enregistrer",
       "cancel": "Annuler",
@@ -2356,7 +2356,7 @@
         "clearFuture": "Effacer les disponibilités futures",
         "clearConfirm": {
           "title": "Effacer les disponibilités futures",
-          "description": "Cela supprimera tous vos créneaux de disponibilité futurs (sauf les affectations de revue). Cette action est irréversible."
+          "description": "Cela supprimera tous vos créneaux de disponibilité futurs (sauf les affectations d'évaluation). Cette action est irréversible."
         }
       },
       "team": {
@@ -2428,7 +2428,7 @@
     },
     "coi": {
       "title": "Conflits d'intérêts",
-      "subtitle": "Conflits déclarés empêchant les affectations de revue",
+      "subtitle": "Conflits déclarés empêchant les affectations d'évaluation",
       "organization": "Organisation",
       "conflictType": "Type de conflit",
       "type": "Type de conflit",
@@ -2456,7 +2456,7 @@
         "FAMILY_RELATIONSHIP": "Lien familial",
         "FORMER_EMPLOYEE": "Ancien employé",
         "BUSINESS_INTEREST": "Intérêt commercial",
-        "RECENT_REVIEW": "Revue récente",
+        "RECENT_REVIEW": "Évaluation récente",
         "OTHER": "Autre conflit"
       },
       "check": {
@@ -2577,9 +2577,9 @@
       },
       "presets": {
         "title": "Préréglages rapides",
-        "standardANS": "Revue ANS standard",
-        "smsReview": "Revue axée SMS",
-        "fullReview": "Revue complète"
+        "standardANS": "Évaluation ANS standard",
+        "smsReview": "Évaluation axée SMS",
+        "fullReview": "Évaluation complète"
       },
       "quickFilters": "Filtres rapides",
       "leadQualifiedOnly": "Chefs qualifiés",
@@ -2589,7 +2589,7 @@
       "requiredExpertise": "Expertise requise",
       "preferredExpertise": "Expertise préférée",
       "requiredLanguages": "Langues requises",
-      "reviewPeriod": "Période de revue",
+      "reviewPeriod": "Période d'évaluation",
       "startDate": "Date de début",
       "endDate": "Date de fin",
       "teamSize": "Taille de l'équipe",
@@ -2614,7 +2614,7 @@
       },
       "leadQualified": "Chef d'équipe qualifié",
       "notEligible": "Non éligible",
-      "reviewsCompleted": "revues effectuées",
+      "reviewsCompleted": "évaluations effectuées",
       "available": "disponible",
       "viewProfile": "Voir le profil",
       "noSearchYet": "Prêt pour la recherche",
@@ -2628,8 +2628,8 @@
         "availability": "Disponibilité",
         "experience": "Expérience",
         "expertiseDesc": "Correspondance entre les domaines d'expertise de l'évaluateur et les domaines requis",
-        "languageDesc": "Capacité à effectuer la revue dans les langues de travail requises",
-        "availabilityDesc": "Disponibilité pendant la période de revue demandée",
+        "languageDesc": "Capacité à effectuer l'évaluation dans les langues de travail requises",
+        "availabilityDesc": "Disponibilité pendant la période d'évaluation demandée",
         "experienceDesc": "Expérience et qualifications pertinentes en évaluation par les pairs",
         "expertiseShort": "Exp",
         "languageShort": "Lang",
@@ -2650,7 +2650,7 @@
         "expertiseTitle": "Couverture d'expertise",
         "languageTitle": "Couverture linguistique",
         "hasLead": "L'équipe a un chef d'équipe",
-        "hasLeadDescription": "Au moins un membre est qualifié pour diriger la revue",
+        "hasLeadDescription": "Au moins un membre est qualifié pour diriger l'évaluation",
         "noLead": "Pas de chef d'équipe",
         "noLeadDescription": "Envisagez d'ajouter un évaluateur qualifié comme chef",
         "balance": {
@@ -2665,7 +2665,7 @@
       },
       "warnings": {
         "coiConflict": "A un conflit d'intérêts",
-        "notAvailable": "Non entièrement disponible pour la période de revue",
+        "notAvailable": "Non entièrement disponible pour la période d'évaluation",
         "missingExpertise": "Expertise requise manquante"
       },
       "ineligibilityReasons": {
@@ -2673,14 +2673,14 @@
         "familyRelationship": "A un membre de la famille dans l'organisation cible",
         "formerEmployee": "Ancien employé de l'organisation cible",
         "recentReview": "A récemment évalué cette organisation",
-        "unavailable": "Indisponible pendant la période de revue",
+        "unavailable": "Indisponible pendant la période d'évaluation",
         "insufficientExpertise": "Expertise insuffisante",
-        "languageMismatch": "Ne peut pas effectuer la revue dans les langues requises",
+        "languageMismatch": "Ne peut pas effectuer l'évaluation dans les langues requises",
         "conflict": "Conflit d'intérêts avec l'organisation cible"
       },
       "emptyState": {
         "initial": {
-          "title": "Constituez votre équipe de revue",
+          "title": "Constituez votre équipe d'évaluation",
           "description": "Sélectionnez une organisation cible et définissez vos critères pour trouver des évaluateurs correspondants."
         },
         "noResults": {
@@ -2691,7 +2691,7 @@
         },
         "noEligible": {
           "title": "Aucun évaluateur éligible",
-          "description": "Tous les évaluateurs ont des conflits d'intérêts ou sont indisponibles pour cette période de revue.",
+          "description": "Tous les évaluateurs ont des conflits d'intérêts ou sont indisponibles pour cette période d'évaluation.",
           "suggestions": "Essayez ces suggestions :",
           "suggestion1": "Élargir la plage de dates pour augmenter la disponibilité",
           "suggestion2": "Réduire les domaines d'expertise requis pour élargir le bassin",
@@ -2704,7 +2704,7 @@
         },
         "noSelection": {
           "title": "Aucune équipe sélectionnée",
-          "description": "Sélectionnez des évaluateurs dans les résultats pour constituer votre équipe de revue par les pairs."
+          "description": "Sélectionnez des évaluateurs dans les résultats pour constituer votre équipe de évaluation par les pairs."
         }
       },
       "shortcuts": {
@@ -2731,8 +2731,8 @@
         "title": "Comment les scores sont calculés :",
         "expertise": "Expertise (40 pts) : Expertise principale +15, Secondaire +5",
         "language": "Langue (25 pts) : Langues requises au niveau opérationnel",
-        "availability": "Disponibilité (25 pts) : Couverture pendant la période de revue",
-        "experience": "Expérience (10 pts) : Revues passées et certifications"
+        "availability": "Disponibilité (25 pts) : Couverture pendant la période d'évaluation",
+        "experience": "Expérience (10 pts) : Évaluations passées et certifications"
       },
       "coverageHelp": {
         "expertise": "Pourcentage des domaines d'expertise requis couverts par l'équipe sélectionnée. 100% signifie que tous les domaines requis ont au moins un membre de l'équipe avec cette expertise.",
@@ -2758,14 +2758,14 @@
       },
       "languageHelp": {
         "title": "Langues de travail",
-        "description": "Les revues par les pairs peuvent être menées dans plusieurs langues de travail. L'équipe doit inclure des membres maîtrisant les langues de travail officielles de l'organisation cible pour assurer une communication efficace pendant la revue."
+        "description": "Les évaluations par les pairs peuvent être menées dans plusieurs langues de travail. L'équipe doit inclure des membres maîtrisant les langues de travail officielles de l'organisation cible pour assurer une communication efficace pendant l'évaluation."
       },
       "eligibilityHelp": {
         "title": "Critères d'éligibilité :",
         "noCOI": "Pas de conflit d'intérêts avec l'organisation cible",
-        "available": "Disponible pendant la période de revue",
+        "available": "Disponible pendant la période d'évaluation",
         "expertise": "Possède les domaines d'expertise requis",
-        "languages": "Peut effectuer la revue dans les langues requises"
+        "languages": "Peut effectuer l'évaluation dans les langues requises"
       }
     }
   },
@@ -2790,7 +2790,7 @@
       "organization": "Organisation",
       "status": "Statut",
       "experience": "Expérience",
-      "reviews": "Revues effectuées"
+      "reviews": "Évaluations effectuées"
     },
     "view": {
       "card": "Vue carte",
@@ -2831,7 +2831,7 @@
     "card": {
       "leadQualified": "Qualifié évaluateur principal",
       "available": "Disponible",
-      "reviews": "{count} revues",
+      "reviews": "{count} évaluations",
       "experience": "{years} ans exp."
     },
     "table": {
@@ -2840,7 +2840,7 @@
       "expertise": "Expertise",
       "languages": "Langues",
       "status": "Statut",
-      "reviews": "Revues",
+      "reviews": "Évaluations",
       "actions": "Actions"
     },
     "actions": {
@@ -2852,7 +2852,7 @@
       "exportSelected": "Exporter la sélection",
       "changeStatus": "Changer le statut",
       "createTeam": "Créer une équipe",
-      "buildTeam": "Construire l'équipe de revue"
+      "buildTeam": "Construire l'équipe d'évaluation"
     },
     "selection": {
       "selectAll": "Tout sélectionner",
@@ -2908,11 +2908,11 @@
     "noProfileHelp": "Si vous pensez devoir avoir un profil d'examinateur, veuillez contacter l'administrateur de votre organisation ou le coordinateur du programme.",
     "availability": {
       "title": "Paramètres de Disponibilité",
-      "description": "Définissez votre disponibilité pour les missions de revue par les pairs",
+      "description": "Définissez votre disponibilité pour les missions de évaluation par les pairs",
       "currentStatus": "Actuellement Disponible",
       "statusDescription": "Désactivez si vous ne pouvez pas accepter de missions",
-      "statusAvailable": "Disponible pour les Revues",
-      "statusAvailableDesc": "Vous pouvez être affecté aux équipes de revue",
+      "statusAvailable": "Disponible pour les Évaluations",
+      "statusAvailableDesc": "Vous pouvez être affecté aux équipes d'évaluation",
       "statusUnavailable": "Non Disponible",
       "statusUnavailableDesc": "Vous ne serez pas considéré pour de nouvelles affectations",
       "window": "Période de Disponibilité",
@@ -2942,8 +2942,8 @@
     }
   },
   "reviews": {
-    "title": "Revues par les pairs",
-    "description": "Gérer et coordonner les activités de revue par les pairs",
+    "title": "Évaluations par les pairs",
+    "description": "Gérer et coordonner les activités de évaluation par les pairs",
     "searchPlaceholder": "Rechercher par référence, organisation...",
     "filterByStatus": "Filtrer par statut",
     "filterByType": "Filtrer par type",
@@ -2953,18 +2953,18 @@
     "teamMembers": "{count} membres d'équipe",
     "findings": "{count} constatations",
     "stats": {
-      "total": "Total des revues",
+      "total": "Total des évaluations",
       "scheduled": "Planifiées",
       "inProgress": "En cours",
       "completed": "Terminées"
     },
     "empty": {
-      "title": "Aucune revue par les pairs",
-      "description": "Les revues par les pairs apparaîtront ici une fois le cycle de revue commencé. Demandez une revue par les pairs pour commencer."
+      "title": "Aucune évaluation par les pairs",
+      "description": "Les évaluations par les pairs apparaîtront ici une fois le cycle d'évaluation commencé. Demandez une évaluation par les pairs pour commencer."
     },
     "needsTeam": "Équipe requise",
     "actions": {
-      "requestReview": "Demander une revue",
+      "requestReview": "Demander une évaluation",
       "viewAll": "Voir tout",
       "assignTeam": "Assigner l'équipe",
       "manageTeam": "Gérer l'équipe"
@@ -2977,14 +2977,14 @@
       "IN_PROGRESS": "En cours",
       "in_progress": "En cours",
       "REPORT_DRAFTING": "Rédaction du rapport",
-      "REPORT_REVIEW": "Revue du rapport",
+      "REPORT_REVIEW": "Révision du rapport",
       "COMPLETED": "Terminée",
       "CANCELLED": "Annulée"
     },
     "type": {
-      "FULL": "Revue complète",
-      "FOCUSED": "Revue ciblée",
-      "FOLLOW_UP": "Revue de suivi",
+      "FULL": "Évaluation complète",
+      "FOCUSED": "Évaluation ciblée",
+      "FOLLOW_UP": "Évaluation de suivi",
       "SURVEILLANCE": "Surveillance"
     },
     "phase": {
@@ -2997,8 +2997,8 @@
       "CLOSED": "Clôturé"
     },
     "statusTransition": {
-      "title": "Changer le statut de la revue",
-      "description": "Sélectionnez un nouveau statut pour la revue {reference}",
+      "title": "Changer le statut de l'évaluation",
+      "description": "Sélectionnez un nouveau statut pour l'évaluation {reference}",
       "currentStatus": "Statut actuel",
       "availableTransitions": "Transitions disponibles",
       "noTransitionsAvailable": "Aucune transition de statut disponible depuis l'état actuel ou vous n'avez pas la permission.",
@@ -3009,15 +3009,15 @@
       "confirmTransition": "Confirmer la transition",
       "transitioning": "Transition en cours...",
       "success": "Statut mis à jour",
-      "successDescription": "Le statut de la revue a été changé en {status}",
+      "successDescription": "Le statut de l'évaluation a été changé en {status}",
       "error": "Échec de la transition"
     },
     "approval": {
-      "pageTitle": "Approbations des revues",
-      "pageDescription": "Examiner et traiter les demandes de revue par les pairs",
+      "pageTitle": "Approbations des évaluations",
+      "pageDescription": "Examiner et traiter les demandes de évaluation par les pairs",
       "title": "Décision d'approbation",
       "description": "Examinez les détails de la demande et prenez votre décision",
-      "backToReviews": "Retour aux revues",
+      "backToReviews": "Retour aux évaluations",
       "pendingRequests": "Demandes en attente",
       "recentDecisions": "Décisions récentes",
       "recentDecisionsDescription": "Décisions prises au cours des 30 derniers jours",
@@ -3052,18 +3052,18 @@
       "decision": {
         "approved": {
           "title": "Approuver la demande",
-          "description": "La revue sera approuvée et l'organisation demandeuse sera notifiée.",
-          "success": "Demande de revue approuvée avec succès"
+          "description": "L'évaluation sera approuvée et l'organisation demandeuse sera notifiée.",
+          "success": "Demande d'évaluation approuvée avec succès"
         },
         "rejected": {
           "title": "Rejeter la demande",
           "description": "Veuillez fournir une raison pour le rejet de cette demande. Cela sera partagé avec l'organisation demandeuse.",
-          "success": "Demande de revue rejetée"
+          "success": "Demande d'évaluation rejetée"
         },
         "deferred": {
           "title": "Différer la demande",
           "description": "Veuillez fournir une raison pour le report de cette demande. L'organisation peut soumettre à nouveau plus tard.",
-          "success": "Demande de revue différée"
+          "success": "Demande d'évaluation différée"
         },
         "error": "Échec du traitement de la décision"
       },
@@ -3076,18 +3076,18 @@
       },
       "confirm": {
         "title": "Confirmer la décision",
-        "approved": "Êtes-vous sûr de vouloir approuver cette demande de revue ? L'organisation demandeuse sera notifiée.",
-        "rejected": "Êtes-vous sûr de vouloir rejeter cette demande de revue ? Cette action ne peut pas être annulée.",
-        "deferred": "Êtes-vous sûr de vouloir différer cette demande de revue ? L'organisation peut soumettre à nouveau plus tard."
+        "approved": "Êtes-vous sûr de vouloir approuver cette demande d'évaluation ? L'organisation demandeuse sera notifiée.",
+        "rejected": "Êtes-vous sûr de vouloir rejeter cette demande d'évaluation ? Cette action ne peut pas être annulée.",
+        "deferred": "Êtes-vous sûr de vouloir différer cette demande d'évaluation ? L'organisation peut soumettre à nouveau plus tard."
       },
       "noPending": {
         "title": "Aucune demande en attente",
-        "description": "Toutes les demandes de revue ont été traitées"
+        "description": "Toutes les demandes d'évaluation ont été traitées"
       }
     },
     "timeline": {
-      "title": "Chronologie de la Revue",
-      "description": "Suivre la progression de cette revue par les pairs à travers chaque phase",
+      "title": "Chronologie de l'Évaluation",
+      "description": "Suivre la progression de cette évaluation par les pairs à travers chaque phase",
       "progress": "Progression",
       "phasesComplete": "phases complétées",
       "current": "En cours",
@@ -3108,26 +3108,26 @@
         "requestApproved": "Demande Approuvée",
         "teamAssigned": "Équipe Assignée",
         "datesConfirmed": "Dates Confirmées",
-        "reviewStarted": "Revue Démarrée",
+        "reviewStarted": "Évaluation Démarrée",
         "fieldworkComplete": "Travail Terrain Terminé",
         "reportDrafted": "Rapport Rédigé",
         "reportFinalized": "Rapport Finalisé",
-        "reviewClosed": "Revue Clôturée"
+        "reviewClosed": "Évaluation Clôturée"
       },
       "phases": {
         "requestSubmitted": "Demande soumise",
         "requestApproved": "Demande approuvée",
         "teamAssigned": "Équipe assignée",
         "datesConfirmed": "Dates confirmées",
-        "reviewStarted": "Revue démarrée",
+        "reviewStarted": "Évaluation démarrée",
         "fieldworkComplete": "Travail de terrain terminé",
         "reportDrafted": "Rapport rédigé",
         "reportFinalized": "Rapport finalisé",
-        "reviewClosed": "Revue clôturée"
+        "reviewClosed": "Évaluation clôturée"
       },
       "cancelled": {
-        "title": "Revue par les pairs annulée",
-        "description": "Cette revue par les pairs a été annulée et ne se poursuivra pas.",
+        "title": "Évaluation par les pairs annulée",
+        "description": "Cette évaluation par les pairs a été annulée et ne se poursuivra pas.",
         "label": "Annulée"
       }
     },
@@ -3159,7 +3159,7 @@
         "openingMeetingHeld": "Réunion d'ouverture tenue avec l'hôte",
         "interviewsCompleted": "Entretiens du personnel complétés",
         "facilitiesInspected": "Inspection des installations complétée",
-        "documentReviewComplete": "Revue documentaire complétée",
+        "documentReviewComplete": "Examen documentaire complété",
         "findingsDiscussed": "Constatations préliminaires discutées avec l'hôte",
         "closingMeetingHeld": "Réunion de clôture tenue"
       },
@@ -3181,8 +3181,8 @@
       }
     },
     "documents": {
-      "title": "Documents de la revue",
-      "description": "Gérer les documents liés à cette revue par les pairs",
+      "title": "Documents de l'évaluation",
+      "description": "Gérer les documents liés à cette évaluation par les pairs",
       "uploadButton": "Téléverser un document",
       "noDocuments": "Aucun document téléversé",
       "totalDocuments": "{count, plural, =0 {Aucun document} =1 {1 document} other {# documents}}",
@@ -3205,7 +3205,7 @@
       },
       "upload": {
         "title": "Téléverser des documents",
-        "description": "Téléversez des fichiers pour cette revue. Formats supportés : PDF, DOCX, XLSX, PNG, JPG",
+        "description": "Téléversez des fichiers pour cette évaluation. Formats supportés : PDF, DOCX, XLSX, PNG, JPG",
         "dragDrop": "Glissez-déposez des fichiers ici, ou cliquez pour parcourir",
         "dropHere": "Déposez les fichiers ici...",
         "allowedTypes": "PDF, DOCX, XLSX, PNG, JPG",
@@ -3214,7 +3214,7 @@
         "category": "Catégorie",
         "descriptionLabel": "Description (optionnel)",
         "descriptionPlaceholder": "Ajoutez une description pour ces documents...",
-        "confidential": "Marquer comme confidentiel (visible uniquement par l'équipe de revue)",
+        "confidential": "Marquer comme confidentiel (visible uniquement par l'équipe d'évaluation)",
         "uploading": "Téléversement...",
         "uploadButton": "Téléverser"
       },
@@ -3283,7 +3283,7 @@
         },
         "form": {
           "createTitle": "Nouvelle discussion",
-          "createDescription": "Créez une discussion pour collaborer avec votre équipe de revue.",
+          "createDescription": "Créez une discussion pour collaborer avec votre équipe d'évaluation.",
           "replyTitle": "Répondre à la discussion",
           "replyDescription": "Ajoutez votre réponse à ce fil de discussion.",
           "subject": "Sujet",
@@ -3303,7 +3303,7 @@
         }
       },
       "tasks": {
-        "title": "Tâches de revue",
+        "title": "Tâches d'évaluation",
         "stats": {
           "pending": "en attente",
           "in_progress": "en cours",
@@ -3342,12 +3342,12 @@
         },
         "empty": {
           "title": "Pas encore de tâches",
-          "description": "Créez des tâches pour coordonner le travail et suivre les progrès parmi les membres de votre équipe de revue.",
+          "description": "Créez des tâches pour coordonner le travail et suivre les progrès parmi les membres de votre équipe d'évaluation.",
           "action": "Créer une tâche"
         },
         "form": {
           "createTitle": "Créer une nouvelle tâche",
-          "createDescription": "Créez une tâche pour suivre le travail de votre équipe de revue.",
+          "createDescription": "Créez une tâche pour suivre le travail de votre équipe d'évaluation.",
           "editTitle": "Modifier la tâche",
           "editDescription": "Mettez à jour les détails de la tâche.",
           "title": "Titre",
@@ -3556,7 +3556,7 @@
           "emptyColumn": "Aucune tâche",
           "new": {
             "title": "Créer une nouvelle tâche",
-            "description": "Ajouter une tâche pour suivre le travail de cette revue"
+            "description": "Ajouter une tâche pour suivre le travail de cette évaluation"
           },
           "form": {
             "title": "Titre",
@@ -3719,7 +3719,7 @@
         },
         "empty": {
           "title": "Aucune constatation",
-          "description": "Aucune constatation n'a encore été enregistrée pour cette revue"
+          "description": "Aucune constatation n'a encore été enregistrée pour cette évaluation"
         }
       },
       "report": {
@@ -3769,11 +3769,11 @@
       },
       "settings": {
         "title": "Paramètres",
-        "description": "Configuration et détails de la revue",
-        "editReview": "Modifier la revue",
-        "reviewDetails": "Détails de la revue",
-        "reviewNumber": "Numéro de revue",
-        "reviewType": "Type de revue",
+        "description": "Configuration et détails de l'évaluation",
+        "editReview": "Modifier l'évaluation",
+        "reviewDetails": "Détails de l'évaluation",
+        "reviewNumber": "Numéro d'évaluation",
+        "reviewType": "Type d'évaluation",
         "status": "Statut",
         "phase": "Phase",
         "created": "Créée le",
@@ -3792,12 +3792,12 @@
           "REMOTE": "À distance",
           "HYBRID": "Hybride"
         },
-        "reviewTeam": "Équipe de revue",
-        "leadReviewer": "Réviseur principal",
+        "reviewTeam": "Équipe d'évaluation",
+        "leadReviewer": "Évaluateur principal",
         "roles": {
-          "LEAD_REVIEWER": "Réviseur Principal",
-          "PEER_REVIEWER": "Réviseur Pair",
-          "REVIEWER": "Réviseur",
+          "LEAD_REVIEWER": "Évaluateur principal",
+          "PEER_REVIEWER": "Pair évaluateur",
+          "REVIEWER": "Évaluateur",
           "OBSERVER": "Observateur",
           "COORDINATOR": "Coordinateur",
           "TECHNICAL_EXPERT": "Expert Technique",
@@ -3805,14 +3805,14 @@
         },
         "noTeamMembers": "Aucun membre d'équipe assigné",
         "linkedAssessments": "Évaluations liées",
-        "noLinkedAssessments": "Aucune évaluation liée à cette revue",
+        "noLinkedAssessments": "Aucune évaluation liée à cette évaluation",
         "dangerZone": "Zone de danger",
         "dangerZoneDescription": "Actions irréversibles et destructives",
-        "deleteReview": "Supprimer la revue",
-        "deleteConfirmTitle": "Supprimer cette revue ?",
-        "deleteConfirmDescription": "Cette action est irréversible. Cela supprimera définitivement la revue et toutes les données associées, y compris les constatations, les documents et les rapports.",
+        "deleteReview": "Supprimer l'évaluation",
+        "deleteConfirmTitle": "Supprimer cette évaluation ?",
+        "deleteConfirmDescription": "Cette action est irréversible. Cela supprimera définitivement l'évaluation et toutes les données associées, y compris les constatations, les documents et les rapports.",
         "cancel": "Annuler",
-        "confirmDelete": "Supprimer la revue"
+        "confirmDelete": "Supprimer l'évaluation"
       },
       "keyboard": {
         "title": "Raccourcis clavier",
@@ -3870,7 +3870,7 @@
   },
   "findings": {
     "title": "Constatations",
-    "description": "Gérer et suivre les constatations des revues par les pairs",
+    "description": "Gérer et suivre les constatations des évaluations par les pairs",
     "searchPlaceholder": "Rechercher par référence, titre...",
     "filterByStatus": "Filtrer par statut",
     "filterByType": "Filtrer par type",
@@ -3880,13 +3880,13 @@
     "allSeverities": "Toutes les gravités",
     "referenceNumber": "Référence",
     "noFindings": "Aucune constatation",
-    "noFindingsDescription": "Aucune constatation n'a encore été enregistrée. Les constatations sont créées lors des revues par les pairs.",
+    "noFindingsDescription": "Aucune constatation n'a encore été enregistrée. Les constatations sont créées lors des évaluations par les pairs.",
     "noFindingsWithFilters": "Aucune constatation ne correspond à vos filtres actuels. Essayez d'ajuster vos critères de recherche.",
     "clearFilters": "Effacer les filtres",
     "showingResults": "Affichage de {start} à {end} sur {total} constatations",
     "previous": "Précédent",
     "next": "Suivant",
-    "backToReview": "Retour à la Revue",
+    "backToReview": "Retour à l'Évaluation",
     "table": {
       "reference": "Référence",
       "severity": "Gravité",
@@ -3938,7 +3938,7 @@
     },
     "form": {
       "createTitle": "Ajouter une constatation",
-      "createDescription": "Enregistrer une nouvelle constatation de la revue par les pairs",
+      "createDescription": "Enregistrer une nouvelle constatation de la évaluation par les pairs",
       "editTitle": "Modifier la constatation",
       "editDescription": "Mettre à jour les détails de la constatation",
       "sections": {
@@ -3971,7 +3971,7 @@
     },
     "detail": {
       "backToList": "Retour aux constatations",
-      "review": "Revue par les pairs",
+      "review": "Évaluation par les pairs",
       "organization": "Organisation",
       "question": "Question associée",
       "identifiedAt": "Identifiée le",
@@ -4613,7 +4613,7 @@
       "tabs": {
         "overview": "Aperçu",
         "assessments": "Évaluations",
-        "reviews": "Revues",
+        "reviews": "Évaluations",
         "users": "Utilisateurs",
         "location": "Localisation",
         "membership": "Adhésion",
@@ -4629,8 +4629,8 @@
       "usersTooltip": "Total des utilisateurs enregistrés dans cette organisation",
       "assessments": "Évaluations",
       "assessmentsTooltip": "Total des évaluations réalisées",
-      "reviews": "Revues",
-      "reviewsTooltip": "Revues par les pairs en tant qu'organisation hôte",
+      "reviews": "Évaluations",
+      "reviewsTooltip": "Évaluations par les pairs en tant qu'organisation hôte",
       "reviewers": "Évaluateurs",
       "noAssessments": "Aucune évaluation",
       "noAssessmentsDescription": "Cette organisation n'a pas encore effectué d'évaluations.",
@@ -4639,8 +4639,8 @@
       "assessmentType": "Type",
       "assessmentStatus": "Statut",
       "assessmentDate": "Date",
-      "noReviews": "Aucune revue par les pairs",
-      "noReviewsDescription": "Cette organisation n'a pas encore accueilli de revues par les pairs.",
+      "noReviews": "Aucune évaluation par les pairs",
+      "noReviewsDescription": "Cette organisation n'a pas encore accueilli de évaluations par les pairs.",
       "noUsers": "Aucun utilisateur trouvé",
       "noUsersDescription": "Aucun utilisateur n'est enregistré pour cette organisation.",
       "usersDescription": "{count} utilisateur(s) enregistré(s)",
@@ -4655,7 +4655,7 @@
     },
     "form": {
       "createTitle": "Ajouter une organisation",
-      "createDescription": "Ajouter une nouvelle organisation au Programme AFI de revue par les pairs",
+      "createDescription": "Ajouter une nouvelle organisation au Programme AFI de évaluation par les pairs",
       "editTitle": "Modifier l'organisation",
       "editDescription": "Mettre à jour les informations de {name}",
       "editDescriptionMeta": "Mettre à jour les informations de l'organisation",
@@ -4707,13 +4707,13 @@
   },
   "review": {
     "detail": {
-      "pageTitle": "Détails de la revue",
-      "pageDescription": "Voir les détails de la demande de revue par les pairs",
-      "backToReviews": "Retour aux revues",
-      "loading": "Chargement des détails de la revue...",
+      "pageTitle": "Détails de l'évaluation",
+      "pageDescription": "Voir les détails de la demande de évaluation par les pairs",
+      "backToReviews": "Retour aux évaluations",
+      "loading": "Chargement des détails de l'évaluation...",
       "createdOn": "Créée le {date}",
       "hostOrganization": "Organisation hôte",
-      "reviewType": "Type de revue",
+      "reviewType": "Type d'évaluation",
       "schedule": "Calendrier",
       "requestedDates": "Dates demandées",
       "plannedDates": "Dates planifiées",
@@ -4725,9 +4725,9 @@
       "transportationProvided": "Transport",
       "primaryContact": "Contact principal",
       "linkedAssessments": "Évaluations liées",
-      "noAssessments": "Aucune évaluation liée à cette revue.",
-      "reviewTeam": "Équipe de revue",
-      "reviewTeamDescription": "Membres de l'équipe assignés à cette revue",
+      "noAssessments": "Aucune évaluation liée à cette évaluation.",
+      "reviewTeam": "Équipe d'évaluation",
+      "reviewTeamDescription": "Membres de l'équipe assignés à cette évaluation",
       "leadQualified": "Qualifié chef d'équipe",
       "specialRequirements": "Exigences spéciales",
       "findings": "Constatations",
@@ -4736,8 +4736,8 @@
       "edit": "Modifier",
       "error": {
         "title": "Erreur",
-        "notFound": "Revue non trouvée",
-        "notFoundDescription": "La revue que vous recherchez n'existe pas ou vous n'avez pas la permission de la consulter."
+        "notFound": "Évaluation non trouvée",
+        "notFoundDescription": "L'évaluation que vous recherchez n'existe pas ou vous n'avez pas la permission de la consulter."
       },
       "status": {
         "requested": "Demandée",
@@ -4751,10 +4751,10 @@
         "cancelled": "Annulée"
       },
       "types": {
-        "full": "Revue complète",
-        "focused": "Revue ciblée",
-        "follow_up": "Revue de suivi",
-        "surveillance": "Revue de surveillance"
+        "full": "Évaluation complète",
+        "focused": "Évaluation ciblée",
+        "follow_up": "Évaluation de suivi",
+        "surveillance": "Évaluation de surveillance"
       },
       "location": {
         "on_site": "Sur site",
@@ -4775,16 +4775,16 @@
       },
       "assignTeam": "Assigner l'équipe",
       "modifyTeam": "Modifier l'équipe",
-      "noTeamMembers": "Aucun membre n'a encore été assigné à cette revue.",
+      "noTeamMembers": "Aucun membre n'a encore été assigné à cette évaluation.",
       "assignTeamNow": "Assigner une équipe maintenant",
-      "coiCannotAssign": "Conflit d'intérêts : Vous ne pouvez pas assigner des évaluateurs à la revue de votre propre organisation. Un autre coordinateur de programme doit gérer cette affectation.",
+      "coiCannotAssign": "Conflit d'intérêts : Vous ne pouvez pas assigner des évaluateurs à l'évaluation de votre propre organisation. Un autre coordinateur de programme doit gérer cette affectation.",
       "timeline": {
-        "title": "Chronologie de la revue",
-        "description": "Suivez la progression de cette revue par les pairs à travers chaque phase"
+        "title": "Chronologie de l'évaluation",
+        "description": "Suivez la progression de cette évaluation par les pairs à travers chaque phase"
       },
       "report": {
-        "title": "Rapport de revue",
-        "description": "Générer et gérer le rapport de revue par les pairs",
+        "title": "Rapport d'évaluation",
+        "description": "Générer et gérer le rapport de évaluation par les pairs",
         "status": {
           "not_generated": "Non généré",
           "draft": "Brouillon",
@@ -4811,15 +4811,15 @@
         "publishSuccess": "Rapport publié avec succès",
         "generatedAt": "Généré le {date}",
         "publishedAt": "Publié le {date}",
-        "cannotGenerate": "Vous n'avez pas la permission de générer des rapports, ou la revue n'est pas dans un statut qui permet la génération de rapports."
+        "cannotGenerate": "Vous n'avez pas la permission de générer des rapports, ou l'évaluation n'est pas dans un statut qui permet la génération de rapports."
       }
     },
     "teamWizard": {
-      "pageTitle": "Assigner l'équipe de revue",
-      "pageDescription": "Sélectionner et assigner des évaluateurs à l'équipe de revue par les pairs",
-      "title": "Assigner l'équipe de revue",
-      "subtitle": "Revue {reference} - {organization}",
-      "backToReview": "Retour à la revue",
+      "pageTitle": "Assigner l'équipe d'évaluation",
+      "pageDescription": "Sélectionner et assigner des évaluateurs à l'équipe de évaluation par les pairs",
+      "title": "Assigner l'équipe d'évaluation",
+      "subtitle": "Évaluation {reference} - {organization}",
+      "backToReview": "Retour à l'évaluation",
       "steps": {
         "criteria": "Critères",
         "selection": "Sélection",
@@ -4834,10 +4834,10 @@
         "assigning": "Assignation..."
       },
       "criteria": {
-        "reviewContext": "Contexte de la revue",
-        "reviewContextDescription": "Résumé des exigences de la revue par les pairs",
+        "reviewContext": "Contexte de l'évaluation",
+        "reviewContextDescription": "Résumé des exigences de la évaluation par les pairs",
         "hostOrganization": "Organisation hôte",
-        "reviewPeriod": "Période de revue",
+        "reviewPeriod": "Période d'évaluation",
         "areasInScope": "Domaines concernés",
         "notSet": "Non défini",
         "teamSize": "Taille de l'équipe",
@@ -4846,13 +4846,13 @@
         "minimum": "Min",
         "recommended": "Rec",
         "maximum": "Max",
-        "teamSizeNote": "La taille idéale de l'équipe est de 3 évaluateurs. Les petites équipes conviennent aux revues ciblées, tandis que les grandes équipes peuvent couvrir plus de domaines simultanément.",
+        "teamSizeNote": "La taille idéale de l'équipe est de 3 évaluateurs. Les petites équipes conviennent aux évaluations ciblées, tandis que les grandes équipes peuvent couvrir plus de domaines simultanément.",
         "requiredExpertise": "Expertise requise",
-        "requiredExpertiseDescription": "Sélectionner les domaines d'expertise nécessaires pour cette revue",
+        "requiredExpertiseDescription": "Sélectionner les domaines d'expertise nécessaires pour cette évaluation",
         "inScope": "Dans le périmètre",
         "noExpertiseWarning": "Veuillez sélectionner au moins un domaine d'expertise pour rechercher des évaluateurs correspondants.",
         "requiredLanguages": "Langues requises",
-        "requiredLanguagesDescription": "Sélectionner les langues nécessaires pour mener la revue",
+        "requiredLanguagesDescription": "Sélectionner les langues nécessaires pour mener l'évaluation",
         "noLanguageWarning": "Veuillez sélectionner au moins une exigence linguistique.",
         "languageNote": "Au moins un membre de l'équipe doit maîtriser chaque langue sélectionnée pour mener les entretiens et examiner la documentation.",
         "teamSizeSummary": "{count} membres d'équipe",
@@ -4883,10 +4883,10 @@
         }
       },
       "confirmation": {
-        "reviewSummary": "Résumé de la revue",
+        "reviewSummary": "Résumé de l'évaluation",
         "reference": "Référence",
         "hostOrganization": "Organisation hôte",
-        "period": "Période de revue",
+        "period": "Période d'évaluation",
         "notSet": "Non défini",
         "teamMembers": "Membres de l'équipe",
         "teamMembersDescription": "{count} évaluateurs assignés à cette équipe",
@@ -4910,7 +4910,7 @@
           "missingLanguages": "Couverture linguistique manquante : {languages}"
         },
         "readyTitle": "Équipe prête",
-        "readyDescription": "L'équipe répond à toutes les exigences et est prête à être assignée à la revue."
+        "readyDescription": "L'équipe répond à toutes les exigences et est prête à être assignée à l'évaluation."
       },
       "roles": {
         "LEAD_REVIEWER": "Évaluateur principal",
@@ -4928,11 +4928,11 @@
         "notLeadQualified": "Ce évaluateur n'est pas qualifié pour être évaluateur principal",
         "leadRequirements": "Exigences pour évaluateur principal",
         "requiresLeadStatus": "Doit avoir le statut Qualifié Chef d'équipe",
-        "requiresMinReviews": "Doit compléter au moins {required} revues (actuellement {current})"
+        "requiresMinReviews": "Doit compléter au moins {required} évaluations (actuellement {current})"
       },
       "error": {
         "title": "Erreur",
-        "reviewNotFound": "La revue n'a pas pu être trouvée.",
+        "reviewNotFound": "L'évaluation n'a pas pu être trouvée.",
         "submitTitle": "Échec de l'assignation"
       }
     },
@@ -4947,7 +4947,7 @@
       "loadError": "Échec du chargement des évaluateurs",
       "noReviewers": "Aucun évaluateur ne correspond à vos critères",
       "score": "score",
-      "leadQualified": "Qualifié pour diriger des revues",
+      "leadQualified": "Qualifié pour diriger des évaluations",
       "selected": "Sélectionné",
       "add": "Ajouter",
       "selectedTeam": "Équipe sélectionnée",
@@ -4960,24 +4960,24 @@
       "avgScore": "Score moyen"
     },
     "teamWizardDialog": {
-      "title": "Assigner l'équipe de revue",
+      "title": "Assigner l'équipe d'évaluation",
       "steps": {
-        "review": "Détails de la revue",
+        "review": "Détails de l'évaluation",
         "select": "Sélectionner l'équipe",
         "confirm": "Confirmer"
       },
-      "reviewInfo": "Informations sur la revue",
+      "reviewInfo": "Informations sur l'évaluation",
       "hostOrganization": "Organisation hôte",
       "location": "Lieu",
       "scheduledDates": "Dates prévues",
-      "reviewScope": "Portée de la revue",
+      "reviewScope": "Portée de l'évaluation",
       "areasInScope": "Domaines concernés",
       "tbd": "À déterminer",
       "existingTeamWarning": {
         "title": "Équipe existante",
-        "description": "Cette revue a déjà {count} membre(s) d'équipe assigné(s). Continuer remplacera l'équipe actuelle."
+        "description": "Cette évaluation a déjà {count} membre(s) d'équipe assigné(s). Continuer remplacera l'équipe actuelle."
       },
-      "reviewNotFound": "Revue non trouvée",
+      "reviewNotFound": "Évaluation non trouvée",
       "teamSummary": "Résumé de l'équipe",
       "matchScore": "Score de correspondance",
       "roles": {
@@ -4999,15 +4999,15 @@
       "next": "Suivant",
       "assignTeam": "Assigner l'équipe",
       "assigning": "Assignation...",
-      "success": "Équipe de revue assignée avec succès",
+      "success": "Équipe d'évaluation assignée avec succès",
       "error": "Échec de l'assignation de l'équipe",
       "teamValid": "Équipe prête",
       "needsLead": "Sélectionnez un évaluateur principal",
       "needsMoreMembers": "Minimum {min} membres requis",
       "types": {
-        "FULL": "Revue complète",
-        "FOCUSED": "Revue ciblée",
-        "FOLLOW_UP": "Revue de suivi",
+        "FULL": "Évaluation complète",
+        "FOCUSED": "Évaluation ciblée",
+        "FOLLOW_UP": "Évaluation de suivi",
         "SURVEILLANCE": "Surveillance"
       },
       "status": {
@@ -5017,7 +5017,7 @@
         "SCHEDULED": "Programmée",
         "in_progress": "En cours",
         "REPORT_DRAFTING": "Rédaction du rapport",
-        "REPORT_REVIEW": "Revue du rapport",
+        "REPORT_REVIEW": "Révision du rapport",
         "COMPLETED": "Terminée",
         "CANCELLED": "Annulée"
       },
@@ -5028,8 +5028,8 @@
       }
     },
     "invitations": {
-      "title": "Invitations aux revues",
-      "description": "Missions de revue en attente de votre réponse",
+      "title": "Invitations aux évaluations",
+      "description": "Missions d'évaluation en attente de votre réponse",
       "noInvitations": "Vous n'avez aucune invitation en attente.",
       "invitedOn": "Invité le {date}",
       "tbd": "À déterminer",
@@ -5037,13 +5037,13 @@
       "decline": "Décliner",
       "cancel": "Annuler",
       "confirmDecline": "Décliner l'invitation",
-      "acceptSuccess": "Vous avez accepté l'invitation pour la revue {reference}",
+      "acceptSuccess": "Vous avez accepté l'invitation pour l'évaluation {reference}",
       "declineSuccess": "Invitation déclinée",
       "declineDialog": {
         "title": "Décliner l'invitation",
         "description": "Veuillez indiquer la raison de votre refus. Cela aide les coordinateurs à trouver un remplaçant approprié.",
         "reasonLabel": "Raison du refus",
-        "reasonPlaceholder": "Veuillez expliquer pourquoi vous ne pouvez pas participer à cette revue (ex: conflit d'agenda, charge de travail, raisons personnelles)...",
+        "reasonPlaceholder": "Veuillez expliquer pourquoi vous ne pouvez pas participer à cette évaluation (ex: conflit d'agenda, charge de travail, raisons personnelles)...",
         "minChars": "Veuillez fournir au moins 10 caractères"
       },
       "coordinator": {
@@ -5057,7 +5057,7 @@
         "confirmed": "confirmé(s)",
         "teamReady": {
           "title": "Équipe prête",
-          "description": "Tous les membres de l'équipe ont confirmé leur participation. La revue peut passer à la planification."
+          "description": "Tous les membres de l'équipe ont confirmé leur participation. L'évaluation peut passer à la planification."
         },
         "teamNotReady": {
           "title": "Équipe non prête",
@@ -5090,22 +5090,22 @@
       }
     },
     "edit": {
-      "pageTitle": "Modifier la demande de revue",
-      "pageDescription": "Modifier votre demande de revue par les pairs",
-      "title": "Modifier la demande de revue",
+      "pageTitle": "Modifier la demande d'évaluation",
+      "pageDescription": "Modifier votre demande d'évaluation par les pairs",
+      "title": "Modifier la demande d'évaluation",
       "subtitle": "Modification de la demande {reference}",
-      "backToDetail": "Retour aux détails de la revue",
-      "backToReviews": "Retour aux revues",
+      "backToDetail": "Retour aux détails de l'évaluation",
+      "backToReviews": "Retour aux évaluations",
       "schedule": {
         "title": "Calendrier",
-        "description": "Mettre à jour les dates demandées pour votre revue par les pairs.",
+        "description": "Mettre à jour les dates demandées pour votre évaluation par les pairs.",
         "startDate": "Date de début",
         "endDate": "Date de fin",
         "selectDate": "Sélectionner une date"
       },
       "logistics": {
         "title": "Logistique",
-        "description": "Mettre à jour les préférences logistiques pour la revue.",
+        "description": "Mettre à jour les préférences logistiques pour l'évaluation.",
         "locationType": "Type de lieu",
         "onSite": "Sur site",
         "hybrid": "Hybride",
@@ -5119,16 +5119,16 @@
       },
       "contact": {
         "title": "Contact principal",
-        "description": "Mettre à jour les coordonnées du contact principal pour cette revue.",
+        "description": "Mettre à jour les coordonnées du contact principal pour cette évaluation.",
         "name": "Nom du contact",
         "email": "Email du contact",
         "phone": "Téléphone du contact"
       },
       "requirements": {
         "title": "Exigences spéciales",
-        "description": "Mettre à jour les exigences spéciales ou notes pour l'équipe de revue.",
+        "description": "Mettre à jour les exigences spéciales ou notes pour l'équipe d'évaluation.",
         "placeholder": "Entrez les exigences spéciales, besoins d'accessibilité, protocoles de sécurité ou autres considérations...",
-        "help": "Incluez toute information utile pour aider l'équipe de revue à se préparer"
+        "help": "Incluez toute information utile pour aider l'équipe d'évaluation à se préparer"
       },
       "actions": {
         "cancel": "Annuler",
@@ -5137,23 +5137,23 @@
       },
       "success": {
         "title": "Modifications enregistrées",
-        "description": "Votre demande de revue a été mise à jour avec succès."
+        "description": "Votre demande d'évaluation a été mise à jour avec succès."
       },
       "error": {
         "title": "Échec de l'enregistrement",
         "loadTitle": "Échec du chargement",
-        "notFound": "Revue non trouvée",
-        "notFoundDescription": "La revue que vous essayez de modifier n'existe pas.",
+        "notFound": "Évaluation non trouvée",
+        "notFoundDescription": "L'évaluation que vous essayez de modifier n'existe pas.",
         "notEditable": "Modification impossible",
-        "notEditableDescription": "Cette revue ne peut plus être modifiée car elle a dépassé le stade de la demande initiale."
+        "notEditableDescription": "Cette évaluation ne peut plus être modifiée car elle a dépassé le stade de la demande initiale."
       }
     },
     "request": {
-      "pageTitle": "Demande de revue par les pairs",
-      "pageDescription": "Soumettre une demande de revue par les pairs pour votre organisation",
-      "title": "Demander une revue par les pairs",
-      "description": "Complétez les étapes suivantes pour demander une revue par les pairs pour votre organisation.",
-      "backToReviews": "Retour aux revues",
+      "pageTitle": "Demande de évaluation par les pairs",
+      "pageDescription": "Soumettre une demande de évaluation par les pairs pour votre organisation",
+      "title": "Demander une évaluation par les pairs",
+      "description": "Complétez les étapes suivantes pour demander une évaluation par les pairs pour votre organisation.",
+      "backToReviews": "Retour aux évaluations",
       "steps": {
         "assessment": "Évaluation",
         "scope": "Portée",
@@ -5163,30 +5163,30 @@
       },
       "assessment": {
         "title": "Sélectionner les évaluations",
-        "description": "Choisissez les auto-évaluations à inclure dans la revue par les pairs.",
+        "description": "Choisissez les auto-évaluations à inclure dans la évaluation par les pairs.",
         "placeholder": "La sélection des évaluations sera disponible ici.",
         "selectLabel": "Auto-évaluations",
-        "selectDescription": "Sélectionnez une ou plusieurs auto-évaluations complétées à inclure dans cette demande de revue par les pairs.",
+        "selectDescription": "Sélectionnez une ou plusieurs auto-évaluations complétées à inclure dans cette demande de évaluation par les pairs.",
         "submittedOn": "Soumise le {date}",
         "noAssessments": "Aucune évaluation disponible",
-        "noAssessmentsDescription": "Vous devez compléter et soumettre au moins une auto-évaluation avant de pouvoir demander une revue par les pairs.",
+        "noAssessmentsDescription": "Vous devez compléter et soumettre au moins une auto-évaluation avant de pouvoir demander une évaluation par les pairs.",
         "available": "{count, plural, one {# évaluation disponible} other {# évaluations disponibles}}"
       },
       "scope": {
-        "title": "Définir la portée de la revue",
-        "description": "Spécifiez le type de revue et les domaines d'intérêt.",
+        "title": "Définir la portée de l'évaluation",
+        "description": "Spécifiez le type d'évaluation et les domaines d'intérêt.",
         "placeholder": "La configuration de la portée sera disponible ici.",
-        "typeLabel": "Type de revue",
+        "typeLabel": "Type d'évaluation",
         "types": {
-          "ansOnly": "Revue ANS uniquement",
+          "ansOnly": "Évaluation ANS uniquement",
           "ansOnlyDesc": "Concentrez-vous sur les services de navigation aérienne basés sur le cadre USOAP CMA 2024 de l'OACI. Couvre les domaines ATS, AIM, MET, CNS et SAR.",
-          "smsOnly": "Revue SGS uniquement",
+          "smsOnly": "Évaluation SGS uniquement",
           "smsOnlyDesc": "Concentrez-vous sur le système de gestion de la sécurité basé sur le Standard d'Excellence CANSO. Couvre la politique, la gestion des risques, l'assurance et la promotion.",
-          "comprehensive": "Revue complète",
-          "comprehensiveDesc": "Revue complète couvrant à la fois les aspects ANS et SGS. Recommandé lorsque les deux types d'évaluation ont été complétés."
+          "comprehensive": "Évaluation complète",
+          "comprehensiveDesc": "Évaluation complète couvrant à la fois les aspects ANS et SGS. Recommandé lorsque les deux types d'évaluation ont été complétés."
         },
         "focusAreasLabel": "Domaines d'intérêt (Optionnel)",
-        "focusAreasDescription": "Sélectionnez les domaines spécifiques sur lesquels vous souhaitez que l'équipe de revue se concentre. Laissez vide pour une revue complète.",
+        "focusAreasDescription": "Sélectionnez les domaines spécifiques sur lesquels vous souhaitez que l'équipe d'évaluation se concentre. Laissez vide pour une évaluation complète.",
         "focusAreas": {
           "ATS": "Services de la circulation aérienne",
           "AIM": "Gestion de l'information aéronautique",
@@ -5201,52 +5201,52 @@
       },
       "schedule": {
         "title": "Calendrier souhaité",
-        "description": "Indiquez vos dates préférées pour la revue par les pairs.",
-        "durationNote": "Exigences de durée de la revue",
-        "durationDescription": "Les revues par les pairs durent généralement 3 à 10 jours. Les demandes doivent être soumises au moins 30 jours à l'avance pour permettre la constitution de l'équipe et la préparation.",
+        "description": "Indiquez vos dates préférées pour la évaluation par les pairs.",
+        "durationNote": "Exigences de durée de l'évaluation",
+        "durationDescription": "Les évaluations par les pairs durent généralement 3 à 10 jours. Les demandes doivent être soumises au moins 30 jours à l'avance pour permettre la constitution de l'équipe et la préparation.",
         "startDate": "Date de début",
         "endDate": "Date de fin",
         "selectDate": "Sélectionner une date",
         "startDateHelp": "La date la plus proche disponible est dans 30 jours",
         "endDateHelp": "Doit être 3 à 10 jours après la date de début",
-        "duration": "Durée de la revue : {days} jours"
+        "duration": "Durée de l'évaluation : {days} jours"
       },
       "logistics": {
         "title": "Logistique et contact",
         "description": "Fournissez les informations logistiques et les coordonnées du contact principal.",
-        "locationLabel": "Type de lieu de la revue",
+        "locationLabel": "Type de lieu de l'évaluation",
         "location": {
-          "onSite": "Revue sur site",
-          "onSiteDesc": "L'équipe de revue se rend dans vos locaux pour toutes les activités",
-          "hybrid": "Revue hybride",
+          "onSite": "Évaluation sur site",
+          "onSiteDesc": "L'équipe d'évaluation se rend dans vos locaux pour toutes les activités",
+          "hybrid": "Évaluation hybride",
           "hybridDesc": "Combinaison de visites sur site et de sessions à distance",
-          "remote": "Revue à distance",
-          "remoteDesc": "Revue entièrement conduite virtuellement par visioconférence"
+          "remote": "Évaluation à distance",
+          "remoteDesc": "Évaluation entièrement conduite virtuellement par visioconférence"
         },
         "supportLabel": "Soutien fourni",
-        "accommodationProvided": "L'hébergement sera fourni à l'équipe de revue",
-        "transportationProvided": "Le transport sera organisé pour l'équipe de revue",
+        "accommodationProvided": "L'hébergement sera fourni à l'équipe d'évaluation",
+        "transportationProvided": "Le transport sera organisé pour l'équipe d'évaluation",
         "languageLabel": "Langue préférée",
-        "languageDescription": "Sélectionnez la langue principale pour les activités de revue et les rapports",
+        "languageDescription": "Sélectionnez la langue principale pour les activités d'évaluation et les rapports",
         "bothLanguages": "Les deux (Bilingue)",
         "contactLabel": "Coordonnées du contact principal",
         "contactName": "Nom du contact",
         "contactEmail": "Email du contact",
         "contactPhone": "Téléphone du contact",
         "specialRequirements": "Exigences particulières",
-        "specialRequirementsPlaceholder": "Indiquez toute exigence particulière, besoins d'accessibilité, protocoles de sécurité ou autres considérations pour l'équipe de revue...",
-        "specialRequirementsHelp": "Incluez toute information qui aiderait l'équipe de revue à préparer sa visite"
+        "specialRequirementsPlaceholder": "Indiquez toute exigence particulière, besoins d'accessibilité, protocoles de sécurité ou autres considérations pour l'équipe d'évaluation...",
+        "specialRequirementsHelp": "Incluez toute information qui aiderait l'équipe d'évaluation à préparer sa visite"
       },
       "review": {
         "title": "Vérifier et soumettre",
         "description": "Vérifiez votre demande avant de la soumettre.",
         "confirmTitle": "Prêt à soumettre",
-        "confirmDescription": "Veuillez vérifier les détails ci-dessous avant de soumettre votre demande de revue par les pairs. Vous pouvez revenir aux étapes précédentes pour apporter des modifications.",
+        "confirmDescription": "Veuillez vérifier les détails ci-dessous avant de soumettre votre demande de évaluation par les pairs. Vous pouvez revenir aux étapes précédentes pour apporter des modifications.",
         "organization": "Organisation",
         "assessments": "Évaluations à examiner",
-        "reviewType": "Type de revue",
+        "reviewType": "Type d'évaluation",
         "schedule": "Calendrier demandé",
-        "location": "Lieu de la revue",
+        "location": "Lieu de l'évaluation",
         "language": "Langue préférée",
         "contact": "Contact principal",
         "specialRequirements": "Exigences particulières",
@@ -5255,9 +5255,9 @@
         "transportationIncluded": "Transport",
         "bothLanguages": "Les deux (Bilingue)",
         "types": {
-          "ansOnly": "Revue ANS (Focus USOAP CMA)",
-          "smsOnly": "Revue SMS (Focus CANSO SoE)",
-          "comprehensive": "Revue complète (ANS + SMS)"
+          "ansOnly": "Évaluation ANS (Focus USOAP CMA)",
+          "smsOnly": "Évaluation SMS (Focus CANSO SoE)",
+          "comprehensive": "Évaluation complète (ANS + SMS)"
         },
         "locations": {
           "onSite": "Sur site",
@@ -5273,14 +5273,14 @@
       },
       "prerequisites": {
         "notMetTitle": "Prérequis non satisfaits",
-        "notMetDescription": "Avant de demander une revue par les pairs, les exigences suivantes doivent être satisfaites :",
+        "notMetDescription": "Avant de demander une évaluation par les pairs, les exigences suivantes doivent être satisfaites :",
         "noAssessmentTitle": "Complétez d'abord une auto-évaluation",
-        "noAssessmentDescription": "Vous devez compléter et soumettre au moins une auto-évaluation avant de demander une revue par les pairs.",
+        "noAssessmentDescription": "Vous devez compléter et soumettre au moins une auto-évaluation avant de demander une évaluation par les pairs.",
         "goToAssessments": "Aller aux évaluations"
       },
       "success": {
         "title": "Demande soumise",
-        "description": "Votre demande de revue par les pairs {referenceNumber} a été soumise avec succès."
+        "description": "Votre demande de évaluation par les pairs {referenceNumber} a été soumise avec succès."
       },
       "error": {
         "title": "Échec de la soumission",
@@ -5288,50 +5288,50 @@
       }
     },
     "new": {
-      "pageTitle": "Planifier une revue par les pairs",
-      "pageDescription": "Créer et planifier une nouvelle revue par les pairs pour une organisation",
-      "title": "Planifier une nouvelle revue par les pairs",
-      "description": "Créez une nouvelle revue par les pairs en sélectionnant l'organisation hôte et en configurant les détails de la revue.",
-      "success": "Revue par les pairs créée avec succès",
-      "error": "Échec de la création de la revue par les pairs",
-      "submit": "Planifier la revue",
+      "pageTitle": "Planifier une évaluation par les pairs",
+      "pageDescription": "Créer et planifier une nouvelle évaluation par les pairs pour une organisation",
+      "title": "Planifier une nouvelle évaluation par les pairs",
+      "description": "Créez une nouvelle évaluation par les pairs en sélectionnant l'organisation hôte et en configurant les détails de l'évaluation.",
+      "success": "Évaluation par les pairs créée avec succès",
+      "error": "Échec de la création de la évaluation par les pairs",
+      "submit": "Planifier l'évaluation",
       "sections": {
         "organization": "Organisation hôte",
         "organizationDesc": "Sélectionnez l'organisation qui sera évaluée",
         "organizationDescOversight": "Sélectionnez l'ANSP cible qui sera évalué",
-        "organizationDescAnsp": "Vous demandez une revue par les pairs pour votre organisation",
-        "reviewType": "Type de revue",
-        "reviewTypeDesc": "Choisissez le type et la portée de la revue par les pairs",
+        "organizationDescAnsp": "Vous demandez une évaluation par les pairs pour votre organisation",
+        "reviewType": "Type d'évaluation",
+        "reviewTypeDesc": "Choisissez le type et la portée de l'évaluation par les pairs",
         "schedule": "Calendrier",
-        "scheduleDesc": "Définissez les dates de revue souhaitées",
+        "scheduleDesc": "Définissez les dates d'évaluation souhaitées",
         "logistics": "Logistique",
         "logisticsDesc": "Configurez le lieu, la langue et les détails d'hébergement",
         "contact": "Contact principal",
-        "contactDesc": "Fournissez les coordonnées du contact principal pour cette revue"
+        "contactDesc": "Fournissez les coordonnées du contact principal pour cette évaluation"
       },
       "fields": {
         "hostOrganization": "Organisation hôte",
         "selectOrganization": "Sélectionnez une organisation...",
         "selectTargetAnsp": "Sélectionner l'ANSP cible",
-        "selectTargetAnspHelp": "Sélectionnez l'ANSP qui fera l'objet de cette revue par les pairs",
+        "selectTargetAnspHelp": "Sélectionnez l'ANSP qui fera l'objet de cette évaluation par les pairs",
         "organization": "Organisation",
         "loadingOrg": "Chargement de l'organisation...",
-        "requestingForYourOrg": "Vous demandez une revue par les pairs pour votre organisation. Votre demande sera examinée et approuvée par le coordinateur du programme.",
-        "requestWillBeReviewed": "Une fois approuvée, une équipe de revue sera assignée et la revue sera planifiée.",
+        "requestingForYourOrg": "Vous demandez une évaluation par les pairs pour votre organisation. Votre demande sera examinée et approuvée par le coordinateur du programme.",
+        "requestWillBeReviewed": "Une fois approuvée, une équipe d'évaluation sera assignée et l'évaluation sera planifiée.",
         "assessments": "Auto-évaluations",
         "assessmentsDesc": "Sélectionnez les évaluations soumises à réviser",
         "submittedOn": "Soumis",
         "noAssessments": "Aucune auto-évaluation soumise disponible pour cette organisation. L'organisation doit d'abord compléter et soumettre une auto-évaluation.",
-        "type": "Type de revue",
+        "type": "Type d'évaluation",
         "focusAreas": "Domaines prioritaires",
-        "focusAreasDesc": "Sélectionnez les domaines spécifiques sur lesquels se concentrer pour cette revue",
+        "focusAreasDesc": "Sélectionnez les domaines spécifiques sur lesquels se concentrer pour cette évaluation",
         "startDate": "Date de début souhaitée",
         "endDate": "Date de fin souhaitée",
         "selectDate": "Sélectionner une date",
         "locationType": "Type de lieu",
         "languagePreference": "Préférence linguistique",
         "accommodationProvided": "Hébergement fourni",
-        "accommodationDesc": "L'organisation hôte fournira l'hébergement pour l'équipe de revue",
+        "accommodationDesc": "L'organisation hôte fournira l'hébergement pour l'équipe d'évaluation",
         "transportationProvided": "Transport fourni",
         "transportationDesc": "L'organisation hôte organisera le transport local",
         "contactName": "Nom du contact",
@@ -5342,16 +5342,16 @@
         "contactPhonePlaceholder": "Entrez le téléphone du contact",
         "specialRequirements": "Exigences spéciales",
         "specialRequirementsPlaceholder": "Entrez les exigences spéciales ou notes...",
-        "specialRequirementsDesc": "Ajoutez toute exigence supplémentaire, contrainte ou information pertinente pour cette revue"
+        "specialRequirementsDesc": "Ajoutez toute exigence supplémentaire, contrainte ou information pertinente pour cette évaluation"
       },
       "reviewTypes": {
-        "FULL": "Revue complète",
-        "FULLDesc": "Revue exhaustive couvrant tous les domaines ANS et SMS",
-        "FOCUSED": "Revue ciblée",
-        "FOCUSEDDesc": "Revue ciblée sur des domaines spécifiques",
-        "FOLLOW_UP": "Revue de suivi",
-        "FOLLOW_UPDesc": "Revue pour vérifier la mise en œuvre des constatations précédentes",
-        "SURVEILLANCE": "Revue de surveillance",
+        "FULL": "Évaluation complète",
+        "FULLDesc": "Évaluation exhaustive couvrant tous les domaines ANS et SMS",
+        "FOCUSED": "Évaluation ciblée",
+        "FOCUSEDDesc": "Évaluation ciblée sur des domaines spécifiques",
+        "FOLLOW_UP": "Évaluation de suivi",
+        "FOLLOW_UPDesc": "Évaluation pour vérifier la mise en œuvre des constatations précédentes",
+        "SURVEILLANCE": "Évaluation de surveillance",
         "SURVEILLANCEDesc": "Surveillance périodique de la conformité continue"
       },
       "locationTypes": {
@@ -5370,14 +5370,14 @@
       "awaitingAction": "En attente d'action",
       "completed": "Terminée",
       "cancelled": "Annulée",
-      "transitionSuccess": "Statut de la revue mis à jour vers {status}",
-      "transitionError": "Échec de la mise à jour du statut de la revue",
+      "transitionSuccess": "Statut de l'évaluation mis à jour vers {status}",
+      "transitionError": "Échec de la mise à jour du statut de l'évaluation",
       "errorLoadingActions": "Échec du chargement des actions du flux de travail",
       "cancel": "Annuler",
       "confirm": "Confirmer",
       "processing": "Traitement...",
       "workflowProgress": "Progression du flux",
-      "workflowDescription": "Suivre la progression de cette revue par les pairs",
+      "workflowDescription": "Suivre la progression de cette évaluation par les pairs",
       "progressPercent": "{percent}% terminé",
       "currentStep": "En cours",
       "teamMembers": "Équipe",
@@ -5402,31 +5402,31 @@
         "assignTeam": "Assigner l'équipe",
         "startPlanning": "Démarrer la planification",
         "setDates": "Définir les dates",
-        "scheduleReview": "Programmer la revue",
-        "startReview": "Démarrer la revue",
+        "scheduleReview": "Programmer l'évaluation",
+        "startReview": "Démarrer l'évaluation",
         "completeFieldwork": "Terminer le travail de terrain",
         "submitForReview": "Soumettre le rapport",
         "finalizeReport": "Finaliser le rapport",
         "requestRevisions": "Demander des révisions"
       },
       "confirmTitle": {
-        "approveRequest": "Approuver la demande de revue ?",
-        "cancelRequest": "Annuler la revue ?",
-        "scheduleReview": "Programmer la revue ?",
-        "startReview": "Démarrer la revue ?",
+        "approveRequest": "Approuver la demande d'évaluation ?",
+        "cancelRequest": "Annuler l'évaluation ?",
+        "scheduleReview": "Programmer l'évaluation ?",
+        "startReview": "Démarrer l'évaluation ?",
         "completeFieldwork": "Terminer le travail de terrain ?",
         "submitForReview": "Soumettre le rapport pour révision ?",
-        "finalizeReport": "Finaliser et terminer la revue ?",
+        "finalizeReport": "Finaliser et terminer l'évaluation ?",
         "requestRevisions": "Demander des révisions du rapport ?"
       },
       "confirmDescription": {
-        "approveRequest": "Cela approuvera la demande de revue et la fera passer à l'étape de planification. L'organisation hôte sera notifiée.",
-        "cancelRequest": "Cela annulera la demande de revue. Cette action ne peut pas être annulée.",
-        "scheduleReview": "Cela marquera la revue comme programmée. Les membres de l'équipe seront notifiés des dates confirmées.",
-        "startReview": "Cela marquera la revue comme en cours. La date de début réelle sera enregistrée.",
+        "approveRequest": "Cela approuvera la demande d'évaluation et la fera passer à l'étape de planification. L'organisation hôte sera notifiée.",
+        "cancelRequest": "Cela annulera la demande d'évaluation. Cette action ne peut pas être annulée.",
+        "scheduleReview": "Cela marquera l'évaluation comme programmée. Les membres de l'équipe seront notifiés des dates confirmées.",
+        "startReview": "Cela marquera l'évaluation comme en cours. La date de début réelle sera enregistrée.",
         "completeFieldwork": "Cela terminera la phase de travail sur le terrain et passera à la rédaction du rapport.",
         "submitForReview": "Cela soumettra le rapport pour révision par la direction du programme.",
-        "finalizeReport": "Cela finalisera le rapport et marquera la revue comme terminée.",
+        "finalizeReport": "Cela finalisera le rapport et marquera l'évaluation comme terminée.",
         "requestRevisions": "Cela renverra le rapport à l'équipe pour révisions."
       },
       "cancellationReason": "Motif d'annulation",
@@ -5434,22 +5434,22 @@
       "notesPlaceholder": "Ajouter des notes pertinentes...",
       "checklist": {
         "requestApproved": "Demande approuvée",
-        "teamAssigned": "Équipe de revue assignée",
+        "teamAssigned": "Équipe d'évaluation assignée",
         "datesConfirmed": "Dates confirmées",
-        "reviewScheduled": "Revue programmée",
-        "reviewStarted": "Revue démarrée",
+        "reviewScheduled": "Évaluation programmée",
+        "reviewStarted": "Évaluation démarrée",
         "reviewCompleted": "Travail de terrain terminé",
         "reportDrafted": "Rapport rédigé",
         "reportFinalized": "Rapport finalisé"
       },
       "hints": {
         "requested": "Examinez les détails de la demande et approuvez pour procéder à l'affectation de l'équipe.",
-        "needsTeam": "Assignez une équipe de revue avec au moins un évaluateur principal et un évaluateur.",
-        "needsDates": "Définissez les dates de début et de fin prévues pour la revue.",
-        "readyToSchedule": "L'équipe et les dates sont définies. Programmez la revue pour notifier les participants.",
-        "scheduled": "La revue est programmée. Démarrez la revue lorsque l'équipe est prête à commencer le travail de terrain.",
-        "inProgress": "La revue est en cours. Terminez le travail de terrain lorsque toutes les activités sont terminées.",
-        "reportDrafting": "L'équipe de revue rédige le rapport. Soumettez une fois terminé pour révision par la direction.",
+        "needsTeam": "Assignez une équipe d'évaluation avec au moins un évaluateur principal et un évaluateur.",
+        "needsDates": "Définissez les dates de début et de fin prévues pour l'évaluation.",
+        "readyToSchedule": "L'équipe et les dates sont définies. Programmez l'évaluation pour notifier les participants.",
+        "scheduled": "L'évaluation est programmée. Démarrez l'évaluation lorsque l'équipe est prête à commencer le travail de terrain.",
+        "inProgress": "L'évaluation est en cours. Terminez le travail de terrain lorsque toutes les activités sont terminées.",
+        "reportDrafting": "L'équipe d'évaluation rédige le rapport. Soumettez une fois terminé pour révision par la direction.",
         "reportReview": "Le rapport est en cours de révision. Approuvez pour finaliser ou demandez des révisions si nécessaire."
       },
       "role": {
@@ -5461,17 +5461,17 @@
     }
   },
   "report": {
-    "pageTitle": "Rapport de Revue",
-    "pageDescription": "Consulter et gérer le rapport de revue",
-    "title": "Rapport de Revue",
+    "pageTitle": "Rapport d'Évaluation",
+    "pageDescription": "Consulter et gérer le rapport d'évaluation",
+    "title": "Rapport d'Évaluation",
     "generateReport": "Générer le Rapport",
     "generateSuccess": "Rapport Généré",
     "generateSuccessDescription": "Le rapport a été généré avec succès.",
     "generateError": "Échec de la Génération",
     "noReport": "Aucun rapport généré pour le moment",
     "noReportTitle": "Aucun Rapport Disponible",
-    "noReportDescription": "Un rapport n'a pas encore été généré pour cette revue. Cliquez sur le bouton ci-dessous pour générer le rapport.",
-    "noReportNotAuthorized": "Un rapport n'a pas encore été généré pour cette revue. Veuillez contacter le responsable de la revue pour générer le rapport.",
+    "noReportDescription": "Un rapport n'a pas encore été généré pour cette évaluation. Cliquez sur le bouton ci-dessous pour générer le rapport.",
+    "noReportNotAuthorized": "Un rapport n'a pas encore été généré pour cette évaluation. Veuillez contacter le responsable de l'évaluation pour générer le rapport.",
     "errorTitle": "Erreur de Chargement du Rapport",
     "unknownError": "Une erreur inconnue s'est produite lors du chargement du rapport.",
     "noDataError": "Aucune donnée de rapport disponible.",
@@ -5500,8 +5500,8 @@
     "finalizeTooltip": "Finaliser et verrouiller le rapport",
     "exportPDF": "Exporter en PDF",
     "breadcrumb": {
-      "reviews": "Revues",
-      "reviewDetails": "Détails de la Revue",
+      "reviews": "Évaluations",
+      "reviewDetails": "Détails de l'Évaluation",
       "report": "Rapport"
     },
     "status": {
@@ -5578,8 +5578,8 @@
       "componentBreakdown": "Répartition par Composante",
       "total": "total",
       "questions": "questions",
-      "noANSAssessment": "Aucune donnée d'évaluation ANS disponible pour cette revue.",
-      "noSMSAssessment": "Aucune donnée d'évaluation SMS disponible pour cette revue."
+      "noANSAssessment": "Aucune donnée d'évaluation ANS disponible pour cette évaluation.",
+      "noSMSAssessment": "Aucune donnée d'évaluation SMS disponible pour cette évaluation."
     },
     "findings": {
       "title": "Résumé des Constats",
@@ -5671,7 +5671,7 @@
       }
     },
     "team": {
-      "title": "Équipe de Revue",
+      "title": "Équipe d'Évaluation",
       "leadReviewer": "Évaluateur Principal",
       "reviewers": "Évaluateurs",
       "observers": "Observateurs",
@@ -5690,7 +5690,7 @@
       "smsMaturity": "Maturité SMS",
       "smsMaturityDescription": "Niveau de maturité du système de gestion de la sécurité basé sur l'évaluation CANSO SoE",
       "totalFindings": "Total des Constats",
-      "totalFindingsDescription": "Nombre total de constats identifiés lors de la revue",
+      "totalFindingsDescription": "Nombre total de constats identifiés lors de l'évaluation",
       "criticalFindings": "Critiques/Majeurs",
       "criticalFindingsDescription": "Nombre de constats critiques et majeurs nécessitant une attention immédiate",
       "capCompletion": "Complétion PAC",
@@ -5711,7 +5711,7 @@
   },
   "training": {
     "title": "Référence de Formation",
-    "description": "Accédez aux supports de formation du Programme de Revue par les Pairs des ANSP Africains",
+    "description": "Accédez aux supports de formation du Programme d'Évaluation par les pairs des ANSP Africains",
     "subtitle": "Ressources de formation complètes pour les évaluateurs pairs AFI",
     "modules": "modules",
     "topics": "sujets",
@@ -5827,14 +5827,14 @@
       "emailNotifications": "Notifications par E-mail",
       "emailNotificationsDescription": "Recevoir des notifications par e-mail",
       "notificationTypes": "Types de Notifications",
-      "reviewAssignment": "Affectations de Revue",
-      "reviewAssignmentDescription": "Être notifié lorsque vous êtes affecté à une revue par les pairs",
+      "reviewAssignment": "Affectations d'Évaluation",
+      "reviewAssignmentDescription": "Être notifié lorsque vous êtes affecté à une évaluation par les pairs",
       "findingCreated": "Nouvelles Constatations",
       "findingCreatedDescription": "Être notifié lorsqu'une constatation est créée dans votre organisation",
       "capStatusChange": "Changements de Statut PAC",
       "capStatusChangeDescription": "Être notifié lorsque le statut d'un plan d'action corrective change",
       "reportReady": "Rapport Prêt",
-      "reportReadyDescription": "Être notifié lorsqu'un rapport de revue est prêt à être consulté",
+      "reportReadyDescription": "Être notifié lorsqu'un rapport d'évaluation est prêt à être consulté",
       "digestFrequency": "Fréquence du Résumé",
       "digestFrequencyDescription": "À quelle fréquence recevoir les résumés de notifications",
       "immediate": "Immédiat",
@@ -5874,9 +5874,9 @@
       "city": "Ville",
       "region": "Région",
       "members": "Membres",
-      "reviewsHosted": "Revues Accueillies",
+      "reviewsHosted": "Évaluations Accueillies",
       "memberSince": "Membre Depuis",
-      "peerReviewTeam": "Équipe de Revue par les Pairs",
+      "peerReviewTeam": "Équipe de Évaluation par les pairs",
       "team": "Équipe",
       "contactNote": "Pour mettre à jour les informations de l'organisation, veuillez contacter l'administrateur du programme.",
       "regions": {
@@ -5896,7 +5896,7 @@
       "systemStatsDescription": "Aperçu de l'utilisation du système et des métriques",
       "activeUsers": "Utilisateurs Actifs",
       "activeOrganizations": "Organisations Actives",
-      "totalReviews": "Total des Revues",
+      "totalReviews": "Total des Évaluations",
       "systemStatus": "État du Système",
       "systemStatusDescription": "État de santé actuel du système et statut opérationnel",
       "systemHealth": "Santé du Système",
@@ -5919,7 +5919,7 @@
     }
   },
   "joinRequest": {
-    "title": "Rejoindre le Programme de Revue par les Pairs",
+    "title": "Rejoindre le Programme de Évaluation par les pairs",
     "subtitle": "Soumettez la candidature de votre organisation pour participer",
     "form": {
       "organizationSection": "Informations sur l'Organisation",
@@ -5953,7 +5953,7 @@
       "maturityD": "Phase D - Surveillance",
       "maturityE": "Phase E - Amélioration Continue",
       "motivationStatement": "Déclaration de Motivation",
-      "motivationStatementPlaceholder": "Décrivez pourquoi votre organisation souhaite participer au Programme de Revue par les Pairs AFI et comment cela s'aligne sur vos objectifs de sécurité...",
+      "motivationStatementPlaceholder": "Décrivez pourquoi votre organisation souhaite participer au Programme de Évaluation par les pairs AFI et comment cela s'aligne sur vos objectifs de sécurité...",
       "motivationStatementHelp": "Minimum 100 caractères requis",
       "proposedReviewerCount": "Nombre d'Évaluateurs à Nommer",
       "proposedReviewerCountHelp": "Combien d'évaluateurs qualifiés votre organisation peut-elle apporter ?",
@@ -5961,7 +5961,7 @@
       "languageEn": "Anglais",
       "languageFr": "Français",
       "languageBoth": "Bilingue (Anglais/Français)",
-      "preferredTeam": "Équipe de Revue Préférée",
+      "preferredTeam": "Équipe d'Évaluation Préférée",
       "preferredTeamPlaceholder": "Pas de préférence",
       "preferredTeamHelp": "Optionnel : Les équipes sont organisées géographiquement",
       "team1": "Équipe 1 (Afrique Australe)",
@@ -6019,7 +6019,7 @@
     "eligibility": {
       "title": "Conditions d'Éligibilité",
       "item1": "Fournisseur de services de navigation aérienne ou Autorité de l'aviation civile dans la région AFI",
-      "item2": "Engagement à participer activement aux revues par les pairs (en tant qu'hôte et évaluateur)",
+      "item2": "Engagement à participer activement aux évaluations par les pairs (en tant qu'hôte et évaluateur)",
       "item3": "Capacité à nommer des évaluateurs qualifiés pour le programme",
       "item4": "Soutien de la direction (approbation du PDG/DG)"
     }
@@ -6069,7 +6069,7 @@
       "approve": "Approuver la Candidature",
       "reject": "Rejeter la Candidature",
       "defer": "Reporter la Décision",
-      "assignedTeam": "Équipe de Revue par les Pairs Assignée",
+      "assignedTeam": "Équipe d'Évaluation par les pairs Assignée",
       "comments": "Commentaires de Décision",
       "commentsPlaceholder": "Fournissez la justification de la décision...",
       "submit": "Soumettre la Décision",
@@ -6174,7 +6174,7 @@
     "title": "Analyses du Programme",
     "subtitle": "Métriques et informations complètes pour la supervision du programme",
     "refresh": "Actualiser",
-    "totalReviews": "Total des Revues",
+    "totalReviews": "Total des Évaluations",
     "activeReviews": "{count} actives",
     "totalFindings": "Total des Constats",
     "openFindings": "{count} ouverts",
@@ -6184,7 +6184,7 @@
     "availableReviewers": "{count} disponibles",
     "tabs": {
       "overview": "Vue d'ensemble",
-      "reviews": "Revues",
+      "reviews": "Évaluations",
       "findings": "Constats",
       "caps": "PAC",
       "team": "Équipe"
@@ -6197,17 +6197,17 @@
     "organization": "Organisation",
     "daysOverdue": "Jours de Retard",
     "severity": "Gravité",
-    "reviewTrend": "Tendance des Revues",
+    "reviewTrend": "Tendance des Évaluations",
     "findingsBySeverity": "Constats par Gravité",
-    "reviewsByStatus": "Revues par Statut",
-    "totalReviewsCount": "Total : {count} revues",
-    "reviewsPerMonth": "Revues par Mois",
+    "reviewsByStatus": "Évaluations par Statut",
+    "totalReviewsCount": "Total : {count} évaluations",
+    "reviewsPerMonth": "Évaluations par Mois",
     "last12Months": "12 derniers mois",
-    "reviewMetrics": "Métriques des Revues",
-    "averageReviewDuration": "Durée Moyenne des Revues",
+    "reviewMetrics": "Métriques des Évaluations",
+    "averageReviewDuration": "Durée Moyenne des Évaluations",
     "days": "jours",
     "topOrganizations": "Organisations Principales",
-    "byReviewCount": "Par nombre de revues",
+    "byReviewCount": "Par nombre d'évaluations",
     "totalFindingsCount": "Total : {count} constats",
     "findingTrend": "Tendance des Constats",
     "findingMetrics": "Métriques des Constats",
@@ -6231,10 +6231,10 @@
     "teamSummary": "Résumé de l'Équipe",
     "available": "Disponible",
     "unavailable": "Indisponible",
-    "avgFindingsPerReview": "Moy. Constats/Revue",
-    "avgReviewsPerReviewer": "Moy. Revues/Examinateur",
+    "avgFindingsPerReview": "Moy. Constats/Évaluation",
+    "avgReviewsPerReviewer": "Moy. Évaluations/Évaluateur",
     "topPerformers": "Meilleurs Contributeurs",
-    "byReviewsCompleted": "Par revues terminées",
+    "byReviewsCompleted": "Par évaluations terminées",
     "reviewerPerformance": "Performance des Examinateurs",
     "reviewerPerformanceDescription": "Métriques de performance individuelles pour tous les examinateurs",
     "reviewer": "Examinateur",
@@ -6532,7 +6532,7 @@
         "implementation": "Guide de mise en œuvre",
         "benefits": "Avantages",
         "sourceFinding": "Constatation source",
-        "sourceDescription": "Cette meilleure pratique a été identifiée lors d'une revue par les pairs et publiée pour être partagée avec d'autres ANSP.",
+        "sourceDescription": "Cette meilleure pratique a été identifiée lors d'une évaluation par les pairs et publiée pour être partagée avec d'autres ANSP.",
         "tags": "Étiquettes",
         "attachments": "Pièces jointes"
       },
@@ -6719,7 +6719,7 @@
       "recipientName": "Nom du destinataire (optionnel)",
       "recipientNamePlaceholder": "ex., Jean Dupont",
       "purpose": "Objet (optionnel)",
-      "purposePlaceholder": "ex., Revue d'audit externe",
+      "purposePlaceholder": "ex., Évaluation d'audit externe",
       "createLink": "Créer le lien",
       "cancel": "Annuler",
       "created": "Lien de partage créé",

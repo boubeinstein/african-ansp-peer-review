@@ -4,12 +4,12 @@
  * Teams List Client Component
  *
  * Displays all 5 Regional Peer Support Teams with their statistics.
- * Highlights the current user's team if they belong to one.
+ * Includes filter chips and sorting functionality.
  */
 
+import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { useParams } from "next/navigation";
-import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 import { trpc } from "@/lib/trpc/client";
 import {
   Card,
@@ -21,7 +21,42 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, Building2, ArrowRight, Crown, FileCheck } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Users,
+  Building2,
+  Crown,
+  FileCheck,
+  AlertTriangle,
+  CheckCircle2,
+  ArrowUpDown,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+
+// =============================================================================
+// TYPES
+// =============================================================================
+
+type FilterType = "all" | "needsAttention" | "onTrack";
+type SortType = "performance" | "capClosure" | "name";
+
+interface TeamData {
+  teamId: string;
+  teamName: string;
+  teamNumber: number;
+  leadOrganizationName: string | null;
+  organizationCount: number;
+  reviewerCount: number;
+  reviewsCompleted: number;
+  capClosureRate: number;
+  participationScore: string;
+}
 
 // =============================================================================
 // TEAM MEMBER ORGANIZATIONS
@@ -40,6 +75,44 @@ function getTeamMembers(teamNumber: number): string {
 }
 
 // =============================================================================
+// HELPERS
+// =============================================================================
+
+/**
+ * Check if a team needs attention (D grade or 0% CAP closure)
+ */
+function needsAttention(team: TeamData): boolean {
+  const score = team.participationScore;
+  const isDGrade = score.startsWith("D") || score.startsWith("E") || score.startsWith("F");
+  const zeroClosure = team.capClosureRate === 0;
+  return isDGrade || zeroClosure;
+}
+
+/**
+ * Check if a team is on track (A or B grade)
+ */
+function isOnTrack(team: TeamData): boolean {
+  const score = team.participationScore;
+  return score.startsWith("A") || score.startsWith("B");
+}
+
+/**
+ * Get numeric value from participation score for sorting
+ */
+function getScoreValue(score: string): number {
+  const firstChar = score.charAt(0).toUpperCase();
+  const scoreMap: Record<string, number> = {
+    "A": 5,
+    "B": 4,
+    "C": 3,
+    "D": 2,
+    "E": 1,
+    "F": 0,
+  };
+  return scoreMap[firstChar] ?? 0;
+}
+
+// =============================================================================
 // LOADING SKELETON
 // =============================================================================
 
@@ -49,6 +122,11 @@ function TeamsListSkeleton() {
       <div>
         <Skeleton className="h-9 w-64 mb-2" />
         <Skeleton className="h-5 w-96" />
+      </div>
+      <div className="flex gap-2">
+        <Skeleton className="h-9 w-28" />
+        <Skeleton className="h-9 w-36" />
+        <Skeleton className="h-9 w-28" />
       </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {[...Array(5)].map((_, i) => (
@@ -60,43 +138,136 @@ function TeamsListSkeleton() {
 }
 
 // =============================================================================
+// FILTER CHIPS
+// =============================================================================
+
+interface FilterChipsProps {
+  activeFilter: FilterType;
+  onFilterChange: (filter: FilterType) => void;
+  counts: {
+    all: number;
+    needsAttention: number;
+    onTrack: number;
+  };
+}
+
+function FilterChips({ activeFilter, onFilterChange, counts }: FilterChipsProps) {
+  const t = useTranslations("teams.filters");
+
+  const filters: { key: FilterType; icon?: React.ReactNode; variant: "default" | "destructive" | "secondary" }[] = [
+    { key: "all", variant: "secondary" },
+    { key: "needsAttention", icon: <AlertTriangle className="h-3.5 w-3.5" />, variant: "destructive" },
+    { key: "onTrack", icon: <CheckCircle2 className="h-3.5 w-3.5" />, variant: "default" },
+  ];
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      {filters.map((filter) => {
+        const count = counts[filter.key];
+        const isActive = activeFilter === filter.key;
+
+        return (
+          <Button
+            key={filter.key}
+            variant={isActive ? filter.variant : "outline"}
+            size="sm"
+            onClick={() => onFilterChange(filter.key)}
+            className={cn(
+              "gap-1.5",
+              !isActive && "text-muted-foreground"
+            )}
+          >
+            {filter.icon}
+            {t(filter.key)}
+            <Badge
+              variant={isActive ? "secondary" : "outline"}
+              className={cn(
+                "ml-1 h-5 min-w-5 px-1.5 text-xs",
+                isActive && filter.variant === "destructive" && "bg-destructive-foreground/20 text-destructive-foreground",
+                isActive && filter.variant === "default" && "bg-primary-foreground/20 text-primary-foreground"
+              )}
+            >
+              {count}
+            </Badge>
+          </Button>
+        );
+      })}
+    </div>
+  );
+}
+
+// =============================================================================
+// SORT SELECT
+// =============================================================================
+
+interface SortSelectProps {
+  value: SortType;
+  onChange: (value: SortType) => void;
+}
+
+function SortSelect({ value, onChange }: SortSelectProps) {
+  const t = useTranslations("teams.sort");
+
+  return (
+    <div className="flex items-center gap-2">
+      <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+      <Select value={value} onValueChange={(v) => onChange(v as SortType)}>
+        <SelectTrigger className="w-[160px] h-9">
+          <SelectValue placeholder={t("label")} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="performance">{t("performance")}</SelectItem>
+          <SelectItem value="capClosure">{t("capClosure")}</SelectItem>
+          <SelectItem value="name">{t("name")}</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+// =============================================================================
 // TEAM CARD
 // =============================================================================
 
 interface TeamCardProps {
-  team: {
-    teamId: string;
-    teamName: string;
-    teamNumber: number;
-    leadOrganizationName: string | null;
-    organizationCount: number;
-    reviewerCount: number;
-    reviewsCompleted: number;
-    capClosureRate: number;
-    participationScore: string;
-  };
+  team: TeamData;
   locale: string;
+  onClick: () => void;
 }
 
-function TeamCard({ team, locale }: TeamCardProps) {
+function TeamCard({ team, locale, onClick }: TeamCardProps) {
   const t = useTranslations("teams");
 
-  const getScoreVariant = (score: string) => {
+  const getScoreVariant = (score: string): "default" | "secondary" | "outline" | "destructive" => {
     if (score.startsWith("A")) return "default";
     if (score.startsWith("B")) return "secondary";
+    if (score.startsWith("D") || score.startsWith("E") || score.startsWith("F")) return "destructive";
     return "outline";
   };
 
+  const showsNeedsAttention = needsAttention(team);
+
   return (
-    <Card className="hover:shadow-lg transition-shadow">
+    <Card
+      className={cn(
+        "cursor-pointer transition-all hover:shadow-lg hover:-translate-y-0.5",
+        showsNeedsAttention && "border-destructive/50"
+      )}
+      onClick={onClick}
+    >
       <CardHeader>
         <div className="flex items-center justify-between mb-1">
           <Badge variant="default" className="text-sm font-bold px-3 py-1.5">
             Team {team.teamNumber}
           </Badge>
-          <Badge variant={getScoreVariant(team.participationScore)}>
-            {team.participationScore}
-          </Badge>
+          <div className="flex items-center gap-2">
+            {showsNeedsAttention && (
+              <AlertTriangle className="h-4 w-4 text-destructive" />
+            )}
+            <Badge variant={getScoreVariant(team.participationScore)}>
+              {team.participationScore}
+            </Badge>
+          </div>
         </div>
         <p className="text-sm text-muted-foreground mt-2">
           {getTeamMembers(team.teamNumber)}
@@ -134,17 +305,21 @@ function TeamCard({ team, locale }: TeamCardProps) {
         <div className="space-y-1">
           <div className="flex justify-between text-sm">
             <span>{t("capClosureRate")}</span>
-            <span className="font-medium">{team.capClosureRate}%</span>
+            <span className={cn(
+              "font-medium",
+              team.capClosureRate === 0 && "text-destructive"
+            )}>
+              {team.capClosureRate}%
+            </span>
           </div>
-          <Progress value={team.capClosureRate} className="h-2" />
+          <Progress
+            value={team.capClosureRate}
+            className={cn(
+              "h-2",
+              team.capClosureRate === 0 && "[&>div]:bg-destructive"
+            )}
+          />
         </div>
-
-        <Button variant="outline" className="w-full" asChild>
-          <Link href={`/${locale}/teams/${team.teamId}`}>
-            {t("viewTeam")}
-            <ArrowRight className="h-4 w-4 ml-2" />
-          </Link>
-        </Button>
       </CardContent>
     </Card>
   );
@@ -157,7 +332,11 @@ function TeamCard({ team, locale }: TeamCardProps) {
 export function TeamsListClient() {
   const t = useTranslations("teams");
   const params = useParams();
+  const router = useRouter();
   const locale = (params.locale as string) || "en";
+
+  const [activeFilter, setActiveFilter] = useState<FilterType>("all");
+  const [sortBy, setSortBy] = useState<SortType>("performance");
 
   const { data: teams, isLoading } = trpc.teamStatistics.getAll.useQuery(
     undefined,
@@ -166,14 +345,52 @@ export function TeamsListClient() {
     }
   );
 
+  // Calculate filter counts
+  const counts = useMemo(() => {
+    if (!teams) return { all: 0, needsAttention: 0, onTrack: 0 };
+    return {
+      all: teams.length,
+      needsAttention: teams.filter(needsAttention).length,
+      onTrack: teams.filter(isOnTrack).length,
+    };
+  }, [teams]);
+
+  // Filter and sort teams
+  const filteredAndSortedTeams = useMemo(() => {
+    if (!teams) return [];
+
+    // Apply filter
+    let filtered = [...teams];
+    if (activeFilter === "needsAttention") {
+      filtered = filtered.filter(needsAttention);
+    } else if (activeFilter === "onTrack") {
+      filtered = filtered.filter(isOnTrack);
+    }
+
+    // Apply sort
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "performance":
+          return getScoreValue(b.participationScore) - getScoreValue(a.participationScore);
+        case "capClosure":
+          return b.capClosureRate - a.capClosureRate;
+        case "name":
+          return a.teamNumber - b.teamNumber;
+        default:
+          return 0;
+      }
+    });
+
+    return filtered;
+  }, [teams, activeFilter, sortBy]);
+
+  const handleTeamClick = (teamId: string) => {
+    router.push(`/${locale}/teams/${teamId}`);
+  };
+
   if (isLoading) {
     return <TeamsListSkeleton />;
   }
-
-  // Sort teams by team number
-  const sortedTeams = teams
-    ? [...teams].sort((a, b) => a.teamNumber - b.teamNumber)
-    : [];
 
   return (
     <div className="space-y-6">
@@ -183,14 +400,25 @@ export function TeamsListClient() {
         <p className="text-muted-foreground">{t("description")}</p>
       </div>
 
+      {/* Filters and Sort */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <FilterChips
+          activeFilter={activeFilter}
+          onFilterChange={setActiveFilter}
+          counts={counts}
+        />
+        <SortSelect value={sortBy} onChange={setSortBy} />
+      </div>
+
       {/* Teams Grid */}
-      {sortedTeams.length > 0 ? (
+      {filteredAndSortedTeams.length > 0 ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {sortedTeams.map((team) => (
+          {filteredAndSortedTeams.map((team) => (
             <TeamCard
               key={team.teamId}
               team={team}
               locale={locale}
+              onClick={() => handleTeamClick(team.teamId)}
             />
           ))}
         </div>

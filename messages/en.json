@@ -56,7 +56,28 @@
       "system": "System"
     },
     "commandPalette": "Command Palette",
-    "keyboardShortcuts": "Keyboard Shortcuts"
+    "keyboardShortcuts": "Keyboard Shortcuts",
+    "autoSave": {
+      "saving": "Saving...",
+      "saved": "Saved",
+      "error": "Save failed",
+      "justNow": "just now",
+      "secondsAgo": "{count}s ago",
+      "oneMinuteAgo": "1 min ago",
+      "minutesAgo": "{count} min ago",
+      "oneHourAgo": "1 hour ago",
+      "hoursAgo": "{count} hours ago",
+      "autoSaved": "Auto-saved {time}",
+      "allChangesSaved": "All changes saved",
+      "lastSavedAt": "Last saved at {time}",
+      "noChangesSaved": "No changes to save"
+    },
+    "prerequisites": {
+      "title": "Prerequisites",
+      "nextStep": "Next step:",
+      "allComplete": "All prerequisites complete",
+      "readyToProceed": "You can now proceed with the next action"
+    }
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -514,6 +535,17 @@
     "capClosureRate": "CAP Closure Rate",
     "viewTeam": "View Team Details",
     "noTeams": "No teams available",
+    "filters": {
+      "all": "All Teams",
+      "needsAttention": "Needs Attention",
+      "onTrack": "On Track"
+    },
+    "sort": {
+      "label": "Sort by",
+      "performance": "Performance",
+      "capClosure": "CAP Closure",
+      "name": "Name"
+    },
     "detail": {
       "title": "Team Details",
       "description": "View team statistics and member organizations",
@@ -3751,10 +3783,17 @@
           "notMet": "Required prerequisites must be met before generating the report",
           "findingsDocumented": "All findings documented",
           "findingsDetail": "{count} findings recorded",
+          "findingsComplete": "{count} findings documented",
+          "findingsNeeded": "No findings have been documented yet",
+          "addFindings": "Add Findings",
           "capsSubmitted": "CAPs submitted for critical/major findings",
           "capsDetail": "{submitted} of {total} CAPs submitted",
+          "capsProgress": "{submitted} of {total} submitted",
+          "noCapsRequired": "No CAPs required (no critical/major findings)",
+          "submitCaps": "Submit CAPs",
           "reviewStatus": "Review in progress or completed",
-          "reviewDetail": "Current status: {status}"
+          "reviewDetail": "Current status: {status}",
+          "currentStatus": "Current: {status}"
         },
         "versionHistory": "Version History",
         "generateConfirmTitle": "Generate Report?",

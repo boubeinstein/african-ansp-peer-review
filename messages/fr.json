@@ -56,7 +56,28 @@
       "system": "Système"
     },
     "commandPalette": "Palette de Commandes",
-    "keyboardShortcuts": "Raccourcis Clavier"
+    "keyboardShortcuts": "Raccourcis Clavier",
+    "autoSave": {
+      "saving": "Enregistrement...",
+      "saved": "Enregistré",
+      "error": "Échec de l'enregistrement",
+      "justNow": "à l'instant",
+      "secondsAgo": "il y a {count}s",
+      "oneMinuteAgo": "il y a 1 min",
+      "minutesAgo": "il y a {count} min",
+      "oneHourAgo": "il y a 1 heure",
+      "hoursAgo": "il y a {count} heures",
+      "autoSaved": "Enregistré {time}",
+      "allChangesSaved": "Toutes les modifications enregistrées",
+      "lastSavedAt": "Dernier enregistrement à {time}",
+      "noChangesSaved": "Aucune modification à enregistrer"
+    },
+    "prerequisites": {
+      "title": "Prérequis",
+      "nextStep": "Prochaine étape :",
+      "allComplete": "Tous les prérequis sont remplis",
+      "readyToProceed": "Vous pouvez maintenant procéder à l'action suivante"
+    }
   },
   "navigation": {
     "dashboard": "Tableau de bord",
@@ -514,6 +535,17 @@
     "capClosureRate": "Taux de Clôture PAC",
     "viewTeam": "Voir les Détails de l'Équipe",
     "noTeams": "Aucune équipe disponible",
+    "filters": {
+      "all": "Toutes les Équipes",
+      "needsAttention": "À Surveiller",
+      "onTrack": "En Bonne Voie"
+    },
+    "sort": {
+      "label": "Trier par",
+      "performance": "Performance",
+      "capClosure": "Clôture PAC",
+      "name": "Nom"
+    },
     "detail": {
       "title": "Détails de l'Équipe",
       "description": "Voir les statistiques de l'équipe et les organisations membres",
@@ -3751,10 +3783,17 @@
           "notMet": "Les prérequis requis doivent être remplis avant de générer le rapport",
           "findingsDocumented": "Toutes les constatations documentées",
           "findingsDetail": "{count} constatations enregistrées",
+          "findingsComplete": "{count} constatations documentées",
+          "findingsNeeded": "Aucune constatation n'a encore été documentée",
+          "addFindings": "Ajouter des constatations",
           "capsSubmitted": "PAC soumis pour constatations critiques/majeures",
           "capsDetail": "{submitted} sur {total} PAC soumis",
+          "capsProgress": "{submitted} sur {total} soumis",
+          "noCapsRequired": "Aucun PAC requis (pas de constatations critiques/majeures)",
+          "submitCaps": "Soumettre les PAC",
           "reviewStatus": "Évaluation en cours ou terminée",
-          "reviewDetail": "Statut actuel : {status}"
+          "reviewDetail": "Statut actuel : {status}",
+          "currentStatus": "Actuel : {status}"
         },
         "versionHistory": "Historique des versions",
         "generateConfirmTitle": "Générer le rapport ?",

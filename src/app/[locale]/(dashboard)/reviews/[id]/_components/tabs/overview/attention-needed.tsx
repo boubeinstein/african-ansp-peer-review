@@ -40,7 +40,7 @@ const severityColors = {
   low: "bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-950/30 dark:border-blue-800 dark:text-blue-400",
 };
 
-export function AttentionNeeded({ items, reviewId: _reviewId }: AttentionNeededProps) {
+export function AttentionNeeded({ items }: AttentionNeededProps) {
   const t = useTranslations("reviews.detail.overview.attention");
   const locale = useLocale();
   const router = useRouter();

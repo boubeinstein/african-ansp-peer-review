@@ -24,7 +24,7 @@ const phases = [
   { id: "POST_REVIEW", labelKey: "POST_REVIEW", icon: "4" },
 ] as const;
 
-export function ProgressDashboard({ currentPhase, fieldworkProgress, status: _status }: ProgressDashboardProps) {
+export function ProgressDashboard({ currentPhase, fieldworkProgress }: ProgressDashboardProps) {
   const t = useTranslations("reviews.detail.overview.progress");
 
   const getPhaseStatus = (phaseId: string) => {

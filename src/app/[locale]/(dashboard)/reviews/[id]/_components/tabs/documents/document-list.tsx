@@ -86,7 +86,6 @@ const statusIcons: Record<string, React.ReactNode> = {
 
 export function DocumentList({
   documents,
-  reviewId: _reviewId,
   onView,
   onDelete,
 }: DocumentListProps) {

@@ -80,7 +80,6 @@ const statusConfig = {
 
 export function FindingList({
   findings,
-  reviewId: _reviewId,
   onSelect,
 }: FindingListProps) {
   const t = useTranslations("reviews.detail.findings");

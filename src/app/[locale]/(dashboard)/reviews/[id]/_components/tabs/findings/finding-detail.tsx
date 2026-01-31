@@ -80,7 +80,6 @@ const statusConfig = {
 
 export function FindingDetail({
   findingId,
-  reviewId: _reviewId,
   onBack,
   onEdit,
 }: FindingDetailProps) {

@@ -40,7 +40,7 @@ const iconMap = {
   STATUS_CHANGE: CheckSquare,
 };
 
-export function RecentActivity({ activities, reviewId: _reviewId }: RecentActivityProps) {
+export function RecentActivity({ activities }: RecentActivityProps) {
   const t = useTranslations("reviews.detail.overview.activity");
   const locale = useLocale();
   const dateLocale = locale === "fr" ? fr : enUS;

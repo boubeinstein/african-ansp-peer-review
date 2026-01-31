@@ -74,7 +74,6 @@ const ACCEPTED_TYPES = {
 export function UploadDialog({
   open,
   onOpenChange,
-  reviewId: _reviewId,
   onUploadComplete,
 }: UploadDialogProps & { onUploadComplete?: () => void }) {
   const t = useTranslations("reviews.detail.documents.upload");

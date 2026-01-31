@@ -3887,6 +3887,54 @@
       "breadcrumb": {
         "reviews": "Reviews"
       }
+    },
+    "retrospective": {
+      "alignmentNotice": "This retrospective is aligned with ICAO Annex 19 Section 3.3 (Continuous Improvement) and CANSO SoE SA8.1/SA10.1 (Safety Reporting & Improvement).",
+      "processRating": {
+        "title": "Process Effectiveness",
+        "description": "Rate the overall effectiveness of the peer review process",
+        "overallRating": "Overall Process Rating",
+        "scale": {
+          "1": "Needs significant improvement",
+          "5": "Excellent"
+        },
+        "preparationEffective": "Pre-visit preparation effective",
+        "onSiteEffective": "On-site activities effective",
+        "reportingEffective": "Reporting process effective"
+      },
+      "whatWentWell": {
+        "title": "What Went Well",
+        "description": "Document successful aspects of the review process that should be maintained or replicated",
+        "placeholder": "Describe what worked well during this review: effective practices, good communication, valuable findings..."
+      },
+      "areasForImprovement": {
+        "title": "Areas for Improvement",
+        "description": "Identify areas where the review process could be enhanced for future reviews",
+        "placeholder": "Describe areas that could be improved: process bottlenecks, resource constraints, communication gaps..."
+      },
+      "keyLearnings": {
+        "title": "Key Learnings",
+        "description": "Capture important lessons learned that should be shared with other review teams",
+        "placeholder": "Document key insights and lessons: best practices identified, common issues found, recommendations for future teams..."
+      },
+      "programmeSuggestions": {
+        "title": "Programme Suggestions",
+        "description": "Optional suggestions for improving the overall peer review programme",
+        "placeholder": "Share any suggestions for improving the programme: tools, training, procedures, guidelines..."
+      },
+      "metrics": {
+        "title": "Quantitative Metrics",
+        "reviewDuration": "Review Duration (days)",
+        "teamSizeAdequate": "Team size was adequate",
+        "resourcesAdequate": "Resources were adequate",
+        "communicationEffective": "Communication was effective"
+      },
+      "saveDraft": "Save Draft",
+      "submit": "Submit Retrospective",
+      "savedSuccessfully": "Retrospective saved successfully",
+      "submittedSuccessfully": "Retrospective submitted for review",
+      "statusSubmitted": "This retrospective has been submitted and is awaiting review.",
+      "statusPublished": "This retrospective has been published and is available in programme insights."
     }
   },
   "finding": {

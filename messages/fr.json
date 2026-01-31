@@ -3887,6 +3887,54 @@
       "breadcrumb": {
         "reviews": "Évaluations"
       }
+    },
+    "retrospective": {
+      "alignmentNotice": "Cette rétrospective est alignée avec l'Annexe 19 de l'OACI Section 3.3 (Amélioration continue) et CANSO SoE SA8.1/SA10.1 (Rapports et amélioration de la sécurité).",
+      "processRating": {
+        "title": "Efficacité du processus",
+        "description": "Évaluez l'efficacité globale du processus d'examen par les pairs",
+        "overallRating": "Évaluation globale du processus",
+        "scale": {
+          "1": "Nécessite une amélioration significative",
+          "5": "Excellent"
+        },
+        "preparationEffective": "Préparation pré-visite efficace",
+        "onSiteEffective": "Activités sur site efficaces",
+        "reportingEffective": "Processus de rapport efficace"
+      },
+      "whatWentWell": {
+        "title": "Ce qui a bien fonctionné",
+        "description": "Documentez les aspects réussis du processus d'examen qui devraient être maintenus ou reproduits",
+        "placeholder": "Décrivez ce qui a bien fonctionné lors de cet examen : pratiques efficaces, bonne communication, résultats précieux..."
+      },
+      "areasForImprovement": {
+        "title": "Domaines d'amélioration",
+        "description": "Identifiez les domaines où le processus d'examen pourrait être amélioré pour les examens futurs",
+        "placeholder": "Décrivez les domaines à améliorer : goulots d'étranglement, contraintes de ressources, lacunes de communication..."
+      },
+      "keyLearnings": {
+        "title": "Enseignements clés",
+        "description": "Capturez les leçons importantes apprises qui devraient être partagées avec d'autres équipes d'examen",
+        "placeholder": "Documentez les informations clés et les leçons : meilleures pratiques identifiées, problèmes courants, recommandations pour les futures équipes..."
+      },
+      "programmeSuggestions": {
+        "title": "Suggestions pour le programme",
+        "description": "Suggestions optionnelles pour améliorer le programme global d'examen par les pairs",
+        "placeholder": "Partagez vos suggestions pour améliorer le programme : outils, formation, procédures, directives..."
+      },
+      "metrics": {
+        "title": "Métriques quantitatives",
+        "reviewDuration": "Durée de l'examen (jours)",
+        "teamSizeAdequate": "La taille de l'équipe était adéquate",
+        "resourcesAdequate": "Les ressources étaient adéquates",
+        "communicationEffective": "La communication était efficace"
+      },
+      "saveDraft": "Enregistrer le brouillon",
+      "submit": "Soumettre la rétrospective",
+      "savedSuccessfully": "Rétrospective enregistrée avec succès",
+      "submittedSuccessfully": "Rétrospective soumise pour examen",
+      "statusSubmitted": "Cette rétrospective a été soumise et est en attente d'examen.",
+      "statusPublished": "Cette rétrospective a été publiée et est disponible dans les informations du programme."
     }
   },
   "finding": {

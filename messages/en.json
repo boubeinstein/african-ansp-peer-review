@@ -7070,29 +7070,65 @@
       "title": "You're All Set!",
       "description": "You now know the essentials. You can restart this tour anytime from Settings > Preferences."
     },
+    "coordinator": {
+      "welcome": {
+        "title": "Welcome, Coordinator!",
+        "description": "As a programme coordinator, you have access to all features. Let's explore your capabilities."
+      },
+      "dashboard": {
+        "title": "Programme Dashboard",
+        "description": "Your command center showing key metrics, pending actions, and programme-wide status at a glance."
+      },
+      "peerReviews": {
+        "title": "Manage Reviews",
+        "description": "Create peer reviews, assign teams, track progress, and approve final reports."
+      },
+      "reviewers": {
+        "title": "Reviewer Management",
+        "description": "Manage the reviewer pool, check expertise areas, assign reviewers to teams, and monitor workload."
+      },
+      "complete": {
+        "title": "Tour Complete!",
+        "description": "You're ready to coordinate the programme. Restart this tour anytime from Settings."
+      }
+    },
     "reviewer": {
       "welcome": {
         "title": "Welcome, Peer Reviewer!",
         "description": "Let's explore the tools you'll use to conduct effective and consistent peer reviews."
+      },
+      "dashboard": {
+        "description": "View your assigned reviews, upcoming tasks, and recent activity across the programme."
+      },
+      "findings": {
+        "title": "Document Findings",
+        "description": "Record observations, concerns, and non-conformities linked to specific ICAO Protocol Questions."
       },
       "complete": {
         "title": "Ready to Review!",
         "description": "You're all set to conduct peer reviews. Access this tour again from Settings if needed."
       }
     },
-    "coordinator": {
-      "welcome": {
-        "title": "Welcome, Coordinator!",
-        "description": "As a programme coordinator, you have access to all features. Let's explore your capabilities."
-      },
-      "peerReviews": {
-        "title": "Manage Reviews",
-        "description": "Create peer reviews, assign teams, track progress, and approve final reports."
-      },
-      "complete": {
-        "title": "Tour Complete!",
-        "description": "You're ready to coordinate the programme. Restart this tour anytime from Settings."
-      }
+    "questionnaires": {
+      "title": "Questionnaires",
+      "description": "Access ICAO USOAP CMA and CANSO SoE questionnaires used for self-assessments and peer reviews."
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Configure your profile, preferences, notifications, and security settings."
+    },
+    "workflow": {
+      "title": "Review Workflow",
+      "description": "Understand the complete peer review lifecycle from planning through findings to CAP follow-up."
+    },
+    "reviewWorkspace": {
+      "title": "Review Workspace",
+      "description": "Your dedicated workspace for conducting reviews, accessing documents, and recording findings."
+    },
+    "tours": {
+      "anspStaff": "ANSP Staff Tour",
+      "peerReviewer": "Peer Reviewer Tour",
+      "coordinator": "Coordinator Tour"
     }
   }
 }

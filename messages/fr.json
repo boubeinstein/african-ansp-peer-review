@@ -7075,6 +7075,13 @@
         "title": "Bienvenue, Évaluateur !",
         "description": "Explorons les outils que vous utiliserez pour mener des revues par les pairs efficaces et cohérentes."
       },
+      "dashboard": {
+        "description": "Consultez vos revues assignées, les tâches à venir et l'activité récente à travers le programme."
+      },
+      "findings": {
+        "title": "Documenter les Constats",
+        "description": "Enregistrez les observations, préoccupations et non-conformités liées aux Questions de Protocole OACI."
+      },
       "complete": {
         "title": "Prêt à Évaluer !",
         "description": "Vous êtes prêt à mener des revues par les pairs. Accédez à cette visite depuis les Paramètres si besoin."
@@ -7085,14 +7092,43 @@
         "title": "Bienvenue, Coordinateur !",
         "description": "En tant que coordinateur du programme, vous avez accès à toutes les fonctionnalités. Explorons vos capacités."
       },
+      "dashboard": {
+        "title": "Tableau de Bord du Programme",
+        "description": "Votre centre de commande affichant les métriques clés, les actions en attente et l'état global du programme."
+      },
       "peerReviews": {
         "title": "Gérer les Revues",
         "description": "Créez des revues par les pairs, assignez les équipes, suivez la progression et approuvez les rapports finaux."
+      },
+      "reviewers": {
+        "title": "Gestion des Évaluateurs",
+        "description": "Gérez le pool d'évaluateurs, vérifiez les domaines d'expertise, assignez les évaluateurs aux équipes et surveillez la charge de travail."
       },
       "complete": {
         "title": "Visite Terminée !",
         "description": "Vous êtes prêt à coordonner le programme. Relancez cette visite depuis les Paramètres à tout moment."
       }
+    },
+    "questionnaires": {
+      "title": "Questionnaires",
+      "description": "Accédez aux questionnaires OACI USOAP CMA et CANSO SoE utilisés pour les auto-évaluations et revues par les pairs."
+    },
+    "settings": {
+      "title": "Paramètres",
+      "description": "Configurez votre profil, préférences, notifications et paramètres de sécurité."
+    },
+    "workflow": {
+      "title": "Processus de Revue",
+      "description": "Comprenez le cycle de vie complet de la revue par les pairs, de la planification aux constats et au suivi des PAC."
+    },
+    "reviewWorkspace": {
+      "title": "Espace de Travail de Revue",
+      "description": "Votre espace dédié pour mener les revues, accéder aux documents et enregistrer les constats."
+    },
+    "tours": {
+      "anspStaff": "Visite Personnel ANSP",
+      "peerReviewer": "Visite Évaluateur",
+      "coordinator": "Visite Coordinateur"
     }
   }
 }

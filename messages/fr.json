@@ -6637,6 +6637,60 @@
       "related": {
         "title": "Meilleures pratiques connexes",
         "viewPractice": "Voir"
+      },
+      "lessons": {
+        "title": "Retours d'expérience",
+        "description": "Expériences de mise en œuvre partagées par les organisations adoptantes",
+        "empty": "Aucun retour d'expérience partagé. Soyez le premier à partager votre expérience !",
+        "shareExperience": "Partager votre expérience",
+        "shareButton": "Partager",
+        "helpfulCount": "{count, plural, =0 {Soyez le premier à trouver ceci utile} =1 {1 personne a trouvé ceci utile} other {# personnes ont trouvé ceci utile}}",
+        "markHelpful": "Utile",
+        "metrics": {
+          "difficulty": "Difficulté",
+          "effectiveness": "Efficacité",
+          "timeToImplement": "Délai de mise en œuvre",
+          "months": "{count, plural, =1 {1 mois} other {# mois}}"
+        },
+        "difficulty": {
+          "1": "Très facile",
+          "2": "Facile",
+          "3": "Modéré",
+          "4": "Difficile",
+          "5": "Très difficile"
+        },
+        "effectiveness": {
+          "1": "Non efficace",
+          "2": "Peu efficace",
+          "3": "Modérément efficace",
+          "4": "Très efficace",
+          "5": "Extrêmement efficace"
+        },
+        "sections": {
+          "challengesFaced": "Défis rencontrés",
+          "keySuccessFactors": "Facteurs clés de succès",
+          "recommendations": "Recommandations"
+        },
+        "form": {
+          "title": "Partagez votre expérience de mise en œuvre",
+          "description": "Aidez les autres organisations en partageant ce que vous avez appris lors de la mise en œuvre de cette meilleure pratique.",
+          "titleLabel": "Titre",
+          "titlePlaceholder": "ex., Mise en œuvre réussie du SMS dans notre ANSP",
+          "contentLabel": "Votre expérience",
+          "contentPlaceholder": "Décrivez votre parcours de mise en œuvre, ce qui a bien fonctionné et les résultats obtenus...",
+          "challengesLabel": "Défis rencontrés (Facultatif)",
+          "challengesPlaceholder": "Quels obstacles avez-vous rencontrés lors de la mise en œuvre ?",
+          "successFactorsLabel": "Facteurs clés de succès (Facultatif)",
+          "successFactorsPlaceholder": "Quels ont été les facteurs critiques qui ont contribué au succès ?",
+          "recommendationsLabel": "Recommandations (Facultatif)",
+          "recommendationsPlaceholder": "Quels conseils donneriez-vous aux autres organisations ?",
+          "difficultyLabel": "Difficulté de mise en œuvre",
+          "effectivenessLabel": "Efficacité globale",
+          "timeLabel": "Délai de mise en œuvre (mois)",
+          "cancel": "Annuler",
+          "submit": "Soumettre",
+          "success": "Merci d'avoir partagé votre expérience !"
+        }
       }
     },
     "new": {

@@ -35,6 +35,7 @@ model Organization {
   leadsTeam                 RegionalTeam?            @relation("TeamLead")
   bestPractices             BestPractice[]
   bestPracticeAdoptions     BestPracticeAdoption[]
+  lessonsLearned            BestPracticeLessonLearned[]
 
   @@map("organizations")
 }
@@ -106,6 +107,7 @@ model User {
   submittedBestPractices   BestPractice[]         @relation("SubmittedBestPractices")
   reviewedBestPractices    BestPractice[]         @relation("ReviewedBestPractices")
   adoptedBestPractices     BestPracticeAdoption[] @relation("AdoptedBestPractices")
+  lessonsAuthored          BestPracticeLessonLearned[] @relation("LessonsAuthored")
   discussionsAuthored      ReviewDiscussion[]     @relation("DiscussionAuthor")
   discussionsResolved      ReviewDiscussion[]     @relation("ResolvedDiscussions")
   tasksAssigned            ReviewTask[]           @relation("AssignedTasks")
@@ -2036,6 +2038,11 @@ enum BestPracticeStatus {
   ARCHIVED
 }
 
+enum LessonStatus {
+  DRAFT
+  PUBLISHED
+}
+
 // =============================================================================
 // REVIEWER COLLABORATION WORKSPACE
 // =============================================================================
@@ -2106,6 +2113,9 @@ model BestPractice {
   // Adoptions
   adoptions         BestPracticeAdoption[]
 
+  // Lessons learned from adopters
+  lessonsLearned    BestPracticeLessonLearned[]
+
   // Timestamps
   createdAt         DateTime            @default(now()) @map("created_at")
   updatedAt         DateTime            @updatedAt @map("updated_at")
@@ -2147,6 +2157,47 @@ model BestPracticeAdoption {
   @@index([organizationId])
   @@index([bestPracticeId])
   @@map("best_practice_adoptions")
+}
+
+model BestPracticeLessonLearned {
+  id                       String       @id @default(cuid())
+
+  bestPracticeId           String       @map("best_practice_id")
+  bestPractice             BestPractice @relation(fields: [bestPracticeId], references: [id], onDelete: Cascade)
+
+  organizationId           String       @map("organization_id")
+  organization             Organization @relation(fields: [organizationId], references: [id])
+
+  authorId                 String       @map("author_id")
+  author                   User         @relation("LessonsAuthored", fields: [authorId], references: [id])
+
+  // Content
+  title                    String
+  content                  String       @db.Text
+  challengesFaced          String?      @db.Text @map("challenges_faced")
+  keySuccessFactors        String?      @db.Text @map("key_success_factors")
+  recommendations          String?      @db.Text
+
+  // Metrics
+  implementationDifficulty Int?         @map("implementation_difficulty") // 1-5
+  overallEffectiveness     Int?         @map("overall_effectiveness")     // 1-5
+  timeToImplementMonths    Int?         @map("time_to_implement_months")
+
+  // Engagement
+  helpfulCount             Int          @default(0) @map("helpful_count")
+
+  // Status
+  status                   LessonStatus @default(DRAFT)
+  publishedAt              DateTime?    @map("published_at")
+
+  // Timestamps
+  createdAt                DateTime     @default(now()) @map("created_at")
+  updatedAt                DateTime     @updatedAt @map("updated_at")
+
+  @@index([bestPracticeId])
+  @@index([organizationId])
+  @@index([status])
+  @@map("best_practice_lessons_learned")
 }
 
 // =============================================================================

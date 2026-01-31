@@ -6637,6 +6637,60 @@
       "related": {
         "title": "Related Best Practices",
         "viewPractice": "View"
+      },
+      "lessons": {
+        "title": "Lessons Learned",
+        "description": "Implementation experiences shared by adopting organizations",
+        "empty": "No lessons shared yet. Be the first to share your experience!",
+        "shareExperience": "Share Your Experience",
+        "shareButton": "Share Lesson",
+        "helpfulCount": "{count, plural, =0 {Be the first to find this helpful} =1 {1 person found this helpful} other {# people found this helpful}}",
+        "markHelpful": "Helpful",
+        "metrics": {
+          "difficulty": "Difficulty",
+          "effectiveness": "Effectiveness",
+          "timeToImplement": "Time to Implement",
+          "months": "{count, plural, =1 {1 month} other {# months}}"
+        },
+        "difficulty": {
+          "1": "Very Easy",
+          "2": "Easy",
+          "3": "Moderate",
+          "4": "Difficult",
+          "5": "Very Difficult"
+        },
+        "effectiveness": {
+          "1": "Not Effective",
+          "2": "Slightly Effective",
+          "3": "Moderately Effective",
+          "4": "Very Effective",
+          "5": "Extremely Effective"
+        },
+        "sections": {
+          "challengesFaced": "Challenges Faced",
+          "keySuccessFactors": "Key Success Factors",
+          "recommendations": "Recommendations"
+        },
+        "form": {
+          "title": "Share Your Implementation Experience",
+          "description": "Help other organizations by sharing what you learned while implementing this best practice.",
+          "titleLabel": "Title",
+          "titlePlaceholder": "e.g., Successful SMS Implementation at Our ANSP",
+          "contentLabel": "Your Experience",
+          "contentPlaceholder": "Describe your implementation journey, what worked well, and outcomes achieved...",
+          "challengesLabel": "Challenges Faced (Optional)",
+          "challengesPlaceholder": "What obstacles did you encounter during implementation?",
+          "successFactorsLabel": "Key Success Factors (Optional)",
+          "successFactorsPlaceholder": "What were the critical factors that contributed to success?",
+          "recommendationsLabel": "Recommendations (Optional)",
+          "recommendationsPlaceholder": "What advice would you give to other organizations?",
+          "difficultyLabel": "Implementation Difficulty",
+          "effectivenessLabel": "Overall Effectiveness",
+          "timeLabel": "Time to Implement (months)",
+          "cancel": "Cancel",
+          "submit": "Submit Lesson",
+          "success": "Thank you for sharing your experience!"
+        }
       }
     },
     "new": {

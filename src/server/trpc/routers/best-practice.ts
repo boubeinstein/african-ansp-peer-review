@@ -11,6 +11,7 @@ import { router, protectedProcedure, publicProcedure } from "../trpc";
 import {
   BestPracticeCategory,
   BestPracticeStatus,
+  LessonStatus,
   Prisma,
   PrismaClient,
   UserRole,
@@ -81,6 +82,18 @@ const updateAdoptionSchema = z.object({
   implementationStatus: z
     .enum(["PLANNED", "IN_PROGRESS", "COMPLETED"])
     .optional(),
+});
+
+const createLessonSchema = z.object({
+  bestPracticeId: z.string(),
+  title: z.string().min(5).max(200),
+  content: z.string().min(20),
+  challengesFaced: z.string().optional(),
+  keySuccessFactors: z.string().optional(),
+  recommendations: z.string().optional(),
+  implementationDifficulty: z.number().min(1).max(5).optional(),
+  overallEffectiveness: z.number().min(1).max(5).optional(),
+  timeToImplementMonths: z.number().min(1).max(60).optional(),
 });
 
 // =============================================================================
@@ -962,4 +975,126 @@ export const bestPracticeRouter = router({
 
     return areas.map((a) => a.auditArea).filter(Boolean) as string[];
   }),
+
+  // ===========================================================================
+  // LESSONS LEARNED - Get published lessons for a best practice
+  // ===========================================================================
+
+  getLessons: publicProcedure
+    .input(z.object({ bestPracticeId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const lessons = await ctx.db.bestPracticeLessonLearned.findMany({
+        where: {
+          bestPracticeId: input.bestPracticeId,
+          status: LessonStatus.PUBLISHED,
+        },
+        include: {
+          organization: {
+            select: {
+              id: true,
+              nameEn: true,
+              nameFr: true,
+              organizationCode: true,
+            },
+          },
+          author: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+        orderBy: [{ helpfulCount: "desc" }, { publishedAt: "desc" }],
+      });
+
+      return lessons;
+    }),
+
+  // ===========================================================================
+  // LESSONS LEARNED - Create a new lesson (adopting orgs only)
+  // ===========================================================================
+
+  addLesson: protectedProcedure
+    .input(createLessonSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+      const userOrgId = user.organizationId;
+
+      if (!userOrgId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You must belong to an organization to share lessons",
+        });
+      }
+
+      // Check if the user's organization has adopted this best practice
+      const adoption = await ctx.db.bestPracticeAdoption.findUnique({
+        where: {
+          bestPracticeId_organizationId: {
+            bestPracticeId: input.bestPracticeId,
+            organizationId: userOrgId,
+          },
+        },
+      });
+
+      if (!adoption) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only organizations that have adopted this practice can share lessons",
+        });
+      }
+
+      const lesson = await ctx.db.bestPracticeLessonLearned.create({
+        data: {
+          bestPracticeId: input.bestPracticeId,
+          organizationId: userOrgId,
+          authorId: user.id,
+          title: input.title,
+          content: input.content,
+          challengesFaced: input.challengesFaced,
+          keySuccessFactors: input.keySuccessFactors,
+          recommendations: input.recommendations,
+          implementationDifficulty: input.implementationDifficulty,
+          overallEffectiveness: input.overallEffectiveness,
+          timeToImplementMonths: input.timeToImplementMonths,
+          status: LessonStatus.PUBLISHED,
+          publishedAt: new Date(),
+        },
+        include: {
+          organization: {
+            select: {
+              id: true,
+              nameEn: true,
+              nameFr: true,
+              organizationCode: true,
+            },
+          },
+          author: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+      });
+
+      return lesson;
+    }),
+
+  // ===========================================================================
+  // LESSONS LEARNED - Mark as helpful
+  // ===========================================================================
+
+  markLessonHelpful: protectedProcedure
+    .input(z.object({ lessonId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const lesson = await ctx.db.bestPracticeLessonLearned.update({
+        where: { id: input.lessonId },
+        data: { helpfulCount: { increment: 1 } },
+      });
+
+      return lesson;
+    }),
 });

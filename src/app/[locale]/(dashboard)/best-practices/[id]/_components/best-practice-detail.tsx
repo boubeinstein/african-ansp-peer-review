@@ -6,12 +6,14 @@ import { useTranslations } from "next-intl";
 import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 import BestPracticeLoading from "../loading";
 import { BestPracticeHeader } from "./best-practice-header";
 import { BestPracticeContent } from "./best-practice-content";
 import { BestPracticeSidebar } from "./best-practice-sidebar";
 import { RelatedPractices } from "./related-practices";
+import { LessonsLearned } from "./lessons-learned";
 
 interface BestPracticeDetailProps {
   id: string;
@@ -27,6 +29,7 @@ export function BestPracticeDetail({
   userRole,
 }: BestPracticeDetailProps) {
   const t = useTranslations("bestPractices.detail");
+  const tNav = useTranslations("bestPractices");
 
   // Fetch best practice
   const {
@@ -74,10 +77,26 @@ export function BestPracticeDetail({
     (a) => a.organization.id === userOrgId
   );
 
+  // Get practice title for breadcrumb
+  const practiceTitle = locale === "fr"
+    ? practice.titleFr || practice.titleEn
+    : practice.titleEn;
+  const practiceRef = practice.referenceNumber || id.slice(0, 8);
+
   return (
     <div className="space-y-6">
-      {/* Back button */}
-      <Button variant="ghost" asChild>
+      {/* Breadcrumb navigation */}
+      <Breadcrumb
+        homeHref={`/${locale}/dashboard`}
+        items={[
+          { label: tNav("title"), href: `/${locale}/best-practices` },
+          { label: practiceRef },
+        ]}
+        className="hidden md:flex"
+      />
+
+      {/* Mobile back button */}
+      <Button variant="ghost" asChild className="md:hidden">
         <Link href={`/${locale}/best-practices`}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           {t("backToLibrary")}
@@ -89,6 +108,11 @@ export function BestPracticeDetail({
         <div className="lg:col-span-2 space-y-6">
           <BestPracticeHeader practice={practice} locale={locale} />
           <BestPracticeContent practice={practice} locale={locale} />
+          <LessonsLearned
+            bestPracticeId={id}
+            locale={locale}
+            hasAdopted={hasAdopted}
+          />
         </div>
 
         {/* Sidebar - 1 column */}

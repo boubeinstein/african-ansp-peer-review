@@ -110,11 +110,14 @@ export function BestPracticeDetail({
             bestPracticeId={id}
             locale={locale}
             hasAdopted={hasAdopted}
+            userRole={userRole}
+            userOrgId={userOrgId}
           />
           <DiscussionThread
             bestPracticeId={id}
             locale={locale}
             isAuthenticated={!!userRole}
+            userRole={userRole}
           />
         </div>
 

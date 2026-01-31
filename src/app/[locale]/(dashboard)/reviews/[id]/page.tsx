@@ -11,6 +11,7 @@ import {
   DocumentsTab,
   FindingsTab,
   ReportTab,
+  RetrospectiveTab,
   SettingsTab,
 } from "./_components/tabs";
 import type { ReviewTab } from "./_types";
@@ -42,7 +43,7 @@ export default async function ReviewDetailPage({ params, searchParams }: PagePro
   const { review, counts } = await fetchReviewWithCounts(id);
 
   // Validate tab parameter
-  const validTabs: ReviewTab[] = ["overview", "workspace", "documents", "findings", "report", "settings"];
+  const validTabs: ReviewTab[] = ["overview", "workspace", "documents", "findings", "report", "retrospective", "settings"];
   const currentTab = validTabs.includes(tabParam as ReviewTab) ? (tabParam as ReviewTab) : "overview";
 
   const renderTabContent = () => {
@@ -57,6 +58,8 @@ export default async function ReviewDetailPage({ params, searchParams }: PagePro
         return <FindingsTab review={review} />;
       case "report":
         return <ReportTab review={review} />;
+      case "retrospective":
+        return <RetrospectiveTab review={review} />;
       case "settings":
         return <SettingsTab review={review} />;
       default:

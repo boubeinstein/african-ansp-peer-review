@@ -462,21 +462,19 @@ export const reviewRouter = router({
             orderBy: { createdAt: "asc" },
           },
           assessments: {
-            select: {
-              id: true,
-              title: true,
-              type: true,
-              status: true,
+            include: {
+              questionnaire: true,
             },
           },
           report: true,
+          fieldworkChecklist: true,
+          checklistItems: true,
           approvals: {
             select: {
               id: true,
               status: true,
               approvedAt: true,
             },
-            orderBy: { createdAt: "desc" },
           },
         },
       });
@@ -1272,17 +1270,9 @@ export const reviewRouter = router({
       }
 
       // Create approval record
-      const approval = await ctx.db.reviewApproval.upsert({
-        where: { reviewId: input.reviewId },
-        create: {
+      const approval = await ctx.db.reviewApproval.create({
+        data: {
           reviewId: input.reviewId,
-          status: input.decision,
-          approvedById: ctx.session.user.id,
-          approvedAt: new Date(),
-          commentsEn: input.commentsEn,
-          commentsFr: input.commentsFr,
-        },
-        update: {
           status: input.decision,
           approvedById: ctx.session.user.id,
           approvedAt: new Date(),

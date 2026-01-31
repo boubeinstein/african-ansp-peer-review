@@ -8,6 +8,7 @@ import {
   DocumentsTabSkeleton,
   FindingsTabSkeleton,
   ReportTabSkeleton,
+  RetrospectiveTabSkeleton,
   SettingsTabSkeleton,
 } from "./skeletons";
 
@@ -22,6 +23,7 @@ const skeletonMap: Record<ReviewTab, React.ComponentType> = {
   documents: DocumentsTabSkeleton,
   findings: FindingsTabSkeleton,
   report: ReportTabSkeleton,
+  retrospective: RetrospectiveTabSkeleton,
   settings: SettingsTabSkeleton,
 };
 

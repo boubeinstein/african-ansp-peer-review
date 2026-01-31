@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -19,23 +20,31 @@ import {
   CheckCircle2,
   GraduationCap,
   HelpCircle,
+  Info,
   Lightbulb,
   Loader2,
   MessageSquare,
+  TrendingUp,
   Users,
   Clock,
 } from "lucide-react";
+import { isOversightRole, canRequestMentorship } from "@/lib/permissions";
+import type { UserRole } from "@prisma/client";
 
 interface RequestMentorshipProps {
   bestPracticeId: string;
   targetOrgName: string;
   isOwnOrg: boolean;
+  userRole?: string;
+  userOrgId?: string | null;
 }
 
 export function RequestMentorship({
   bestPracticeId,
   targetOrgName,
   isOwnOrg,
+  userRole,
+  userOrgId,
 }: RequestMentorshipProps) {
   const t = useTranslations("bestPractices.detail.mentorship");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -65,14 +74,66 @@ export function RequestMentorship({
     });
   };
 
-  // Own organization - show info message
+  // Role-based permission check
+  const isProgrammeRole = userRole ? isOversightRole(userRole as UserRole) : false;
+  const canRequest = userRole
+    ? canRequestMentorship(userRole as UserRole, userOrgId)
+    : false;
+
+  // Programme roles see overview stats instead of request form
+  if (isProgrammeRole) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-2 text-sm">
+          <TrendingUp className="h-4 w-4 text-primary" />
+          <span className="font-medium">{t("overviewTitle")}</span>
+        </div>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">{t("totalRequests")}</span>
+            <Badge variant="secondary">{status?.totalRequests || 0}</Badge>
+          </div>
+          {(status?.pendingRequests || 0) > 0 && (
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">{t("pendingRequests")}</span>
+              <Badge variant="outline" className="text-amber-600 border-amber-300">
+                {status?.pendingRequests}
+              </Badge>
+            </div>
+          )}
+        </div>
+        <p className="text-xs text-muted-foreground">
+          {t("programmeHint")}
+        </p>
+      </div>
+    );
+  }
+
+  // Own organization - show info message about incoming requests
   if (isOwnOrg) {
     return (
       <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
         <div className="flex items-start gap-3">
           <GraduationCap className="h-5 w-5 text-primary mt-0.5" />
-          <p className="text-sm text-muted-foreground">{t("ownOrgMessage")}</p>
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">{t("ownOrgMessage")}</p>
+            {(status?.pendingRequests || 0) > 0 && (
+              <Badge variant="secondary">
+                {t("viewRequests", { count: status?.pendingRequests || 0 })}
+              </Badge>
+            )}
+          </div>
         </div>
+      </div>
+    );
+  }
+
+  // Cannot request mentorship - show info message
+  if (!canRequest) {
+    return (
+      <div className="flex items-start gap-2 text-sm text-muted-foreground">
+        <Info className="h-4 w-4 mt-0.5 shrink-0" />
+        <span>{t("noOrgHint")}</span>
       </div>
     );
   }

@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/cap-deadlines",
       "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/process-emails",
+      "schedule": "*/5 * * * *"
     }
   ]
 }

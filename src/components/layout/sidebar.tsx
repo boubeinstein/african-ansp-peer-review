@@ -111,6 +111,7 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
 
   return (
     <div
+      suppressHydrationWarning
       className={cn(
         "relative hidden md:flex flex-col h-full flex-shrink-0 border-r bg-background transition-all duration-300 overflow-hidden",
         collapsed ? "w-16" : "w-64"

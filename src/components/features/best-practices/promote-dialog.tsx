@@ -72,9 +72,9 @@ export function PromoteDialog({
   });
 
   const promoteMutation = trpc.bestPracticePromotion.create.useMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success(t("success"), {
-        description: t("successDescription"),
+        description: t("successDescription", { count: data.notificationsSent }),
       });
       onOpenChange(false);
       form.reset();

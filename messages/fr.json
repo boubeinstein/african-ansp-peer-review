@@ -6883,7 +6883,7 @@
       "cancel": "Annuler",
       "sendPromotion": "Envoyer la Promotion",
       "success": "Promotion Envoyée !",
-      "successDescription": "Les notifications ont été envoyées au public cible.",
+      "successDescription": "Notifications envoyées à {count, plural, =0 {aucun utilisateur} =1 {1 utilisateur} other {# utilisateurs}}. Les emails seront livrés sous peu.",
       "error": "Échec de l'envoi de la promotion"
     }
   },

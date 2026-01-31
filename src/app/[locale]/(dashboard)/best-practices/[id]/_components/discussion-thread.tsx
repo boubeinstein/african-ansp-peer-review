@@ -9,19 +9,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { MessageSquare, Reply, Send, User } from "lucide-react";
+import { MessageSquare, Reply, Send, Shield, User } from "lucide-react";
+import { canModerateDiscussion } from "@/lib/permissions";
+import type { UserRole } from "@prisma/client";
 
 interface DiscussionThreadProps {
   bestPracticeId: string;
   locale: string;
   isAuthenticated: boolean;
+  userRole?: string;
 }
 
 export function DiscussionThread({
   bestPracticeId,
   locale,
   isAuthenticated,
+  userRole,
 }: DiscussionThreadProps) {
   const t = useTranslations("bestPractices.detail.discussion");
   const dateLocale = locale === "fr" ? fr : enUS;
@@ -30,6 +35,9 @@ export function DiscussionThread({
   const [newComment, setNewComment] = useState("");
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState("");
+
+  // Role-based moderation check
+  const isModerator = userRole ? canModerateDiscussion(userRole as UserRole) : false;
 
   // Fetch comments
   const { data: comments, isLoading } = trpc.bestPractice.getComments.useQuery({
@@ -100,15 +108,23 @@ export function DiscussionThread({
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <MessageSquare className="h-5 w-5 text-primary" />
-          {t("title")}
-          {totalComments > 0 && (
-            <span className="text-sm font-normal text-muted-foreground">
-              ({t("commentCount", { count: totalComments })})
-            </span>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <MessageSquare className="h-5 w-5 text-primary" />
+            {t("title")}
+            {totalComments > 0 && (
+              <span className="text-sm font-normal text-muted-foreground">
+                ({t("commentCount", { count: totalComments })})
+              </span>
+            )}
+          </CardTitle>
+          {isModerator && (
+            <Badge variant="secondary" className="gap-1 text-xs">
+              <Shield className="h-3 w-3" />
+              {t("moderator")}
+            </Badge>
           )}
-        </CardTitle>
+        </div>
         <p className="text-sm text-muted-foreground">{t("description")}</p>
       </CardHeader>
 

@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import {
   LayoutDashboard,
+  Lightbulb,
   MessageSquare,
   FileText,
   AlertTriangle,
@@ -26,7 +27,8 @@ const TAB_SHORTCUTS: Record<ReviewTab, string> = {
   documents: "Alt+3",
   findings: "Alt+4",
   report: "Alt+5",
-  settings: "Alt+6",
+  retrospective: "Alt+6",
+  settings: "Alt+7",
 };
 
 interface ReviewTabsProps {
@@ -45,6 +47,7 @@ interface ReviewTabsProps {
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   LayoutDashboard,
+  Lightbulb,
   MessageSquare,
   FileText,
   AlertTriangle,
@@ -52,7 +55,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Settings,
 };
 
-const TAB_ORDER: ReviewTab[] = ["overview", "workspace", "documents", "findings", "report", "settings"];
+const TAB_ORDER: ReviewTab[] = ["overview", "workspace", "documents", "findings", "report", "retrospective", "settings"];
 
 export function ReviewTabs({ currentTab, onTabChange, counts }: ReviewTabsProps) {
   const t = useTranslations("reviews.detail.tabs");

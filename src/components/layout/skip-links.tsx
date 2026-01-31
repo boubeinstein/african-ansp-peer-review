@@ -29,6 +29,8 @@ export function SkipLinks() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // This pattern is intentional to fix hydration mismatches
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

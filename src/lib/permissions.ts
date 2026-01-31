@@ -1,10 +1,18 @@
 import { UserRole } from "@prisma/client";
 
-// Roles that represent oversight/administration (no ANSP affiliation required)
+// Roles that represent programme-level oversight (no ANSP affiliation required)
 export const OVERSIGHT_ROLES: UserRole[] = [
   "SUPER_ADMIN",
   "SYSTEM_ADMIN",
   "PROGRAMME_COORDINATOR",
+  "STEERING_COMMITTEE",
+];
+
+// Reviewer roles (experts who may or may not be ANSP members)
+export const REVIEWER_ROLES: UserRole[] = [
+  "LEAD_REVIEWER",
+  "PEER_REVIEWER",
+  "OBSERVER",
 ];
 
 // Roles that represent ANSP organizations
@@ -12,8 +20,6 @@ export const ANSP_ROLES: UserRole[] = [
   "ANSP_ADMIN",
   "SAFETY_MANAGER",
   "QUALITY_MANAGER",
-  "LEAD_REVIEWER",
-  "PEER_REVIEWER",
   "STAFF",
 ];
 
@@ -32,14 +38,22 @@ export function isAnspRole(role: UserRole): boolean {
 }
 
 /**
+ * Check if user has a reviewer role
+ */
+export function isReviewerRole(role: UserRole): boolean {
+  return REVIEWER_ROLES.includes(role);
+}
+
+/**
  * Check if user can perform ANSP-specific actions
- * Requires both an ANSP role AND an organization affiliation
+ * Requires an ANSP or reviewer role AND an organization affiliation
  */
 export function canPerformAnspActions(
   role: UserRole,
   organizationId: string | null | undefined
 ): boolean {
-  return isAnspRole(role) && !!organizationId;
+  // ANSP roles or reviewers with an organization can perform ANSP actions
+  return (isAnspRole(role) || isReviewerRole(role)) && !!organizationId;
 }
 
 /**
@@ -136,4 +150,54 @@ export function canViewTeamChat(
   }
 
   return userTeamId === chatTeamId;
+}
+
+/**
+ * Check if user can request mentorship for a best practice
+ * - Programme roles cannot request (they oversee, don't represent ANSP)
+ * - ANSP roles and reviewers with organization can request
+ */
+export function canRequestMentorship(
+  role: UserRole,
+  organizationId: string | null | undefined
+): boolean {
+  if (isOversightRole(role)) return false;
+  return !!organizationId;
+}
+
+/**
+ * Check if user can add lessons learned to a best practice
+ * - Programme roles can add programme-wide insights
+ * - ANSP roles and reviewers with organization can add org-specific lessons
+ */
+export function canAddLessonLearned(
+  role: UserRole,
+  organizationId: string | null | undefined
+): boolean {
+  // Programme roles can add programme-wide lessons
+  if (isOversightRole(role)) return true;
+  // ANSP roles need organization
+  return !!organizationId;
+}
+
+/**
+ * Check if user can moderate discussions (delete any comment)
+ * Only programme-level oversight roles can moderate
+ */
+export function canModerateDiscussion(role: UserRole): boolean {
+  return isOversightRole(role);
+}
+
+/**
+ * Check if user can delete a specific comment
+ * - Moderators can delete any comment
+ * - Users can only delete their own comments
+ */
+export function canDeleteComment(
+  role: UserRole,
+  commentAuthorId: string,
+  userId: string
+): boolean {
+  if (canModerateDiscussion(role)) return true;
+  return commentAuthorId === userId;
 }

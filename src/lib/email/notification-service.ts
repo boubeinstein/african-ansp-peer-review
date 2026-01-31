@@ -2,14 +2,26 @@ import { prisma } from "@/lib/db";
 import { sendEmail, sendBatchEmails } from "./resend";
 import { notificationEmailTemplate } from "./templates/notification";
 import { bestPracticePromotionEmailTemplate } from "./templates/best-practice-promotion";
-import type {
-  Notification,
-  User,
-  NotificationPreference,
-} from "@prisma/client";
+import type { Notification, NotificationPreference, Locale } from "@prisma/client";
 
-type UserWithPrefs = User & {
+// Type for promotion target users (minimal fields needed)
+export type PromotionTargetUser = {
+  id: string;
+  email: string;
+  firstName: string;
+  locale: Locale;
   notificationPreference: NotificationPreference | null;
+};
+
+// Type for notification with user
+type NotificationWithUser = Notification & {
+  user: {
+    id: string;
+    email: string;
+    firstName: string;
+    locale: Locale;
+    notificationPreference: NotificationPreference | null;
+  };
 };
 
 /**
@@ -38,23 +50,46 @@ function isEmailEnabledForType(
 /**
  * Get user's preferred locale
  */
-function getUserLocale(user: User): "en" | "fr" {
-  return user.locale === "FR" ? "fr" : "en";
+function getUserLocale(locale: Locale): "en" | "fr" {
+  return locale === "FR" ? "fr" : "en";
+}
+
+/**
+ * Check if email sending should be skipped (dev mode with test domain)
+ */
+function shouldSkipEmailSending(): boolean {
+  const emailFrom = process.env.EMAIL_FROM || "";
+  const apiKey = process.env.RESEND_API_KEY;
+
+  // Skip if using Resend test domain or no API key
+  if (emailFrom.includes("@resend.dev")) {
+    return true;
+  }
+
+  if (!apiKey) {
+    return true;
+  }
+
+  return false;
 }
 
 /**
  * Send email notification for a single notification record
  */
 export async function sendNotificationEmail(
-  notification: Notification & { user: UserWithPrefs }
+  notification: NotificationWithUser
 ): Promise<boolean> {
   const { user } = notification;
 
+  // Check if email sending should be skipped
+  if (shouldSkipEmailSending()) {
+    console.log("[NotificationEmail] Skipped - using test domain or no API key");
+    return false;
+  }
+
   // Check if email is enabled for this notification type
   if (!isEmailEnabledForType(user.notificationPreference, notification.type)) {
-    console.log(
-      `[NotificationEmail] Skipped - email disabled for type ${notification.type}`
-    );
+    console.log(`[NotificationEmail] Skipped - email disabled for type ${notification.type}`);
     return false;
   }
 
@@ -64,21 +99,17 @@ export async function sendNotificationEmail(
     return false;
   }
 
-  const locale = getUserLocale(user);
+  const locale = getUserLocale(user.locale);
   const title = locale === "fr" ? notification.titleFr : notification.titleEn;
-  const message =
-    locale === "fr" ? notification.messageFr : notification.messageEn;
-  const actionLabel =
-    locale === "fr" ? notification.actionLabelFr : notification.actionLabelEn;
-
-  const appUrl = process.env.APP_URL || "http://localhost:3000";
+  const message = locale === "fr" ? notification.messageFr : notification.messageEn;
+  const actionLabel = locale === "fr" ? notification.actionLabelFr : notification.actionLabelEn;
 
   const html = notificationEmailTemplate({
     recipientName: user.firstName,
     title,
     message,
     actionUrl: notification.actionUrl
-      ? `${appUrl}${notification.actionUrl}`
+      ? `${process.env.APP_URL}${notification.actionUrl}`
       : undefined,
     actionLabel: actionLabel || undefined,
     locale,
@@ -118,12 +149,22 @@ export async function sendBestPracticePromotionEmails(params: {
     category: string;
     organization: { nameEn: string; nameFr: string };
   };
-  targetUsers: UserWithPrefs[];
+  targetUsers: PromotionTargetUser[];
   customMessageEn?: string;
   customMessageFr?: string;
 }): Promise<{ sent: number; skipped: number; failed: number }> {
-  const { bestPractice, targetUsers, customMessageEn, customMessageFr } =
-    params;
+  const { bestPractice, targetUsers, customMessageEn, customMessageFr } = params;
+
+  // =========================================================================
+  // SKIP EMAIL SENDING IN DEVELOPMENT (using Resend test domain)
+  // =========================================================================
+  if (shouldSkipEmailSending()) {
+    console.log("[BestPracticePromotion] Email sending skipped - using test domain or no API key");
+    console.log(`[BestPracticePromotion] ${targetUsers.length} in-app notifications were created successfully`);
+    console.log("[BestPracticePromotion] To enable emails, verify a domain at https://resend.com/domains");
+    return { sent: 0, skipped: targetUsers.length, failed: 0 };
+  }
+  // =========================================================================
 
   let sent = 0;
   let skipped = 0;
@@ -137,33 +178,31 @@ export async function sendBestPracticePromotionEmails(params: {
   skipped = targetUsers.length - eligibleUsers.length;
 
   if (eligibleUsers.length === 0) {
+    console.log("[BestPracticePromotion] No eligible users for email");
     return { sent, skipped, failed };
   }
 
-  const appUrl = process.env.APP_URL || "http://localhost:3000";
-
   // Prepare emails
   const emails = eligibleUsers.map((user) => {
-    const locale = getUserLocale(user);
+    const locale = getUserLocale(user.locale);
     const isEn = locale === "en";
 
     return {
       to: user.email,
       subject: isEn
-        ? `Recommended: ${bestPractice.titleEn}`
-        : `Recommandé : ${bestPractice.titleFr}`,
+        ? `📣 Recommended: ${bestPractice.titleEn}`
+        : `📣 Recommandé : ${bestPractice.titleFr}`,
       html: bestPracticePromotionEmailTemplate({
         recipientName: user.firstName,
         bestPracticeTitle: isEn ? bestPractice.titleEn : bestPractice.titleFr,
         bestPracticeDescription:
-          (isEn ? bestPractice.descriptionEn : bestPractice.descriptionFr) ||
-          "",
+          (isEn ? bestPractice.descriptionEn : bestPractice.descriptionFr) || "",
         originatingOrg: isEn
           ? bestPractice.organization.nameEn
           : bestPractice.organization.nameFr,
         category: bestPractice.category,
         customMessage: isEn ? customMessageEn : customMessageFr,
-        actionUrl: `${appUrl}/${locale}/best-practices/${bestPractice.id}`,
+        actionUrl: `${process.env.APP_URL}/${locale}/best-practices/${bestPractice.id}`,
         locale,
       }),
     };
@@ -191,9 +230,13 @@ export async function sendBestPracticePromotionEmails(params: {
 /**
  * Process pending notification emails (for background job)
  */
-export async function processPendingNotificationEmails(
-  limit = 50
-): Promise<number> {
+export async function processPendingNotificationEmails(limit = 50): Promise<number> {
+  // Skip if using test domain
+  if (shouldSkipEmailSending()) {
+    console.log("[ProcessEmails] Skipped - using test domain or no API key");
+    return 0;
+  }
+
   const pendingNotifications = await prisma.notification.findMany({
     where: {
       emailSentAt: null,
@@ -217,7 +260,7 @@ export async function processPendingNotificationEmails(
 
   for (const notification of pendingNotifications) {
     const success = await sendNotificationEmail(
-      notification as Notification & { user: UserWithPrefs }
+      notification as unknown as NotificationWithUser
     );
     if (success) sentCount++;
   }

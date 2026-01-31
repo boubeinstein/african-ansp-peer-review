@@ -10,6 +10,7 @@ import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure } from "../trpc";
 import { PromotionTargetType, PrismaClient } from "@prisma/client";
 import { isBPProgrammeRole } from "@/lib/permissions/best-practice-permissions";
+import { sendBestPracticePromotionEmails, type PromotionTargetUser } from "@/lib/email/notification-service";
 
 // =============================================================================
 // INPUT SCHEMAS
@@ -87,8 +88,8 @@ export const bestPracticePromotionRouter = router({
         },
       });
 
-      // Create notifications for target users
-      await createPromotionNotifications(ctx.db, {
+      // Create notifications for target users and send emails
+      const { notificationCount, targetUsers } = await createPromotionNotifications(ctx.db, {
         promotion,
         bestPractice,
         targetType: input.targetType,
@@ -99,7 +100,30 @@ export const bestPracticePromotionRouter = router({
         senderId: session.user.id,
       });
 
-      return promotion;
+      // Send emails asynchronously (don't block response)
+      if (targetUsers.length > 0 && bestPractice.organization) {
+        sendBestPracticePromotionEmails({
+          bestPractice: {
+            id: bestPractice.id,
+            titleEn: bestPractice.titleEn,
+            titleFr: bestPractice.titleFr,
+            descriptionEn: bestPractice.descriptionEn,
+            descriptionFr: bestPractice.descriptionFr,
+            category: bestPractice.category,
+            organization: bestPractice.organization,
+          },
+          targetUsers,
+          customMessageEn: input.messageEn,
+          customMessageFr: input.messageFr,
+        }).catch((err: unknown) => {
+          console.error("[Promotion] Email sending failed:", err);
+        });
+      }
+
+      return {
+        promotion,
+        notificationsSent: notificationCount,
+      };
     }),
 
   /**
@@ -326,11 +350,15 @@ interface PromotionNotificationParams {
 
 /**
  * Helper to create notifications for promotion targets
+ * Returns the target users (with preferences) for email sending
  */
 async function createPromotionNotifications(
   prisma: PrismaClient,
   params: PromotionNotificationParams
-) {
+): Promise<{
+  notificationCount: number;
+  targetUsers: PromotionTargetUser[];
+}> {
   const {
     bestPractice,
     targetType,
@@ -380,10 +408,18 @@ async function createPromotionNotifications(
     userFilter.organizationId = { in: targetOrgIds };
   }
 
-  // Get target users
+  // Get target users with their preferences (for email sending)
   const users = await prisma.user.findMany({
     where: userFilter,
-    select: { id: true, role: true },
+    select: {
+      id: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      locale: true,
+      role: true,
+      notificationPreference: true,
+    },
   });
 
   console.log("[Promotion] Found target users:", users.length);
@@ -394,11 +430,11 @@ async function createPromotionNotifications(
 
   if (users.length === 0) {
     console.log("[Promotion] No target users found, skipping notifications");
-    return;
+    return { notificationCount: 0, targetUsers: [] };
   }
 
   // Create notifications in batch
-  const notifications = users.map((user: { id: string }) => ({
+  const notifications = users.map((user) => ({
     userId: user.id,
     type: "BEST_PRACTICE_PROMOTED" as const,
     titleEn: `New Best Practice Recommendation: ${bestPractice.titleEn}`,
@@ -420,6 +456,18 @@ async function createPromotionNotifications(
   try {
     const result = await prisma.notification.createMany({ data: notifications });
     console.log("[Promotion] Created notifications:", result.count);
+
+    // Return users with required fields for email service
+    return {
+      notificationCount: result.count,
+      targetUsers: users.map((u) => ({
+        id: u.id,
+        email: u.email,
+        firstName: u.firstName,
+        locale: u.locale,
+        notificationPreference: u.notificationPreference,
+      })),
+    };
   } catch (error) {
     console.error("[Promotion] Failed to create notifications:", error);
     throw error;

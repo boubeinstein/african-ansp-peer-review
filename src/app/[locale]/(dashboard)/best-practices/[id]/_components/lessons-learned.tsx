@@ -30,6 +30,7 @@ import {
   Building2,
   ChevronDown,
   Clock,
+  Globe,
   Lightbulb,
   MessageSquare,
   PenLine,
@@ -38,21 +39,35 @@ import {
   ThumbsUp,
   Trophy,
 } from "lucide-react";
+import { isOversightRole, canAddLessonLearned } from "@/lib/permissions";
+import type { UserRole } from "@prisma/client";
 
 interface LessonsLearnedProps {
   bestPracticeId: string;
   locale: string;
   hasAdopted: boolean;
+  userRole?: string;
+  userOrgId?: string | null;
 }
 
 export function LessonsLearned({
   bestPracticeId,
   locale,
   hasAdopted,
+  userRole,
+  userOrgId,
 }: LessonsLearnedProps) {
   const t = useTranslations("bestPractices.detail.lessons");
   const dateLocale = locale === "fr" ? fr : enUS;
   const utils = trpc.useUtils();
+
+  // Role-based permission check
+  const isProgrammeRole = userRole ? isOversightRole(userRole as UserRole) : false;
+  const canAddLesson = userRole
+    ? canAddLessonLearned(userRole as UserRole, userOrgId)
+    : false;
+  // Programme roles can always add insights; ANSP roles can add if they adopted
+  const showAddButton = canAddLesson && (isProgrammeRole || hasAdopted);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [expandedLessons, setExpandedLessons] = useState<Set<string>>(new Set());
@@ -176,12 +191,21 @@ export function LessonsLearned({
             {t("title")}
           </CardTitle>
 
-          {hasAdopted && (
+          {showAddButton && (
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
-                  <PenLine className="h-4 w-4 mr-2" />
-                  {t("shareExperience")}
+                  {isProgrammeRole ? (
+                    <>
+                      <Globe className="h-4 w-4 mr-2" />
+                      {t("addInsight")}
+                    </>
+                  ) : (
+                    <>
+                      <PenLine className="h-4 w-4 mr-2" />
+                      {t("shareExperience")}
+                    </>
+                  )}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">

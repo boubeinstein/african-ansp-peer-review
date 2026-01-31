@@ -19,7 +19,10 @@ export function AppShell({ children, locale, user }: AppShellProps) {
   return (
     <>
       <SkipLinks />
-      <div className="app-container flex h-[100dvh] overflow-hidden">
+      <div
+        className="app-container flex h-[100dvh] overflow-hidden"
+        suppressHydrationWarning
+      >
         <Sidebar locale={locale} userRole={user.role} />
         <div className="flex flex-1 flex-col min-w-0 h-full overflow-hidden">
           <Header locale={locale} user={user} />
@@ -27,6 +30,7 @@ export function AppShell({ children, locale, user }: AppShellProps) {
             id="main-content"
             className="flex-1 overflow-y-auto overflow-x-hidden bg-muted/30 p-6 pb-20 md:pb-6"
             tabIndex={-1}
+            suppressHydrationWarning
           >
             {children}
           </main>

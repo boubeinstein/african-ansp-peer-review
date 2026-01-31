@@ -1324,9 +1324,35 @@ export const bestPracticeRouter = router({
     .query(async ({ ctx, input }) => {
       const { user } = ctx.session;
       const userOrgId = user.organizationId;
+      const userRole = user.role;
+
+      // Programme roles see aggregate stats
+      const isOversightRole = [
+        "SUPER_ADMIN",
+        "SYSTEM_ADMIN",
+        "PROGRAMME_COORDINATOR",
+        "STEERING_COMMITTEE",
+      ].includes(userRole);
+
+      // Get aggregate stats for all users
+      const [totalRequests, pendingRequests] = await Promise.all([
+        ctx.db.mentorshipRequest.count({
+          where: { bestPracticeId: input.bestPracticeId },
+        }),
+        ctx.db.mentorshipRequest.count({
+          where: {
+            bestPracticeId: input.bestPracticeId,
+            status: "PENDING",
+          },
+        }),
+      ]);
 
       if (!userOrgId) {
-        return { hasPendingRequest: false };
+        return {
+          hasPendingRequest: false,
+          totalRequests: isOversightRole ? totalRequests : 0,
+          pendingRequests: isOversightRole ? pendingRequests : 0,
+        };
       }
 
       const request = await ctx.db.mentorshipRequest.findFirst({
@@ -1345,6 +1371,8 @@ export const bestPracticeRouter = router({
       return {
         hasPendingRequest: request?.status === "PENDING",
         lastRequest: request,
+        totalRequests,
+        pendingRequests,
       };
     }),
 });

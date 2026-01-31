@@ -338,6 +338,13 @@ async function createPromotionNotifications(
     messageFr,
   } = params;
 
+  console.log("[Promotion] Creating notifications for:", {
+    bestPracticeId: bestPractice.id,
+    targetType,
+    targetTeamIds,
+    targetOrgIds,
+  });
+
   // Build user filter based on target type
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const userFilter: any = {
@@ -359,7 +366,12 @@ async function createPromotionNotifications(
     select: { id: true },
   });
 
-  if (users.length === 0) return;
+  console.log("[Promotion] Found target users:", users.length);
+
+  if (users.length === 0) {
+    console.log("[Promotion] No target users found, skipping notifications");
+    return;
+  }
 
   // Create notifications in batch
   const notifications = users.map((user: { id: string }) => ({
@@ -381,5 +393,11 @@ async function createPromotionNotifications(
     priority: "NORMAL" as const,
   }));
 
-  await prisma.notification.createMany({ data: notifications });
+  try {
+    const result = await prisma.notification.createMany({ data: notifications });
+    console.log("[Promotion] Created notifications:", result.count);
+  } catch (error) {
+    console.error("[Promotion] Failed to create notifications:", error);
+    throw error;
+  }
 }

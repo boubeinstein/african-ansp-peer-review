@@ -6691,6 +6691,20 @@
           "submit": "Soumettre",
           "success": "Merci d'avoir partagé votre expérience !"
         }
+      },
+      "discussion": {
+        "title": "Discussion",
+        "description": "Posez des questions ou partagez vos réflexions sur cette meilleure pratique",
+        "placeholder": "Posez une question ou partagez vos réflexions...",
+        "post": "Publier",
+        "reply": "Répondre",
+        "replyTo": "Répondre à {name}",
+        "replyPlaceholder": "Écrire une réponse...",
+        "cancel": "Annuler",
+        "noComments": "Pas encore de discussions. Soyez le premier à lancer la conversation !",
+        "signInToComment": "Connectez-vous pour participer à la discussion",
+        "commentCount": "{count, plural, =0 {Aucun commentaire} =1 {1 commentaire} other {# commentaires}}",
+        "replyCount": "{count, plural, =1 {1 réponse} other {# réponses}}"
       }
     },
     "new": {

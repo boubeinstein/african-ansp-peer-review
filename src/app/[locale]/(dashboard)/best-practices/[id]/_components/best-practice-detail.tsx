@@ -14,6 +14,7 @@ import { BestPracticeContent } from "./best-practice-content";
 import { BestPracticeSidebar } from "./best-practice-sidebar";
 import { RelatedPractices } from "./related-practices";
 import { LessonsLearned } from "./lessons-learned";
+import { DiscussionThread } from "./discussion-thread";
 
 interface BestPracticeDetailProps {
   id: string;
@@ -112,6 +113,11 @@ export function BestPracticeDetail({
             bestPracticeId={id}
             locale={locale}
             hasAdopted={hasAdopted}
+          />
+          <DiscussionThread
+            bestPracticeId={id}
+            locale={locale}
+            isAuthenticated={!!userRole}
           />
         </div>
 

@@ -6,3 +6,4 @@ export { AdoptionButton } from "./adoption-button";
 export { AdoptionList } from "./adoption-list";
 export { RelatedPractices } from "./related-practices";
 export { LessonsLearned } from "./lessons-learned";
+export { DiscussionThread } from "./discussion-thread";

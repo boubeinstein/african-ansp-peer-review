@@ -6691,6 +6691,20 @@
           "submit": "Submit Lesson",
           "success": "Thank you for sharing your experience!"
         }
+      },
+      "discussion": {
+        "title": "Discussion",
+        "description": "Ask questions or share thoughts about this best practice",
+        "placeholder": "Ask a question or share your thoughts...",
+        "post": "Post",
+        "reply": "Reply",
+        "replyTo": "Reply to {name}",
+        "replyPlaceholder": "Write a reply...",
+        "cancel": "Cancel",
+        "noComments": "No discussions yet. Be the first to start a conversation!",
+        "signInToComment": "Sign in to join the discussion",
+        "commentCount": "{count, plural, =0 {No comments} =1 {1 comment} other {# comments}}",
+        "replyCount": "{count, plural, =1 {1 reply} other {# replies}}"
       }
     },
     "new": {

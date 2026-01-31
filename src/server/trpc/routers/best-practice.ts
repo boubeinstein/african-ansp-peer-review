@@ -1097,4 +1097,123 @@ export const bestPracticeRouter = router({
 
       return lesson;
     }),
+
+  // ===========================================================================
+  // DISCUSSION COMMENTS - Get comments for a best practice
+  // ===========================================================================
+
+  getComments: publicProcedure
+    .input(z.object({ bestPracticeId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const comments = await ctx.db.bestPracticeComment.findMany({
+        where: {
+          bestPracticeId: input.bestPracticeId,
+          parentId: null, // Only top-level comments
+        },
+        include: {
+          author: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              organization: {
+                select: {
+                  organizationCode: true,
+                },
+              },
+            },
+          },
+          replies: {
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  organization: {
+                    select: {
+                      organizationCode: true,
+                    },
+                  },
+                },
+              },
+            },
+            orderBy: { createdAt: "asc" },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      return comments;
+    }),
+
+  // ===========================================================================
+  // DISCUSSION COMMENTS - Add a comment
+  // ===========================================================================
+
+  addComment: protectedProcedure
+    .input(
+      z.object({
+        bestPracticeId: z.string(),
+        content: z.string().min(1).max(2000),
+        parentId: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+
+      // If replying, verify the parent comment exists and belongs to the same best practice
+      if (input.parentId) {
+        const parentComment = await ctx.db.bestPracticeComment.findUnique({
+          where: { id: input.parentId },
+        });
+
+        if (!parentComment) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Parent comment not found",
+          });
+        }
+
+        if (parentComment.bestPracticeId !== input.bestPracticeId) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Parent comment does not belong to this best practice",
+          });
+        }
+
+        // Prevent nested replies (only one level allowed)
+        if (parentComment.parentId) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Cannot reply to a reply. Only one level of threading is allowed.",
+          });
+        }
+      }
+
+      const comment = await ctx.db.bestPracticeComment.create({
+        data: {
+          bestPracticeId: input.bestPracticeId,
+          authorId: user.id,
+          content: input.content,
+          parentId: input.parentId,
+        },
+        include: {
+          author: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              organization: {
+                select: {
+                  organizationCode: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      return comment;
+    }),
 });

@@ -108,6 +108,7 @@ model User {
   reviewedBestPractices    BestPractice[]         @relation("ReviewedBestPractices")
   adoptedBestPractices     BestPracticeAdoption[] @relation("AdoptedBestPractices")
   lessonsAuthored          BestPracticeLessonLearned[] @relation("LessonsAuthored")
+  bestPracticeComments     BestPracticeComment[]  @relation("BestPracticeCommentsAuthored")
   discussionsAuthored      ReviewDiscussion[]     @relation("DiscussionAuthor")
   discussionsResolved      ReviewDiscussion[]     @relation("ResolvedDiscussions")
   tasksAssigned            ReviewTask[]           @relation("AssignedTasks")
@@ -2116,6 +2117,9 @@ model BestPractice {
   // Lessons learned from adopters
   lessonsLearned    BestPracticeLessonLearned[]
 
+  // Discussion comments
+  comments          BestPracticeComment[]
+
   // Timestamps
   createdAt         DateTime            @default(now()) @map("created_at")
   updatedAt         DateTime            @updatedAt @map("updated_at")
@@ -2198,6 +2202,32 @@ model BestPracticeLessonLearned {
   @@index([organizationId])
   @@index([status])
   @@map("best_practice_lessons_learned")
+}
+
+model BestPracticeComment {
+  id              String                @id @default(cuid())
+
+  bestPracticeId  String                @map("best_practice_id")
+  bestPractice    BestPractice          @relation(fields: [bestPracticeId], references: [id], onDelete: Cascade)
+
+  authorId        String                @map("author_id")
+  author          User                  @relation("BestPracticeCommentsAuthored", fields: [authorId], references: [id])
+
+  // Threading support (one level)
+  parentId        String?               @map("parent_id")
+  parent          BestPracticeComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies         BestPracticeComment[] @relation("CommentReplies")
+
+  // Content
+  content         String                @db.Text
+
+  // Timestamps
+  createdAt       DateTime              @default(now()) @map("created_at")
+  updatedAt       DateTime              @updatedAt @map("updated_at")
+
+  @@index([bestPracticeId])
+  @@index([parentId])
+  @@map("best_practice_comments")
 }
 
 // =============================================================================

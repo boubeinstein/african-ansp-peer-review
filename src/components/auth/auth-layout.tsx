@@ -129,9 +129,9 @@ export function AuthLayout({ children }: AuthLayoutProps) {
       </div>
 
       {/* Form Panel - Right Side */}
-      <div className="flex-1 flex flex-col bg-slate-50 lg:h-screen lg:overflow-y-auto">
+      <div className="flex-1 flex flex-col bg-muted/50 lg:h-screen lg:overflow-y-auto">
         {/* Mobile Logo Bar */}
-        <div className="lg:hidden flex items-center justify-center gap-4 p-4 bg-white border-b">
+        <div className="lg:hidden flex items-center justify-center gap-4 p-4 bg-card border-b">
           <Image
             src="/images/logos/International_Civil_Aviation_Organization_logo.svg"
             alt="ICAO"
@@ -139,7 +139,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
             height={32}
             className="h-7 w-auto"
           />
-          <div className="h-5 w-px bg-slate-200" />
+          <div className="h-5 w-px bg-border" />
           <Image
             src="/images/logos/CANSO.svg"
             alt="CANSO"
@@ -155,7 +155,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         </div>
 
         {/* Footer */}
-        <div className="p-4 lg:p-6 text-center text-xs text-slate-500 border-t bg-white flex-shrink-0">
+        <div className="p-4 lg:p-6 text-center text-xs text-muted-foreground border-t bg-card flex-shrink-0">
           <p>&copy; 2026 {t("footer.copyright")}</p>
           <p className="mt-1 font-medium">ICAO &bull; CANSO &bull; AFCAC</p>
         </div>

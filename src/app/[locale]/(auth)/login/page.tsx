@@ -45,7 +45,7 @@ export default async function LoginPage({ params }: LoginPageProps) {
       </div>
 
       {/* Right Panel - Login Form (1/3) */}
-      <div className="w-full lg:w-1/3 flex flex-col justify-center bg-white dark:bg-slate-950">
+      <div className="w-full lg:w-1/3 flex flex-col justify-center bg-background">
         {/* Mobile Header - Only visible on small screens */}
         <div className="lg:hidden px-6 pt-8 pb-4">
           <MobileHeader />
@@ -74,11 +74,11 @@ function ShowcaseSkeleton() {
   return (
     <div className="w-full h-full flex items-center justify-center">
       <div className="animate-pulse flex flex-col items-center gap-4">
-        <div className="h-8 w-64 bg-slate-700 rounded" />
-        <div className="h-4 w-48 bg-slate-700 rounded" />
+        <div className="h-8 w-64 bg-slate-600 rounded" />
+        <div className="h-4 w-48 bg-slate-600 rounded" />
         <div className="flex gap-4 mt-8">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-24 w-24 bg-slate-700 rounded-lg" />
+            <div key={i} className="h-24 w-24 bg-slate-600 rounded-lg" />
           ))}
         </div>
       </div>

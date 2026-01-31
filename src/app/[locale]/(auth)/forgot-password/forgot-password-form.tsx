@@ -62,15 +62,15 @@ export function ForgotPasswordForm() {
   // Success state after submitting
   if (isSubmitted) {
     return (
-      <Card className="border-0 shadow-xl bg-white">
+      <Card className="border-0 shadow-xl bg-card">
         <CardHeader className="text-center pb-2">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-green-100">
             <CheckCircle className="h-7 w-7 text-green-600" />
           </div>
-          <CardTitle className="text-2xl font-bold text-slate-900 font-montserrat">
+          <CardTitle className="text-2xl font-bold text-foreground font-montserrat">
             {t("successTitle")}
           </CardTitle>
-          <CardDescription className="mt-2 text-slate-600">
+          <CardDescription className="mt-2 text-muted-foreground">
             {t("successMessage", { email: submittedEmail })}
           </CardDescription>
         </CardHeader>
@@ -95,16 +95,16 @@ export function ForgotPasswordForm() {
   }
 
   return (
-    <Card className="border-0 shadow-xl bg-white">
+    <Card className="border-0 shadow-xl bg-card">
       <CardHeader className="space-y-4 text-center pb-2">
         <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-blue-100">
           <Mail className="h-7 w-7 text-blue-600" />
         </div>
         <div>
-          <CardTitle className="text-2xl font-bold text-slate-900 font-montserrat">
+          <CardTitle className="text-2xl font-bold text-foreground font-montserrat">
             {t("title")}
           </CardTitle>
-          <CardDescription className="text-slate-600 mt-2">
+          <CardDescription className="text-muted-foreground mt-2">
             {t("subtitle")}
           </CardDescription>
         </div>
@@ -116,18 +116,18 @@ export function ForgotPasswordForm() {
           <div className="space-y-2">
             <Label
               htmlFor="email"
-              className="text-sm font-medium text-slate-700"
+              className="text-sm font-medium text-foreground"
             >
               {t("emailLabel")}
             </Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 id="email"
                 type="email"
                 placeholder={t("emailPlaceholder")}
                 className={cn(
-                  "pl-10 h-11 bg-slate-50 border-slate-200 focus:bg-white transition-colors",
+                  "pl-10 h-11 bg-muted/50 border-input focus:bg-background transition-colors",
                   errors.email && "border-red-500 focus:ring-red-500"
                 )}
                 {...register("email")}
@@ -167,7 +167,7 @@ export function ForgotPasswordForm() {
         <div className="mt-6 text-center">
           <Link
             href={`/${locale}/login`}
-            className="inline-flex items-center text-sm text-slate-600 hover:text-icao transition-colors"
+            className="inline-flex items-center text-sm text-muted-foreground hover:text-icao transition-colors"
           >
             <ArrowLeft className="mr-1 h-3 w-3" />
             {t("rememberPassword")}

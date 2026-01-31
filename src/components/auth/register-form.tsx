@@ -31,13 +31,13 @@ export function RegisterForm({ initialTab = "access" }: RegisterFormProps) {
   const [activeTab, setActiveTab] = useState<"access" | "join">(initialTab);
 
   return (
-    <Card className="border-0 shadow-xl bg-white">
+    <Card className="border-0 shadow-xl bg-card">
       <CardHeader className="space-y-4 text-center pb-2">
         <div>
-          <CardTitle className="text-2xl font-bold text-slate-900 font-montserrat">
+          <CardTitle className="text-2xl font-bold text-foreground font-montserrat">
             {t("title")}
           </CardTitle>
-          <CardDescription className="text-slate-600 mt-2">
+          <CardDescription className="text-muted-foreground mt-2">
             {t("description")}
           </CardDescription>
         </div>

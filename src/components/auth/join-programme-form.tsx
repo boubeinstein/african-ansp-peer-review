@@ -133,7 +133,7 @@ export function JoinProgrammeForm() {
         </div>
         <h3 className="text-xl font-semibold text-slate-900">{t("successTitle")}</h3>
         <p className="text-slate-600 max-w-md mx-auto">{t("successMessage")}</p>
-        <div className="text-sm text-slate-500 mt-2">
+        <div className="text-sm text-muted-foreground mt-2">
           <p>{t("nextSteps")}</p>
         </div>
         <Button
@@ -156,125 +156,125 @@ export function JoinProgrammeForm() {
 
       {/* Organization Name */}
       <div className="space-y-2">
-        <Label htmlFor="organizationName" className="text-sm font-medium text-slate-700">
-          {t("organizationName")} <span className="text-red-500">*</span>
+        <Label htmlFor="organizationName" className="text-sm font-medium text-foreground">
+          {t("organizationName")} <span className="text-destructive">*</span>
         </Label>
         <div className="relative">
-          <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             id="organizationName"
             placeholder={t("organizationNamePlaceholder")}
             className={cn(
-              "pl-10 h-10 bg-slate-50 border-slate-200 focus:bg-white transition-colors",
-              errors.organizationName && "border-red-500"
+              "pl-10 h-10 bg-muted/50 border-input focus:bg-background transition-colors",
+              errors.organizationName && "border-destructive"
             )}
             {...register("organizationName")}
             disabled={submitMutation.isPending}
           />
         </div>
-        <p className="text-xs text-slate-500">{t("organizationNameHelp")}</p>
+        <p className="text-xs text-muted-foreground">{t("organizationNameHelp")}</p>
         {errors.organizationName && (
-          <p className="text-xs text-red-500">{errors.organizationName.message}</p>
+          <p className="text-xs text-destructive">{errors.organizationName.message}</p>
         )}
       </div>
 
       {/* Country and ICAO Code - Side by Side */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="organizationCountry" className="text-sm font-medium text-slate-700">
-            {t("country")} <span className="text-red-500">*</span>
+          <Label htmlFor="organizationCountry" className="text-sm font-medium text-foreground">
+            {t("country")} <span className="text-destructive">*</span>
           </Label>
           <div className="relative">
-            <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               id="organizationCountry"
               placeholder={t("countryPlaceholder")}
               className={cn(
-                "pl-10 h-10 bg-slate-50 border-slate-200 focus:bg-white transition-colors",
-                errors.organizationCountry && "border-red-500"
+                "pl-10 h-10 bg-muted/50 border-input focus:bg-background transition-colors",
+                errors.organizationCountry && "border-destructive"
               )}
               {...register("organizationCountry")}
               disabled={submitMutation.isPending}
             />
           </div>
           {errors.organizationCountry && (
-            <p className="text-xs text-red-500">{errors.organizationCountry.message}</p>
+            <p className="text-xs text-destructive">{errors.organizationCountry.message}</p>
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="organizationCode" className="text-sm font-medium text-slate-700">
-            {t("organizationCode")} <span className="text-xs text-slate-500">({t("optional")})</span>
+          <Label htmlFor="organizationCode" className="text-sm font-medium text-foreground">
+            {t("organizationCode")} <span className="text-xs text-muted-foreground">({t("optional")})</span>
           </Label>
           <Input
             id="organizationCode"
             placeholder="e.g., HKJK"
-            className="h-10 bg-slate-50 border-slate-200 focus:bg-white transition-colors"
+            className="h-10 bg-muted/50 border-input focus:bg-background transition-colors"
             {...register("organizationCode")}
             disabled={submitMutation.isPending}
           />
-          <p className="text-xs text-slate-500">{t("organizationCodeHelp")}</p>
+          <p className="text-xs text-muted-foreground">{t("organizationCodeHelp")}</p>
         </div>
       </div>
 
       {/* Contact Name */}
       <div className="space-y-2">
-        <Label htmlFor="contactName" className="text-sm font-medium text-slate-700">
-          {t("contactName")} <span className="text-red-500">*</span>
+        <Label htmlFor="contactName" className="text-sm font-medium text-foreground">
+          {t("contactName")} <span className="text-destructive">*</span>
         </Label>
         <div className="relative">
-          <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             id="contactName"
             placeholder={t("contactNamePlaceholder")}
             className={cn(
-              "pl-10 h-10 bg-slate-50 border-slate-200 focus:bg-white transition-colors",
-              errors.contactName && "border-red-500"
+              "pl-10 h-10 bg-muted/50 border-input focus:bg-background transition-colors",
+              errors.contactName && "border-destructive"
             )}
             {...register("contactName")}
             disabled={submitMutation.isPending}
           />
         </div>
         {errors.contactName && (
-          <p className="text-xs text-red-500">{errors.contactName.message}</p>
+          <p className="text-xs text-destructive">{errors.contactName.message}</p>
         )}
       </div>
 
       {/* Contact Email and Phone - Side by Side */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="contactEmail" className="text-sm font-medium text-slate-700">
-            {t("email")} <span className="text-red-500">*</span>
+          <Label htmlFor="contactEmail" className="text-sm font-medium text-foreground">
+            {t("email")} <span className="text-destructive">*</span>
           </Label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               id="contactEmail"
               type="email"
               placeholder={t("emailPlaceholder")}
               className={cn(
-                "pl-10 h-10 bg-slate-50 border-slate-200 focus:bg-white transition-colors",
-                errors.contactEmail && "border-red-500"
+                "pl-10 h-10 bg-muted/50 border-input focus:bg-background transition-colors",
+                errors.contactEmail && "border-destructive"
               )}
               {...register("contactEmail")}
               disabled={submitMutation.isPending}
             />
           </div>
           {errors.contactEmail && (
-            <p className="text-xs text-red-500">{errors.contactEmail.message}</p>
+            <p className="text-xs text-destructive">{errors.contactEmail.message}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="contactPhone" className="text-sm font-medium text-slate-700">
+          <Label htmlFor="contactPhone" className="text-sm font-medium text-foreground">
             {t("phone")}
           </Label>
           <div className="relative">
-            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               id="contactPhone"
               placeholder={t("phonePlaceholder")}
               className={cn(
-                "pl-10 h-10 bg-slate-50 border-slate-200 focus:bg-white transition-colors"
+                "pl-10 h-10 bg-muted/50 border-input focus:bg-background transition-colors"
               )}
               {...register("contactPhone")}
               disabled={submitMutation.isPending}
@@ -285,38 +285,38 @@ export function JoinProgrammeForm() {
 
       {/* Job Title */}
       <div className="space-y-2">
-        <Label htmlFor="contactJobTitle" className="text-sm font-medium text-slate-700">
-          {t("jobTitle")} <span className="text-red-500">*</span>
+        <Label htmlFor="contactJobTitle" className="text-sm font-medium text-foreground">
+          {t("jobTitle")} <span className="text-destructive">*</span>
         </Label>
         <div className="relative">
-          <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             id="contactJobTitle"
             placeholder={t("jobTitlePlaceholder")}
             className={cn(
-              "pl-10 h-10 bg-slate-50 border-slate-200 focus:bg-white transition-colors",
-              errors.contactJobTitle && "border-red-500"
+              "pl-10 h-10 bg-muted/50 border-input focus:bg-background transition-colors",
+              errors.contactJobTitle && "border-destructive"
             )}
             {...register("contactJobTitle")}
             disabled={submitMutation.isPending}
           />
         </div>
         {errors.contactJobTitle && (
-          <p className="text-xs text-red-500">{errors.contactJobTitle.message}</p>
+          <p className="text-xs text-destructive">{errors.contactJobTitle.message}</p>
         )}
       </div>
 
       {/* SMS Maturity and Preferred Team - Side by Side */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="smsMaturity" className="text-sm font-medium text-slate-700">
+          <Label htmlFor="smsMaturity" className="text-sm font-medium text-foreground">
             {t("smsMaturity")}
           </Label>
           <Select
             onValueChange={(value) => setValue("currentSmsMaturity", value as "A" | "B" | "C" | "D" | "E")}
             disabled={submitMutation.isPending}
           >
-            <SelectTrigger className="h-10 bg-slate-50 border-slate-200 focus:bg-white">
+            <SelectTrigger className="h-10 bg-muted/50 border-input focus:bg-background">
               <SelectValue placeholder={t("selectMaturity")} />
             </SelectTrigger>
             <SelectContent>
@@ -330,14 +330,14 @@ export function JoinProgrammeForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="preferredTeam" className="text-sm font-medium text-slate-700">
+          <Label htmlFor="preferredTeam" className="text-sm font-medium text-foreground">
             {t("preferredTeam")}
           </Label>
           <Select
             onValueChange={(value) => setValue("preferredTeam", parseInt(value))}
             disabled={submitMutation.isPending}
           >
-            <SelectTrigger className="h-10 bg-slate-50 border-slate-200 focus:bg-white">
+            <SelectTrigger className="h-10 bg-muted/50 border-input focus:bg-background">
               <SelectValue placeholder={t("selectTeam")} />
             </SelectTrigger>
             <SelectContent>
@@ -354,17 +354,17 @@ export function JoinProgrammeForm() {
       {/* Proposed Reviewers and Language - Side by Side */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="proposedReviewerCount" className="text-sm font-medium text-slate-700">
+          <Label htmlFor="proposedReviewerCount" className="text-sm font-medium text-foreground">
             {t("proposedReviewers")}
           </Label>
           <div className="relative">
-            <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               id="proposedReviewerCount"
               type="number"
               min={2}
               max={10}
-              className="pl-10 h-10 bg-slate-50 border-slate-200 focus:bg-white"
+              className="pl-10 h-10 bg-muted/50 border-input focus:bg-background"
               {...register("proposedReviewerCount", { valueAsNumber: true })}
               disabled={submitMutation.isPending}
             />
@@ -372,17 +372,17 @@ export function JoinProgrammeForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="preferredLanguage" className="text-sm font-medium text-slate-700">
+          <Label htmlFor="preferredLanguage" className="text-sm font-medium text-foreground">
             {t("preferredLanguage")}
           </Label>
           <div className="relative">
-            <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10 pointer-events-none" />
+            <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10 pointer-events-none" />
             <Select
               defaultValue={locale === "fr" ? "fr" : "en"}
               onValueChange={(value) => setValue("preferredLanguage", value as "en" | "fr" | "both")}
               disabled={submitMutation.isPending}
             >
-              <SelectTrigger className="pl-10 h-10 bg-slate-50 border-slate-200 focus:bg-white">
+              <SelectTrigger className="pl-10 h-10 bg-muted/50 border-input focus:bg-background">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -397,34 +397,34 @@ export function JoinProgrammeForm() {
 
       {/* Motivation Statement */}
       <div className="space-y-2">
-        <Label htmlFor="motivationStatement" className="text-sm font-medium text-slate-700">
-          {t("motivation")} <span className="text-red-500">*</span>
+        <Label htmlFor="motivationStatement" className="text-sm font-medium text-foreground">
+          {t("motivation")} <span className="text-destructive">*</span>
         </Label>
         <Textarea
           id="motivationStatement"
           placeholder={t("motivationPlaceholder")}
           className={cn(
-            "min-h-[120px] bg-slate-50 border-slate-200 focus:bg-white transition-colors resize-none",
-            errors.motivationStatement && "border-red-500"
+            "min-h-[120px] bg-muted/50 border-input focus:bg-background transition-colors resize-none",
+            errors.motivationStatement && "border-destructive"
           )}
           {...register("motivationStatement")}
           disabled={submitMutation.isPending}
         />
-        <p className="text-xs text-slate-500">{t("motivationHelp")}</p>
+        <p className="text-xs text-muted-foreground">{t("motivationHelp")}</p>
         {errors.motivationStatement && (
-          <p className="text-xs text-red-500">{errors.motivationStatement.message}</p>
+          <p className="text-xs text-destructive">{errors.motivationStatement.message}</p>
         )}
       </div>
 
       {/* Additional Notes */}
       <div className="space-y-2">
-        <Label htmlFor="additionalNotes" className="text-sm font-medium text-slate-700">
+        <Label htmlFor="additionalNotes" className="text-sm font-medium text-foreground">
           {t("additionalNotes")}
         </Label>
         <Textarea
           id="additionalNotes"
           placeholder={t("additionalNotesPlaceholder")}
-          className="min-h-[80px] bg-slate-50 border-slate-200 focus:bg-white transition-colors resize-none"
+          className="min-h-[80px] bg-muted/50 border-input focus:bg-background transition-colors resize-none"
           {...register("additionalNotes")}
           disabled={submitMutation.isPending}
         />

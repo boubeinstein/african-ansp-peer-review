@@ -75,9 +75,9 @@ function PasswordRequirement({
       {met ? (
         <Check className="h-3 w-3 text-green-600" />
       ) : (
-        <X className="h-3 w-3 text-slate-400" />
+        <X className="h-3 w-3 text-muted-foreground" />
       )}
-      <span className={met ? "text-green-600" : "text-slate-500"}>{label}</span>
+      <span className={met ? "text-green-600" : "text-muted-foreground"}>{label}</span>
     </div>
   );
 }
@@ -140,10 +140,10 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   // Loading state while verifying token
   if (isVerifying) {
     return (
-      <Card className="border-0 shadow-xl bg-white">
+      <Card className="border-0 shadow-xl bg-card">
         <CardContent className="flex flex-col items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
-          <p className="mt-4 text-sm text-slate-500">{t("verifying")}</p>
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <p className="mt-4 text-sm text-muted-foreground">{t("verifying")}</p>
         </CardContent>
       </Card>
     );
@@ -152,15 +152,15 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   // Invalid or expired token
   if (!token || !tokenStatus?.valid) {
     return (
-      <Card className="border-0 shadow-xl bg-white">
+      <Card className="border-0 shadow-xl bg-card">
         <CardHeader className="text-center pb-2">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
             <XCircle className="h-7 w-7 text-red-600" />
           </div>
-          <CardTitle className="text-2xl font-bold text-slate-900 font-montserrat">
+          <CardTitle className="text-2xl font-bold text-foreground font-montserrat">
             {t("invalidToken")}
           </CardTitle>
-          <CardDescription className="mt-2 text-slate-600">
+          <CardDescription className="mt-2 text-muted-foreground">
             {t("expiredToken")}
           </CardDescription>
         </CardHeader>
@@ -178,15 +178,15 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   // Success state
   if (isSuccess) {
     return (
-      <Card className="border-0 shadow-xl bg-white">
+      <Card className="border-0 shadow-xl bg-card">
         <CardHeader className="text-center pb-2">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-green-100">
             <CheckCircle className="h-7 w-7 text-green-600" />
           </div>
-          <CardTitle className="text-2xl font-bold text-slate-900 font-montserrat">
+          <CardTitle className="text-2xl font-bold text-foreground font-montserrat">
             {t("successTitle")}
           </CardTitle>
-          <CardDescription className="mt-2 text-slate-600">
+          <CardDescription className="mt-2 text-muted-foreground">
             {t("successMessage")}
           </CardDescription>
         </CardHeader>
@@ -201,16 +201,16 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
   // Reset form
   return (
-    <Card className="border-0 shadow-xl bg-white">
+    <Card className="border-0 shadow-xl bg-card">
       <CardHeader className="space-y-4 text-center pb-2">
         <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-blue-100">
           <KeyRound className="h-7 w-7 text-blue-600" />
         </div>
         <div>
-          <CardTitle className="text-2xl font-bold text-slate-900 font-montserrat">
+          <CardTitle className="text-2xl font-bold text-foreground font-montserrat">
             {t("title")}
           </CardTitle>
-          <CardDescription className="text-slate-600 mt-2">
+          <CardDescription className="text-muted-foreground mt-2">
             {t("subtitle")}{" "}
             {tokenStatus.email && (
               <span className="font-medium">({tokenStatus.email})</span>
@@ -225,17 +225,17 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           <div className="space-y-2">
             <Label
               htmlFor="password"
-              className="text-sm font-medium text-slate-700"
+              className="text-sm font-medium text-foreground"
             >
               {t("passwordLabel")}
             </Label>
             <div className="relative">
-              <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
                 className={cn(
-                  "pl-10 pr-10 h-11 bg-slate-50 border-slate-200 focus:bg-white transition-colors",
+                  "pl-10 pr-10 h-11 bg-muted/50 border-input focus:bg-background transition-colors",
                   errors.password && "border-red-500 focus:ring-red-500"
                 )}
                 {...register("password")}
@@ -244,7 +244,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground transition-colors"
                 tabIndex={-1}
               >
                 {showPassword ? (
@@ -270,17 +270,17 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           <div className="space-y-2">
             <Label
               htmlFor="confirmPassword"
-              className="text-sm font-medium text-slate-700"
+              className="text-sm font-medium text-foreground"
             >
               {t("confirmPasswordLabel")}
             </Label>
             <div className="relative">
-              <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 id="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
                 className={cn(
-                  "pl-10 pr-10 h-11 bg-slate-50 border-slate-200 focus:bg-white transition-colors",
+                  "pl-10 pr-10 h-11 bg-muted/50 border-input focus:bg-background transition-colors",
                   errors.confirmPassword && "border-red-500 focus:ring-red-500"
                 )}
                 {...register("confirmPassword")}
@@ -289,7 +289,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground transition-colors"
                 tabIndex={-1}
               >
                 {showConfirmPassword ? (

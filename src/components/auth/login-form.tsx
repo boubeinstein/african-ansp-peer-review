@@ -80,13 +80,13 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="border-0 shadow-xl bg-white">
+    <Card className="border-0 shadow-xl bg-card">
       <CardHeader className="space-y-4 text-center pb-2">
         <div>
-          <CardTitle className="text-2xl font-bold text-slate-900 font-montserrat">
+          <CardTitle className="text-2xl font-bold text-foreground font-montserrat">
             {t("title")}
           </CardTitle>
-          <CardDescription className="text-slate-600 mt-2">
+          <CardDescription className="text-muted-foreground mt-2">
             {t("description")}
           </CardDescription>
         </div>
@@ -98,26 +98,26 @@ export function LoginForm() {
           <div className="space-y-2">
             <Label
               htmlFor="email"
-              className="text-sm font-medium text-slate-700"
+              className="text-sm font-medium text-foreground"
             >
               {t("email")}
             </Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 id="email"
                 type="email"
                 placeholder={t("emailPlaceholder")}
                 className={cn(
-                  "pl-10 h-11 bg-slate-50 border-slate-200 focus:bg-white transition-colors",
-                  errors.email && "border-red-500 focus:ring-red-500"
+                  "pl-10 h-11 bg-muted/50 border-input focus:bg-background transition-colors",
+                  errors.email && "border-destructive focus:ring-destructive"
                 )}
                 {...register("email")}
                 disabled={isLoading}
               />
             </div>
             {errors.email && (
-              <p className="text-xs text-red-500">{errors.email.message}</p>
+              <p className="text-xs text-destructive">{errors.email.message}</p>
             )}
           </div>
 
@@ -126,26 +126,26 @@ export function LoginForm() {
             <div className="flex items-center justify-between">
               <Label
                 htmlFor="password"
-                className="text-sm font-medium text-slate-700"
+                className="text-sm font-medium text-foreground"
               >
                 {t("password")}
               </Label>
               <Link
                 href={`/${locale}/forgot-password`}
-                className="text-xs text-icao hover:text-canso transition-colors"
+                className="text-xs text-primary hover:text-primary/80 transition-colors"
               >
                 {t("forgotPassword")}
               </Link>
             </div>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
                 className={cn(
-                  "pl-10 pr-10 h-11 bg-slate-50 border-slate-200 focus:bg-white transition-colors",
-                  errors.password && "border-red-500 focus:ring-red-500"
+                  "pl-10 pr-10 h-11 bg-muted/50 border-input focus:bg-background transition-colors",
+                  errors.password && "border-destructive focus:ring-destructive"
                 )}
                 {...register("password")}
                 disabled={isLoading}
@@ -153,7 +153,7 @@ export function LoginForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 tabIndex={-1}
               >
                 {showPassword ? (
@@ -164,7 +164,7 @@ export function LoginForm() {
               </button>
             </div>
             {errors.password && (
-              <p className="text-xs text-red-500">{errors.password.message}</p>
+              <p className="text-xs text-destructive">{errors.password.message}</p>
             )}
           </div>
 
@@ -195,11 +195,11 @@ export function LoginForm() {
 
         {/* Sign Up Link */}
         <div className="mt-6 text-center">
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-muted-foreground">
             {t("noAccount")}{" "}
             <Link
               href={`/${locale}/register`}
-              className="font-medium text-icao hover:text-canso transition-colors"
+              className="font-medium text-primary hover:text-primary/80 transition-colors"
             >
               {t("signUp")}
             </Link>
@@ -208,11 +208,11 @@ export function LoginForm() {
 
         {/* Separate section for non-participants */}
         <div className="mt-4 pt-4 border-t text-center">
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted-foreground">
             {t("notParticipant")}{" "}
             <Link
               href={`/${locale}/request-access?tab=join`}
-              className="font-medium text-icao hover:text-canso transition-colors"
+              className="font-medium text-primary hover:text-primary/80 transition-colors"
             >
               {t("requestToJoin")}
             </Link>

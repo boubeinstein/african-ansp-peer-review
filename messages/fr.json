@@ -57,6 +57,7 @@
     },
     "commandPalette": "Palette de Commandes",
     "keyboardShortcuts": "Raccourcis Clavier",
+    "theme": "Thème",
     "autoSave": {
       "saving": "Enregistrement...",
       "saved": "Enregistré",

@@ -21,13 +21,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Globe, LogOut, Settings, Search, Keyboard } from "lucide-react";
+import { Globe, LogOut, Settings, Search, Keyboard, Moon, Sun } from "lucide-react";
 import Link from "next/link";
 import { NotificationBell } from "@/components/features/notifications/notification-bell";
 import { CommandPalette } from "@/components/features/command-palette";
 import { KeyboardShortcutsDialog, ShortcutIndicator } from "@/components/features/keyboard-shortcuts";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { OfflineIndicator } from "@/components/pwa/offline-indicator";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 interface HeaderProps {
   locale: string;
@@ -126,6 +127,18 @@ export function Header({ locale, user }: HeaderProps) {
                 </TooltipContent>
               </Tooltip>
 
+              {/* Theme Toggle */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <ThemeToggle />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p>{t("theme")}</p>
+                </TooltipContent>
+              </Tooltip>
+
               {/* Language Toggle */}
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -220,6 +233,8 @@ function HeaderSkeleton() {
       {/* Search button skeleton */}
       <Skeleton className="h-9 w-9 rounded-md" />
       {/* Keyboard shortcuts button skeleton */}
+      <Skeleton className="h-9 w-9 rounded-md" />
+      {/* Theme toggle skeleton */}
       <Skeleton className="h-9 w-9 rounded-md" />
       {/* Language toggle skeleton */}
       <Skeleton className="h-9 w-9 rounded-md" />

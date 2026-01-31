@@ -57,6 +57,7 @@
     },
     "commandPalette": "Command Palette",
     "keyboardShortcuts": "Keyboard Shortcuts",
+    "theme": "Theme",
     "autoSave": {
       "saving": "Saving...",
       "saved": "Saved",

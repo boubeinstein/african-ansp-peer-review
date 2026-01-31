@@ -11,7 +11,9 @@ import {
 } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { UserRole } from "@prisma/client";
+import { toast } from "sonner";
 import { trpc } from "@/lib/trpc/client";
+import { fireCelebrationConfetti } from "@/lib/confetti";
 import {
   getTourForRole,
   type TourStep,
@@ -279,6 +281,17 @@ export function OnboardingProvider({
       setIsActive(false);
 
       if (completed) {
+        // Fire celebration confetti
+        fireCelebrationConfetti();
+
+        // Show success toast after a brief delay
+        setTimeout(() => {
+          toast.success("Welcome aboard!", {
+            description: "You're ready to start using the platform.",
+            duration: 5000,
+          });
+        }, 1000);
+
         completeTourMutation.mutate();
       } else {
         dismissTourMutation.mutate();

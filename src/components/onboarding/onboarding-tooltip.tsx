@@ -374,6 +374,15 @@ export function OnboardingTooltip() {
               {t(`actions.${currentStep.action}`)}
             </div>
           )}
+
+          {/* Celebration emojis on last step */}
+          {isLastStep && (
+            <div className="flex justify-center gap-2 text-2xl mt-4 animate-bounce">
+              <span role="img" aria-label="party">🎉</span>
+              <span role="img" aria-label="confetti">🎊</span>
+              <span role="img" aria-label="celebration">🥳</span>
+            </div>
+          )}
         </div>
 
         {/* Progress dots */}

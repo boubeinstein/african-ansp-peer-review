@@ -5,7 +5,7 @@ import { TRPCProvider } from "@/lib/trpc/provider";
 import { KeyboardShortcutsProvider } from "@/components/features/shortcuts";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { OfflineIndicator } from "@/components/collaboration";
-import { OnboardingProvider, OnboardingTooltip } from "@/components/onboarding";
+import { OnboardingProvider, OnboardingTooltip, WelcomeModal } from "@/components/onboarding";
 
 interface DashboardProvidersProps {
   children: React.ReactNode;
@@ -25,6 +25,7 @@ export function DashboardProviders({
           <OnboardingProvider userRole={userRole} locale={locale}>
             <OfflineIndicator />
             {children}
+            <WelcomeModal />
             <OnboardingTooltip />
           </OnboardingProvider>
         </KeyboardShortcutsProvider>

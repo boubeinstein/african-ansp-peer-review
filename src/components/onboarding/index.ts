@@ -12,3 +12,5 @@ export {
 } from "./onboarding-provider";
 
 export { OnboardingTooltip } from "./onboarding-tooltip";
+
+export { WelcomeModal } from "./welcome-modal";

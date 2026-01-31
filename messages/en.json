@@ -7010,6 +7010,17 @@
       "click": "Click to interact",
       "hover": "Hover for more"
     },
+    "welcomeModal": {
+      "title": "Welcome to AAPRP!",
+      "subtitle": "African ANSP Peer Review Programme",
+      "description": "Let's take a quick tour to help you get familiar with the platform and its features.",
+      "feature1": "Interactive guided walkthrough",
+      "feature2": "Learn key features for your role",
+      "feature3": "Takes only 2-3 minutes",
+      "startButton": "Start Tour",
+      "skipButton": "Skip for now",
+      "restartHint": "You can restart the tour anytime from Settings"
+    },
     "welcome": {
       "title": "Welcome to AAPRP!",
       "description": "Let's take a quick tour of the African ANSP Peer Review Programme platform. This will help you navigate the key features."

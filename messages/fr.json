@@ -7010,6 +7010,17 @@
       "click": "Cliquez pour interagir",
       "hover": "Survolez pour plus d'infos"
     },
+    "welcomeModal": {
+      "title": "Bienvenue sur AAPRP !",
+      "subtitle": "Programme Africain de Revue par les Pairs des ANSP",
+      "description": "Faisons une visite rapide pour vous familiariser avec la plateforme et ses fonctionnalités.",
+      "feature1": "Visite guidée interactive",
+      "feature2": "Découvrez les fonctionnalités clés pour votre rôle",
+      "feature3": "Durée : 2-3 minutes seulement",
+      "startButton": "Commencer la visite",
+      "skipButton": "Passer pour l'instant",
+      "restartHint": "Vous pouvez relancer la visite à tout moment depuis les Paramètres"
+    },
     "welcome": {
       "title": "Bienvenue sur AAPRP !",
       "description": "Faisons une visite rapide de la plateforme du Programme Africain de Revue par les Pairs des ANSP. Cela vous aidera à naviguer les fonctionnalités clés."

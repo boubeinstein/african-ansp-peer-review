@@ -28,6 +28,7 @@ interface OnboardingContextType {
   // State
   isActive: boolean;
   isNavigating: boolean;
+  showWelcomeModal: boolean;
   currentStep: TourStep | null;
   currentStepIndex: number;
   totalSteps: number;
@@ -46,6 +47,7 @@ interface OnboardingContextType {
   resetTour: () => void;
   goToStep: (stepIndex: number) => Promise<void>;
   setShowTooltips: (show: boolean) => void;
+  dismissWelcomeModal: () => void;
 }
 
 interface OnboardingProviderProps {
@@ -76,6 +78,7 @@ export function OnboardingProvider({
   // Local state for tour UI
   const [isActive, setIsActive] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
   // Compute tour based on user role (memoized)
   const tour = useMemo<TourDefinition | null>(() => {
@@ -163,11 +166,19 @@ export function OnboardingProvider({
       tour &&
       !isActive
     ) {
-      // Small delay to let page render
-      const timer = setTimeout(() => setIsActive(true), 1500);
+      // Small delay to let page render, then show welcome modal
+      const timer = setTimeout(() => {
+        setIsActive(true);
+        setShowWelcomeModal(true);
+      }, 1500);
       return () => clearTimeout(timer);
     }
   }, [onboardingState, tour, isActive]);
+
+  // Dismiss welcome modal function
+  const dismissWelcomeModal = useCallback(() => {
+    setShowWelcomeModal(false);
+  }, []);
 
   // Computed values
   const currentStep = tour?.steps[currentStepIndex] ?? null;
@@ -319,6 +330,7 @@ export function OnboardingProvider({
       value={{
         isActive,
         isNavigating,
+        showWelcomeModal,
         currentStep,
         currentStepIndex,
         totalSteps,
@@ -335,6 +347,7 @@ export function OnboardingProvider({
         resetTour,
         goToStep,
         setShowTooltips,
+        dismissWelcomeModal,
       }}
     >
       {children}

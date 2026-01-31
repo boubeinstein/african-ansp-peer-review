@@ -276,8 +276,8 @@ export function OnboardingTooltip() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isActive, onboarding]);
 
-  // Don't render on server or when inactive
-  if (!isClient || !isActive || !currentStep || !onboarding) {
+  // Don't render on server, when inactive, or when welcome modal is showing
+  if (!isClient || !isActive || !currentStep || !onboarding || onboarding.showWelcomeModal) {
     return null;
   }
 

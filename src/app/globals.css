@@ -163,10 +163,79 @@ body {
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* ==========================================
+     Global Focus-Visible States
+     WCAG 2.1 AA compliant focus indicators
+     ========================================== */
+
+  /*
+   * Enhanced focus ring for all interactive elements
+   * Uses ring-2 ring-primary ring-offset-2 pattern
+   * Visible in both light and dark modes
+   */
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  /* Remove default focus outline since we're using ring */
+  :focus {
+    outline: none;
+  }
+
+  /* Ensure focus is visible on links */
+  a:focus-visible {
+    @apply rounded-sm;
+  }
+
+  /* Enhanced focus for form inputs - inner glow effect */
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  [contenteditable="true"]:focus-visible {
+    @apply ring-2 ring-primary ring-offset-0 border-primary;
+  }
+
+  /* Buttons and interactive controls */
+  button:focus-visible,
+  [role="button"]:focus-visible,
+  [type="button"]:focus-visible,
+  [type="submit"]:focus-visible,
+  [type="reset"]:focus-visible {
+    @apply ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  /* Checkboxes and radio buttons - smaller offset */
+  [type="checkbox"]:focus-visible,
+  [type="radio"]:focus-visible,
+  [role="checkbox"]:focus-visible,
+  [role="radio"]:focus-visible,
+  [role="switch"]:focus-visible {
+    @apply ring-2 ring-primary ring-offset-1 ring-offset-background;
+  }
+
+  /* Tab panels and menu items */
+  [role="tab"]:focus-visible,
+  [role="menuitem"]:focus-visible,
+  [role="option"]:focus-visible,
+  [role="listbox"]:focus-visible {
+    @apply ring-2 ring-primary ring-offset-0;
+  }
+
+  /* Cards and larger interactive areas */
+  [role="article"]:focus-visible,
+  [role="listitem"]:focus-visible {
+    @apply ring-2 ring-primary ring-offset-2 ring-offset-background rounded-lg;
+  }
+
+  /* Skip links special handling - already styled in skip-links.tsx */
+  .skip-links a:focus-visible {
+    @apply ring-0;
   }
 }
 

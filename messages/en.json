@@ -2978,69 +2978,6 @@
       "windowExpired": "Availability window expired",
       "pastDateError": "Cannot select dates in the past",
       "endBeforeStart": "End date must be after start date"
-    },
-    "workload": {
-      "title": "Reviewer Workload Dashboard",
-      "description": "Monitor reviewer capacity to prevent burnout and ensure fair distribution",
-      "backToReviewers": "Back to Reviewers",
-      "noData": "No workload data available",
-      "filterByStatus": "Filter by status",
-      "showingCount": "Showing {count} reviewers",
-      "noReviewersFound": "No reviewers found matching the filter",
-      "lastUpdated": "Last updated",
-      "availableNow": "Available Now",
-      "notAvailable": "Not Available",
-      "leadQualified": "Lead Qualified",
-      "currentStatus": "Current Status",
-      "availableSlots": "Available Slots",
-      "totalCompleted": "Total completed",
-      "asLead": "As lead",
-      "currentAssignments": "Current Assignments",
-      "upcomingAssignments": "Upcoming Assignments",
-      "noCurrentAssignments": "No current assignments",
-      "noUpcomingAssignments": "No upcoming assignments",
-      "availability": "Availability",
-      "next30Days": "Next 30 Days",
-      "next60Days": "31-60 Days",
-      "next90Days": "61-90 Days",
-      "summary": {
-        "totalReviewers": "Total Reviewers",
-        "available": "Available",
-        "moderate": "Moderate",
-        "overloaded": "Overloaded",
-        "activeAssignments": "Active Reviews",
-        "upcoming30Days": "Upcoming (30d)",
-        "avgReviews12m": "Avg Reviews/12m"
-      },
-      "indicators": {
-        "available": "Available",
-        "moderate": "Moderate",
-        "overloaded": "Overloaded"
-      },
-      "filters": {
-        "all": "All Reviewers",
-        "available": "Available",
-        "moderate": "Moderate",
-        "overloaded": "Overloaded"
-      },
-      "table": {
-        "reviewer": "Reviewer",
-        "status": "Status",
-        "active": "Active",
-        "upcoming": "Upcoming",
-        "historical": "12m Reviews",
-        "availability": "Availability",
-        "qualifications": "Qualifications"
-      },
-      "benefits": {
-        "title": "Dashboard Benefits",
-        "preventBurnout": "Prevent Burnout",
-        "preventBurnoutDesc": "Monitor workload to ensure reviewers aren't overloaded",
-        "fairDistribution": "Fair Distribution",
-        "fairDistributionDesc": "Enable equitable assignment distribution across reviewers",
-        "capacityPlanning": "Capacity Planning",
-        "capacityPlanningDesc": "Support proactive planning for upcoming reviews"
-      }
     }
   },
   "reviews": {

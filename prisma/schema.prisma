@@ -36,6 +36,8 @@ model Organization {
   bestPractices             BestPractice[]
   bestPracticeAdoptions     BestPracticeAdoption[]
   lessonsLearned            BestPracticeLessonLearned[]
+  mentorshipRequestsSent    MentorshipRequest[] @relation("MentorshipRequesting")
+  mentorshipRequestsReceived MentorshipRequest[] @relation("MentorshipTarget")
 
   @@map("organizations")
 }
@@ -109,6 +111,7 @@ model User {
   adoptedBestPractices     BestPracticeAdoption[] @relation("AdoptedBestPractices")
   lessonsAuthored          BestPracticeLessonLearned[] @relation("LessonsAuthored")
   bestPracticeComments     BestPracticeComment[]  @relation("BestPracticeCommentsAuthored")
+  mentorshipRequests       MentorshipRequest[]    @relation("MentorshipRequester")
   discussionsAuthored      ReviewDiscussion[]     @relation("DiscussionAuthor")
   discussionsResolved      ReviewDiscussion[]     @relation("ResolvedDiscussions")
   tasksAssigned            ReviewTask[]           @relation("AssignedTasks")
@@ -2044,6 +2047,12 @@ enum LessonStatus {
   PUBLISHED
 }
 
+enum MentorshipStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
 // =============================================================================
 // REVIEWER COLLABORATION WORKSPACE
 // =============================================================================
@@ -2119,6 +2128,9 @@ model BestPractice {
 
   // Discussion comments
   comments          BestPracticeComment[]
+
+  // Mentorship requests
+  mentorshipRequests MentorshipRequest[]
 
   // Timestamps
   createdAt         DateTime            @default(now()) @map("created_at")
@@ -2228,6 +2240,39 @@ model BestPracticeComment {
   @@index([bestPracticeId])
   @@index([parentId])
   @@map("best_practice_comments")
+}
+
+model MentorshipRequest {
+  id                String            @id @default(cuid())
+
+  bestPracticeId    String            @map("best_practice_id")
+  bestPractice      BestPractice      @relation(fields: [bestPracticeId], references: [id], onDelete: Cascade)
+
+  requestingOrgId   String            @map("requesting_org_id")
+  requestingOrg     Organization      @relation("MentorshipRequesting", fields: [requestingOrgId], references: [id])
+
+  targetOrgId       String            @map("target_org_id")
+  targetOrg         Organization      @relation("MentorshipTarget", fields: [targetOrgId], references: [id])
+
+  requesterId       String            @map("requester_id")
+  requester         User              @relation("MentorshipRequester", fields: [requesterId], references: [id])
+
+  // Request content
+  message           String            @db.Text
+
+  // Status
+  status            MentorshipStatus  @default(PENDING)
+  respondedAt       DateTime?         @map("responded_at")
+  responseMessage   String?           @db.Text @map("response_message")
+
+  // Timestamps
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+
+  @@index([bestPracticeId])
+  @@index([targetOrgId])
+  @@index([requestingOrgId])
+  @@map("mentorship_requests")
 }
 
 // =============================================================================

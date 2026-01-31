@@ -1216,4 +1216,135 @@ export const bestPracticeRouter = router({
 
       return comment;
     }),
+
+  // ===========================================================================
+  // MENTORSHIP - Request implementation support
+  // ===========================================================================
+
+  requestMentorship: protectedProcedure
+    .input(
+      z.object({
+        bestPracticeId: z.string(),
+        message: z.string().min(10).max(2000),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+      const userOrgId = user.organizationId;
+
+      if (!userOrgId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You must belong to an organization to request mentorship",
+        });
+      }
+
+      // Get the best practice to find the target organization
+      const bestPractice = await ctx.db.bestPractice.findUnique({
+        where: { id: input.bestPracticeId },
+        select: {
+          organizationId: true,
+          status: true,
+          organization: {
+            select: {
+              nameEn: true,
+              nameFr: true,
+            },
+          },
+        },
+      });
+
+      if (!bestPractice) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Best practice not found",
+        });
+      }
+
+      if (bestPractice.status !== "PUBLISHED") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Can only request mentorship for published best practices",
+        });
+      }
+
+      // Cannot request mentorship from own organization
+      if (userOrgId === bestPractice.organizationId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot request mentorship from your own organization",
+        });
+      }
+
+      // Check if there's already a pending request
+      const existingRequest = await ctx.db.mentorshipRequest.findFirst({
+        where: {
+          bestPracticeId: input.bestPracticeId,
+          requestingOrgId: userOrgId,
+          status: "PENDING",
+        },
+      });
+
+      if (existingRequest) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Your organization already has a pending mentorship request for this practice",
+        });
+      }
+
+      const request = await ctx.db.mentorshipRequest.create({
+        data: {
+          bestPracticeId: input.bestPracticeId,
+          requestingOrgId: userOrgId,
+          targetOrgId: bestPractice.organizationId,
+          requesterId: user.id,
+          message: input.message,
+        },
+        include: {
+          targetOrg: {
+            select: {
+              nameEn: true,
+              nameFr: true,
+            },
+          },
+        },
+      });
+
+      // TODO: Send email notification to target organization
+
+      return request;
+    }),
+
+  // ===========================================================================
+  // MENTORSHIP - Check if user has pending request
+  // ===========================================================================
+
+  getMentorshipStatus: protectedProcedure
+    .input(z.object({ bestPracticeId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+      const userOrgId = user.organizationId;
+
+      if (!userOrgId) {
+        return { hasPendingRequest: false };
+      }
+
+      const request = await ctx.db.mentorshipRequest.findFirst({
+        where: {
+          bestPracticeId: input.bestPracticeId,
+          requestingOrgId: userOrgId,
+        },
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          status: true,
+          createdAt: true,
+        },
+      });
+
+      return {
+        hasPendingRequest: request?.status === "PENDING",
+        lastRequest: request,
+      };
+    }),
 });

@@ -2,9 +2,10 @@
 
 import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, Award, MapPin } from "lucide-react";
+import { Building2, Award, MapPin, GraduationCap } from "lucide-react";
 import { AdoptionButton } from "./adoption-button";
 import { AdoptionList } from "./adoption-list";
+import { RequestMentorship } from "./request-mentorship";
 
 interface Organization {
   id: string;
@@ -93,6 +94,25 @@ export function BestPracticeSidebar({
           )}
         </CardContent>
       </Card>
+
+      {/* Mentorship Request Card */}
+      {userRole && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <GraduationCap className="h-5 w-5 text-primary" />
+              {locale === "fr" ? "Accompagnement" : "Mentorship"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RequestMentorship
+              bestPracticeId={practice.id}
+              targetOrgName={orgName}
+              isOwnOrg={isOwnOrg}
+            />
+          </CardContent>
+        </Card>
+      )}
 
       {/* Originating Organization Card */}
       <Card>

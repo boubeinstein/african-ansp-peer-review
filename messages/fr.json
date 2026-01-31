@@ -6705,6 +6705,27 @@
         "signInToComment": "Connectez-vous pour participer à la discussion",
         "commentCount": "{count, plural, =0 {Aucun commentaire} =1 {1 commentaire} other {# commentaires}}",
         "replyCount": "{count, plural, =1 {1 réponse} other {# réponses}}"
+      },
+      "mentorship": {
+        "requestButton": "Demander un accompagnement",
+        "title": "Demander un soutien à la mise en œuvre",
+        "description": "Connectez-vous avec {org} pour obtenir des conseils sur la mise en œuvre de cette meilleure pratique. Leur équipe peut partager des idées, répondre à vos questions et vous aider à éviter les pièges courants.",
+        "whatYouGet": "Ce que vous pouvez attendre :",
+        "benefits": {
+          "guidance": "Conseils de mise en œuvre personnalisés",
+          "questions": "Réponses à vos questions spécifiques",
+          "lessons": "Leçons tirées de leur expérience",
+          "support": "Soutien continu pendant la mise en œuvre"
+        },
+        "messageLabel": "Votre message",
+        "messagePlaceholder": "Présentez votre organisation, décrivez votre contexte de mise en œuvre et partagez vos questions spécifiques ou les domaines où vous avez besoin de conseils...",
+        "messageHelp": "Soyez précis sur vos besoins pour les aider à fournir le meilleur soutien.",
+        "cancel": "Annuler",
+        "send": "Envoyer la demande",
+        "requestSent": "Demande d'accompagnement envoyée avec succès !",
+        "requestPending": "Demande en attente",
+        "pendingMessage": "Votre organisation a déjà demandé un accompagnement pour cette pratique. L'organisation d'origine répondra bientôt.",
+        "ownOrgMessage": "C'est la meilleure pratique de votre organisation. Vous pouvez accompagner d'autres organisations qui demandent du soutien."
       }
     },
     "new": {

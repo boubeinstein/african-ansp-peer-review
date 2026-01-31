@@ -6705,6 +6705,27 @@
         "signInToComment": "Sign in to join the discussion",
         "commentCount": "{count, plural, =0 {No comments} =1 {1 comment} other {# comments}}",
         "replyCount": "{count, plural, =1 {1 reply} other {# replies}}"
+      },
+      "mentorship": {
+        "requestButton": "Request Mentorship",
+        "title": "Request Implementation Support",
+        "description": "Connect with {org} to get guidance on implementing this best practice. Their team can share insights, answer questions, and help you avoid common pitfalls.",
+        "whatYouGet": "What you can expect:",
+        "benefits": {
+          "guidance": "Personalized implementation guidance",
+          "questions": "Answers to your specific questions",
+          "lessons": "Lessons learned from their experience",
+          "support": "Ongoing support during implementation"
+        },
+        "messageLabel": "Your Message",
+        "messagePlaceholder": "Introduce your organization, describe your implementation context, and share any specific questions or areas where you need guidance...",
+        "messageHelp": "Be specific about your needs to help them provide the best support.",
+        "cancel": "Cancel",
+        "send": "Send Request",
+        "requestSent": "Mentorship request sent successfully!",
+        "requestPending": "Request Pending",
+        "pendingMessage": "Your organization has already requested mentorship for this practice. The originating organization will respond soon.",
+        "ownOrgMessage": "This is your organization's best practice. You can mentor other organizations that request support."
       }
     },
     "new": {

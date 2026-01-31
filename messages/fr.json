@@ -3792,10 +3792,13 @@
         "reviewTeam": "Équipe de revue",
         "leadReviewer": "Réviseur principal",
         "roles": {
-          "LEAD_REVIEWER": "Réviseur principal",
-          "PEER_REVIEWER": "Réviseur pair",
+          "LEAD_REVIEWER": "Réviseur Principal",
+          "PEER_REVIEWER": "Réviseur Pair",
+          "REVIEWER": "Réviseur",
           "OBSERVER": "Observateur",
-          "TECHNICAL_EXPERT": "Expert technique"
+          "COORDINATOR": "Coordinateur",
+          "TECHNICAL_EXPERT": "Expert Technique",
+          "HOST_CONTACT": "Contact Hôte"
         },
         "noTeamMembers": "Aucun membre d'équipe assigné",
         "linkedAssessments": "Évaluations liées",

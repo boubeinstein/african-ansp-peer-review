@@ -3794,8 +3794,11 @@
         "roles": {
           "LEAD_REVIEWER": "Lead Reviewer",
           "PEER_REVIEWER": "Peer Reviewer",
+          "REVIEWER": "Reviewer",
           "OBSERVER": "Observer",
-          "TECHNICAL_EXPERT": "Technical Expert"
+          "COORDINATOR": "Coordinator",
+          "TECHNICAL_EXPERT": "Technical Expert",
+          "HOST_CONTACT": "Host Contact"
         },
         "noTeamMembers": "No team members assigned",
         "linkedAssessments": "Linked Assessments",

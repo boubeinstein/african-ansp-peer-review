@@ -27,25 +27,25 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
   const t = useTranslations("navigation");
   
   // Hydration-safe state: always start expanded (false) on both server and client
+  // This prevents mismatch between SSR and initial client render
   const [collapsed, setCollapsed] = useState(false);
-  const [hasMounted, setHasMounted] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  // After hydration, we can safely read from localStorage
+  // After hydration completes, safely read from localStorage
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional hydration pattern
-    setHasMounted(true);
-    const saved = localStorage.getItem("sidebar-collapsed");
-    if (saved === "true") {
-      setCollapsed(true);
+    setMounted(true);
+    const stored = localStorage.getItem("sidebar-collapsed");
+    if (stored !== null) {
+      setCollapsed(stored === "true");
     }
   }, []);
 
-  // Persist collapsed state to localStorage
+  // Persist collapsed state to localStorage (only after initial mount)
   useEffect(() => {
-    if (hasMounted) {
+    if (mounted) {
       localStorage.setItem("sidebar-collapsed", String(collapsed));
     }
-  }, [collapsed, hasMounted]);
+  }, [collapsed, mounted]);
 
   // Fetch user preferences for conditional nav items
   const { data: preferences } = trpc.settings.getPreferences.useQuery(

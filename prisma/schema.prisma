@@ -112,6 +112,7 @@ model User {
   lessonsAuthored          BestPracticeLessonLearned[] @relation("LessonsAuthored")
   bestPracticeComments     BestPracticeComment[]  @relation("BestPracticeCommentsAuthored")
   mentorshipRequests       MentorshipRequest[]    @relation("MentorshipRequester")
+  retrospectives           ReviewRetrospective[]  @relation("RetrospectiveSubmitter")
   discussionsAuthored      ReviewDiscussion[]     @relation("DiscussionAuthor")
   discussionsResolved      ReviewDiscussion[]     @relation("ResolvedDiscussions")
   tasksAssigned            ReviewTask[]           @relation("AssignedTasks")
@@ -597,6 +598,9 @@ model Review {
   // Real-time collaboration
   sessions               ReviewSession[]
 
+  // Post-review reflection (ICAO Annex 19 - Continuous Improvement)
+  retrospective          ReviewRetrospective?
+
   @@map("reviews")
 }
 
@@ -781,6 +785,9 @@ model Finding {
 
   // Document annotations linked to this finding
   annotations          DocumentAnnotation[]
+
+  // Retrospective lessons linked to this finding
+  retrospectiveLinks   RetrospectiveFinding[]
 
   @@index([reviewId, status])
   @@index([organizationId, status])
@@ -2053,6 +2060,20 @@ enum MentorshipStatus {
   DECLINED
 }
 
+enum RetrospectiveStatus {
+  DRAFT
+  SUBMITTED
+  PUBLISHED
+}
+
+enum LessonType {
+  BEST_PRACTICE_IDENTIFIED
+  SYSTEMIC_ISSUE
+  PROCESS_IMPROVEMENT
+  TRAINING_GAP
+  RESOURCE_CONSTRAINT
+}
+
 // =============================================================================
 // REVIEWER COLLABORATION WORKSPACE
 // =============================================================================
@@ -2273,6 +2294,88 @@ model MentorshipRequest {
   @@index([targetOrgId])
   @@index([requestingOrgId])
   @@map("mentorship_requests")
+}
+
+// =============================================================================
+// REVIEW RETROSPECTIVE - ICAO Annex 19 Continuous Improvement
+// =============================================================================
+
+// Review Retrospective - captures post-review reflection
+// Aligned with ICAO Annex 19 Section 3.3 (Continuous Improvement of SMS)
+// and CANSO SoE SA8.1/SA10.1 (Safety Reporting & Improvement)
+model ReviewRetrospective {
+  id                      String              @id @default(cuid())
+
+  reviewId                String              @unique @map("review_id")
+  review                  Review              @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  // Submitter info
+  submittedById           String              @map("submitted_by_id")
+  submittedBy             User                @relation("RetrospectiveSubmitter", fields: [submittedById], references: [id])
+  submittedAt             DateTime            @default(now()) @map("submitted_at")
+
+  // Section 1: Process Effectiveness
+  processRating           Int                 @map("process_rating") // 1-5 scale
+  preparationEffective    Boolean?            @map("preparation_effective")
+  onSiteEffective         Boolean?            @map("on_site_effective")
+  reportingEffective      Boolean?            @map("reporting_effective")
+
+  // Section 2: What Went Well (Safety Assurance - positive findings)
+  whatWentWell            String              @db.Text @map("what_went_well")
+
+  // Section 3: Areas for Improvement (Continuous Improvement)
+  areasForImprovement     String              @db.Text @map("areas_for_improvement")
+
+  // Section 4: Key Learnings (Knowledge Management)
+  keyLearnings            String              @db.Text @map("key_learnings")
+
+  // Section 5: Programme Suggestions
+  programmeSuggestions    String?             @db.Text @map("programme_suggestions")
+
+  // Section 6: Quantitative Metrics
+  reviewDurationDays      Int?                @map("review_duration_days")
+  teamSizeAdequate        Boolean?            @map("team_size_adequate")
+  resourcesAdequate       Boolean?            @map("resources_adequate")
+  communicationEffective  Boolean?            @map("communication_effective")
+
+  // Status workflow
+  status                  RetrospectiveStatus @default(DRAFT)
+  publishedAt             DateTime?           @map("published_at")
+
+  // Timestamps
+  createdAt               DateTime            @default(now()) @map("created_at")
+  updatedAt               DateTime            @updatedAt @map("updated_at")
+
+  // Related items tagged from retrospective
+  taggedFindings          RetrospectiveFinding[]
+
+  @@index([reviewId])
+  @@index([submittedById])
+  @@index([status])
+  @@map("review_retrospectives")
+}
+
+// Link findings to retrospective insights for lessons learned
+model RetrospectiveFinding {
+  id                String              @id @default(cuid())
+
+  retrospectiveId   String              @map("retrospective_id")
+  retrospective     ReviewRetrospective @relation(fields: [retrospectiveId], references: [id], onDelete: Cascade)
+
+  findingId         String              @map("finding_id")
+  finding           Finding             @relation(fields: [findingId], references: [id])
+
+  // Why this finding is notable
+  notableReason     String?             @db.Text @map("notable_reason")
+  lessonType        LessonType          @map("lesson_type")
+
+  // Timestamps
+  createdAt         DateTime            @default(now()) @map("created_at")
+
+  @@unique([retrospectiveId, findingId])
+  @@index([retrospectiveId])
+  @@index([findingId])
+  @@map("retrospective_findings")
 }
 
 // =============================================================================

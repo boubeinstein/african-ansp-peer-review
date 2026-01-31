@@ -6681,7 +6681,8 @@
         "removeAdoption": "Remove Adoption",
         "adoptSuccess": "Successfully adopted this best practice!",
         "removeSuccess": "Adoption removed successfully",
-        "oversightRoleMessage": "As a Programme Coordinator or Administrator, you oversee the programme but do not represent a specific ANSP. Best practice adoption is performed by ANSP organization members.",
+        "totalAdoptions": "Total adoptions",
+        "promoteToANSPs": "Promote to ANSPs",
         "noOrganization": "You must be a member of an ANSP organization to adopt best practices.",
         "adoptDialog": {
           "title": "Adopt Best Practice",
@@ -6714,6 +6715,7 @@
         "description": "Implementation experiences shared by adopting organizations",
         "empty": "No lessons shared yet. Be the first to share your experience!",
         "shareExperience": "Share Your Experience",
+        "addInsight": "Add Programme Insight",
         "shareButton": "Share Lesson",
         "helpfulCount": "{count, plural, =0 {Be the first to find this helpful} =1 {1 person found this helpful} other {# people found this helpful}}",
         "markHelpful": "Helpful",
@@ -6775,7 +6777,10 @@
         "noComments": "No discussions yet. Be the first to start a conversation!",
         "signInToComment": "Sign in to join the discussion",
         "commentCount": "{count, plural, =0 {No comments} =1 {1 comment} other {# comments}}",
-        "replyCount": "{count, plural, =1 {1 reply} other {# replies}}"
+        "replyCount": "{count, plural, =1 {1 reply} other {# replies}}",
+        "moderator": "Moderator",
+        "deleteComment": "Delete",
+        "deleteConfirm": "Delete this comment? This action cannot be undone."
       },
       "mentorship": {
         "requestButton": "Request Mentorship",
@@ -6796,7 +6801,13 @@
         "requestSent": "Mentorship request sent successfully!",
         "requestPending": "Request Pending",
         "pendingMessage": "Your organization has already requested mentorship for this practice. The originating organization will respond soon.",
-        "ownOrgMessage": "This is your organization's best practice. You can mentor other organizations that request support."
+        "ownOrgMessage": "This is your organization's best practice. You can mentor other organizations that request support.",
+        "overviewTitle": "Mentorship Overview",
+        "totalRequests": "Total requests",
+        "pendingRequests": "Awaiting response",
+        "programmeHint": "As a programme coordinator, you can monitor mentorship activity across all practices.",
+        "viewRequests": "{count, plural, =1 {View 1 request} other {View # requests}}",
+        "noOrgHint": "Join an organization to request mentorship support."
       }
     },
     "new": {
@@ -6852,6 +6863,28 @@
         "saveDraft": "Save as Draft",
         "addTag": "Add"
       }
+    },
+    "promote": {
+      "title": "Promote to ANSPs",
+      "description": "Send a notification to ANSP members recommending this best practice.",
+      "willNotify": "This will notify ANSP Administrators and Safety Managers",
+      "targetAudience": "Target Audience",
+      "allANSPs": "All ANSPs",
+      "allANSPsDescription": "Notify all ANSP members across Africa",
+      "byTeam": "By Regional Team",
+      "byTeamDescription": "Select specific regional teams to notify",
+      "messageEn": "Custom Message (English)",
+      "messageFr": "Custom Message (French)",
+      "messagePlaceholder": "Optional: Add a note about why this practice is recommended...",
+      "messagePlaceholderFr": "Optionnel: Ajoutez une note sur pourquoi cette pratique est recommandée...",
+      "messageHint": "Leave blank to use default message",
+      "markFeatured": "Mark as Featured",
+      "featuredDescription": "Featured practices appear highlighted in the library",
+      "cancel": "Cancel",
+      "sendPromotion": "Send Promotion",
+      "success": "Promotion Sent!",
+      "successDescription": "Notifications have been sent to the target audience.",
+      "error": "Failed to send promotion"
     }
   },
   "workflow": {

@@ -6681,7 +6681,8 @@
         "removeAdoption": "Retirer l'adoption",
         "adoptSuccess": "Pratique adoptée avec succès !",
         "removeSuccess": "Adoption retirée avec succès",
-        "oversightRoleMessage": "En tant que Coordinateur de Programme ou Administrateur, vous supervisez le programme mais ne représentez pas un ANSP spécifique. L'adoption des meilleures pratiques est effectuée par les membres de l'organisation ANSP.",
+        "totalAdoptions": "Adoptions totales",
+        "promoteToANSPs": "Promouvoir aux ANSP",
         "noOrganization": "Vous devez être membre d'une organisation ANSP pour adopter les meilleures pratiques.",
         "adoptDialog": {
           "title": "Adopter la meilleure pratique",
@@ -6714,6 +6715,7 @@
         "description": "Expériences de mise en œuvre partagées par les organisations adoptantes",
         "empty": "Aucun retour d'expérience partagé. Soyez le premier à partager votre expérience !",
         "shareExperience": "Partager votre expérience",
+        "addInsight": "Ajouter un aperçu du programme",
         "shareButton": "Partager",
         "helpfulCount": "{count, plural, =0 {Soyez le premier à trouver ceci utile} =1 {1 personne a trouvé ceci utile} other {# personnes ont trouvé ceci utile}}",
         "markHelpful": "Utile",
@@ -6775,7 +6777,10 @@
         "noComments": "Pas encore de discussions. Soyez le premier à lancer la conversation !",
         "signInToComment": "Connectez-vous pour participer à la discussion",
         "commentCount": "{count, plural, =0 {Aucun commentaire} =1 {1 commentaire} other {# commentaires}}",
-        "replyCount": "{count, plural, =1 {1 réponse} other {# réponses}}"
+        "replyCount": "{count, plural, =1 {1 réponse} other {# réponses}}",
+        "moderator": "Modérateur",
+        "deleteComment": "Supprimer",
+        "deleteConfirm": "Supprimer ce commentaire ? Cette action est irréversible."
       },
       "mentorship": {
         "requestButton": "Demander un accompagnement",
@@ -6796,7 +6801,13 @@
         "requestSent": "Demande d'accompagnement envoyée avec succès !",
         "requestPending": "Demande en attente",
         "pendingMessage": "Votre organisation a déjà demandé un accompagnement pour cette pratique. L'organisation d'origine répondra bientôt.",
-        "ownOrgMessage": "C'est la meilleure pratique de votre organisation. Vous pouvez accompagner d'autres organisations qui demandent du soutien."
+        "ownOrgMessage": "C'est la meilleure pratique de votre organisation. Vous pouvez accompagner d'autres organisations qui demandent du soutien.",
+        "overviewTitle": "Aperçu du mentorat",
+        "totalRequests": "Demandes totales",
+        "pendingRequests": "En attente de réponse",
+        "programmeHint": "En tant que coordinateur du programme, vous pouvez suivre l'activité de mentorat pour toutes les pratiques.",
+        "viewRequests": "{count, plural, =1 {Voir 1 demande} other {Voir # demandes}}",
+        "noOrgHint": "Rejoignez une organisation pour demander un accompagnement."
       }
     },
     "new": {
@@ -6852,6 +6863,28 @@
         "saveDraft": "Enregistrer comme brouillon",
         "addTag": "Ajouter"
       }
+    },
+    "promote": {
+      "title": "Promouvoir aux ANSP",
+      "description": "Envoyer une notification aux membres ANSP recommandant cette bonne pratique.",
+      "willNotify": "Cela notifiera les Administrateurs ANSP et les Responsables Sécurité",
+      "targetAudience": "Public Cible",
+      "allANSPs": "Tous les ANSP",
+      "allANSPsDescription": "Notifier tous les membres ANSP à travers l'Afrique",
+      "byTeam": "Par Équipe Régionale",
+      "byTeamDescription": "Sélectionner des équipes régionales spécifiques",
+      "messageEn": "Message Personnalisé (Anglais)",
+      "messageFr": "Message Personnalisé (Français)",
+      "messagePlaceholder": "Optionnel: Ajoutez une note...",
+      "messagePlaceholderFr": "Optionnel: Ajoutez une note sur pourquoi cette pratique est recommandée...",
+      "messageHint": "Laissez vide pour utiliser le message par défaut",
+      "markFeatured": "Marquer comme En Vedette",
+      "featuredDescription": "Les pratiques en vedette apparaissent en évidence dans la bibliothèque",
+      "cancel": "Annuler",
+      "sendPromotion": "Envoyer la Promotion",
+      "success": "Promotion Envoyée !",
+      "successDescription": "Les notifications ont été envoyées au public cible.",
+      "error": "Échec de l'envoi de la promotion"
     }
   },
   "workflow": {

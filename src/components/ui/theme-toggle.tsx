@@ -8,6 +8,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
@@ -69,6 +70,14 @@ export function ThemeToggle() {
           <span>System</span>
           {theme === "system" && <Check className="ml-auto h-4 w-4" />}
         </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+        <div className="px-2 py-1.5 text-xs text-muted-foreground">
+          <kbd className="px-1.5 py-0.5 rounded bg-muted font-mono text-[10px]">
+            Ctrl+Shift+L
+          </kbd>{" "}
+          to cycle
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

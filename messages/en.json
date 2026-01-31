@@ -6444,6 +6444,7 @@
       "commandPalette": "Command Palette",
       "commandPaletteDesc": "Search commands, navigate, create",
       "showShortcuts": "Show This Dialog",
+      "cycleTheme": "Cycle Theme",
       "closeCancel": "Close / Cancel"
     },
     "navigation": {

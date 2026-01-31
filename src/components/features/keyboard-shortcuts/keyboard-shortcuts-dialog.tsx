@@ -35,6 +35,7 @@ export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcut
       shortcuts: [
         { keys: [modKey, "K"], label: t("essential.commandPalette"), description: t("essential.commandPaletteDesc") },
         { keys: [modKey, "/"], label: t("essential.showShortcuts") },
+        { keys: [modKey, "Shift", "L"], label: t("essential.cycleTheme") },
         { keys: ["Esc"], label: t("essential.closeCancel") },
       ],
     },

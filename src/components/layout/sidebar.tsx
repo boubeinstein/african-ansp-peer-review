@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useEffect, useCallback, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -17,6 +17,40 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+const SIDEBAR_COLLAPSED_KEY = "sidebar-collapsed";
+
+// Custom hook for localStorage-synced state using useSyncExternalStore
+function useSidebarCollapsed(defaultValue: boolean) {
+  const subscribe = useCallback((callback: () => void) => {
+    window.addEventListener("storage", callback);
+    // Also listen for custom event for same-window updates
+    window.addEventListener("sidebar-storage-update", callback);
+    return () => {
+      window.removeEventListener("storage", callback);
+      window.removeEventListener("sidebar-storage-update", callback);
+    };
+  }, []);
+
+  const getSnapshot = useCallback(() => {
+    const stored = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
+    return stored !== null ? stored === "true" : defaultValue;
+  }, [defaultValue]);
+
+  const getServerSnapshot = useCallback(() => {
+    return defaultValue; // Always return default on server (SSR-safe)
+  }, [defaultValue]);
+
+  const collapsed = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+
+  const setCollapsed = useCallback((value: boolean) => {
+    localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(value));
+    // Dispatch custom event to trigger re-render in same window
+    window.dispatchEvent(new Event("sidebar-storage-update"));
+  }, []);
+
+  return [collapsed, setCollapsed] as const;
+}
+
 interface SidebarProps {
   locale: string;
   userRole: UserRole;
@@ -27,19 +61,8 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
   const t = useTranslations("navigation");
   const tSidebar = useTranslations("navSidebar");
 
-  // Hydration-safe state: always start expanded (false) on both server and client
-  // This prevents mismatch between SSR and initial client render
-  const [collapsed, setCollapsed] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  // After hydration completes, safely read from localStorage
-  useEffect(() => {
-    setMounted(true);
-    const stored = localStorage.getItem("sidebar-collapsed");
-    if (stored !== null) {
-      setCollapsed(stored === "true");
-    }
-  }, []);
+  // Use localStorage-synced state with SSR-safe defaults
+  const [collapsed, setCollapsed] = useSidebarCollapsed(false);
 
   // Keyboard shortcuts: [ to collapse, ] to expand
   useEffect(() => {
@@ -65,14 +88,7 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
-  // Persist collapsed state to localStorage (only after initial mount)
-  useEffect(() => {
-    if (mounted) {
-      localStorage.setItem("sidebar-collapsed", String(collapsed));
-    }
-  }, [collapsed, mounted]);
+  }, [setCollapsed]);
 
   // Fetch user preferences for conditional nav items
   const { data: preferences } = trpc.settings.getPreferences.useQuery(

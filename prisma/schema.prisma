@@ -132,6 +132,7 @@ model User {
   workflowsCreated         WorkflowDefinition[]        @relation("WorkflowCreator")
   workflowActions          WorkflowHistory[]           @relation("WorkflowActor")
   onboarding               UserOnboarding?
+  promotedBestPractices    BestPracticePromotion[]     @relation("PromotedBestPractices")
 
   @@map("users")
 }
@@ -1379,6 +1380,7 @@ model BestPractice {
   reviewedBy         User?                       @relation("ReviewedBestPractices", fields: [reviewedById], references: [id])
   submittedBy        User                        @relation("SubmittedBestPractices", fields: [submittedById], references: [id])
   mentorshipRequests MentorshipRequest[]
+  promotions         BestPracticePromotion[]
 
   @@index([organizationId])
   @@index([category])
@@ -1386,6 +1388,38 @@ model BestPractice {
   @@index([auditArea])
   @@index([publishedAt(sort: Desc)])
   @@map("best_practices")
+}
+
+model BestPracticePromotion {
+  id             String              @id @default(cuid())
+  bestPracticeId String              @map("best_practice_id")
+  promotedById   String              @map("promoted_by_id")
+
+  // Targeting
+  targetType     PromotionTargetType @default(ALL_ANSPS) @map("target_type")
+  targetTeamIds  String[]            @map("target_team_ids")
+  targetOrgIds   String[]            @map("target_org_ids")
+
+  // Content
+  messageEn      String?             @map("message_en")
+  messageFr      String?             @map("message_fr")
+
+  // Status
+  status         PromotionStatus     @default(ACTIVE)
+  isFeatured     Boolean             @default(false) @map("is_featured")
+
+  // Timestamps
+  promotedAt     DateTime            @default(now()) @map("promoted_at")
+  expiresAt      DateTime?           @map("expires_at")
+
+  // Relations
+  bestPractice   BestPractice        @relation(fields: [bestPracticeId], references: [id], onDelete: Cascade)
+  promotedBy     User                @relation("PromotedBestPractices", fields: [promotedById], references: [id])
+
+  @@index([bestPracticeId])
+  @@index([promotedById])
+  @@index([status, promotedAt])
+  @@map("best_practice_promotions")
 }
 
 model BestPracticeAdoption {
@@ -2275,6 +2309,19 @@ enum BestPracticeStatus {
   APPROVED
   PUBLISHED
   ARCHIVED
+}
+
+enum PromotionTargetType {
+  ALL_ANSPS
+  BY_TEAM
+  BY_ORGANIZATION
+}
+
+enum PromotionStatus {
+  DRAFT
+  ACTIVE
+  EXPIRED
+  CANCELLED
 }
 
 enum LessonStatus {

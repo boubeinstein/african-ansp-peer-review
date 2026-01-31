@@ -4,6 +4,12 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   LayoutDashboard,
   MessageSquare,
   FileText,
@@ -13,6 +19,15 @@ import {
 } from "lucide-react";
 import type { ReviewTab } from "../_types";
 import { REVIEW_TABS } from "../_types";
+
+const TAB_SHORTCUTS: Record<ReviewTab, string> = {
+  overview: "Alt+1",
+  workspace: "Alt+2",
+  documents: "Alt+3",
+  findings: "Alt+4",
+  report: "Alt+5",
+  settings: "Alt+6",
+};
 
 interface ReviewTabsProps {
   currentTab: ReviewTab;
@@ -81,54 +96,72 @@ export function ReviewTabs({ currentTab, onTabChange, counts }: ReviewTabsProps)
   };
 
   return (
-    <div className="sticky top-[73px] z-30 bg-background border-b">
-      <div className="px-4 md:px-6">
-        <nav
-          className="flex gap-1 overflow-x-auto scrollbar-hide -mb-px"
-          role="tablist"
-          aria-label={tA11y("tabNavigation")}
-        >
-          {REVIEW_TABS.map((tab) => {
-            const Icon = iconMap[tab.icon];
-            const badge = getTabBadge(tab.id);
-            const isActive = currentTab === tab.id;
+    <TooltipProvider delayDuration={400}>
+      <div className="sticky top-[73px] z-30 bg-background border-b">
+        <div className="px-4 md:px-6">
+          <nav
+            className="flex gap-1 overflow-x-auto scrollbar-hide -mb-px"
+            role="tablist"
+            aria-label={tA11y("tabNavigation")}
+          >
+            {REVIEW_TABS.map((tab) => {
+              const Icon = iconMap[tab.icon];
+              const badge = getTabBadge(tab.id);
+              const isActive = currentTab === tab.id;
 
-            return (
-              <button
-                key={tab.id}
-                role="tab"
-                id={`tab-${tab.id}`}
-                aria-selected={isActive}
-                aria-controls={`tabpanel-${tab.id}`}
-                tabIndex={isActive ? 0 : -1}
-                onClick={() => onTabChange(tab.id)}
-                onKeyDown={(e) => handleKeyDown(e, tab.id)}
-                className={cn(
-                  "flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                  isActive
-                    ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30"
-                )}
-              >
-                {Icon && <Icon className="h-4 w-4" />}
-                <span className="hidden sm:inline">{t(tab.labelKey)}</span>
-                {badge && (
-                  <Badge
-                    variant={badge.variant}
-                    className={cn(
-                      "ml-1 h-5 min-w-5 px-1.5 text-xs",
-                      badge.variant === "destructive" && "animate-pulse"
-                    )}
-                  >
-                    {badge.count}
-                  </Badge>
-                )}
-              </button>
-            );
-          })}
-        </nav>
+              return (
+                <Tooltip key={tab.id}>
+                  <TooltipTrigger asChild>
+                    <button
+                      role="tab"
+                      id={`tab-${tab.id}`}
+                      aria-selected={isActive}
+                      aria-controls={`tabpanel-${tab.id}`}
+                      tabIndex={isActive ? 0 : -1}
+                      onClick={() => onTabChange(tab.id)}
+                      onKeyDown={(e) => handleKeyDown(e, tab.id)}
+                      className={cn(
+                        "flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                        isActive
+                          ? "border-primary text-primary"
+                          : "border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30"
+                      )}
+                    >
+                      {Icon && <Icon className="h-4 w-4" />}
+                      <span className="hidden sm:inline">{t(tab.labelKey)}</span>
+                      {badge && (
+                        <Badge
+                          variant={badge.variant}
+                          className={cn(
+                            "ml-1 h-5 min-w-5 px-1.5 text-xs",
+                            badge.variant === "destructive" && "animate-pulse"
+                          )}
+                        >
+                          {badge.count}
+                        </Badge>
+                      )}
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" sideOffset={8}>
+                    <div className="flex items-center gap-2.5">
+                      <span className="font-medium">{t(tab.labelKey)}</span>
+                      <kbd className={cn(
+                        "inline-flex items-center",
+                        "px-1.5 py-0.5 text-[11px] font-mono",
+                        "bg-muted/60 text-muted-foreground",
+                        "border border-border/60 rounded"
+                      )}>
+                        {TAB_SHORTCUTS[tab.id]}
+                      </kbd>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              );
+            })}
+          </nav>
+        </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 }

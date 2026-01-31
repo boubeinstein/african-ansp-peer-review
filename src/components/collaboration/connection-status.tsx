@@ -57,6 +57,14 @@ export function ConnectionStatus({
           bgColor: "bg-red-100",
           animate: false,
         };
+      default:
+        return {
+          icon: WifiOff,
+          label: "Unknown",
+          color: "text-gray-600",
+          bgColor: "bg-gray-100",
+          animate: false,
+        };
     }
   };
 
@@ -85,7 +93,7 @@ export function ConnectionStatus({
                 onClick={reconnect}
                 className="h-7 px-2"
               >
-                <RefreshCw className="mr-1 h-3 w-3" />
+                <RefreshCw className="h-3 w-3 mr-1" />
                 Retry
               </Button>
             )}

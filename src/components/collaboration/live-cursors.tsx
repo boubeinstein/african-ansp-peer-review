@@ -1,58 +1,40 @@
 "use client";
 
-import { useEffect, useMemo, useCallback, useRef } from "react";
-import { useSession } from "next-auth/react";
+import { useMemo, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { PresenceMember } from "@/hooks/use-presence";
 
+
 interface LiveCursorsProps {
   members: PresenceMember[];
-  containerRef: React.RefObject<HTMLElement | null>;
+  userId?: string;
   className?: string;
 }
 
 export function LiveCursors({
   members,
+  userId,
   className,
 }: LiveCursorsProps) {
-  const { data: session } = useSession();
-
-  // Derive cursors from members - no useState needed
-  const cursors = useMemo(() => {
-    const result: Record<string, { x: number; y: number }> = {};
-    members.forEach((member) => {
-      if (member.cursorPosition && member.id !== session?.user?.id) {
-        result[member.id] = member.cursorPosition;
-      }
-    });
-    return result;
-  }, [members, session?.user?.id]);
-
-  const otherMembers = members.filter((m) => m.id !== session?.user?.id);
+  // Filter out current user and only show members with cursor positions
+  const otherMembersWithCursors = useMemo(
+    () => members.filter((m) => m.id !== userId && m.cursorPosition),
+    [members, userId]
+  );
 
   return (
-    <div
-      className={cn(
-        "pointer-events-none absolute inset-0 overflow-hidden",
-        className
-      )}
-    >
+    <div className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}>
       <AnimatePresence>
-        {otherMembers.map((member) => {
-          const cursor = cursors[member.id];
-          if (!cursor) return null;
-
-          return (
-            <Cursor
-              key={member.id}
-              x={cursor.x}
-              y={cursor.y}
-              color={member.color}
-              name={member.name}
-            />
-          );
-        })}
+        {otherMembersWithCursors.map((member) => (
+          <Cursor
+            key={member.id}
+            x={member.cursorPosition!.x}
+            y={member.cursorPosition!.y}
+            color={member.color}
+            name={member.name}
+          />
+        ))}
       </AnimatePresence>
     </div>
   );
@@ -72,7 +54,7 @@ function Cursor({ x, y, color, name }: CursorProps) {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.5 }}
       transition={{ duration: 0.15 }}
-      className="pointer-events-none absolute"
+      className="absolute pointer-events-none"
       style={{
         left: x,
         top: y,
@@ -87,12 +69,6 @@ function Cursor({ x, y, color, name }: CursorProps) {
         fill="none"
         className="relative -left-1 -top-1"
       >
-        <path
-          d="M5.65376 12.4563L5.65378 12.4563L12.4563 5.65376L12.4563 5.65378L5.65376 12.4563ZM5.65376 12.4563L12.4563 19.2589L12.4563 19.2589L5.65376 12.4563ZM5.65376 12.4563L5.65378 12.4563L12.4563 5.65376L12.4563 5.65378L5.65376 12.4563Z"
-          fill={color}
-          stroke="white"
-          strokeWidth="1.5"
-        />
         <path
           d="M3 3L10 21L12.5 13.5L21 10L3 3Z"
           fill={color}
@@ -136,7 +112,7 @@ export function useCursorTracking({
     (e: MouseEvent) => {
       if (!enabled || !containerRef.current) return;
 
-      const now = Date.now();
+      const now = performance.now();
       if (now - lastUpdate.current < throttleMs) return;
       lastUpdate.current = now;
 
@@ -144,7 +120,6 @@ export function useCursorTracking({
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
-      // Only send if within container bounds
       if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
         onCursorMove({ x, y });
       }
@@ -173,36 +148,31 @@ export function SelectionHighlight({
   elementId,
   label,
 }: SelectionHighlightProps) {
-  const highlightRef = useRef<HTMLDivElement>(null);
-
-  // Use layout effect to measure and position synchronously
-  useEffect(() => {
+  const position = useMemo(() => {
+    if (typeof document === "undefined") return null;
     const element = document.getElementById(elementId);
-    const highlight = highlightRef.current;
-    if (element && highlight) {
-      const rect = element.getBoundingClientRect();
-      highlight.style.left = `${rect.left - 2}px`;
-      highlight.style.top = `${rect.top - 2}px`;
-      highlight.style.width = `${rect.width + 4}px`;
-      highlight.style.height = `${rect.height + 4}px`;
-      highlight.style.display = "block";
-    } else if (highlight) {
-      highlight.style.display = "none";
+    if (element) {
+      return element.getBoundingClientRect();
     }
+    return null;
   }, [elementId]);
+
+  if (!position) return null;
 
   return (
     <motion.div
-      ref={highlightRef}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="pointer-events-none fixed"
       style={{
+        left: position.left - 2,
+        top: position.top - 2,
+        width: position.width + 4,
+        height: position.height + 4,
         border: `2px solid ${color}`,
         borderRadius: 4,
         zIndex: 9998,
-        display: "none",
       }}
     >
       {label && (

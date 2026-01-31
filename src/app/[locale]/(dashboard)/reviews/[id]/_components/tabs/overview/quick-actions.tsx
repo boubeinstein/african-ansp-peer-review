@@ -26,7 +26,7 @@ export function QuickActions({ reviewId, canEdit }: QuickActionsProps) {
       icon: AlertTriangle,
       label: t("addFinding"),
       href: `/${locale}/reviews/${reviewId}?tab=findings&action=new`,
-      variant: "default" as const,
+      variant: "outline" as const,
     },
     {
       icon: Upload,

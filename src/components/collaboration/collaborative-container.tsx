@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 interface CollaborativeContainerProps {
   reviewId: string;
-  userId?: string; // Pass from server component - no need for SessionProvider
+  userId?: string;
   showCursors?: boolean;
   children: React.ReactNode;
   className?: string;
@@ -20,7 +20,7 @@ export function CollaborativeContainer({
   children,
   className,
 }: CollaborativeContainerProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const { members, updateCursor, updateFocus } = usePresence({
     reviewId,
@@ -54,7 +54,7 @@ export function CollaborativeContainer({
     >
       {children}
       {showCursors && (
-        <LiveCursors members={members} containerRef={containerRef} />
+        <LiveCursors members={members} userId={userId} />
       )}
     </div>
   );

@@ -5,13 +5,16 @@
  *
  * Displays role-appropriate KPI cards with dynamic colors and loading states.
  * Adapts layout and metrics based on user role category.
+ * Includes trend indicators and optional sparkline charts.
  */
 
 import { useTranslations } from "next-intl";
 import Link from "next/link";
+import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Sparkline } from "@/components/ui/sparkline";
 import {
   type RoleCategory,
   getStatCardsForRole,
@@ -23,9 +26,17 @@ import {
 // TYPES
 // =============================================================================
 
+interface TrendData {
+  value: number;
+  direction: "up" | "down" | "neutral";
+  isPositive?: boolean;
+  sparklineData?: number[];
+}
+
 interface RoleStatCardsProps {
   roleCategory: RoleCategory;
   stats: Record<string, number | string | null>;
+  trends?: Record<string, TrendData>;
   isLoading?: boolean;
   className?: string;
 }
@@ -62,6 +73,41 @@ export function RoleStatCardsSkeleton({ count = 4 }: { count?: number }) {
 }
 
 // =============================================================================
+// TREND INDICATOR
+// =============================================================================
+
+interface TrendIndicatorProps {
+  value: number;
+  direction: "up" | "down" | "neutral";
+  isPositive?: boolean; // Whether "up" is good (green) or bad (red)
+}
+
+function TrendIndicator({ value, direction, isPositive = true }: TrendIndicatorProps) {
+  // Determine color based on direction and whether it's positive
+  const getColor = () => {
+    if (direction === "neutral") return "text-muted-foreground";
+    if (direction === "up") {
+      return isPositive ? "text-green-600" : "text-red-600";
+    }
+    // direction === "down"
+    return isPositive ? "text-red-600" : "text-green-600";
+  };
+
+  const Icon = direction === "up" ? TrendingUp : direction === "down" ? TrendingDown : Minus;
+  const colorClass = getColor();
+
+  return (
+    <div className={cn("flex items-center gap-1", colorClass)}>
+      <Icon className="h-3.5 w-3.5" />
+      <span className="text-xs font-medium">
+        {direction !== "neutral" && (direction === "up" ? "+" : "-")}
+        {Math.abs(value)}%
+      </span>
+    </div>
+  );
+}
+
+// =============================================================================
 // STAT CARD
 // =============================================================================
 
@@ -72,6 +118,12 @@ interface StatCardProps {
   icon: React.ElementType;
   colorScheme: ColorScheme;
   linkTo?: string;
+  trend?: {
+    value: number;
+    direction: "up" | "down" | "neutral";
+    isPositive?: boolean; // Whether "up" is good
+  };
+  sparklineData?: number[];
 }
 
 function StatCard({
@@ -81,9 +133,21 @@ function StatCard({
   icon: Icon,
   colorScheme,
   linkTo,
+  trend,
+  sparklineData,
 }: StatCardProps) {
   const colors = getColorClasses(colorScheme);
   const displayValue = value ?? "-";
+
+  // Determine sparkline color based on trend
+  const getSparklineColor = (): "default" | "success" | "warning" | "danger" => {
+    if (!trend) return "default";
+    if (trend.direction === "neutral") return "default";
+    if (trend.direction === "up") {
+      return trend.isPositive !== false ? "success" : "danger";
+    }
+    return trend.isPositive !== false ? "danger" : "success";
+  };
 
   const content = (
     <Card
@@ -94,14 +158,32 @@ function StatCard({
     >
       <CardContent className="p-6">
         <div className="flex items-start justify-between">
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-muted-foreground">{title}</p>
-            <p className="text-2xl font-bold mt-1">{displayValue}</p>
+            <div className="flex items-baseline gap-2 mt-1">
+              <p className="text-2xl font-bold">{displayValue}</p>
+              {trend && (
+                <TrendIndicator
+                  value={trend.value}
+                  direction={trend.direction}
+                  isPositive={trend.isPositive}
+                />
+              )}
+            </div>
             {subtitle && (
               <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
             )}
+            {sparklineData && sparklineData.length > 1 && (
+              <div className="mt-2">
+                <Sparkline
+                  data={sparklineData}
+                  color={getSparklineColor()}
+                  height={20}
+                />
+              </div>
+            )}
           </div>
-          <div className={cn("p-3 rounded-lg", colors.bg)}>
+          <div className={cn("p-3 rounded-lg flex-shrink-0", colors.bg)}>
             <Icon className={cn("h-5 w-5", colors.text)} />
           </div>
         </div>
@@ -123,6 +205,7 @@ function StatCard({
 export function RoleStatCards({
   roleCategory,
   stats,
+  trends,
   isLoading,
   className,
 }: RoleStatCardsProps) {
@@ -165,6 +248,9 @@ export function RoleStatCards({
         const title = t(config.titleKey);
         const subtitle = config.subtitleKey ? t(config.subtitleKey) : undefined;
 
+        // Get trend data if available
+        const trendData = trends?.[config.valueKey];
+
         return (
           <StatCard
             key={config.id}
@@ -174,6 +260,12 @@ export function RoleStatCards({
             icon={config.icon}
             colorScheme={colorScheme}
             linkTo={config.linkTo}
+            trend={trendData ? {
+              value: trendData.value,
+              direction: trendData.direction,
+              isPositive: trendData.isPositive,
+            } : undefined}
+            sparklineData={trendData?.sparklineData}
           />
         );
       })}

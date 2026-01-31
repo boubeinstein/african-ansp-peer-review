@@ -127,7 +127,7 @@ export function ReviewHeader({ review }: ReviewHeaderProps) {
               {t("actions.edit")}
             </Button>
 
-            <Button size="sm">
+            <Button variant="outline" size="sm">
               <Send className="h-4 w-4 mr-1.5" />
               {t("actions.submit")}
             </Button>

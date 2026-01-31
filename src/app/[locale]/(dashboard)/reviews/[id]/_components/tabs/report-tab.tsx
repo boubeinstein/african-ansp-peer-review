@@ -1,16 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import {
   AlertDialog,
@@ -23,10 +21,11 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
+  PrerequisitesChecklist,
+  type PrerequisiteItem,
+} from "@/components/ui/prerequisites-checklist";
+import {
   FileText,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
   Download,
   Eye,
   RefreshCw,
@@ -46,14 +45,7 @@ import type { ReviewData } from "../../_lib/fetch-review-data";
 
 interface ReportTabProps {
   review: ReviewData;
-}
-
-interface Prerequisite {
-  id: string;
-  label: string;
-  met: boolean;
-  required: boolean;
-  detail?: string;
+  locale?: string;
 }
 
 export function ReportTab({ review }: ReportTabProps) {
@@ -122,41 +114,82 @@ export function ReportTab({ review }: ReportTabProps) {
   const allCapsSubmitted =
     findingsNeedingCap.length === 0 ||
     capsSubmitted.length === findingsNeedingCap.length;
-  const reviewCompleted = ["COMPLETED", "IN_PROGRESS"].includes(review.status);
+  const reviewInProgress = review.status === "IN_PROGRESS";
+  const reviewCompleted = review.status === "COMPLETED";
 
-  const prerequisites: Prerequisite[] = [
+  // Build prerequisites items for the new component
+  const prerequisiteItems: PrerequisiteItem[] = useMemo(() => [
     {
       id: "findings",
       label: t("prerequisites.findingsDocumented"),
-      met: allFindingsDocumented,
+      status: allFindingsDocumented ? "complete" : "incomplete",
       required: true,
-      detail: t("prerequisites.findingsDetail", { count: findings.length }),
+      detail: allFindingsDocumented
+        ? t("prerequisites.findingsComplete", { count: findings.length })
+        : t("prerequisites.findingsNeeded"),
+      progress: { current: findings.length, total: findings.length || 1 },
+      action: !allFindingsDocumented
+        ? {
+            label: t("prerequisites.addFindings"),
+            href: `/${locale}/reviews/${review.id}?tab=findings&action=new`,
+          }
+        : undefined,
     },
     {
       id: "caps",
       label: t("prerequisites.capsSubmitted"),
-      met: allCapsSubmitted,
+      status: allCapsSubmitted
+        ? "complete"
+        : capsSubmitted.length > 0
+        ? "in-progress"
+        : "incomplete",
       required: true,
-      detail: t("prerequisites.capsDetail", {
-        submitted: capsSubmitted.length,
-        total: findingsNeedingCap.length,
-      }),
+      detail: findingsNeedingCap.length === 0
+        ? t("prerequisites.noCapsRequired")
+        : t("prerequisites.capsProgress", {
+            submitted: capsSubmitted.length,
+            total: findingsNeedingCap.length,
+          }),
+      progress:
+        findingsNeedingCap.length > 0
+          ? { current: capsSubmitted.length, total: findingsNeedingCap.length }
+          : undefined,
+      action: !allCapsSubmitted
+        ? {
+            label: t("prerequisites.submitCaps"),
+            href: `/${locale}/caps?review=${review.id}`,
+          }
+        : undefined,
     },
     {
       id: "review",
       label: t("prerequisites.reviewStatus"),
-      met: reviewCompleted,
+      status: reviewCompleted
+        ? "complete"
+        : reviewInProgress
+        ? "in-progress"
+        : "incomplete",
       required: false,
-      detail: t("prerequisites.reviewDetail", { status: tStatus(review.status) }),
+      detail: t("prerequisites.currentStatus", { status: tStatus(review.status) }),
     },
-  ];
+  ], [
+    allFindingsDocumented,
+    allCapsSubmitted,
+    capsSubmitted.length,
+    findingsNeedingCap.length,
+    findings.length,
+    reviewCompleted,
+    reviewInProgress,
+    review.id,
+    review.status,
+    locale,
+    t,
+    tStatus,
+  ]);
 
-  const requiredPrerequisitesMet = prerequisites
+  const requiredPrerequisitesMet = prerequisiteItems
     .filter((p) => p.required)
-    .every((p) => p.met);
-  const prerequisiteProgress = Math.round(
-    (prerequisites.filter((p) => p.met).length / prerequisites.length) * 100
-  );
+    .every((p) => p.status === "complete");
 
   const canGenerate = requiredPrerequisitesMet;
   // Report exists if we have data and no error
@@ -320,69 +353,12 @@ export function ReportTab({ review }: ReportTabProps) {
       )}
 
       {/* Prerequisites */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">{t("prerequisites.title")}</CardTitle>
-          <CardDescription>{t("prerequisites.description")}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center gap-4">
-            <Progress value={prerequisiteProgress} className="flex-1" />
-            <span className="text-sm font-medium">{prerequisiteProgress}%</span>
-          </div>
-
-          <div className="space-y-3">
-            {prerequisites.map((prereq) => (
-              <div
-                key={prereq.id}
-                className={cn(
-                  "flex items-start gap-3 p-3 rounded-lg border",
-                  prereq.met
-                    ? "bg-green-50/50 border-green-200"
-                    : "bg-muted/50 border-muted"
-                )}
-              >
-                {prereq.met ? (
-                  <CheckCircle className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
-                ) : prereq.required ? (
-                  <XCircle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
-                ) : (
-                  <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p
-                      className={cn(
-                        "font-medium text-sm",
-                        prereq.met && "text-green-800"
-                      )}
-                    >
-                      {prereq.label}
-                    </p>
-                    {prereq.required && !prereq.met && (
-                      <Badge variant="destructive" className="text-xs">
-                        {t("prerequisites.required")}
-                      </Badge>
-                    )}
-                  </div>
-                  {prereq.detail && (
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {prereq.detail}
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {!requiredPrerequisitesMet && (
-            <p className="text-sm text-amber-600 flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4" />
-              {t("prerequisites.notMet")}
-            </p>
-          )}
-        </CardContent>
-      </Card>
+      <PrerequisitesChecklist
+        title={t("prerequisites.title")}
+        description={t("prerequisites.description")}
+        items={prerequisiteItems}
+        showNextStep={!requiredPrerequisitesMet}
+      />
 
       {/* Generate Confirmation Dialog */}
       <AlertDialog open={showGenerateDialog} onOpenChange={setShowGenerateDialog}>

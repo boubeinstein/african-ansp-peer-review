@@ -78,10 +78,7 @@ export function BestPracticeDetail({
     (a) => a.organization.id === userOrgId
   );
 
-  // Get practice title for breadcrumb
-  const practiceTitle = locale === "fr"
-    ? practice.titleFr || practice.titleEn
-    : practice.titleEn;
+  // Get practice reference for breadcrumb
   const practiceRef = practice.referenceNumber || id.slice(0, 8);
 
   return (

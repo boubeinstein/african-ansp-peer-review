@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useTranslations } from "next-intl";
@@ -76,6 +76,15 @@ export function RetrospectiveForm({ reviewId, existingData }: RetrospectiveFormP
     },
   });
 
+  // Use useWatch for React Compiler compatibility
+  const processRating = useWatch({ control: form.control, name: "processRating" });
+  const preparationEffective = useWatch({ control: form.control, name: "preparationEffective" });
+  const onSiteEffective = useWatch({ control: form.control, name: "onSiteEffective" });
+  const reportingEffective = useWatch({ control: form.control, name: "reportingEffective" });
+  const teamSizeAdequate = useWatch({ control: form.control, name: "teamSizeAdequate" });
+  const resourcesAdequate = useWatch({ control: form.control, name: "resourcesAdequate" });
+  const communicationEffective = useWatch({ control: form.control, name: "communicationEffective" });
+
   const upsertMutation = trpc.retrospective.upsert.useMutation({
     onSuccess: () => {
       toast.success(t("savedSuccessfully"));
@@ -133,7 +142,7 @@ export function RetrospectiveForm({ reviewId, existingData }: RetrospectiveFormP
           <div>
             <Label>{t("processRating.overallRating")}</Label>
             <RadioGroup
-              value={String(form.watch("processRating"))}
+              value={String(processRating)}
               onValueChange={(v) => form.setValue("processRating", parseInt(v))}
               className="flex gap-4 mt-2"
               disabled={isReadOnly}
@@ -154,7 +163,7 @@ export function RetrospectiveForm({ reviewId, existingData }: RetrospectiveFormP
             <div className="flex items-center justify-between">
               <Label>{t("processRating.preparationEffective")}</Label>
               <Switch
-                checked={form.watch("preparationEffective") || false}
+                checked={preparationEffective || false}
                 onCheckedChange={(v) => form.setValue("preparationEffective", v)}
                 disabled={isReadOnly}
               />
@@ -162,7 +171,7 @@ export function RetrospectiveForm({ reviewId, existingData }: RetrospectiveFormP
             <div className="flex items-center justify-between">
               <Label>{t("processRating.onSiteEffective")}</Label>
               <Switch
-                checked={form.watch("onSiteEffective") || false}
+                checked={onSiteEffective || false}
                 onCheckedChange={(v) => form.setValue("onSiteEffective", v)}
                 disabled={isReadOnly}
               />
@@ -170,7 +179,7 @@ export function RetrospectiveForm({ reviewId, existingData }: RetrospectiveFormP
             <div className="flex items-center justify-between">
               <Label>{t("processRating.reportingEffective")}</Label>
               <Switch
-                checked={form.watch("reportingEffective") || false}
+                checked={reportingEffective || false}
                 onCheckedChange={(v) => form.setValue("reportingEffective", v)}
                 disabled={isReadOnly}
               />
@@ -291,7 +300,7 @@ export function RetrospectiveForm({ reviewId, existingData }: RetrospectiveFormP
             <div className="flex items-center justify-between">
               <Label>{t("metrics.teamSizeAdequate")}</Label>
               <Switch
-                checked={form.watch("teamSizeAdequate") || false}
+                checked={teamSizeAdequate || false}
                 onCheckedChange={(v) => form.setValue("teamSizeAdequate", v)}
                 disabled={isReadOnly}
               />
@@ -299,7 +308,7 @@ export function RetrospectiveForm({ reviewId, existingData }: RetrospectiveFormP
             <div className="flex items-center justify-between">
               <Label>{t("metrics.resourcesAdequate")}</Label>
               <Switch
-                checked={form.watch("resourcesAdequate") || false}
+                checked={resourcesAdequate || false}
                 onCheckedChange={(v) => form.setValue("resourcesAdequate", v)}
                 disabled={isReadOnly}
               />
@@ -307,7 +316,7 @@ export function RetrospectiveForm({ reviewId, existingData }: RetrospectiveFormP
             <div className="flex items-center justify-between">
               <Label>{t("metrics.communicationEffective")}</Label>
               <Switch
-                checked={form.watch("communicationEffective") || false}
+                checked={communicationEffective || false}
                 onCheckedChange={(v) => form.setValue("communicationEffective", v)}
                 disabled={isReadOnly}
               />

@@ -5,7 +5,7 @@ import { prisma } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
-
+  
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -15,17 +15,18 @@ export async function POST(req: NextRequest) {
   const socketId = params.get("socket_id");
   const channelName = params.get("channel_name");
 
+  console.log("[Pusher Auth] Request:", { userId: session.user.id, channelName });
+
   if (!socketId || !channelName) {
     return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
   }
 
   const pusher = getPusherServer();
 
-  // For presence channels, include user data
   if (channelName.startsWith("presence-")) {
-    // Verify user has access to this channel
     const hasAccess = await verifyChannelAccess(session.user.id, channelName);
-
+    console.log("[Pusher Auth] Access:", hasAccess);
+    
     if (!hasAccess) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
@@ -42,22 +43,15 @@ export async function POST(req: NextRequest) {
       },
     };
 
-    const authResponse = pusher.authorizeChannel(
-      socketId,
-      channelName,
-      presenceData
-    );
+    const authResponse = pusher.authorizeChannel(socketId, channelName, presenceData);
     return NextResponse.json(authResponse);
   }
 
-  // For private channels
   if (channelName.startsWith("private-")) {
     const hasAccess = await verifyChannelAccess(session.user.id, channelName);
-
     if (!hasAccess) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-
     const authResponse = pusher.authorizeChannel(socketId, channelName);
     return NextResponse.json(authResponse);
   }
@@ -65,49 +59,27 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ error: "Invalid channel" }, { status: 400 });
 }
 
-async function verifyChannelAccess(
-  userId: string,
-  channelName: string
-): Promise<boolean> {
-  // Extract review ID from channel name
+async function verifyChannelAccess(userId: string, channelName: string): Promise<boolean> {
   const reviewMatch = channelName.match(/(?:private|presence)-review-(.+)/);
-
+  
   if (reviewMatch) {
     const reviewId = reviewMatch[1];
-
-    // Check if user is a team member of this review
     const membership = await prisma.reviewTeamMember.findFirst({
-      where: {
-        reviewId,
-        userId,
-      },
+      where: { reviewId, userId },
     });
-
     if (membership) return true;
 
-    // Check if user is oversight role (can view all)
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: { role: true },
     });
-
-    if (
-      user?.role &&
-      ["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(
-        user.role
-      )
-    ) {
+    if (user?.role && ["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(user.role)) {
       return true;
     }
-
     return false;
   }
 
-  // User's own channel
-  if (channelName === `private-user-${userId}`) {
-    return true;
-  }
-
+  if (channelName === `private-user-${userId}`) return true;
   return false;
 }
 
@@ -116,26 +88,10 @@ function getInitials(firstName: string, lastName: string): string {
 }
 
 function getUserColor(userId: string): string {
-  // Generate consistent color based on user ID
-  const colors = [
-    "#ef4444",
-    "#f97316",
-    "#f59e0b",
-    "#84cc16",
-    "#22c55e",
-    "#14b8a6",
-    "#06b6d4",
-    "#3b82f6",
-    "#6366f1",
-    "#8b5cf6",
-    "#a855f7",
-    "#ec4899",
-  ];
-
+  const colors = ["#ef4444", "#f97316", "#f59e0b", "#84cc16", "#22c55e", "#14b8a6", "#06b6d4", "#3b82f6", "#6366f1", "#8b5cf6", "#a855f7", "#ec4899"];
   let hash = 0;
   for (let i = 0; i < userId.length; i++) {
     hash = userId.charCodeAt(i) + ((hash << 5) - hash);
   }
-
   return colors[Math.abs(hash) % colors.length];
 }

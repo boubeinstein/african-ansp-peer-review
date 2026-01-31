@@ -231,11 +231,10 @@ function SortSelect({ value, onChange }: SortSelectProps) {
 
 interface TeamCardProps {
   team: TeamData;
-  locale: string;
   onClick: () => void;
 }
 
-function TeamCard({ team, locale, onClick }: TeamCardProps) {
+function TeamCard({ team, onClick }: TeamCardProps) {
   const t = useTranslations("teams");
 
   const getScoreVariant = (score: string): "default" | "secondary" | "outline" | "destructive" => {
@@ -417,7 +416,6 @@ export function TeamsListClient() {
             <TeamCard
               key={team.teamId}
               team={team}
-              locale={locale}
               onClick={() => handleTeamClick(team.teamId)}
             />
           ))}

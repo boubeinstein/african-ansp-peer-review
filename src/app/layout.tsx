@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Montserrat, Source_Sans_3 } from "next/font/google";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -56,7 +57,14 @@ export default function RootLayout({
         className={`${montserrat.variable} ${sourceSans.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

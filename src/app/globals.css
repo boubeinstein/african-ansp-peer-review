@@ -553,3 +553,48 @@ body {
     page-break-before: always;
   }
 }
+
+/* ===========================================
+   Onboarding Tour Styles
+   =========================================== */
+
+/* Elements targeted by onboarding get elevated z-index */
+[data-tour].onboarding-highlight {
+  position: relative;
+  z-index: 9999 !important;
+}
+
+/* Smooth spotlight transition */
+.onboarding-spotlight {
+  transition: all 0.3s ease-out;
+}
+
+/* Tooltip entrance animation */
+@keyframes onboardingSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.onboarding-tooltip-enter {
+  animation: onboardingSlideIn 0.3s ease-out forwards;
+}
+
+/* Pulse animation for action indicators */
+@keyframes onboardingPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px hsl(var(--primary) / 0);
+  }
+}
+
+.onboarding-pulse {
+  animation: onboardingPulse 2s ease-in-out infinite;
+}

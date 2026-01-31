@@ -5932,6 +5932,9 @@
       "featuresSection": "Features",
       "showTraining": "Show Training Module",
       "showTrainingDescription": "Display the training module in the navigation menu",
+      "onboardingSection": "Platform Tour",
+      "tour": "Guided Tour",
+      "tourDescription": "Restart the guided tour to learn about platform features",
       "updateSuccess": "Preferences updated successfully",
       "updateError": "Failed to update preferences"
     },

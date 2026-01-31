@@ -7,37 +7,37 @@ datasource db {
 }
 
 model Organization {
-  id                  String              @id @default(cuid())
-  nameEn              String              @map("name_en")
-  nameFr              String              @map("name_fr")
-  organizationCode    String?             @unique @map("organization_code")
-  country             String
-  region              AfricanRegion
-  city                String?
-  peerReviewTeam      Int?                @map("peer_review_team")
-  membershipStatus    MembershipStatus    @default(PENDING)
-  joinedAt            DateTime?           @map("joined_at")
-  createdAt           DateTime            @default(now()) @map("created_at")
-  updatedAt           DateTime            @updatedAt @map("updated_at")
-  joinedProgrammeAt   DateTime?           @map("joined_programme_at")
-  participationStatus ParticipationStatus @default(REGISTERED) @map("participation_status")
-  regionalTeamId      String?             @map("regional_team_id")
-  assessments         Assessment[]
-  coiOverrides        COIOverride[]       @relation("COIOverrides")
-  documents           Document[]
-  findings            Finding[]
-  joinRequests        JoinRequest[]
-  conflictCOIs        ReviewerCOI[]       @relation("ConflictReviewers")
-  homeReviewers       ReviewerProfile[]   @relation("HomeReviewers")
-  reviewsAsHost       Review[]            @relation("HostANSP")
-  users               User[]
-  regionalTeam              RegionalTeam?            @relation("TeamMembers", fields: [regionalTeamId], references: [id])
-  leadsTeam                 RegionalTeam?            @relation("TeamLead")
-  bestPractices             BestPractice[]
-  bestPracticeAdoptions     BestPracticeAdoption[]
-  lessonsLearned            BestPracticeLessonLearned[]
-  mentorshipRequestsSent    MentorshipRequest[] @relation("MentorshipRequesting")
-  mentorshipRequestsReceived MentorshipRequest[] @relation("MentorshipTarget")
+  id                         String                      @id @default(cuid())
+  nameEn                     String                      @map("name_en")
+  nameFr                     String                      @map("name_fr")
+  organizationCode           String?                     @unique @map("organization_code")
+  country                    String
+  region                     AfricanRegion
+  city                       String?
+  peerReviewTeam             Int?                        @map("peer_review_team")
+  membershipStatus           MembershipStatus            @default(PENDING)
+  joinedAt                   DateTime?                   @map("joined_at")
+  createdAt                  DateTime                    @default(now()) @map("created_at")
+  updatedAt                  DateTime                    @updatedAt @map("updated_at")
+  joinedProgrammeAt          DateTime?                   @map("joined_programme_at")
+  participationStatus        ParticipationStatus         @default(REGISTERED) @map("participation_status")
+  regionalTeamId             String?                     @map("regional_team_id")
+  assessments                Assessment[]
+  bestPracticeAdoptions      BestPracticeAdoption[]
+  lessonsLearned             BestPracticeLessonLearned[]
+  bestPractices              BestPractice[]
+  coiOverrides               COIOverride[]               @relation("COIOverrides")
+  documents                  Document[]
+  findings                   Finding[]
+  joinRequests               JoinRequest[]
+  mentorshipRequestsSent     MentorshipRequest[]         @relation("MentorshipRequesting")
+  mentorshipRequestsReceived MentorshipRequest[]         @relation("MentorshipTarget")
+  regionalTeam               RegionalTeam?               @relation("TeamMembers", fields: [regionalTeamId], references: [id])
+  leadsTeam                  RegionalTeam?               @relation("TeamLead")
+  conflictCOIs               ReviewerCOI[]               @relation("ConflictReviewers")
+  homeReviewers              ReviewerProfile[]           @relation("HomeReviewers")
+  reviewsAsHost              Review[]                    @relation("HostANSP")
+  users                      User[]
 
   @@map("organizations")
 }
@@ -49,96 +49,89 @@ model RegionalTeam {
   nameEn              String         @map("name_en")
   nameFr              String         @map("name_fr")
   leadOrganizationId  String         @unique @map("lead_organization_id")
-  leadOrganization    Organization   @relation("TeamLead", fields: [leadOrganizationId], references: [id])
-  memberOrganizations Organization[] @relation("TeamMembers")
   isActive            Boolean        @default(true) @map("is_active")
   createdAt           DateTime       @default(now()) @map("created_at")
   updatedAt           DateTime       @updatedAt @map("updated_at")
+  memberOrganizations Organization[] @relation("TeamMembers")
+  leadOrganization    Organization   @relation("TeamLead", fields: [leadOrganizationId], references: [id])
 
   @@map("regional_teams")
 }
 
 model User {
-  id                       String                 @id @default(cuid())
-  email                    String                 @unique
-  passwordHash             String?                @map("password_hash")
-  emailVerified            DateTime?              @map("email_verified")
-  firstName                String                 @map("first_name")
-  lastName                 String                 @map("last_name")
+  id                       String                      @id @default(cuid())
+  email                    String                      @unique
+  passwordHash             String?                     @map("password_hash")
+  emailVerified            DateTime?                   @map("email_verified")
+  firstName                String                      @map("first_name")
+  lastName                 String                      @map("last_name")
   title                    String?
   phone                    String?
-  locale                   Locale                 @default(EN)
-  timezone                 String                 @default("UTC")
-  theme                    Theme                  @default(SYSTEM)
-  role                     UserRole               @default(STAFF)
-  organizationId           String?                @map("organization_id")
-  lastLoginAt              DateTime?              @map("last_login_at")
-  isActive                 Boolean                @default(true) @map("is_active")
-  mustChangePassword       Boolean                @default(false) @map("must_change_password")
-  createdAt                DateTime               @default(now()) @map("created_at")
-  updatedAt                DateTime               @updatedAt @map("updated_at")
+  locale                   Locale                      @default(EN)
+  timezone                 String                      @default("UTC")
+  theme                    Theme                       @default(SYSTEM)
+  role                     UserRole                    @default(STAFF)
+  organizationId           String?                     @map("organization_id")
+  lastLoginAt              DateTime?                   @map("last_login_at")
+  isActive                 Boolean                     @default(true) @map("is_active")
+  mustChangePassword       Boolean                     @default(false) @map("must_change_password")
+  createdAt                DateTime                    @default(now()) @map("created_at")
+  updatedAt                DateTime                    @updatedAt @map("updated_at")
   assessmentEvents         AssessmentEvent[]
   assessmentResponses      AssessmentResponse[]
   auditLogs                AuditLog[]
-  approvedCOIOverrides     COIOverride[]          @relation("COIOverrideApprover")
-  revokedCOIOverrides      COIOverride[]          @relation("COIOverrideRevoker")
-  assignedCAPs             CorrectiveActionPlan[] @relation("AssignedTo")
-  capComments              CAPComment[]           @relation("CAPCommentAuthor")
-  uploadedEvidence         CAPEvidence[]          @relation("CAPEvidenceUploader")
-  reviewedEvidence         CAPEvidence[]          @relation("CAPEvidenceReviewer")
-  uploadedDocuments        Document[]             @relation("UploadedDocuments")
-  assignedFindings         Finding[]              @relation("AssignedTo")
-  coordinatorReviews       JoinRequest[]          @relation("CoordinatorReview")
-  scDecisions              JoinRequest[]          @relation("SCDecision")
+  adoptedBestPractices     BestPracticeAdoption[]      @relation("AdoptedBestPractices")
+  bestPracticeComments     BestPracticeComment[]       @relation("BestPracticeCommentsAuthored")
+  lessonsAuthored          BestPracticeLessonLearned[] @relation("LessonsAuthored")
+  reviewedBestPractices    BestPractice[]              @relation("ReviewedBestPractices")
+  submittedBestPractices   BestPractice[]              @relation("SubmittedBestPractices")
+  capComments              CAPComment[]                @relation("CAPCommentAuthor")
+  reviewedEvidence         CAPEvidence[]               @relation("CAPEvidenceReviewer")
+  uploadedEvidence         CAPEvidence[]               @relation("CAPEvidenceUploader")
+  approvedCOIOverrides     COIOverride[]               @relation("COIOverrideApprover")
+  revokedCOIOverrides      COIOverride[]               @relation("COIOverrideRevoker")
+  assignedCAPs             CorrectiveActionPlan[]      @relation("AssignedTo")
+  documentTokensCreated    DocumentAccessToken[]       @relation("TokenCreator")
+  documentAnnotations      DocumentAnnotation[]
+  documentVersionsCreated  DocumentVersion[]           @relation("VersionCreator")
+  documentVersionsLocked   DocumentVersion[]           @relation("VersionLocker")
+  documentsApproved        Document[]                  @relation("DocumentApprover")
+  documentsReviewed        Document[]                  @relation("DocumentReviewer")
+  uploadedDocuments        Document[]                  @relation("UploadedDocuments")
+  evidenceLinksCreated     EvidenceLink[]              @relation("EvidenceLinkCreator")
+  evidenceLinksVerified    EvidenceLink[]              @relation("EvidenceVerifier")
+  checklistItemsCompleted  FieldworkChecklistItem[]    @relation("ChecklistCompletedBy")
+  checklistItemsOverridden FieldworkChecklistItem[]    @relation("ChecklistOverriddenBy")
+  fieldworkChecklists      FieldworkChecklist[]        @relation("FieldworkChecklists")
+  assignedFindings         Finding[]                   @relation("AssignedTo")
+  coordinatorReviews       JoinRequest[]               @relation("CoordinatorReview")
+  scDecisions              JoinRequest[]               @relation("SCDecision")
+  mentorshipRequests       MentorshipRequest[]         @relation("MentorshipRequester")
+  notificationDigests      NotificationDigest[]
+  notificationPreference   NotificationPreference?
   notifications            Notification[]
   passwordResets           PasswordReset[]
-  addedResponseDocuments   ResponseDocument[]     @relation("AddedResponseDocuments")
+  addedResponseDocuments   ResponseDocument[]          @relation("AddedResponseDocuments")
+  reviewApprovals          ReviewApproval[]            @relation("ReviewApprovals")
+  discussionsAuthored      ReviewDiscussion[]          @relation("DiscussionAuthor")
+  discussionsResolved      ReviewDiscussion[]          @relation("ResolvedDiscussions")
+  retrospectives           ReviewRetrospective[]       @relation("RetrospectiveSubmitter")
+  sessionsStarted          ReviewSession[]             @relation("SessionStarter")
+  tasksAssigned            ReviewTask[]                @relation("AssignedTasks")
+  tasksCompleted           ReviewTask[]                @relation("CompletedTasks")
+  tasksCreated             ReviewTask[]                @relation("CreatedTasks")
   reviewTeamMembers        ReviewTeamMember[]
-  createdAvailabilitySlots ReviewerAvailability[] @relation("AvailabilityCreator")
-  createdCOIs              ReviewerCOI[]          @relation("COICreator")
-  verifiedCOIs             ReviewerCOI[]          @relation("COIVerifier")
+  createdAvailabilitySlots ReviewerAvailability[]      @relation("AvailabilityCreator")
+  createdCOIs              ReviewerCOI[]               @relation("COICreator")
+  verifiedCOIs             ReviewerCOI[]               @relation("COIVerifier")
   reviewerProfile          ReviewerProfile?
-  reviewApprovals          ReviewApproval[]       @relation("ReviewApprovals")
-  fieldworkChecklists      FieldworkChecklist[]   @relation("FieldworkChecklists")
-  checklistItemsCompleted  FieldworkChecklistItem[] @relation("ChecklistCompletedBy")
-  checklistItemsOverridden FieldworkChecklistItem[] @relation("ChecklistOverriddenBy")
-  documentsReviewed        Document[]             @relation("DocumentReviewer")
-  documentsApproved        Document[]             @relation("DocumentApprover")
-  preferences              UserPreferences?
-  organization             Organization?          @relation(fields: [organizationId], references: [id])
-  submittedBestPractices   BestPractice[]         @relation("SubmittedBestPractices")
-  reviewedBestPractices    BestPractice[]         @relation("ReviewedBestPractices")
-  adoptedBestPractices     BestPracticeAdoption[] @relation("AdoptedBestPractices")
-  lessonsAuthored          BestPracticeLessonLearned[] @relation("LessonsAuthored")
-  bestPracticeComments     BestPracticeComment[]  @relation("BestPracticeCommentsAuthored")
-  mentorshipRequests       MentorshipRequest[]    @relation("MentorshipRequester")
-  retrospectives           ReviewRetrospective[]  @relation("RetrospectiveSubmitter")
-  discussionsAuthored      ReviewDiscussion[]     @relation("DiscussionAuthor")
-  discussionsResolved      ReviewDiscussion[]     @relation("ResolvedDiscussions")
-  tasksAssigned            ReviewTask[]           @relation("AssignedTasks")
-  tasksCreated             ReviewTask[]           @relation("CreatedTasks")
-  tasksCompleted           ReviewTask[]           @relation("CompletedTasks")
-
-  // Real-time collaboration
-  sessionsStarted          ReviewSession[]        @relation("SessionStarter")
-  sessionParticipations    SessionParticipant[]
   sessionActivities        SessionActivity[]
-  documentAnnotations      DocumentAnnotation[]
-
-  // Workflow automation
-  workflowsCreated         WorkflowDefinition[]   @relation("WorkflowCreator")
-  workflowActions          WorkflowHistory[]      @relation("WorkflowActor")
-
-  // Notification preferences
-  notificationPreference   NotificationPreference?
-  notificationDigests      NotificationDigest[]
-
-  // Evidence-grade documents
-  documentVersionsCreated  DocumentVersion[]     @relation("VersionCreator")
-  documentVersionsLocked   DocumentVersion[]     @relation("VersionLocker")
-  evidenceLinksVerified    EvidenceLink[]        @relation("EvidenceVerifier")
-  evidenceLinksCreated     EvidenceLink[]        @relation("EvidenceLinkCreator")
-  documentTokensCreated    DocumentAccessToken[] @relation("TokenCreator")
+  sessionParticipations    SessionParticipant[]
+  preferences              UserPreferences?
+  organization             Organization?               @relation(fields: [organizationId], references: [id])
+  workflowsCreated         WorkflowDefinition[]        @relation("WorkflowCreator")
+  workflowActions          WorkflowHistory[]           @relation("WorkflowActor")
+  onboarding               UserOnboarding?
 
   @@map("users")
 }
@@ -147,10 +140,10 @@ model PasswordReset {
   id        String    @id @default(cuid())
   token     String    @unique
   userId    String    @map("user_id")
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   expiresAt DateTime  @map("expires_at")
   usedAt    DateTime? @map("used_at")
   createdAt DateTime  @default(now()) @map("created_at")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([expiresAt])
@@ -555,51 +548,47 @@ model AssessmentResponse {
 }
 
 model Review {
-  id                     String                 @id @default(cuid())
-  referenceNumber        String                 @unique @map("reference_number")
-  reviewType             ReviewType             @default(FULL)
-  hostOrganizationId     String                 @map("host_organization_id")
-  status                 ReviewStatus           @default(REQUESTED)
-  phase                  ReviewPhase            @default(PLANNING)
-  requestedDate          DateTime               @map("requested_date")
-  plannedStartDate       DateTime?              @map("planned_start_date")
-  plannedEndDate         DateTime?              @map("planned_end_date")
-  actualStartDate        DateTime?              @map("actual_start_date")
-  actualEndDate          DateTime?              @map("actual_end_date")
-  questionnairesInScope  String[]               @default([]) @map("questionnaires_in_scope")
-  areasInScope           String[]               @default([]) @map("areas_in_scope")
-  createdAt              DateTime               @default(now()) @map("created_at")
-  updatedAt              DateTime               @updatedAt @map("updated_at")
-  locationType           ReviewLocationType     @default(ON_SITE) @map("location_type")
+  id                     String                   @id @default(cuid())
+  referenceNumber        String                   @unique @map("reference_number")
+  reviewType             ReviewType               @default(FULL)
+  hostOrganizationId     String                   @map("host_organization_id")
+  status                 ReviewStatus             @default(REQUESTED)
+  phase                  ReviewPhase              @default(PLANNING)
+  requestedDate          DateTime                 @map("requested_date")
+  plannedStartDate       DateTime?                @map("planned_start_date")
+  plannedEndDate         DateTime?                @map("planned_end_date")
+  actualStartDate        DateTime?                @map("actual_start_date")
+  actualEndDate          DateTime?                @map("actual_end_date")
+  questionnairesInScope  String[]                 @default([]) @map("questionnaires_in_scope")
+  areasInScope           String[]                 @default([]) @map("areas_in_scope")
+  createdAt              DateTime                 @default(now()) @map("created_at")
+  updatedAt              DateTime                 @updatedAt @map("updated_at")
+  locationType           ReviewLocationType       @default(ON_SITE) @map("location_type")
   objectives             String?
-  specialRequirements    String?                @map("special_requirements")
-  accommodationProvided  Boolean                @default(false) @map("accommodation_provided")
-  languagePreference     LanguagePreference     @default(BOTH) @map("language_preference")
-  primaryContactEmail    String?                @map("primary_contact_email")
-  primaryContactName     String?                @map("primary_contact_name")
-  primaryContactPhone    String?                @map("primary_contact_phone")
-  requestedEndDate       DateTime?              @map("requested_end_date")
-  requestedStartDate     DateTime?              @map("requested_start_date")
-  transportationProvided Boolean                @default(false) @map("transportation_provided")
+  specialRequirements    String?                  @map("special_requirements")
+  accommodationProvided  Boolean                  @default(false) @map("accommodation_provided")
+  languagePreference     LanguagePreference       @default(BOTH) @map("language_preference")
+  primaryContactEmail    String?                  @map("primary_contact_email")
+  primaryContactName     String?                  @map("primary_contact_name")
+  primaryContactPhone    String?                  @map("primary_contact_phone")
+  requestedEndDate       DateTime?                @map("requested_end_date")
+  requestedStartDate     DateTime?                @map("requested_start_date")
+  transportationProvided Boolean                  @default(false) @map("transportation_provided")
   assessments            Assessment[]
   coiOverrides           COIOverride[]
   documents              Document[]
+  checklistItems         FieldworkChecklistItem[]
+  fieldworkChecklist     FieldworkChecklist?
   findings               Finding[]
+  approvals              ReviewApproval[]
+  discussions            ReviewDiscussion[]
   report                 ReviewReport?
+  retrospective          ReviewRetrospective?
+  sessions               ReviewSession[]
+  tasks                  ReviewTask[]
   teamMembers            ReviewTeamMember[]
   blockedAvailability    ReviewerAvailability[]
-  approvals              ReviewApproval[]
-  fieldworkChecklist     FieldworkChecklist?
-  checklistItems         FieldworkChecklistItem[]
-  hostOrganization       Organization           @relation("HostANSP", fields: [hostOrganizationId], references: [id])
-  discussions            ReviewDiscussion[]
-  tasks                  ReviewTask[]
-
-  // Real-time collaboration
-  sessions               ReviewSession[]
-
-  // Post-review reflection (ICAO Annex 19 - Continuous Improvement)
-  retrospective          ReviewRetrospective?
+  hostOrganization       Organization             @relation("HostANSP", fields: [hostOrganizationId], references: [id])
 
   @@map("reviews")
 }
@@ -610,44 +599,38 @@ model ReviewApproval {
   status       ApprovalStatus @default(PENDING)
   approvedById String?        @map("approved_by_id")
   approvedAt   DateTime?      @map("approved_at")
-  commentsEn   String?        @map("comments_en") @db.Text
-  commentsFr   String?        @map("comments_fr") @db.Text
+  commentsEn   String?        @map("comments_en")
+  commentsFr   String?        @map("comments_fr")
   createdAt    DateTime       @default(now()) @map("created_at")
   updatedAt    DateTime       @updatedAt @map("updated_at")
+  approvedBy   User?          @relation("ReviewApprovals", fields: [approvedById], references: [id])
+  review       Review         @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 
-  review     Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-  approvedBy User?  @relation("ReviewApprovals", fields: [approvedById], references: [id])
-
-  @@unique([reviewId])
+  @@index([reviewId])
   @@map("review_approvals")
 }
 
 model ReviewTeamMember {
-  id                String           @id @default(cuid())
-  reviewId          String           @map("review_id")
-  userId            String           @map("user_id")
-  reviewerProfileId String?          @map("reviewer_profile_id")
-  role              TeamRole         @default(REVIEWER)
-  assignedAreas     String[]         @default([]) @map("assigned_areas")
-  createdAt         DateTime         @default(now()) @map("created_at")
-
-  // Invitation workflow
-  invitationStatus  InvitationStatus @default(PENDING) @map("invitation_status")
-  invitedAt         DateTime?        @map("invited_at")
-  respondedAt       DateTime?        @map("responded_at")
-  confirmedAt       DateTime?        @map("confirmed_at")
-  declinedAt        DateTime?        @map("declined_at")
-  declineReason     String?          @map("decline_reason")
-
-  // Cross-team assignment (Rule 3 exception)
-  isCrossTeamAssignment   Boolean   @default(false) @map("is_cross_team_assignment")
-  crossTeamJustification  String?   @map("cross_team_justification") @db.Text
-  crossTeamApprovedById   String?   @map("cross_team_approved_by_id")
-  crossTeamApprovedAt     DateTime? @map("cross_team_approved_at")
-
-  review            Review           @relation(fields: [reviewId], references: [id])
-  reviewerProfile   ReviewerProfile? @relation(fields: [reviewerProfileId], references: [id])
-  user              User             @relation(fields: [userId], references: [id])
+  id                     String           @id @default(cuid())
+  reviewId               String           @map("review_id")
+  userId                 String           @map("user_id")
+  reviewerProfileId      String?          @map("reviewer_profile_id")
+  role                   TeamRole         @default(REVIEWER)
+  assignedAreas          String[]         @default([]) @map("assigned_areas")
+  createdAt              DateTime         @default(now()) @map("created_at")
+  invitationStatus       InvitationStatus @default(PENDING) @map("invitation_status")
+  invitedAt              DateTime?        @map("invited_at")
+  respondedAt            DateTime?        @map("responded_at")
+  confirmedAt            DateTime?        @map("confirmed_at")
+  declinedAt             DateTime?        @map("declined_at")
+  declineReason          String?          @map("decline_reason")
+  isCrossTeamAssignment  Boolean          @default(false) @map("is_cross_team_assignment")
+  crossTeamJustification String?          @map("cross_team_justification")
+  crossTeamApprovedById  String?          @map("cross_team_approved_by_id")
+  crossTeamApprovedAt    DateTime?        @map("cross_team_approved_at")
+  review                 Review           @relation(fields: [reviewId], references: [id])
+  reviewerProfile        ReviewerProfile? @relation(fields: [reviewerProfileId], references: [id])
+  user                   User             @relation(fields: [userId], references: [id])
 
   @@unique([reviewId, userId])
   @@index([userId, invitationStatus])
@@ -655,75 +638,53 @@ model ReviewTeamMember {
 }
 
 model FieldworkChecklist {
-  id       String @id @default(cuid())
-  reviewId String @unique @map("review_id")
-
-  // Pre-visit checklist
-  documentRequestSent Boolean @default(false) @map("document_request_sent")
-  documentsReceived   Boolean @default(false) @map("documents_received")
-  preVisitMeetingHeld Boolean @default(false) @map("pre_visit_meeting_held")
-  reviewPlanApproved  Boolean @default(false) @map("review_plan_approved")
-
-  // On-site checklist
-  openingMeetingHeld     Boolean @default(false) @map("opening_meeting_held")
-  interviewsCompleted    Boolean @default(false) @map("interviews_completed")
-  facilitiesInspected    Boolean @default(false) @map("facilities_inspected")
-  documentReviewComplete Boolean @default(false) @map("document_review_complete")
-  findingsDiscussed      Boolean @default(false) @map("findings_discussed")
-  closingMeetingHeld     Boolean @default(false) @map("closing_meeting_held")
-
-  // Post-visit checklist
-  findingsEntered      Boolean @default(false) @map("findings_entered")
-  evidenceUploaded     Boolean @default(false) @map("evidence_uploaded")
-  draftReportPrepared  Boolean @default(false) @map("draft_report_prepared")
-  hostFeedbackReceived Boolean @default(false) @map("host_feedback_received")
-
-  // Completion tracking
-  completedAt   DateTime? @map("completed_at")
-  completedById String?   @map("completed_by_id")
-
-  // Timestamps
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  // Relations
-  review      Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-  completedBy User?  @relation("FieldworkChecklists", fields: [completedById], references: [id])
+  id                     String    @id @default(cuid())
+  reviewId               String    @unique @map("review_id")
+  documentRequestSent    Boolean   @default(false) @map("document_request_sent")
+  documentsReceived      Boolean   @default(false) @map("documents_received")
+  preVisitMeetingHeld    Boolean   @default(false) @map("pre_visit_meeting_held")
+  reviewPlanApproved     Boolean   @default(false) @map("review_plan_approved")
+  openingMeetingHeld     Boolean   @default(false) @map("opening_meeting_held")
+  interviewsCompleted    Boolean   @default(false) @map("interviews_completed")
+  facilitiesInspected    Boolean   @default(false) @map("facilities_inspected")
+  documentReviewComplete Boolean   @default(false) @map("document_review_complete")
+  findingsDiscussed      Boolean   @default(false) @map("findings_discussed")
+  closingMeetingHeld     Boolean   @default(false) @map("closing_meeting_held")
+  findingsEntered        Boolean   @default(false) @map("findings_entered")
+  evidenceUploaded       Boolean   @default(false) @map("evidence_uploaded")
+  draftReportPrepared    Boolean   @default(false) @map("draft_report_prepared")
+  hostFeedbackReceived   Boolean   @default(false) @map("host_feedback_received")
+  completedAt            DateTime? @map("completed_at")
+  completedById          String?   @map("completed_by_id")
+  createdAt              DateTime  @default(now()) @map("created_at")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
+  completedBy            User?     @relation("FieldworkChecklists", fields: [completedById], references: [id])
+  review                 Review    @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 
   @@map("fieldwork_checklists")
 }
 
-// Fieldwork Checklist with Validation Rules (Enhanced)
 model FieldworkChecklistItem {
-  id            String         @id @default(cuid())
-
-  reviewId      String         @map("review_id")
-  review        Review         @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-
-  phase         FieldworkPhase
-  itemCode      String         @map("item_code")
-  sortOrder     Int            @map("sort_order")
-
-  labelEn       String         @map("label_en")
-  labelFr       String         @map("label_fr")
-
-  isCompleted   Boolean        @default(false) @map("is_completed")
-  completedAt   DateTime?      @map("completed_at")
-  completedById String?        @map("completed_by_id")
-  completedBy   User?          @relation("ChecklistCompletedBy", fields: [completedById], references: [id])
-
-  // JSON validation rules (e.g., requires document upload, depends on other items)
-  validationRules Json?        @map("validation_rules")
-
-  // Override workflow for exceptions
-  isOverridden    Boolean      @default(false) @map("is_overridden")
-  overrideReason  String?      @map("override_reason")
-  overriddenById  String?      @map("overridden_by_id")
-  overriddenBy    User?        @relation("ChecklistOverriddenBy", fields: [overriddenById], references: [id])
-  overriddenAt    DateTime?    @map("overridden_at")
-
-  createdAt     DateTime       @default(now()) @map("created_at")
-  updatedAt     DateTime       @updatedAt @map("updated_at")
+  id              String         @id @default(cuid())
+  reviewId        String         @map("review_id")
+  phase           FieldworkPhase
+  itemCode        String         @map("item_code")
+  sortOrder       Int            @map("sort_order")
+  labelEn         String         @map("label_en")
+  labelFr         String         @map("label_fr")
+  isCompleted     Boolean        @default(false) @map("is_completed")
+  completedAt     DateTime?      @map("completed_at")
+  completedById   String?        @map("completed_by_id")
+  validationRules Json?          @map("validation_rules")
+  isOverridden    Boolean        @default(false) @map("is_overridden")
+  overrideReason  String?        @map("override_reason")
+  overriddenById  String?        @map("overridden_by_id")
+  overriddenAt    DateTime?      @map("overridden_at")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+  completedBy     User?          @relation("ChecklistCompletedBy", fields: [completedById], references: [id])
+  overriddenBy    User?          @relation("ChecklistOverriddenBy", fields: [overriddenById], references: [id])
+  review          Review         @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 
   @@unique([reviewId, itemCode])
   @@index([reviewId, phase])
@@ -752,41 +713,37 @@ model ReviewReport {
 }
 
 model Finding {
-  id                   String                @id @default(cuid())
-  reviewId             String                @map("review_id")
-  organizationId       String                @map("organization_id")
-  questionId           String?               @map("question_id")
-  referenceNumber      String                @unique @map("reference_number")
-  findingType          FindingType           @default(OBSERVATION)
-  severity             FindingSeverity       @default(MINOR)
-  titleEn              String                @map("title_en")
-  titleFr              String                @map("title_fr")
-  descriptionEn        String                @map("description_en")
-  descriptionFr        String                @map("description_fr")
-  evidenceEn           String?               @map("evidence_en")
-  evidenceFr           String?               @map("evidence_fr")
-  icaoReference        String?               @map("icao_reference")
-  criticalElement      CriticalElement?      @map("critical_element")
-  status               FindingStatus         @default(OPEN)
-  assignedToId         String?               @map("assigned_to_id")
-  capRequired          Boolean               @default(true) @map("cap_required")
-  identifiedAt         DateTime              @default(now()) @map("identified_at")
-  targetCloseDate      DateTime?             @map("target_close_date")
-  closedAt             DateTime?             @map("closed_at")
-  createdAt            DateTime              @default(now()) @map("created_at")
-  updatedAt            DateTime              @updatedAt @map("updated_at")
-  correctiveActionPlan CorrectiveActionPlan?
-  documents            Document[]
-  assignedTo           User?                 @relation("AssignedTo", fields: [assignedToId], references: [id])
-  organization         Organization          @relation(fields: [organizationId], references: [id])
-  question             Question?             @relation(fields: [questionId], references: [id])
-  review               Review                @relation(fields: [reviewId], references: [id])
+  id                   String                 @id @default(cuid())
+  reviewId             String                 @map("review_id")
+  organizationId       String                 @map("organization_id")
+  questionId           String?                @map("question_id")
+  referenceNumber      String                 @unique @map("reference_number")
+  findingType          FindingType            @default(OBSERVATION)
+  severity             FindingSeverity        @default(MINOR)
+  titleEn              String                 @map("title_en")
+  titleFr              String                 @map("title_fr")
+  descriptionEn        String                 @map("description_en")
+  descriptionFr        String                 @map("description_fr")
+  evidenceEn           String?                @map("evidence_en")
+  evidenceFr           String?                @map("evidence_fr")
+  icaoReference        String?                @map("icao_reference")
+  criticalElement      CriticalElement?       @map("critical_element")
+  status               FindingStatus          @default(OPEN)
+  assignedToId         String?                @map("assigned_to_id")
+  capRequired          Boolean                @default(true) @map("cap_required")
+  identifiedAt         DateTime               @default(now()) @map("identified_at")
+  targetCloseDate      DateTime?              @map("target_close_date")
+  closedAt             DateTime?              @map("closed_at")
+  createdAt            DateTime               @default(now()) @map("created_at")
+  updatedAt            DateTime               @updatedAt @map("updated_at")
   bestPractice         BestPractice?
-
-  // Document annotations linked to this finding
+  correctiveActionPlan CorrectiveActionPlan?
   annotations          DocumentAnnotation[]
-
-  // Retrospective lessons linked to this finding
+  documents            Document[]
+  assignedTo           User?                  @relation("AssignedTo", fields: [assignedToId], references: [id])
+  organization         Organization           @relation(fields: [organizationId], references: [id])
+  question             Question?              @relation(fields: [questionId], references: [id])
+  review               Review                 @relation(fields: [reviewId], references: [id])
   retrospectiveLinks   RetrospectiveFinding[]
 
   @@index([reviewId, status])
@@ -819,31 +776,31 @@ model CorrectiveActionPlan {
   closedById         String?        @map("closed_by_id")
   createdAt          DateTime       @default(now()) @map("created_at")
   updatedAt          DateTime       @updatedAt @map("updated_at")
+  comments           CAPComment[]
+  evidence           CAPEvidence[]
+  milestones         CAPMilestone[]
   assignedTo         User?          @relation("AssignedTo", fields: [assignedToId], references: [id])
   finding            Finding        @relation(fields: [findingId], references: [id])
   documents          Document[]
-  milestones         CAPMilestone[]
-  comments           CAPComment[]
-  evidence           CAPEvidence[]
 
   @@map("corrective_action_plans")
 }
 
 model CAPMilestone {
-  id            String          @id @default(cuid())
-  capId         String          @map("cap_id")
-  titleEn       String          @map("title_en")
-  titleFr       String?         @map("title_fr")
-  descriptionEn String?         @map("description_en")
-  descriptionFr String?         @map("description_fr")
-  targetDate    DateTime        @map("target_date")
-  completedDate DateTime?       @map("completed_date")
-  status        MilestoneStatus @default(PENDING)
-  sortOrder     Int             @default(0) @map("sort_order")
-  createdAt     DateTime        @default(now()) @map("created_at")
-  updatedAt     DateTime        @updatedAt @map("updated_at")
-  cap           CorrectiveActionPlan @relation(fields: [capId], references: [id], onDelete: Cascade)
+  id            String               @id @default(cuid())
+  capId         String               @map("cap_id")
+  titleEn       String               @map("title_en")
+  titleFr       String?              @map("title_fr")
+  descriptionEn String?              @map("description_en")
+  descriptionFr String?              @map("description_fr")
+  targetDate    DateTime             @map("target_date")
+  completedDate DateTime?            @map("completed_date")
+  status        MilestoneStatus      @default(PENDING)
+  sortOrder     Int                  @default(0) @map("sort_order")
+  createdAt     DateTime             @default(now()) @map("created_at")
+  updatedAt     DateTime             @updatedAt @map("updated_at")
   evidence      CAPEvidence[]
+  cap           CorrectiveActionPlan @relation(fields: [capId], references: [id], onDelete: Cascade)
 
   @@index([capId])
   @@index([targetDate])
@@ -851,16 +808,16 @@ model CAPMilestone {
 }
 
 model CAPComment {
-  id        String   @id @default(cuid())
-  capId     String   @map("cap_id")
-  authorId  String   @map("author_id")
-  contentEn String   @db.Text @map("content_en")
-  contentFr String?  @db.Text @map("content_fr")
-  isInternal Boolean @default(false) @map("is_internal")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  cap       CorrectiveActionPlan @relation(fields: [capId], references: [id], onDelete: Cascade)
-  author    User     @relation("CAPCommentAuthor", fields: [authorId], references: [id])
+  id         String               @id @default(cuid())
+  capId      String               @map("cap_id")
+  authorId   String               @map("author_id")
+  contentEn  String               @map("content_en")
+  contentFr  String?              @map("content_fr")
+  isInternal Boolean              @default(false) @map("is_internal")
+  createdAt  DateTime             @default(now()) @map("created_at")
+  updatedAt  DateTime             @updatedAt @map("updated_at")
+  author     User                 @relation("CAPCommentAuthor", fields: [authorId], references: [id])
+  cap        CorrectiveActionPlan @relation(fields: [capId], references: [id], onDelete: Cascade)
 
   @@index([capId])
   @@index([authorId])
@@ -868,33 +825,33 @@ model CAPComment {
 }
 
 model CAPEvidence {
-  id                String          @id @default(cuid())
-  capId             String          @map("cap_id")
-  milestoneId       String?         @map("milestone_id")
+  id                String               @id @default(cuid())
+  capId             String               @map("cap_id")
+  milestoneId       String?              @map("milestone_id")
   category          EvidenceCategory
-  titleEn           String          @map("title_en")
-  titleFr           String?         @map("title_fr")
-  descriptionEn     String?         @db.Text @map("description_en")
-  descriptionFr     String?         @db.Text @map("description_fr")
-  evidenceDate      DateTime        @map("evidence_date")
-  fileUrl           String          @map("file_url")
-  fileName          String          @map("file_name")
-  fileType          String          @map("file_type")
-  fileSize          Int             @map("file_size")
-  status            EvidenceStatus  @default(PENDING)
-  uploadedById      String          @map("uploaded_by_id")
-  uploadedAt        DateTime        @default(now()) @map("uploaded_at")
-  reviewedById      String?         @map("reviewed_by_id")
-  reviewedAt        DateTime?       @map("reviewed_at")
-  reviewerCommentEn String?         @db.Text @map("reviewer_comment_en")
-  reviewerCommentFr String?         @db.Text @map("reviewer_comment_fr")
-  rejectionReason   String?         @db.Text @map("rejection_reason")
-  createdAt         DateTime        @default(now()) @map("created_at")
-  updatedAt         DateTime        @updatedAt @map("updated_at")
+  titleEn           String               @map("title_en")
+  titleFr           String?              @map("title_fr")
+  descriptionEn     String?              @map("description_en")
+  descriptionFr     String?              @map("description_fr")
+  evidenceDate      DateTime             @map("evidence_date")
+  fileUrl           String               @map("file_url")
+  fileName          String               @map("file_name")
+  fileType          String               @map("file_type")
+  fileSize          Int                  @map("file_size")
+  status            EvidenceStatus       @default(PENDING)
+  uploadedById      String               @map("uploaded_by_id")
+  uploadedAt        DateTime             @default(now()) @map("uploaded_at")
+  reviewedById      String?              @map("reviewed_by_id")
+  reviewedAt        DateTime?            @map("reviewed_at")
+  reviewerCommentEn String?              @map("reviewer_comment_en")
+  reviewerCommentFr String?              @map("reviewer_comment_fr")
+  rejectionReason   String?              @map("rejection_reason")
+  createdAt         DateTime             @default(now()) @map("created_at")
+  updatedAt         DateTime             @updatedAt @map("updated_at")
   cap               CorrectiveActionPlan @relation(fields: [capId], references: [id], onDelete: Cascade)
-  milestone         CAPMilestone?   @relation(fields: [milestoneId], references: [id])
-  uploadedBy        User            @relation("CAPEvidenceUploader", fields: [uploadedById], references: [id])
-  reviewedBy        User?           @relation("CAPEvidenceReviewer", fields: [reviewedById], references: [id])
+  milestone         CAPMilestone?        @relation(fields: [milestoneId], references: [id])
+  reviewedBy        User?                @relation("CAPEvidenceReviewer", fields: [reviewedById], references: [id])
+  uploadedBy        User                 @relation("CAPEvidenceUploader", fields: [uploadedById], references: [id])
 
   @@index([capId])
   @@index([milestoneId])
@@ -956,60 +913,51 @@ model TrainingResource {
 }
 
 model Document {
-  id             String                @id @default(cuid())
-  name           String
-  originalName   String?               @map("original_name")
-  description    String?
-  fileUrl        String                @map("file_url")
-  fileType       String                @map("file_type")
-  fileSize       Int                   @map("file_size")
-  category       DocumentCategory      @default(EVIDENCE)
-  tags           String[]              @default([])
-  language       Locale?
-  organizationId String?               @map("organization_id")
-  assessmentId   String?               @map("assessment_id")
-  reviewId       String?               @map("review_id")
-  findingId      String?               @map("finding_id")
-  capId          String?               @map("cap_id")
-  uploadedById   String                @map("uploaded_by_id")
-  uploadedAt     DateTime              @default(now()) @map("uploaded_at")
-  isConfidential Boolean               @default(false) @map("is_confidential")
-  isDeleted      Boolean               @default(false) @map("is_deleted")
-  deletedAt      DateTime?             @map("deleted_at")
-
-  // Document status workflow
-  status         DocumentStatus        @default(UPLOADED)
-  reviewedAt     DateTime?             @map("reviewed_at")
-  reviewedById   String?               @map("reviewed_by_id")
-  reviewedBy     User?                 @relation("DocumentReviewer", fields: [reviewedById], references: [id])
-  reviewNotes    String?               @map("review_notes")
-  approvedAt     DateTime?             @map("approved_at")
-  approvedById   String?               @map("approved_by_id")
-  approvedBy     User?                 @relation("DocumentApprover", fields: [approvedById], references: [id])
-
-  createdAt      DateTime              @default(now()) @map("created_at")
-  updatedAt      DateTime              @updatedAt @map("updated_at")
-  assessment     Assessment?           @relation(fields: [assessmentId], references: [id])
-  cap            CorrectiveActionPlan? @relation(fields: [capId], references: [id])
-  finding        Finding?              @relation(fields: [findingId], references: [id])
-  organization   Organization?         @relation(fields: [organizationId], references: [id])
-  review         Review?               @relation(fields: [reviewId], references: [id])
-  uploadedBy     User                  @relation("UploadedDocuments", fields: [uploadedById], references: [id])
-  responses      ResponseDocument[]
-
-  // Collaborative annotations
-  annotations    DocumentAnnotation[]
-
-  // Evidence-grade enhancements
-  classification    DocumentClassification @default(SUPPORTING)
-  expiresAt         DateTime?              @map("expires_at")
-  expiryNotified    Boolean                @default(false) @map("expiry_notified")
-  currentVersionId  String?                @map("current_version_id")
-
-  // Version and evidence relations
-  versions          DocumentVersion[]
-  evidenceLinks     EvidenceLink[]
-  accessTokens      DocumentAccessToken[]
+  id               String                 @id @default(cuid())
+  name             String
+  originalName     String?                @map("original_name")
+  description      String?
+  fileUrl          String                 @map("file_url")
+  fileType         String                 @map("file_type")
+  fileSize         Int                    @map("file_size")
+  category         DocumentCategory       @default(EVIDENCE)
+  tags             String[]               @default([])
+  language         Locale?
+  organizationId   String?                @map("organization_id")
+  assessmentId     String?                @map("assessment_id")
+  reviewId         String?                @map("review_id")
+  findingId        String?                @map("finding_id")
+  capId            String?                @map("cap_id")
+  uploadedById     String                 @map("uploaded_by_id")
+  uploadedAt       DateTime               @default(now()) @map("uploaded_at")
+  isConfidential   Boolean                @default(false) @map("is_confidential")
+  isDeleted        Boolean                @default(false) @map("is_deleted")
+  deletedAt        DateTime?              @map("deleted_at")
+  status           DocumentStatus         @default(UPLOADED)
+  reviewedAt       DateTime?              @map("reviewed_at")
+  reviewedById     String?                @map("reviewed_by_id")
+  reviewNotes      String?                @map("review_notes")
+  approvedAt       DateTime?              @map("approved_at")
+  approvedById     String?                @map("approved_by_id")
+  createdAt        DateTime               @default(now()) @map("created_at")
+  updatedAt        DateTime               @updatedAt @map("updated_at")
+  classification   DocumentClassification @default(SUPPORTING)
+  currentVersionId String?                @map("current_version_id")
+  expiresAt        DateTime?              @map("expires_at")
+  expiryNotified   Boolean                @default(false) @map("expiry_notified")
+  accessTokens     DocumentAccessToken[]
+  annotations      DocumentAnnotation[]
+  versions         DocumentVersion[]
+  approvedBy       User?                  @relation("DocumentApprover", fields: [approvedById], references: [id])
+  assessment       Assessment?            @relation(fields: [assessmentId], references: [id])
+  cap              CorrectiveActionPlan?  @relation(fields: [capId], references: [id])
+  finding          Finding?               @relation(fields: [findingId], references: [id])
+  organization     Organization?          @relation(fields: [organizationId], references: [id])
+  review           Review?                @relation(fields: [reviewId], references: [id])
+  reviewedBy       User?                  @relation("DocumentReviewer", fields: [reviewedById], references: [id])
+  uploadedBy       User                   @relation("UploadedDocuments", fields: [uploadedById], references: [id])
+  evidenceLinks    EvidenceLink[]
+  responses        ResponseDocument[]
 
   @@index([organizationId, isDeleted])
   @@index([assessmentId])
@@ -1020,33 +968,21 @@ model Document {
 model DocumentVersion {
   id            String        @id @default(cuid())
   documentId    String        @map("document_id")
-  document      Document      @relation(fields: [documentId], references: [id], onDelete: Cascade)
-
-  // Version info
   versionNumber Int           @map("version_number")
-
-  // File storage
   fileUrl       String        @map("file_url")
   fileName      String        @map("file_name")
   fileSize      Int           @map("file_size")
   mimeType      String        @map("mime_type")
-
-  // Integrity
   hashAlgorithm HashAlgorithm @default(SHA256) @map("hash_algorithm")
   fileHash      String        @map("file_hash")
-
-  // Metadata
-  changeNotes   String?       @map("change_notes") @db.Text
-
-  // Audit
+  changeNotes   String?       @map("change_notes")
   createdAt     DateTime      @default(now()) @map("created_at")
   createdById   String        @map("created_by_id")
-  createdBy     User          @relation("VersionCreator", fields: [createdById], references: [id])
-
-  // Immutability flag
   isLocked      Boolean       @default(false) @map("is_locked")
   lockedAt      DateTime?     @map("locked_at")
   lockedById    String?       @map("locked_by_id")
+  createdBy     User          @relation("VersionCreator", fields: [createdById], references: [id])
+  document      Document      @relation(fields: [documentId], references: [id], onDelete: Cascade)
   lockedBy      User?         @relation("VersionLocker", fields: [lockedById], references: [id])
 
   @@unique([documentId, versionNumber])
@@ -1057,29 +993,20 @@ model DocumentVersion {
 model EvidenceLink {
   id             String    @id @default(cuid())
   documentId     String    @map("document_id")
-  document       Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
-
-  // Link target
-  entityType     String    @map("entity_type") // FINDING, CAP, ASSESSMENT_RESPONSE
+  entityType     String    @map("entity_type")
   entityId       String    @map("entity_id")
-
-  // Link metadata
-  linkType       String    @default("SUPPORTS") @map("link_type") // SUPPORTS, PROVES, REFERENCES
-  relevanceScore Float?    @map("relevance_score") // 0-1, for AI-suggested links
-
-  // Verification
+  linkType       String    @default("SUPPORTS") @map("link_type")
+  relevanceScore Float?    @map("relevance_score")
   isVerified     Boolean   @default(false) @map("is_verified")
   verifiedAt     DateTime? @map("verified_at")
   verifiedById   String?   @map("verified_by_id")
-  verifiedBy     User?     @relation("EvidenceVerifier", fields: [verifiedById], references: [id])
-
-  // Notes
-  notesEn        String?   @map("notes_en") @db.Text
-  notesFr        String?   @map("notes_fr") @db.Text
-
+  notesEn        String?   @map("notes_en")
+  notesFr        String?   @map("notes_fr")
   createdAt      DateTime  @default(now()) @map("created_at")
   createdById    String    @map("created_by_id")
   createdBy      User      @relation("EvidenceLinkCreator", fields: [createdById], references: [id])
+  document       Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  verifiedBy     User?     @relation("EvidenceVerifier", fields: [verifiedById], references: [id])
 
   @@unique([documentId, entityType, entityId])
   @@index([entityType, entityId])
@@ -1089,30 +1016,20 @@ model EvidenceLink {
 model DocumentAccessToken {
   id             String    @id @default(cuid())
   documentId     String    @map("document_id")
-  document       Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
-
-  // Token
   token          String    @unique
-
-  // Access control
-  permissions    String[]  @default(["VIEW"]) // VIEW, DOWNLOAD
-
-  // Validity
+  permissions    String[]  @default(["VIEW"])
   expiresAt      DateTime  @map("expires_at")
   maxAccesses    Int?      @map("max_accesses")
   accessCount    Int       @default(0) @map("access_count")
-
-  // Recipient info
   recipientEmail String?   @map("recipient_email")
   recipientName  String?   @map("recipient_name")
   purpose        String?
-
-  // Audit
   createdAt      DateTime  @default(now()) @map("created_at")
   createdById    String    @map("created_by_id")
-  createdBy      User      @relation("TokenCreator", fields: [createdById], references: [id])
   lastAccessedAt DateTime? @map("last_accessed_at")
   revokedAt      DateTime? @map("revoked_at")
+  createdBy      User      @relation("TokenCreator", fields: [createdById], references: [id])
+  document       Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
   @@index([token])
   @@index([expiresAt])
@@ -1136,25 +1053,25 @@ model ResponseDocument {
 }
 
 model Notification {
-  id             String               @id @default(cuid())
-  userId         String               @map("user_id")
-  type           NotificationType     @default(SYSTEM_ANNOUNCEMENT)
-  titleEn        String               @map("title_en")
-  titleFr        String               @map("title_fr")
-  messageEn      String               @map("message_en")
-  messageFr      String               @map("message_fr")
-  entityType     String?              @map("entity_type")
-  entityId       String?              @map("entity_id")
-  actionUrl      String?              @map("action_url")
-  actionLabelEn  String?              @map("action_label_en")
-  actionLabelFr  String?              @map("action_label_fr")
-  priority       NotificationPriority @default(NORMAL)
-  link           String?
-  data           Json?
-  readAt         DateTime?            @map("read_at")
-  emailSentAt    DateTime?            @map("email_sent_at")
-  createdAt      DateTime             @default(now()) @map("created_at")
-  user           User                 @relation(fields: [userId], references: [id])
+  id            String               @id @default(cuid())
+  userId        String               @map("user_id")
+  type          NotificationType     @default(SYSTEM_ANNOUNCEMENT)
+  titleEn       String               @map("title_en")
+  titleFr       String               @map("title_fr")
+  messageEn     String               @map("message_en")
+  messageFr     String               @map("message_fr")
+  entityType    String?              @map("entity_type")
+  entityId      String?              @map("entity_id")
+  actionUrl     String?              @map("action_url")
+  actionLabelEn String?              @map("action_label_en")
+  actionLabelFr String?              @map("action_label_fr")
+  priority      NotificationPriority @default(NORMAL)
+  link          String?
+  data          Json?
+  readAt        DateTime?            @map("read_at")
+  emailSentAt   DateTime?            @map("email_sent_at")
+  createdAt     DateTime             @default(now()) @map("created_at")
+  user          User                 @relation(fields: [userId], references: [id])
 
   @@index([userId, readAt])
   @@index([userId, type])
@@ -1164,46 +1081,33 @@ model Notification {
 }
 
 model NotificationPreference {
-  id                String              @id @default(cuid())
-  userId            String              @unique @map("user_id")
-  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // Global settings
-  emailEnabled      Boolean             @default(true) @map("email_enabled")
-  inAppEnabled      Boolean             @default(true) @map("in_app_enabled")
-  digestFrequency   DigestFrequency     @default(IMMEDIATE) @map("digest_frequency")
-
-  // Type-specific settings (JSON map of NotificationType -> boolean)
-  typeSettings      Json                @default("{}") @map("type_settings")
-
-  // Quiet hours (UTC)
-  quietHoursStart   String?             @map("quiet_hours_start")
-  quietHoursEnd     String?             @map("quiet_hours_end")
-  timezone          String              @default("UTC")
-
-  // Frequency capping
-  maxPerHour        Int                 @default(10) @map("max_per_hour")
-  maxPerDay         Int                 @default(50) @map("max_per_day")
-
-  createdAt         DateTime            @default(now()) @map("created_at")
-  updatedAt         DateTime            @updatedAt @map("updated_at")
+  id              String          @id @default(cuid())
+  userId          String          @unique @map("user_id")
+  emailEnabled    Boolean         @default(true) @map("email_enabled")
+  inAppEnabled    Boolean         @default(true) @map("in_app_enabled")
+  digestFrequency DigestFrequency @default(IMMEDIATE) @map("digest_frequency")
+  typeSettings    Json            @default("{}") @map("type_settings")
+  quietHoursStart String?         @map("quiet_hours_start")
+  quietHoursEnd   String?         @map("quiet_hours_end")
+  timezone        String          @default("UTC")
+  maxPerHour      Int             @default(10) @map("max_per_hour")
+  maxPerDay       Int             @default(50) @map("max_per_day")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("notification_preferences")
 }
 
 model NotificationDigest {
-  id                String              @id @default(cuid())
-  userId            String              @map("user_id")
-  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  frequency         DigestFrequency
-  scheduledFor      DateTime            @map("scheduled_for")
-  sentAt            DateTime?           @map("sent_at")
-
-  // Aggregated notification IDs
-  notificationIds   String[]            @map("notification_ids")
-
-  createdAt         DateTime            @default(now()) @map("created_at")
+  id              String          @id @default(cuid())
+  userId          String          @map("user_id")
+  frequency       DigestFrequency
+  scheduledFor    DateTime        @map("scheduled_for")
+  sentAt          DateTime?       @map("sent_at")
+  notificationIds String[]        @map("notification_ids")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, frequency, scheduledFor])
   @@map("notification_digests")
@@ -1229,108 +1133,104 @@ model AuditLog {
   @@map("audit_logs")
 }
 
-// =============================================================================
-// WORKFLOW AUTOMATION MODELS
-// =============================================================================
-
 model WorkflowDefinition {
-  id              String              @id @default(cuid())
-  code            String              @unique
-  nameEn          String              @map("name_en")
-  nameFr          String              @map("name_fr")
-  descriptionEn   String?             @map("description_en") @db.Text
-  descriptionFr   String?             @map("description_fr") @db.Text
+  id              String               @id @default(cuid())
+  code            String               @unique
+  nameEn          String               @map("name_en")
+  nameFr          String               @map("name_fr")
+  descriptionEn   String?              @map("description_en")
+  descriptionFr   String?              @map("description_fr")
   entityType      WorkflowEntityType
-  isActive        Boolean             @default(true) @map("is_active")
-  isDefault       Boolean             @default(false) @map("is_default")
-  version         Int                 @default(1)
+  isActive        Boolean              @default(true) @map("is_active")
+  isDefault       Boolean              @default(false) @map("is_default")
+  version         Int                  @default(1)
+  createdAt       DateTime             @default(now()) @map("created_at")
+  updatedAt       DateTime             @updatedAt @map("updated_at")
+  createdById     String?              @map("created_by_id")
+  escalationRules EscalationRule[]
+  createdBy       User?                @relation("WorkflowCreator", fields: [createdById], references: [id])
+  executions      WorkflowExecution[]
   states          WorkflowState[]
   transitions     WorkflowTransition[]
-  escalationRules EscalationRule[]
-  executions      WorkflowExecution[]
-  createdAt       DateTime            @default(now()) @map("created_at")
-  updatedAt       DateTime            @updatedAt @map("updated_at")
-  createdById     String?             @map("created_by_id")
-  createdBy       User?               @relation("WorkflowCreator", fields: [createdById], references: [id])
 
   @@index([entityType, isActive])
   @@map("workflow_definitions")
 }
 
 model WorkflowState {
-  id                String              @id @default(cuid())
-  workflowId        String              @map("workflow_id")
-  workflow          WorkflowDefinition  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
-  code              String
-  labelEn           String              @map("label_en")
-  labelFr           String              @map("label_fr")
-  stateType         WorkflowStateType   @default(INTERMEDIATE) @map("state_type")
-  color             String?
-  icon              String?
-  sortOrder         Int                 @default(0) @map("sort_order")
-  defaultSLADays    Int?                @map("default_sla_days")
-  fromTransitions   WorkflowTransition[] @relation("FromState")
-  toTransitions     WorkflowTransition[] @relation("ToState")
-  escalationRules   EscalationRule[]
+  id              String               @id @default(cuid())
+  workflowId      String               @map("workflow_id")
+  code            String
+  labelEn         String               @map("label_en")
+  labelFr         String               @map("label_fr")
+  stateType       WorkflowStateType    @default(INTERMEDIATE) @map("state_type")
+  color           String?
+  icon            String?
+  sortOrder       Int                  @default(0) @map("sort_order")
+  defaultSLADays  Int?                 @map("default_sla_days")
+  escalationRules EscalationRule[]
+  workflow        WorkflowDefinition   @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  fromTransitions WorkflowTransition[] @relation("FromState")
+  toTransitions   WorkflowTransition[] @relation("ToState")
 
   @@unique([workflowId, code])
   @@map("workflow_states")
 }
 
 model WorkflowTransition {
-  id                  String              @id @default(cuid())
-  workflowId          String              @map("workflow_id")
-  workflow            WorkflowDefinition  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
-  fromStateId         String              @map("from_state_id")
-  fromState           WorkflowState       @relation("FromState", fields: [fromStateId], references: [id])
-  toStateId           String              @map("to_state_id")
-  toState             WorkflowState       @relation("ToState", fields: [toStateId], references: [id])
+  id                  String             @id @default(cuid())
+  workflowId          String             @map("workflow_id")
+  fromStateId         String             @map("from_state_id")
+  toStateId           String             @map("to_state_id")
   code                String
-  labelEn             String              @map("label_en")
-  labelFr             String              @map("label_fr")
-  trigger             TransitionTrigger   @default(MANUAL)
-  allowedRoles        Json                @default("[]") @map("allowed_roles")
+  labelEn             String             @map("label_en")
+  labelFr             String             @map("label_fr")
+  trigger             TransitionTrigger  @default(MANUAL)
+  allowedRoles        Json               @default("[]") @map("allowed_roles")
   conditions          Json?
-  onTransitionActions Json?               @map("on_transition_actions")
-  buttonVariant       String?             @map("button_variant")
-  confirmRequired     Boolean             @default(false) @map("confirm_required")
-  confirmMessageEn    String?             @map("confirm_message_en")
-  confirmMessageFr    String?             @map("confirm_message_fr")
+  onTransitionActions Json?              @map("on_transition_actions")
+  buttonVariant       String?            @map("button_variant")
+  confirmRequired     Boolean            @default(false) @map("confirm_required")
+  confirmMessageEn    String?            @map("confirm_message_en")
+  confirmMessageFr    String?            @map("confirm_message_fr")
+  fromState           WorkflowState      @relation("FromState", fields: [fromStateId], references: [id])
+  toState             WorkflowState      @relation("ToState", fields: [toStateId], references: [id])
+  workflow            WorkflowDefinition @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
   @@unique([workflowId, fromStateId, code])
   @@map("workflow_transitions")
 }
 
 model EscalationRule {
-  id                 String              @id @default(cuid())
-  workflowId         String              @map("workflow_id")
-  workflow           WorkflowDefinition  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
-  stateId            String              @map("state_id")
-  state              WorkflowState       @relation(fields: [stateId], references: [id])
-  nameEn             String              @map("name_en")
-  nameFr             String              @map("name_fr")
-  triggerAfterDays   Int                 @map("trigger_after_days")
-  triggerConditions  Json?               @map("trigger_conditions")
+  id                 String             @id @default(cuid())
+  workflowId         String             @map("workflow_id")
+  stateId            String             @map("state_id")
+  nameEn             String             @map("name_en")
+  nameFr             String             @map("name_fr")
+  triggerAfterDays   Int                @map("trigger_after_days")
+  triggerConditions  Json?              @map("trigger_conditions")
   action             EscalationAction
-  actionConfig       Json?               @map("action_config")
-  repeatIntervalDays Int?                @map("repeat_interval_days")
-  maxRepeats         Int?                @map("max_repeats")
-  isActive           Boolean             @default(true) @map("is_active")
+  actionConfig       Json?              @map("action_config")
+  repeatIntervalDays Int?               @map("repeat_interval_days")
+  maxRepeats         Int?               @map("max_repeats")
+  isActive           Boolean            @default(true) @map("is_active")
+  state              WorkflowState      @relation(fields: [stateId], references: [id])
+  workflow           WorkflowDefinition @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
   @@map("escalation_rules")
 }
 
 model WorkflowExecution {
-  id               String              @id @default(cuid())
-  workflowId       String              @map("workflow_id")
-  workflow         WorkflowDefinition  @relation(fields: [workflowId], references: [id])
-  entityType       WorkflowEntityType  @map("entity_type")
-  entityId         String              @map("entity_id")
-  currentStateCode String              @map("current_state_code")
-  startedAt        DateTime            @default(now()) @map("started_at")
-  completedAt      DateTime?           @map("completed_at")
-  history          WorkflowHistory[]
+  id               String             @id @default(cuid())
+  workflowId       String             @map("workflow_id")
+  entityType       WorkflowEntityType @map("entity_type")
+  entityId         String             @map("entity_id")
+  currentStateCode String             @map("current_state_code")
+  startedAt        DateTime           @default(now()) @map("started_at")
+  completedAt      DateTime?          @map("completed_at")
   slaTrackers      SLATracker[]
+  workflow         WorkflowDefinition @relation(fields: [workflowId], references: [id])
+  history          WorkflowHistory[]
 
   @@unique([entityType, entityId])
   @@index([workflowId, currentStateCode])
@@ -1338,39 +1238,39 @@ model WorkflowExecution {
 }
 
 model WorkflowHistory {
-  id              String              @id @default(cuid())
-  executionId     String              @map("execution_id")
-  execution       WorkflowExecution   @relation(fields: [executionId], references: [id], onDelete: Cascade)
-  fromStateCode   String?             @map("from_state_code")
-  toStateCode     String              @map("to_state_code")
-  transitionCode  String?             @map("transition_code")
+  id              String            @id @default(cuid())
+  executionId     String            @map("execution_id")
+  fromStateCode   String?           @map("from_state_code")
+  toStateCode     String            @map("to_state_code")
+  transitionCode  String?           @map("transition_code")
   trigger         TransitionTrigger
-  performedById   String?             @map("performed_by_id")
-  performedBy     User?               @relation("WorkflowActor", fields: [performedById], references: [id])
-  comment         String?             @db.Text
+  performedById   String?           @map("performed_by_id")
+  comment         String?
   metadata        Json?
-  performedAt     DateTime            @default(now()) @map("performed_at")
-  durationInState Int?                @map("duration_in_state")
+  performedAt     DateTime          @default(now()) @map("performed_at")
+  durationInState Int?              @map("duration_in_state")
+  execution       WorkflowExecution @relation(fields: [executionId], references: [id], onDelete: Cascade)
+  performedBy     User?             @relation("WorkflowActor", fields: [performedById], references: [id])
 
   @@index([executionId, performedAt])
   @@map("workflow_history")
 }
 
 model SLATracker {
-  id              String              @id @default(cuid())
-  executionId     String              @map("execution_id")
-  execution       WorkflowExecution   @relation(fields: [executionId], references: [id], onDelete: Cascade)
-  stateCode       String              @map("state_code")
-  targetDays      Int                 @map("target_days")
-  startedAt       DateTime            @map("started_at")
-  pausedAt        DateTime?           @map("paused_at")
-  pausedDuration  Int                 @default(0) @map("paused_duration")
-  dueAt           DateTime            @map("due_at")
-  status          SLAStatus           @default(RUNNING)
-  breachedAt      DateTime?           @map("breached_at")
-  completedAt     DateTime?           @map("completed_at")
-  escalationCount Int                 @default(0) @map("escalation_count")
-  lastEscalatedAt DateTime?           @map("last_escalated_at")
+  id              String            @id @default(cuid())
+  executionId     String            @map("execution_id")
+  stateCode       String            @map("state_code")
+  targetDays      Int               @map("target_days")
+  startedAt       DateTime          @map("started_at")
+  pausedAt        DateTime?         @map("paused_at")
+  pausedDuration  Int               @default(0) @map("paused_duration")
+  dueAt           DateTime          @map("due_at")
+  status          SLAStatus         @default(RUNNING)
+  breachedAt      DateTime?         @map("breached_at")
+  completedAt     DateTime?         @map("completed_at")
+  escalationCount Int               @default(0) @map("escalation_count")
+  lastEscalatedAt DateTime?         @map("last_escalated_at")
+  execution       WorkflowExecution @relation(fields: [executionId], references: [id], onDelete: Cascade)
 
   @@unique([executionId, stateCode])
   @@index([status, dueAt])
@@ -1401,22 +1301,14 @@ model UserPreferences {
 model JoinRequest {
   id                         String            @id @default(cuid())
   requestType                JoinRequestType   @default(PROGRAMME_JOIN) @map("request_type")
-
-  // For existing organizations (USER_ACCESS requests)
   organizationId             String?           @map("organization_id")
-
-  // For new organizations (PROGRAMME_JOIN with free-text entry)
   organizationName           String?           @map("organization_name")
   organizationCountry        String?           @map("organization_country")
   organizationCode           String?           @map("organization_code")
-
-  // Contact details
   contactName                String            @map("contact_name")
   contactEmail               String            @map("contact_email")
   contactPhone               String?           @map("contact_phone")
   contactJobTitle            String            @map("contact_job_title")
-
-  // Application details
   currentSmsMaturity         String?           @map("current_sms_maturity")
   commitmentLetterUrl        String?           @map("commitment_letter_url")
   motivationStatement        String            @map("motivation_statement")
@@ -1424,16 +1316,12 @@ model JoinRequest {
   preferredLanguage          String            @default("en") @map("preferred_language")
   proposedReviewerCount      Int               @default(2) @map("proposed_reviewer_count")
   additionalNotes            String?           @map("additional_notes")
-
-  // Status and workflow
   status                     JoinRequestStatus @default(PENDING)
   coordinatorNotes           String?           @map("coordinator_notes")
   coordinatorReviewedAt      DateTime?         @map("coordinator_reviewed_at")
   coordinatorRecommendation  String?           @map("coordinator_recommendation")
   coordinatorRecommendedTeam Int?              @map("coordinator_recommended_team")
   coordinatorReviewedById    String?           @map("coordinator_reviewed_by_id")
-
-  // SC decision
   scDecision                 String?           @map("sc_decision")
   scDecisionNotes            String?           @map("sc_decision_notes")
   scDecisionAt               DateTime?         @map("sc_decision_at")
@@ -1441,12 +1329,8 @@ model JoinRequest {
   scAssignedTeam             Int?              @map("sc_assigned_team")
   rejectionReason            String?           @map("rejection_reason")
   additionalInfoRequest      String?           @map("additional_info_request")
-
-  // Timestamps
   createdAt                  DateTime          @default(now()) @map("created_at")
   updatedAt                  DateTime          @updatedAt @map("updated_at")
-
-  // Relations
   coordinatorReviewedBy      User?             @relation("CoordinatorReview", fields: [coordinatorReviewedById], references: [id])
   organization               Organization?     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   scDecisionBy               User?             @relation("SCDecision", fields: [scDecisionById], references: [id])
@@ -1455,6 +1339,365 @@ model JoinRequest {
   @@index([status])
   @@index([createdAt])
   @@map("join_requests")
+}
+
+model BestPractice {
+  id                 String                      @id @default(cuid())
+  referenceNumber    String                      @unique @map("reference_number")
+  findingId          String?                     @unique @map("finding_id")
+  organizationId     String                      @map("organization_id")
+  submittedById      String                      @map("submitted_by_id")
+  titleEn            String                      @map("title_en")
+  titleFr            String                      @map("title_fr")
+  summaryEn          String                      @map("summary_en")
+  summaryFr          String                      @map("summary_fr")
+  descriptionEn      String                      @map("description_en")
+  descriptionFr      String                      @map("description_fr")
+  implementationEn   String                      @map("implementation_en")
+  implementationFr   String                      @map("implementation_fr")
+  benefitsEn         String                      @map("benefits_en")
+  benefitsFr         String                      @map("benefits_fr")
+  category           BestPracticeCategory
+  auditArea          String?                     @map("audit_area")
+  tags               String[]                    @default([])
+  imageUrl           String?                     @map("image_url")
+  attachments        String[]                    @default([])
+  status             BestPracticeStatus          @default(DRAFT)
+  submittedAt        DateTime?                   @map("submitted_at")
+  reviewedById       String?                     @map("reviewed_by_id")
+  reviewedAt         DateTime?                   @map("reviewed_at")
+  reviewNotes        String?                     @map("review_notes")
+  publishedAt        DateTime?                   @map("published_at")
+  viewCount          Int                         @default(0) @map("view_count")
+  createdAt          DateTime                    @default(now()) @map("created_at")
+  updatedAt          DateTime                    @updatedAt @map("updated_at")
+  adoptions          BestPracticeAdoption[]
+  comments           BestPracticeComment[]
+  lessonsLearned     BestPracticeLessonLearned[]
+  finding            Finding?                    @relation(fields: [findingId], references: [id])
+  organization       Organization                @relation(fields: [organizationId], references: [id])
+  reviewedBy         User?                       @relation("ReviewedBestPractices", fields: [reviewedById], references: [id])
+  submittedBy        User                        @relation("SubmittedBestPractices", fields: [submittedById], references: [id])
+  mentorshipRequests MentorshipRequest[]
+
+  @@index([organizationId])
+  @@index([category])
+  @@index([status])
+  @@index([auditArea])
+  @@index([publishedAt(sort: Desc)])
+  @@map("best_practices")
+}
+
+model BestPracticeAdoption {
+  id                   String       @id @default(cuid())
+  bestPracticeId       String       @map("best_practice_id")
+  organizationId       String       @map("organization_id")
+  adoptedById          String       @map("adopted_by_id")
+  adoptedAt            DateTime     @default(now()) @map("adopted_at")
+  implementationNotes  String?      @map("implementation_notes")
+  implementationStatus String?      @map("implementation_status")
+  completedAt          DateTime?    @map("completed_at")
+  createdAt            DateTime     @default(now()) @map("created_at")
+  updatedAt            DateTime     @updatedAt @map("updated_at")
+  adoptedBy            User         @relation("AdoptedBestPractices", fields: [adoptedById], references: [id])
+  bestPractice         BestPractice @relation(fields: [bestPracticeId], references: [id], onDelete: Cascade)
+  organization         Organization @relation(fields: [organizationId], references: [id])
+
+  @@unique([bestPracticeId, organizationId])
+  @@index([organizationId])
+  @@index([bestPracticeId])
+  @@map("best_practice_adoptions")
+}
+
+model BestPracticeLessonLearned {
+  id                       String       @id @default(cuid())
+  bestPracticeId           String       @map("best_practice_id")
+  organizationId           String       @map("organization_id")
+  authorId                 String       @map("author_id")
+  title                    String
+  content                  String
+  challengesFaced          String?      @map("challenges_faced")
+  keySuccessFactors        String?      @map("key_success_factors")
+  recommendations          String?
+  implementationDifficulty Int?         @map("implementation_difficulty")
+  overallEffectiveness     Int?         @map("overall_effectiveness")
+  timeToImplementMonths    Int?         @map("time_to_implement_months")
+  helpfulCount             Int          @default(0) @map("helpful_count")
+  status                   LessonStatus @default(DRAFT)
+  publishedAt              DateTime?    @map("published_at")
+  createdAt                DateTime     @default(now()) @map("created_at")
+  updatedAt                DateTime     @updatedAt @map("updated_at")
+  author                   User         @relation("LessonsAuthored", fields: [authorId], references: [id])
+  bestPractice             BestPractice @relation(fields: [bestPracticeId], references: [id], onDelete: Cascade)
+  organization             Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([bestPracticeId])
+  @@index([organizationId])
+  @@index([status])
+  @@map("best_practice_lessons_learned")
+}
+
+model BestPracticeComment {
+  id             String                @id @default(cuid())
+  bestPracticeId String                @map("best_practice_id")
+  authorId       String                @map("author_id")
+  parentId       String?               @map("parent_id")
+  content        String
+  createdAt      DateTime              @default(now()) @map("created_at")
+  updatedAt      DateTime              @updatedAt @map("updated_at")
+  author         User                  @relation("BestPracticeCommentsAuthored", fields: [authorId], references: [id])
+  bestPractice   BestPractice          @relation(fields: [bestPracticeId], references: [id], onDelete: Cascade)
+  parent         BestPracticeComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies        BestPracticeComment[] @relation("CommentReplies")
+
+  @@index([bestPracticeId])
+  @@index([parentId])
+  @@map("best_practice_comments")
+}
+
+model MentorshipRequest {
+  id              String           @id @default(cuid())
+  bestPracticeId  String           @map("best_practice_id")
+  requestingOrgId String           @map("requesting_org_id")
+  targetOrgId     String           @map("target_org_id")
+  requesterId     String           @map("requester_id")
+  message         String
+  status          MentorshipStatus @default(PENDING)
+  respondedAt     DateTime?        @map("responded_at")
+  responseMessage String?          @map("response_message")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  bestPractice    BestPractice     @relation(fields: [bestPracticeId], references: [id], onDelete: Cascade)
+  requester       User             @relation("MentorshipRequester", fields: [requesterId], references: [id])
+  requestingOrg   Organization     @relation("MentorshipRequesting", fields: [requestingOrgId], references: [id])
+  targetOrg       Organization     @relation("MentorshipTarget", fields: [targetOrgId], references: [id])
+
+  @@index([bestPracticeId])
+  @@index([targetOrgId])
+  @@index([requestingOrgId])
+  @@map("mentorship_requests")
+}
+
+model ReviewRetrospective {
+  id                     String                 @id @default(cuid())
+  reviewId               String                 @unique @map("review_id")
+  submittedById          String                 @map("submitted_by_id")
+  submittedAt            DateTime               @default(now()) @map("submitted_at")
+  processRating          Int                    @map("process_rating")
+  preparationEffective   Boolean?               @map("preparation_effective")
+  onSiteEffective        Boolean?               @map("on_site_effective")
+  reportingEffective     Boolean?               @map("reporting_effective")
+  whatWentWell           String                 @map("what_went_well")
+  areasForImprovement    String                 @map("areas_for_improvement")
+  keyLearnings           String                 @map("key_learnings")
+  programmeSuggestions   String?                @map("programme_suggestions")
+  reviewDurationDays     Int?                   @map("review_duration_days")
+  teamSizeAdequate       Boolean?               @map("team_size_adequate")
+  resourcesAdequate      Boolean?               @map("resources_adequate")
+  communicationEffective Boolean?               @map("communication_effective")
+  status                 RetrospectiveStatus    @default(DRAFT)
+  publishedAt            DateTime?              @map("published_at")
+  createdAt              DateTime               @default(now()) @map("created_at")
+  updatedAt              DateTime               @updatedAt @map("updated_at")
+  taggedFindings         RetrospectiveFinding[]
+  review                 Review                 @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  submittedBy            User                   @relation("RetrospectiveSubmitter", fields: [submittedById], references: [id])
+
+  @@index([reviewId])
+  @@index([submittedById])
+  @@index([status])
+  @@map("review_retrospectives")
+}
+
+model RetrospectiveFinding {
+  id              String              @id @default(cuid())
+  retrospectiveId String              @map("retrospective_id")
+  findingId       String              @map("finding_id")
+  notableReason   String?             @map("notable_reason")
+  lessonType      LessonType          @map("lesson_type")
+  createdAt       DateTime            @default(now()) @map("created_at")
+  finding         Finding             @relation(fields: [findingId], references: [id])
+  retrospective   ReviewRetrospective @relation(fields: [retrospectiveId], references: [id], onDelete: Cascade)
+
+  @@unique([retrospectiveId, findingId])
+  @@index([retrospectiveId])
+  @@index([findingId])
+  @@map("retrospective_findings")
+}
+
+model TranslationCache {
+  id             String   @id @default(cuid())
+  sourceHash     String   @map("source_hash")
+  sourceText     String   @map("source_text")
+  translatedText String   @map("translated_text")
+  sourceLanguage String   @map("source_language")
+  targetLanguage String   @map("target_language")
+  entityType     String?  @map("entity_type")
+  entityId       String?  @map("entity_id")
+  fieldName      String?  @map("field_name")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@unique([sourceHash, sourceLanguage, targetLanguage])
+  @@index([entityType, entityId])
+  @@map("translation_cache")
+}
+
+model ReviewDiscussion {
+  id           String             @id @default(cuid())
+  reviewId     String             @map("review_id")
+  authorId     String             @map("author_id")
+  parentId     String?            @map("parent_id")
+  subject      String?
+  content      String
+  mentions     String[]           @default([])
+  attachments  String[]           @default([])
+  isResolved   Boolean            @default(false) @map("is_resolved")
+  resolvedAt   DateTime?          @map("resolved_at")
+  resolvedById String?            @map("resolved_by_id")
+  isEdited     Boolean            @default(false) @map("is_edited")
+  editedAt     DateTime?          @map("edited_at")
+  isDeleted    Boolean            @default(false) @map("is_deleted")
+  deletedAt    DateTime?          @map("deleted_at")
+  createdAt    DateTime           @default(now()) @map("created_at")
+  updatedAt    DateTime           @updatedAt @map("updated_at")
+  author       User               @relation("DiscussionAuthor", fields: [authorId], references: [id])
+  parent       ReviewDiscussion?  @relation("DiscussionReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies      ReviewDiscussion[] @relation("DiscussionReplies")
+  resolvedBy   User?              @relation("ResolvedDiscussions", fields: [resolvedById], references: [id])
+  review       Review             @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  linkedTask   ReviewTask?
+
+  @@index([reviewId, isDeleted])
+  @@index([reviewId, parentId])
+  @@index([authorId])
+  @@map("review_discussions")
+}
+
+model ReviewTask {
+  id            String            @id @default(cuid())
+  reviewId      String            @map("review_id")
+  assignedToId  String?           @map("assigned_to_id")
+  createdById   String            @map("created_by_id")
+  title         String
+  description   String?
+  status        TaskStatus        @default(PENDING)
+  priority      TaskPriority      @default(MEDIUM)
+  dueDate       DateTime?         @map("due_date")
+  completedAt   DateTime?         @map("completed_at")
+  completedById String?           @map("completed_by_id")
+  checklist     Json?
+  discussionId  String?           @unique @map("discussion_id")
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+  assignedTo    User?             @relation("AssignedTasks", fields: [assignedToId], references: [id])
+  completedBy   User?             @relation("CompletedTasks", fields: [completedById], references: [id])
+  createdBy     User              @relation("CreatedTasks", fields: [createdById], references: [id])
+  discussion    ReviewDiscussion? @relation(fields: [discussionId], references: [id])
+  review        Review            @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId, status])
+  @@index([assignedToId, status])
+  @@index([reviewId, dueDate])
+  @@map("review_tasks")
+}
+
+/// Tracks active collaboration sessions for a review
+model ReviewSession {
+  id             String               @id @default(cuid())
+  reviewId       String               @map("review_id")
+  sessionType    SessionType          @default(FIELDWORK) @map("session_type")
+  title          String?
+  description    String?
+  startedAt      DateTime             @default(now()) @map("started_at")
+  endedAt        DateTime?            @map("ended_at")
+  scheduledStart DateTime?            @map("scheduled_start")
+  scheduledEnd   DateTime?            @map("scheduled_end")
+  status         SessionStatus        @default(ACTIVE)
+  isRecording    Boolean              @default(false) @map("is_recording")
+  startedById    String               @map("started_by_id")
+  createdAt      DateTime             @default(now()) @map("created_at")
+  updatedAt      DateTime             @updatedAt @map("updated_at")
+  review         Review               @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  startedBy      User                 @relation("SessionStarter", fields: [startedById], references: [id])
+  activities     SessionActivity[]
+  participants   SessionParticipant[]
+
+  @@index([reviewId])
+  @@index([status])
+  @@map("review_sessions")
+}
+
+/// Tracks participants in a collaboration session
+model SessionParticipant {
+  id             String          @id @default(cuid())
+  sessionId      String          @map("session_id")
+  userId         String          @map("user_id")
+  joinedAt       DateTime        @default(now()) @map("joined_at")
+  leftAt         DateTime?       @map("left_at")
+  isOnline       Boolean         @default(true) @map("is_online")
+  lastSeenAt     DateTime        @default(now()) @map("last_seen_at")
+  currentFocus   String?         @map("current_focus")
+  cursorPosition Json?           @map("cursor_position")
+  role           ParticipantRole @default(PARTICIPANT)
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  session        ReviewSession   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user           User            @relation(fields: [userId], references: [id])
+
+  @@unique([sessionId, userId])
+  @@index([sessionId])
+  @@index([userId])
+  @@map("session_participants")
+}
+
+/// Activity log for audit trail and session replay
+model SessionActivity {
+  id           String        @id @default(cuid())
+  sessionId    String        @map("session_id")
+  userId       String        @map("user_id")
+  activityType ActivityType  @map("activity_type")
+  targetType   String?       @map("target_type")
+  targetId     String?       @map("target_id")
+  data         Json?
+  previousData Json?         @map("previous_data")
+  timestamp    DateTime      @default(now())
+  ipAddress    String?       @map("ip_address")
+  userAgent    String?       @map("user_agent")
+  session      ReviewSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user         User          @relation(fields: [userId], references: [id])
+
+  @@index([sessionId])
+  @@index([userId])
+  @@index([timestamp])
+  @@index([activityType])
+  @@map("session_activities")
+}
+
+/// Collaborative document annotations
+model DocumentAnnotation {
+  id          String         @id @default(cuid())
+  documentId  String         @map("document_id")
+  pageNumber  Int            @map("page_number")
+  x           Float
+  y           Float
+  width       Float?
+  height      Float?
+  type        AnnotationType
+  content     String?
+  color       String         @default("#FFEB3B")
+  createdById String         @map("created_by_id")
+  sessionId   String?        @map("session_id")
+  findingId   String?        @map("finding_id")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  createdBy   User           @relation(fields: [createdById], references: [id])
+  document    Document       @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  finding     Finding?       @relation(fields: [findingId], references: [id])
+
+  @@index([documentId])
+  @@index([findingId])
+  @@map("document_annotations")
 }
 
 enum Locale {
@@ -1516,8 +1759,8 @@ enum JoinRequestStatus {
 }
 
 enum JoinRequestType {
-  PROGRAMME_JOIN  // Non-member organization wants to join the programme
-  USER_ACCESS     // User wants access to an existing member organization
+  PROGRAMME_JOIN
+  USER_ACCESS
 }
 
 enum QuestionnaireType {
@@ -1817,11 +2060,11 @@ enum TeamRole {
 }
 
 enum InvitationStatus {
-  PENDING     // Initial state when member is added
-  INVITED     // Invitation sent to reviewer
-  CONFIRMED   // Reviewer accepted invitation
-  DECLINED    // Reviewer declined invitation
-  WITHDRAWN   // Coordinator withdrew the invitation
+  PENDING
+  INVITED
+  CONFIRMED
+  DECLINED
+  WITHDRAWN
 }
 
 enum FindingType {
@@ -1896,7 +2139,6 @@ enum ResourceType {
 }
 
 enum DocumentCategory {
-  // General categories
   POLICY
   PROCEDURE
   RECORD
@@ -1905,7 +2147,6 @@ enum DocumentCategory {
   TRAINING
   EVIDENCE
   OTHER
-  // Review-specific categories
   PRE_VISIT_REQUEST
   HOST_SUBMISSION
   INTERVIEW_NOTES
@@ -1960,7 +2201,6 @@ enum DigestFrequency {
 }
 
 enum NotificationType {
-  // Reviews
   REVIEW_REQUESTED
   REVIEW_APPROVED
   REVIEW_REJECTED
@@ -1972,12 +2212,8 @@ enum NotificationType {
   REVIEW_SCHEDULED
   REVIEW_STARTED
   REVIEW_COMPLETED
-
-  // Findings
   FINDING_CREATED
   FINDING_UPDATED
-
-  // CAPs
   CAP_REQUIRED
   CAP_SUBMITTED
   CAP_ACCEPTED
@@ -1986,13 +2222,9 @@ enum NotificationType {
   CAP_OVERDUE
   CAP_VERIFIED
   CAP_CLOSED
-
-  // Reports
   REPORT_DRAFT_READY
   REPORT_SUBMITTED
   REPORT_APPROVED
-
-  // System
   SYSTEM_ANNOUNCEMENT
   REMINDER
 }
@@ -2026,10 +2258,6 @@ enum AuditAction {
   TOKEN_REVOKE
   TOKEN_REVOKE_ALL
 }
-
-// =============================================================================
-// BEST PRACTICES LIBRARY
-// =============================================================================
 
 enum BestPracticeCategory {
   SAFETY_MANAGEMENT
@@ -2074,10 +2302,6 @@ enum LessonType {
   RESOURCE_CONSTRAINT
 }
 
-// =============================================================================
-// REVIEWER COLLABORATION WORKSPACE
-// =============================================================================
-
 enum TaskStatus {
   PENDING
   IN_PROGRESS
@@ -2092,462 +2316,12 @@ enum TaskPriority {
   URGENT
 }
 
-model BestPractice {
-  id                String              @id @default(cuid())
-  referenceNumber   String              @unique @map("reference_number")
-
-  // Source (optional link to finding that originated this)
-  findingId         String?             @unique @map("finding_id")
-  finding           Finding?            @relation(fields: [findingId], references: [id])
-
-  // Originating organization
-  organizationId    String              @map("organization_id")
-  organization      Organization        @relation(fields: [organizationId], references: [id])
-
-  // Submitted by
-  submittedById     String              @map("submitted_by_id")
-  submittedBy       User                @relation("SubmittedBestPractices", fields: [submittedById], references: [id])
-
-  // Content (bilingual)
-  titleEn           String              @map("title_en")
-  titleFr           String              @map("title_fr")
-  summaryEn         String              @db.Text @map("summary_en")
-  summaryFr         String              @db.Text @map("summary_fr")
-  descriptionEn     String              @db.Text @map("description_en")
-  descriptionFr     String              @db.Text @map("description_fr")
-  implementationEn  String              @db.Text @map("implementation_en")
-  implementationFr  String              @db.Text @map("implementation_fr")
-  benefitsEn        String              @db.Text @map("benefits_en")
-  benefitsFr        String              @db.Text @map("benefits_fr")
-
-  // Classification
-  category          BestPracticeCategory
-  auditArea         String?             @map("audit_area") // ATS, AIM, MET, CNS, SAR, SMS, etc.
-  tags              String[]            @default([])
-
-  // Media
-  imageUrl          String?             @map("image_url")
-  attachments       String[]            @default([])
-
-  // Workflow status
-  status            BestPracticeStatus  @default(DRAFT)
-  submittedAt       DateTime?           @map("submitted_at")
-  reviewedById      String?             @map("reviewed_by_id")
-  reviewedBy        User?               @relation("ReviewedBestPractices", fields: [reviewedById], references: [id])
-  reviewedAt        DateTime?           @map("reviewed_at")
-  reviewNotes       String?             @db.Text @map("review_notes")
-  publishedAt       DateTime?           @map("published_at")
-
-  // Engagement metrics
-  viewCount         Int                 @default(0) @map("view_count")
-
-  // Adoptions
-  adoptions         BestPracticeAdoption[]
-
-  // Lessons learned from adopters
-  lessonsLearned    BestPracticeLessonLearned[]
-
-  // Discussion comments
-  comments          BestPracticeComment[]
-
-  // Mentorship requests
-  mentorshipRequests MentorshipRequest[]
-
-  // Timestamps
-  createdAt         DateTime            @default(now()) @map("created_at")
-  updatedAt         DateTime            @updatedAt @map("updated_at")
-
-  @@index([organizationId])
-  @@index([category])
-  @@index([status])
-  @@index([auditArea])
-  @@index([publishedAt(sort: Desc)])
-  @@map("best_practices")
-}
-
-model BestPracticeAdoption {
-  id                  String        @id @default(cuid())
-
-  bestPracticeId      String        @map("best_practice_id")
-  bestPractice        BestPractice  @relation(fields: [bestPracticeId], references: [id], onDelete: Cascade)
-
-  organizationId      String        @map("organization_id")
-  organization        Organization  @relation(fields: [organizationId], references: [id])
-
-  // Adoption details
-  adoptedById         String        @map("adopted_by_id")
-  adoptedBy           User          @relation("AdoptedBestPractices", fields: [adoptedById], references: [id])
-  adoptedAt           DateTime      @default(now()) @map("adopted_at")
-
-  // Implementation notes from adopting organization
-  implementationNotes String?       @db.Text @map("implementation_notes")
-
-  // Optional: track implementation status
-  implementationStatus String?      @map("implementation_status") // PLANNED, IN_PROGRESS, COMPLETED
-  completedAt         DateTime?     @map("completed_at")
-
-  // Timestamps
-  createdAt           DateTime      @default(now()) @map("created_at")
-  updatedAt           DateTime      @updatedAt @map("updated_at")
-
-  @@unique([bestPracticeId, organizationId])
-  @@index([organizationId])
-  @@index([bestPracticeId])
-  @@map("best_practice_adoptions")
-}
-
-model BestPracticeLessonLearned {
-  id                       String       @id @default(cuid())
-
-  bestPracticeId           String       @map("best_practice_id")
-  bestPractice             BestPractice @relation(fields: [bestPracticeId], references: [id], onDelete: Cascade)
-
-  organizationId           String       @map("organization_id")
-  organization             Organization @relation(fields: [organizationId], references: [id])
-
-  authorId                 String       @map("author_id")
-  author                   User         @relation("LessonsAuthored", fields: [authorId], references: [id])
-
-  // Content
-  title                    String
-  content                  String       @db.Text
-  challengesFaced          String?      @db.Text @map("challenges_faced")
-  keySuccessFactors        String?      @db.Text @map("key_success_factors")
-  recommendations          String?      @db.Text
-
-  // Metrics
-  implementationDifficulty Int?         @map("implementation_difficulty") // 1-5
-  overallEffectiveness     Int?         @map("overall_effectiveness")     // 1-5
-  timeToImplementMonths    Int?         @map("time_to_implement_months")
-
-  // Engagement
-  helpfulCount             Int          @default(0) @map("helpful_count")
-
-  // Status
-  status                   LessonStatus @default(DRAFT)
-  publishedAt              DateTime?    @map("published_at")
-
-  // Timestamps
-  createdAt                DateTime     @default(now()) @map("created_at")
-  updatedAt                DateTime     @updatedAt @map("updated_at")
-
-  @@index([bestPracticeId])
-  @@index([organizationId])
-  @@index([status])
-  @@map("best_practice_lessons_learned")
-}
-
-model BestPracticeComment {
-  id              String                @id @default(cuid())
-
-  bestPracticeId  String                @map("best_practice_id")
-  bestPractice    BestPractice          @relation(fields: [bestPracticeId], references: [id], onDelete: Cascade)
-
-  authorId        String                @map("author_id")
-  author          User                  @relation("BestPracticeCommentsAuthored", fields: [authorId], references: [id])
-
-  // Threading support (one level)
-  parentId        String?               @map("parent_id")
-  parent          BestPracticeComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
-  replies         BestPracticeComment[] @relation("CommentReplies")
-
-  // Content
-  content         String                @db.Text
-
-  // Timestamps
-  createdAt       DateTime              @default(now()) @map("created_at")
-  updatedAt       DateTime              @updatedAt @map("updated_at")
-
-  @@index([bestPracticeId])
-  @@index([parentId])
-  @@map("best_practice_comments")
-}
-
-model MentorshipRequest {
-  id                String            @id @default(cuid())
-
-  bestPracticeId    String            @map("best_practice_id")
-  bestPractice      BestPractice      @relation(fields: [bestPracticeId], references: [id], onDelete: Cascade)
-
-  requestingOrgId   String            @map("requesting_org_id")
-  requestingOrg     Organization      @relation("MentorshipRequesting", fields: [requestingOrgId], references: [id])
-
-  targetOrgId       String            @map("target_org_id")
-  targetOrg         Organization      @relation("MentorshipTarget", fields: [targetOrgId], references: [id])
-
-  requesterId       String            @map("requester_id")
-  requester         User              @relation("MentorshipRequester", fields: [requesterId], references: [id])
-
-  // Request content
-  message           String            @db.Text
-
-  // Status
-  status            MentorshipStatus  @default(PENDING)
-  respondedAt       DateTime?         @map("responded_at")
-  responseMessage   String?           @db.Text @map("response_message")
-
-  // Timestamps
-  createdAt         DateTime          @default(now()) @map("created_at")
-  updatedAt         DateTime          @updatedAt @map("updated_at")
-
-  @@index([bestPracticeId])
-  @@index([targetOrgId])
-  @@index([requestingOrgId])
-  @@map("mentorship_requests")
-}
-
-// =============================================================================
-// REVIEW RETROSPECTIVE - ICAO Annex 19 Continuous Improvement
-// =============================================================================
-
-// Review Retrospective - captures post-review reflection
-// Aligned with ICAO Annex 19 Section 3.3 (Continuous Improvement of SMS)
-// and CANSO SoE SA8.1/SA10.1 (Safety Reporting & Improvement)
-model ReviewRetrospective {
-  id                      String              @id @default(cuid())
-
-  reviewId                String              @unique @map("review_id")
-  review                  Review              @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-
-  // Submitter info
-  submittedById           String              @map("submitted_by_id")
-  submittedBy             User                @relation("RetrospectiveSubmitter", fields: [submittedById], references: [id])
-  submittedAt             DateTime            @default(now()) @map("submitted_at")
-
-  // Section 1: Process Effectiveness
-  processRating           Int                 @map("process_rating") // 1-5 scale
-  preparationEffective    Boolean?            @map("preparation_effective")
-  onSiteEffective         Boolean?            @map("on_site_effective")
-  reportingEffective      Boolean?            @map("reporting_effective")
-
-  // Section 2: What Went Well (Safety Assurance - positive findings)
-  whatWentWell            String              @db.Text @map("what_went_well")
-
-  // Section 3: Areas for Improvement (Continuous Improvement)
-  areasForImprovement     String              @db.Text @map("areas_for_improvement")
-
-  // Section 4: Key Learnings (Knowledge Management)
-  keyLearnings            String              @db.Text @map("key_learnings")
-
-  // Section 5: Programme Suggestions
-  programmeSuggestions    String?             @db.Text @map("programme_suggestions")
-
-  // Section 6: Quantitative Metrics
-  reviewDurationDays      Int?                @map("review_duration_days")
-  teamSizeAdequate        Boolean?            @map("team_size_adequate")
-  resourcesAdequate       Boolean?            @map("resources_adequate")
-  communicationEffective  Boolean?            @map("communication_effective")
-
-  // Status workflow
-  status                  RetrospectiveStatus @default(DRAFT)
-  publishedAt             DateTime?           @map("published_at")
-
-  // Timestamps
-  createdAt               DateTime            @default(now()) @map("created_at")
-  updatedAt               DateTime            @updatedAt @map("updated_at")
-
-  // Related items tagged from retrospective
-  taggedFindings          RetrospectiveFinding[]
-
-  @@index([reviewId])
-  @@index([submittedById])
-  @@index([status])
-  @@map("review_retrospectives")
-}
-
-// Link findings to retrospective insights for lessons learned
-model RetrospectiveFinding {
-  id                String              @id @default(cuid())
-
-  retrospectiveId   String              @map("retrospective_id")
-  retrospective     ReviewRetrospective @relation(fields: [retrospectiveId], references: [id], onDelete: Cascade)
-
-  findingId         String              @map("finding_id")
-  finding           Finding             @relation(fields: [findingId], references: [id])
-
-  // Why this finding is notable
-  notableReason     String?             @db.Text @map("notable_reason")
-  lessonType        LessonType          @map("lesson_type")
-
-  // Timestamps
-  createdAt         DateTime            @default(now()) @map("created_at")
-
-  @@unique([retrospectiveId, findingId])
-  @@index([retrospectiveId])
-  @@index([findingId])
-  @@map("retrospective_findings")
-}
-
-// =============================================================================
-// TRANSLATION CACHE
-// =============================================================================
-
-model TranslationCache {
-  id              String   @id @default(cuid())
-  sourceHash      String   @map("source_hash")
-  sourceText      String   @map("source_text") @db.Text
-  translatedText  String   @map("translated_text") @db.Text
-  sourceLanguage  String   @map("source_language")
-  targetLanguage  String   @map("target_language")
-  entityType      String?  @map("entity_type")
-  entityId        String?  @map("entity_id")
-  fieldName       String?  @map("field_name")
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
-
-  @@unique([sourceHash, sourceLanguage, targetLanguage])
-  @@index([entityType, entityId])
-  @@map("translation_cache")
-}
-
-// =============================================================================
-// REVIEWER COLLABORATION WORKSPACE - MODELS
-// =============================================================================
-
-model ReviewDiscussion {
-  id              String              @id @default(cuid())
-
-  // Parent review
-  reviewId        String              @map("review_id")
-  review          Review              @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-
-  // Author
-  authorId        String              @map("author_id")
-  author          User                @relation("DiscussionAuthor", fields: [authorId], references: [id])
-
-  // Threading (optional parent for replies)
-  parentId        String?             @map("parent_id")
-  parent          ReviewDiscussion?   @relation("DiscussionReplies", fields: [parentId], references: [id], onDelete: Cascade)
-  replies         ReviewDiscussion[]  @relation("DiscussionReplies")
-
-  // Content
-  subject         String?             // Only for top-level discussions
-  content         String              @db.Text
-
-  // Mentions (stored as user IDs)
-  mentions        String[]            @default([])
-
-  // Attachments (URLs to uploaded files)
-  attachments     String[]            @default([])
-
-  // Status
-  isResolved      Boolean             @default(false) @map("is_resolved")
-  resolvedAt      DateTime?           @map("resolved_at")
-  resolvedById    String?             @map("resolved_by_id")
-  resolvedBy      User?               @relation("ResolvedDiscussions", fields: [resolvedById], references: [id])
-
-  // Edit tracking
-  isEdited        Boolean             @default(false) @map("is_edited")
-  editedAt        DateTime?           @map("edited_at")
-
-  // Soft delete
-  isDeleted       Boolean             @default(false) @map("is_deleted")
-  deletedAt       DateTime?           @map("deleted_at")
-
-  // Timestamps
-  createdAt       DateTime            @default(now()) @map("created_at")
-  updatedAt       DateTime            @updatedAt @map("updated_at")
-
-  // Linked task (optional)
-  linkedTask      ReviewTask?
-
-  @@index([reviewId, isDeleted])
-  @@index([reviewId, parentId])
-  @@index([authorId])
-  @@map("review_discussions")
-}
-
-model ReviewTask {
-  id              String          @id @default(cuid())
-
-  // Parent review
-  reviewId        String          @map("review_id")
-  review          Review          @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-
-  // Assignment
-  assignedToId    String?         @map("assigned_to_id")
-  assignedTo      User?           @relation("AssignedTasks", fields: [assignedToId], references: [id])
-  createdById     String          @map("created_by_id")
-  createdBy       User            @relation("CreatedTasks", fields: [createdById], references: [id])
-
-  // Task details
-  title           String
-  description     String?         @db.Text
-
-  // Status and priority
-  status          TaskStatus      @default(PENDING)
-  priority        TaskPriority    @default(MEDIUM)
-
-  // Dates
-  dueDate         DateTime?       @map("due_date")
-  completedAt     DateTime?       @map("completed_at")
-  completedById   String?         @map("completed_by_id")
-  completedBy     User?           @relation("CompletedTasks", fields: [completedById], references: [id])
-
-  // Checklist items (JSON array)
-  checklist       Json?           // [{ id, text, completed }]
-
-  // Linked discussion (optional)
-  discussionId    String?         @unique @map("discussion_id")
-  discussion      ReviewDiscussion? @relation(fields: [discussionId], references: [id])
-
-  // Timestamps
-  createdAt       DateTime        @default(now()) @map("created_at")
-  updatedAt       DateTime        @updatedAt @map("updated_at")
-
-  @@index([reviewId, status])
-  @@index([assignedToId, status])
-  @@index([reviewId, dueDate])
-  @@map("review_tasks")
-}
-
-// =============================================================================
-// REAL-TIME COLLABORATION
-// =============================================================================
-
-/// Tracks active collaboration sessions for a review
-model ReviewSession {
-  id             String              @id @default(cuid())
-  reviewId       String              @map("review_id")
-  review         Review              @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-
-  // Session metadata
-  sessionType    SessionType         @default(FIELDWORK) @map("session_type")
-  title          String?
-  description    String?
-
-  // Timing
-  startedAt      DateTime            @default(now()) @map("started_at")
-  endedAt        DateTime?           @map("ended_at")
-  scheduledStart DateTime?           @map("scheduled_start")
-  scheduledEnd   DateTime?           @map("scheduled_end")
-
-  // Session state
-  status         SessionStatus       @default(ACTIVE)
-  isRecording    Boolean             @default(false) @map("is_recording")
-
-  // Creator
-  startedById    String              @map("started_by_id")
-  startedBy      User                @relation("SessionStarter", fields: [startedById], references: [id])
-
-  // Participants
-  participants   SessionParticipant[]
-  activities     SessionActivity[]
-
-  createdAt      DateTime            @default(now()) @map("created_at")
-  updatedAt      DateTime            @updatedAt @map("updated_at")
-
-  @@index([reviewId])
-  @@index([status])
-  @@map("review_sessions")
-}
-
 enum SessionType {
-  FIELDWORK       // On-site review session
-  REMOTE          // Remote collaboration
-  DOCUMENT_REVIEW // Document review session
-  DEBRIEF         // Team debrief
-  PLANNING        // Planning session
+  FIELDWORK
+  REMOTE
+  DOCUMENT_REVIEW
+  DEBRIEF
+  PLANNING
 }
 
 enum SessionStatus {
@@ -2558,141 +2332,34 @@ enum SessionStatus {
   CANCELLED
 }
 
-/// Tracks participants in a collaboration session
-model SessionParticipant {
-  id            String          @id @default(cuid())
-  sessionId     String          @map("session_id")
-  session       ReviewSession   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-
-  userId        String          @map("user_id")
-  user          User            @relation(fields: [userId], references: [id])
-
-  // Presence info
-  joinedAt      DateTime        @default(now()) @map("joined_at")
-  leftAt        DateTime?       @map("left_at")
-  isOnline      Boolean         @default(true) @map("is_online")
-  lastSeenAt    DateTime        @default(now()) @map("last_seen_at")
-
-  // Current focus
-  currentFocus  String?         @map("current_focus") // e.g., "finding:123", "document:456"
-  cursorPosition Json?          @map("cursor_position") // {x, y, element}
-
-  // Role in session
-  role          ParticipantRole @default(PARTICIPANT)
-
-  createdAt     DateTime        @default(now()) @map("created_at")
-  updatedAt     DateTime        @updatedAt @map("updated_at")
-
-  @@unique([sessionId, userId])
-  @@index([sessionId])
-  @@index([userId])
-  @@map("session_participants")
-}
-
 enum ParticipantRole {
-  HOST        // Session host (usually team lead)
-  PRESENTER   // Currently presenting/leading
-  PARTICIPANT // Active participant
-  OBSERVER    // View-only
-}
-
-/// Activity log for audit trail and session replay
-model SessionActivity {
-  id           String        @id @default(cuid())
-  sessionId    String        @map("session_id")
-  session      ReviewSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-
-  userId       String        @map("user_id")
-  user         User          @relation(fields: [userId], references: [id])
-
-  // Activity details
-  activityType ActivityType  @map("activity_type")
-  targetType   String?       @map("target_type") // "finding", "document", "comment", etc.
-  targetId     String?       @map("target_id")
-
-  // Activity data
-  data         Json?         // Flexible storage for activity-specific data
-  previousData Json?         @map("previous_data") // For tracking changes
-
-  // Metadata
-  timestamp    DateTime      @default(now())
-  ipAddress    String?       @map("ip_address")
-  userAgent    String?       @map("user_agent")
-
-  @@index([sessionId])
-  @@index([userId])
-  @@index([timestamp])
-  @@index([activityType])
-  @@map("session_activities")
+  HOST
+  PRESENTER
+  PARTICIPANT
+  OBSERVER
 }
 
 enum ActivityType {
-  // Session activities
   SESSION_JOIN
   SESSION_LEAVE
   SESSION_PAUSE
   SESSION_RESUME
-
-  // Content activities
   FINDING_VIEW
   FINDING_CREATE
   FINDING_EDIT
   FINDING_DELETE
-
   COMMENT_ADD
   COMMENT_EDIT
   COMMENT_DELETE
-
   DOCUMENT_VIEW
   DOCUMENT_UPLOAD
   DOCUMENT_ANNOTATE
-
-  // Collaboration activities
   CURSOR_MOVE
   SELECTION_CHANGE
   FOCUS_CHANGE
-
-  // Task activities
   TASK_CREATE
   TASK_UPDATE
   TASK_COMPLETE
-}
-
-/// Collaborative document annotations
-model DocumentAnnotation {
-  id          String         @id @default(cuid())
-  documentId  String         @map("document_id")
-  document    Document       @relation(fields: [documentId], references: [id], onDelete: Cascade)
-
-  // Position
-  pageNumber  Int            @map("page_number")
-  x           Float
-  y           Float
-  width       Float?
-  height      Float?
-
-  // Annotation content
-  type        AnnotationType
-  content     String?
-  color       String         @default("#FFEB3B")
-
-  // Creator
-  createdById String         @map("created_by_id")
-  createdBy   User           @relation(fields: [createdById], references: [id])
-
-  // Session context (if created during session)
-  sessionId   String?        @map("session_id")
-
-  // Link to finding if annotation supports a finding
-  findingId   String?        @map("finding_id")
-  finding     Finding?       @relation(fields: [findingId], references: [id])
-
-  createdAt   DateTime       @default(now()) @map("created_at")
-  updatedAt   DateTime       @updatedAt @map("updated_at")
-
-  @@index([documentId])
-  @@index([findingId])
-  @@map("document_annotations")
 }
 
 enum AnnotationType {
@@ -2702,10 +2369,6 @@ enum AnnotationType {
   STAMP
   TEXT
 }
-
-// =============================================================================
-// WORKFLOW AUTOMATION ENUMS
-// =============================================================================
 
 enum WorkflowEntityType {
   CAP
@@ -2741,4 +2404,30 @@ enum SLAStatus {
   PAUSED
   BREACHED
   COMPLETED
+}
+
+// =============================================================================
+// USER ONBOARDING
+// =============================================================================
+
+model UserOnboarding {
+  id              String    @id @default(cuid())
+  userId          String    @unique @map("user_id")
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  completedSteps  String[]  @default([]) @map("completed_steps")
+  skippedSteps    String[]  @default([]) @map("skipped_steps")
+  currentStep     String?   @map("current_step")
+
+  tourStartedAt   DateTime? @map("tour_started_at")
+  tourCompletedAt DateTime? @map("tour_completed_at")
+  tourDismissedAt DateTime? @map("tour_dismissed_at")
+
+  showTooltips    Boolean   @default(true) @map("show_tooltips")
+  showWelcome     Boolean   @default(true) @map("show_welcome")
+
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@map("user_onboarding")
 }

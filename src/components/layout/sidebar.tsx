@@ -133,12 +133,13 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
       </div>
 
       <ScrollArea className="flex-1 px-3 py-4">
-        <nav id="navigation" className="flex flex-col gap-1" tabIndex={-1}>
+        <nav id="navigation" data-tour="sidebar" className="flex flex-col gap-1" tabIndex={-1}>
           {navItems
             .filter((item) => item.section !== "admin")
             .map((item) => {
               const isActive = pathname.startsWith(`/${locale}${item.href}`);
               const Icon = item.icon;
+              const dataTourAttr = `nav-${item.name}`;
 
               if (collapsed) {
                 return (
@@ -146,6 +147,7 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
                     <TooltipTrigger asChild>
                       <Link
                         href={`/${locale}${item.href}`}
+                        data-tour={dataTourAttr}
                         className={cn(
                           "flex h-10 w-10 items-center justify-center rounded-lg transition-colors",
                           isActive
@@ -165,6 +167,7 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
                 <Link
                   key={item.name}
                   href={`/${locale}${item.href}`}
+                  data-tour={dataTourAttr}
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
                     isActive
@@ -192,12 +195,15 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
                   const isActive = pathname.startsWith(`/${locale}${item.href}`);
                   const Icon = item.icon;
 
+                  const adminDataTourAttr = `nav-${item.name}`;
+
                   if (collapsed) {
                     return (
                       <Tooltip key={item.name} delayDuration={0}>
                         <TooltipTrigger asChild>
                           <Link
                             href={`/${locale}${item.href}`}
+                            data-tour={adminDataTourAttr}
                             className={cn(
                               "flex h-10 w-10 items-center justify-center rounded-lg transition-colors",
                               isActive
@@ -217,6 +223,7 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
                     <Link
                       key={item.name}
                       href={`/${locale}${item.href}`}
+                      data-tour={adminDataTourAttr}
                       className={cn(
                         "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
                         isActive

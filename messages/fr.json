@@ -5932,6 +5932,9 @@
       "featuresSection": "Fonctionnalités",
       "showTraining": "Afficher le Module de Formation",
       "showTrainingDescription": "Afficher le module de formation dans le menu de navigation",
+      "onboardingSection": "Visite de la Plateforme",
+      "tour": "Visite Guidée",
+      "tourDescription": "Relancez la visite guidée pour découvrir les fonctionnalités de la plateforme",
       "updateSuccess": "Préférences mises à jour avec succès",
       "updateError": "Échec de la mise à jour des préférences"
     },

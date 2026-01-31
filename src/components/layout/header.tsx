@@ -111,6 +111,7 @@ export function Header({ locale, user }: HeaderProps) {
                   <Button
                     variant="ghost"
                     size="icon"
+                    data-tour="keyboard-hint"
                     onClick={() => setShortcutsOpen(true)}
                     className="text-muted-foreground hover:text-foreground"
                   >

@@ -39,7 +39,7 @@ export default async function DashboardLayout({
   };
 
   return (
-    <DashboardProviders>
+    <DashboardProviders userRole={session.user.role} locale={locale}>
       <AppShell locale={locale} user={user}>
         {children}
       </AppShell>

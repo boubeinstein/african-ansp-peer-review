@@ -35,6 +35,7 @@ import { workflowRouter } from "./workflow";
 import { documentEnhancedRouter } from "./document-enhanced";
 import { searchRouter } from "./search";
 import { retrospectiveRouter } from "./retrospective";
+import { onboardingRouter } from "./onboarding";
 
 /**
  * Main app router combining all sub-routers
@@ -76,6 +77,7 @@ export const appRouter = router({
   documentEnhanced: documentEnhancedRouter,
   search: searchRouter,
   retrospective: retrospectiveRouter,
+  onboarding: onboardingRouter,
 });
 
 /**

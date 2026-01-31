@@ -50,10 +50,13 @@ import {
   Sun,
   Moon,
   Monitor,
+  RefreshCw,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Locale, Theme } from "@prisma/client";
 import { cn } from "@/lib/utils";
+import { useOnboardingOptional } from "@/components/onboarding";
 
 const preferencesSchema = z.object({
   locale: z.nativeEnum(Locale),
@@ -113,7 +116,9 @@ function ThemePreview({ theme }: { theme: Theme }) {
 export function PreferencesSettings() {
   const t = useTranslations("settings.preferences");
   const tCommon = useTranslations("common");
+  const tOnboarding = useTranslations("onboarding");
   const utils = trpc.useUtils();
+  const onboarding = useOnboardingOptional();
 
   const { data: preferences, isLoading } = trpc.settings.getPreferences.useQuery();
 
@@ -329,6 +334,36 @@ export function PreferencesSettings() {
                 )}
               />
             </div>
+
+            <Separator />
+
+            {/* Onboarding Section */}
+            {onboarding && (
+              <div className="space-y-4">
+                <h3 className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
+                  <Sparkles className="h-4 w-4" />
+                  {t("onboardingSection")}
+                </h3>
+
+                <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <p className="text-base font-medium">{t("tour")}</p>
+                    <p className="text-sm text-muted-foreground">{t("tourDescription")}</p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      onboarding.resetTour();
+                      onboarding.startTour();
+                    }}
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    {tOnboarding("restartTour")}
+                  </Button>
+                </div>
+              </div>
+            )}
 
             <div className="flex justify-end pt-4">
               <Button

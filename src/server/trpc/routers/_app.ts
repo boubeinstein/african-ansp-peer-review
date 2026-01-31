@@ -28,6 +28,7 @@ import { activityRouter } from "./activity";
 import { publicRouter } from "./public";
 import { checklistRouter } from "./checklist";
 import { bestPracticeRouter } from "./best-practice";
+import { bestPracticePromotionRouter } from "./best-practice-promotion";
 import { reviewDiscussionRouter } from "./review-discussion";
 import { reviewTaskRouter } from "./review-task";
 import { collaborationRouter } from "./collaboration";
@@ -70,6 +71,7 @@ export const appRouter = router({
   public: publicRouter,
   checklist: checklistRouter,
   bestPractice: bestPracticeRouter,
+  bestPracticePromotion: bestPracticePromotionRouter,
   reviewDiscussion: reviewDiscussionRouter,
   reviewTask: reviewTaskRouter,
   collaboration: collaborationRouter,

@@ -2987,6 +2987,15 @@
       "FOLLOW_UP": "Revue de suivi",
       "SURVEILLANCE": "Surveillance"
     },
+    "phase": {
+      "PLANNING": "Planification",
+      "PRE_VISIT": "Préparation Pré-Visite",
+      "ON_SITE": "Activités Sur Site",
+      "POST_VISIT": "Activités Post-Visite",
+      "REPORTING": "Rapport",
+      "FOLLOW_UP": "Suivi",
+      "CLOSED": "Clôturé"
+    },
     "statusTransition": {
       "title": "Changer le statut de la revue",
       "description": "Sélectionnez un nouveau statut pour la revue {reference}",

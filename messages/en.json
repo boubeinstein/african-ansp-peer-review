@@ -2987,6 +2987,15 @@
       "FOLLOW_UP": "Follow-up Review",
       "SURVEILLANCE": "Surveillance"
     },
+    "phase": {
+      "PLANNING": "Planning",
+      "PRE_VISIT": "Pre-Visit Preparation",
+      "ON_SITE": "On-Site Activities",
+      "POST_VISIT": "Post-Visit Activities",
+      "REPORTING": "Reporting",
+      "FOLLOW_UP": "Follow-Up",
+      "CLOSED": "Closed"
+    },
     "statusTransition": {
       "title": "Change Review Status",
       "description": "Select a new status for review {reference}",

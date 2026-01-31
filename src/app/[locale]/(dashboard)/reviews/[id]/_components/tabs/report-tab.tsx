@@ -65,7 +65,7 @@ export function ReportTab({ review }: ReportTabProps) {
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
 
-  // Fetch full report data via tRPC (may return NOT_FOUND error if no report)
+  // Fetch full report data via tRPC (returns null if no report exists yet)
   const {
     data: reportData,
     isLoading: isLoadingReport,
@@ -74,7 +74,6 @@ export function ReportTab({ review }: ReportTabProps) {
     { reviewId: review.id },
     {
       enabled: !!review.id,
-      retry: false, // Don't retry on NOT_FOUND
     }
   );
 

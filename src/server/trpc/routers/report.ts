@@ -628,16 +628,14 @@ export const reportRouter = router({
         });
       }
 
-      // Get report
+      // Get report - may not exist yet (valid state)
       const report = await ctx.db.reviewReport.findUnique({
         where: { reviewId: input.reviewId },
       });
 
+      // Return null if no report exists yet - this is a valid state
       if (!report) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Report not found for this review. Use generate to create one. / Rapport non trouvé pour cette revue. Utilisez generate pour en créer un.",
-        });
+        return null;
       }
 
       // Get review details with team

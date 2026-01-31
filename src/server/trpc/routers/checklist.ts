@@ -117,7 +117,7 @@ const CHECKLIST_ITEM_DEFINITIONS: Array<{
     itemCode: "SITE_DOC_REVIEW",
     sortOrder: 8,
     labelEn: "Document review completed",
-    labelFr: "Examen des documents termine",
+    labelFr: "Évaluation des documents termine",
     validationRules: {
       type: "DOCUMENTS_REVIEWED",
       category: "HOST_SUBMISSION",

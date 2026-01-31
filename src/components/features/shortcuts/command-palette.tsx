@@ -161,7 +161,7 @@ export function CommandPalette({
         description: t("descriptions.reviewers"),
         icon: ICONS.reviewers,
         category: "navigation",
-        keywords: ["reviewers", "experts", "team", "examinateurs"],
+        keywords: ["reviewers", "experts", "team", "évaluateurs"],
         action: () => navigate("/reviewers"),
         shortcut: "G E",
       },

@@ -83,7 +83,7 @@
   "auth": {
     "hero": {
       "badge": "Programme Approuvé par l'OACI",
-      "title": "Programme Africain de Évaluation par les pairs des ANSP",
+      "title": "Programme Africain d'Évaluation par les pairs des ANSP",
       "subtitle": "Amélioration collaborative de la sécurité aérienne par des évaluations systématiques entre les Fournisseurs de Services de Navigation Aérienne et les Autorités de l'Aviation Civile africains.",
       "tagline": "Renforcer la Sécurité Aérienne en Afrique par l'Excellence Collaborative",
       "stats": {
@@ -94,7 +94,7 @@
       "partnership": "En partenariat avec l'OACI, CANSO & CAFAC"
     },
     "showcase": {
-      "header": "Programme Africain de Évaluation par les pairs des ANSP en Chiffres",
+      "header": "Programme Africain d'Évaluation par les pairs des ANSP en Chiffres",
       "stats": {
         "organizations": "Organisations Participantes",
         "reviewers": "Évaluateurs Sélectionnés",
@@ -118,7 +118,7 @@
     "login": {
       "title": "Bienvenue",
       "pageTitle": "Connexion - Évaluation par les pairs AFI",
-      "pageDescription": "Connectez-vous au Programme de Évaluation par les pairs des ANSP Africains",
+      "pageDescription": "Connectez-vous au Programme d'Évaluation par les pairs des ANSP Africains",
       "description": "Connectez-vous à votre compte pour continuer",
       "email": "Adresse Email",
       "emailPlaceholder": "nom@organisation.aero",
@@ -190,7 +190,7 @@
       "backToLogin": "Retour à la Connexion"
     },
     "joinProgramme": {
-      "description": "Inscrivez votre organisation au Programme Africain d'Examen par les Pairs des ANSP. Ceci est destiné aux organisations qui ne participent pas encore.",
+      "description": "Inscrivez votre organisation au Programme Africain d'Évaluation par les Pairs des ANSP. Ceci est destiné aux organisations qui ne participent pas encore.",
       "organizationName": "Nom de l'organisation",
       "organizationNamePlaceholder": "ex: Autorité de l'Aviation Civile du Kenya",
       "organizationNameHelp": "Entrez le nom officiel complet de votre fournisseur de services de navigation aérienne",
@@ -212,11 +212,11 @@
       "selectMaturity": "Sélectionnez le niveau de maturité...",
       "preferredTeam": "Équipe Régionale Préférée",
       "selectTeam": "Sélectionnez l'équipe préférée...",
-      "proposedReviewers": "Examinateurs Proposés",
+      "proposedReviewers": "Évaluateurs Proposés",
       "preferredLanguage": "Langue Préférée",
       "bothLanguages": "Les Deux (Anglais & Français)",
       "motivation": "Déclaration de Motivation",
-      "motivationPlaceholder": "Expliquez pourquoi votre organisation souhaite rejoindre le programme, les avantages attendus et l'engagement envers les activités d'examen par les pairs...",
+      "motivationPlaceholder": "Expliquez pourquoi votre organisation souhaite rejoindre le programme, les avantages attendus et l'engagement envers les activités d'évaluation par les pairs...",
       "motivationHelp": "Minimum 100 caractères. Décrivez les objectifs et l'engagement de votre organisation.",
       "additionalNotes": "Notes Supplémentaires",
       "additionalNotesPlaceholder": "Toute information supplémentaire que vous souhaitez partager...",
@@ -227,7 +227,7 @@
       "success": "Candidature soumise avec succès",
       "error": "Échec de la soumission",
       "successTitle": "Candidature Soumise !",
-      "successMessage": "Votre candidature a été soumise pour examen. Le Coordinateur du Programme examinera votre candidature et vous recevrez des mises à jour par email.",
+      "successMessage": "Votre candidature a été soumise pour évaluation. Le Coordinateur du Programme examinera votre candidature et vous recevrez des mises à jour par email.",
       "nextSteps": "Prochaines étapes : Le Coordinateur examinera et transmettra au Comité de Pilotage pour approbation.",
       "backToLogin": "Retour à la Connexion"
     },
@@ -247,7 +247,7 @@
       "networkError": "Erreur réseau. Veuillez vérifier votre connexion."
     },
     "footer": {
-      "copyright": "Programme Africain de Évaluation par les pairs des ANSP. Tous droits réservés."
+      "copyright": "Programme Africain d'Évaluation par les pairs des ANSP. Tous droits réservés."
     },
     "language": {
       "switch": "English"
@@ -292,7 +292,7 @@
   "dashboard": {
     "title": "Tableau de bord",
     "welcome": "Bon retour, {name}!",
-    "subtitle": "Voici un aperçu de vos activités de évaluation par les pairs.",
+    "subtitle": "Voici un aperçu de vos activités d'évaluation par les pairs.",
     "newAssessment": "Nouvelle évaluation",
     "newReview": "Nouvelle évaluation",
     "stats": {
@@ -427,10 +427,10 @@
       "teamNumber": "Équipe {number}",
       "teamLead": "Chef d'équipe",
       "memberOrganizations": "Organisations membres",
-      "reviewers": "examinateurs",
+      "reviewers": "évaluateurs",
       "you": "Vous",
       "reviewsCompleted": "Évaluations terminées",
-      "totalReviewers": "Total examinateurs",
+      "totalReviewers": "Total évaluateurs",
       "capClosureRate": "Taux de clôture PAC",
       "performanceScore": "Performance",
       "openFindingsAlert": "{count} constats ouverts",
@@ -449,7 +449,7 @@
       "exportReport": "Exporter le rapport",
       "totalTeams": "Équipes",
       "totalOrganizations": "Organisations",
-      "totalReviewers": "Examinateurs",
+      "totalReviewers": "Évaluateurs",
       "reviewsCompleted": "Évaluations terminées",
       "openFindings": "Constats ouverts",
       "avgCapClosure": "Taux moyen clôture PAC",
@@ -458,7 +458,7 @@
       "issuesTab": "Problèmes",
       "team": "Équipe",
       "organizations": "Organisations",
-      "reviewers": "Examinateurs",
+      "reviewers": "Évaluateurs",
       "capClosureRate": "Taux de clôture PAC",
       "score": "Score",
       "orgs": "Orgs",
@@ -481,9 +481,9 @@
       "allTypes": "Tous les types d'activité",
       "showingActivities": "Affichage de {count} activités des 30 derniers jours",
       "types": {
-        "reviewCreated": "Examens créés",
-        "reviewStarted": "Examens démarrés",
-        "reviewCompleted": "Examens terminés",
+        "reviewCreated": "Évaluations créés",
+        "reviewStarted": "Évaluations démarrés",
+        "reviewCompleted": "Évaluations terminés",
         "findingRaised": "Constatations émises",
         "findingClosed": "Constatations fermées",
         "capSubmitted": "PAC soumis",
@@ -491,9 +491,9 @@
         "capOverdue": "PAC en retard"
       },
       "messages": {
-        "reviewCreated": "Nouvel examen par les pairs programmé pour {org}",
-        "reviewStarted": "Examen par les pairs démarré à {org}",
-        "reviewCompleted": "Examen par les pairs terminé à {org}",
+        "reviewCreated": "Nouvel évaluation par les pairs programmé pour {org}",
+        "reviewStarted": "Évaluation par les pairs démarré à {org}",
+        "reviewCompleted": "Évaluation par les pairs terminé à {org}",
         "findingRaised": "Constatation {severity} émise pour {org}",
         "findingClosed": "Constatation fermée pour {org}",
         "capSubmitted": "Plan d'action corrective soumis par {org}",
@@ -704,7 +704,7 @@
         "filtersTitle": "Filtres rapides",
         "filtersTip1": "Tout afficher : Voir toutes les questions quel que soit leur statut.",
         "filtersTip2": "Non répondu : Se concentrer sur les questions qui nécessitent encore des réponses.",
-        "filtersTip3": "Marquées : Voir les questions signalées pour suivi ou examen.",
+        "filtersTip3": "Marquées : Voir les questions signalées pour suivi ou évaluation.",
         "progressTitle": "Suivi de la progression",
         "progressTip": "La barre de progression indique le pourcentage d'achèvement. Soumettez votre évaluation lorsque vous atteignez 100% ou lorsque toutes les questions requises sont répondues."
       },
@@ -1310,7 +1310,7 @@
       "onSite": "Sur Site",
       "newIn2024": "Nouveau en 2024",
       "revisedIn2024": "Révisé en 2024",
-      "guidance": "Orientations pour l'Examen des Preuves",
+      "guidance": "Orientations pour l'Évaluation des Preuves",
       "icaoReferences": "Références OACI"
     },
     "empty": {
@@ -1369,7 +1369,7 @@
     },
     "priority": "Prioritaire",
     "onSite": "Sur Site",
-    "guidance": "Orientations pour l'Examen des Preuves",
+    "guidance": "Orientations pour l'Évaluation des Preuves",
     "icaoReferences": "Références OACI",
     "noReferences": "Aucune référence OACI disponible",
     "relatedQuestions": "Questions Connexes",
@@ -1660,7 +1660,7 @@
     },
     "leadReviewer": {
       "title": "Évaluateur principal",
-      "description": "Dirige les équipes de évaluation par les pairs, approuve les constats et assure la qualité des évaluations.",
+      "description": "Dirige les équipes d'évaluation par les pairs, approuve les constats et assure la qualité des évaluations.",
       "typical1": "Expert Senior en Sécurité Aérienne"
     },
     "peerReviewer": {
@@ -1759,7 +1759,7 @@
       "assessmentTypeDesc": "Choisir l'objectif",
       "details": "Détails",
       "detailsDesc": "Configurer le périmètre",
-      "review": "Examen",
+      "review": "Évaluation",
       "reviewDesc": "Confirmer et créer",
       "stepOf": "Étape {current} sur {total}"
     },
@@ -1939,7 +1939,7 @@
       "unflag": "Retirer le marquage",
       "guidance": "Orientations",
       "yourResponse": "Votre réponse",
-      "ansInstructions": "Sélectionnez la réponse appropriée en fonction de votre examen des preuves.",
+      "ansInstructions": "Sélectionnez la réponse appropriée en fonction de votre évaluation des preuves.",
       "smsInstructions": "Sélectionnez le niveau de maturité qui décrit le mieux l'état actuel de votre organisation.",
       "notes": "Notes et commentaires",
       "previous": "Précédent",
@@ -2195,7 +2195,7 @@
       "biographyFr": "Biographie (Français)",
       "biographyPlaceholder": "Brief professional biography highlighting relevant experience...",
       "biographyPlaceholderFr": "Brève biographie professionnelle mettant en avant l'expérience pertinente...",
-      "biographyDescription": "Max 2000 caractères. Sera visible par les coordinateurs de évaluation par les pairs.",
+      "biographyDescription": "Max 2000 caractères. Sera visible par les coordinateurs d'évaluation par les pairs.",
       "alternateEmail": "Email alternatif",
       "alternateEmailPlaceholder": "backup@example.com",
       "alternatePhone": "Téléphone alternatif",
@@ -2704,7 +2704,7 @@
         },
         "noSelection": {
           "title": "Aucune équipe sélectionnée",
-          "description": "Sélectionnez des évaluateurs dans les résultats pour constituer votre équipe de évaluation par les pairs."
+          "description": "Sélectionnez des évaluateurs dans les résultats pour constituer votre équipe d'évaluation par les pairs."
         }
       },
       "shortcuts": {
@@ -2901,14 +2901,14 @@
       "title": "Aucun évaluateur trouvé",
       "description": "Essayez d'ajuster votre recherche ou vos filtres pour trouver des évaluateurs."
     },
-    "myProfile": "Mon profil d'examinateur",
-    "myProfileDescription": "Voir et gérer votre profil d'examinateur",
-    "noProfileTitle": "Pas de profil d'examinateur",
-    "noProfileDescription": "Vous n'avez pas encore de profil d'examinateur. Les profils d'examinateurs sont créés par les coordinateurs du programme pour les examinateurs pairs qualifiés.",
-    "noProfileHelp": "Si vous pensez devoir avoir un profil d'examinateur, veuillez contacter l'administrateur de votre organisation ou le coordinateur du programme.",
+    "myProfile": "Mon profil d'évaluateur",
+    "myProfileDescription": "Voir et gérer votre profil d'évaluateur",
+    "noProfileTitle": "Pas de profil d'évaluateur",
+    "noProfileDescription": "Vous n'avez pas encore de profil d'évaluateur. Les profils d'évaluateurs sont créés par les coordinateurs du programme pour les évaluateurs pairs qualifiés.",
+    "noProfileHelp": "Si vous pensez devoir avoir un profil d'évaluateur, veuillez contacter l'administrateur de votre organisation ou le coordinateur du programme.",
     "availability": {
       "title": "Paramètres de Disponibilité",
-      "description": "Définissez votre disponibilité pour les missions de évaluation par les pairs",
+      "description": "Définissez votre disponibilité pour les missions d'évaluation par les pairs",
       "currentStatus": "Actuellement Disponible",
       "statusDescription": "Désactivez si vous ne pouvez pas accepter de missions",
       "statusAvailable": "Disponible pour les Évaluations",
@@ -2943,7 +2943,7 @@
   },
   "reviews": {
     "title": "Évaluations par les pairs",
-    "description": "Gérer et coordonner les activités de évaluation par les pairs",
+    "description": "Gérer et coordonner les activités d'évaluation par les pairs",
     "searchPlaceholder": "Rechercher par référence, organisation...",
     "filterByStatus": "Filtrer par statut",
     "filterByType": "Filtrer par type",
@@ -3014,7 +3014,7 @@
     },
     "approval": {
       "pageTitle": "Approbations des évaluations",
-      "pageDescription": "Examiner et traiter les demandes de évaluation par les pairs",
+      "pageDescription": "Examiner et traiter les demandes d'évaluation par les pairs",
       "title": "Décision d'approbation",
       "description": "Examinez les détails de la demande et prenez votre décision",
       "backToReviews": "Retour aux évaluations",
@@ -3152,14 +3152,14 @@
         "documentRequestSent": "Demande de documents envoyée à l'organisation hôte",
         "documentsReceived": "Documents pré-visite reçus et examinés",
         "preVisitMeetingHeld": "Réunion de coordination pré-visite tenue avec l'équipe",
-        "reviewPlanApproved": "Plan d'examen approuvé par l'équipe"
+        "reviewPlanApproved": "Plan d'évaluation approuvé par l'équipe"
       },
       "onSite": {
         "title": "Activités sur site",
         "openingMeetingHeld": "Réunion d'ouverture tenue avec l'hôte",
         "interviewsCompleted": "Entretiens du personnel complétés",
         "facilitiesInspected": "Inspection des installations complétée",
-        "documentReviewComplete": "Examen documentaire complété",
+        "documentReviewComplete": "Évaluation documentaire complété",
         "findingsDiscussed": "Constatations préliminaires discutées avec l'hôte",
         "closingMeetingHeld": "Réunion de clôture tenue"
       },
@@ -3390,7 +3390,7 @@
       }
     },
     "detail": {
-      "title": "Détails de l'examen",
+      "title": "Détails de l'évaluation",
       "tabs": {
         "overview": "Aperçu",
         "workspace": "Espace de travail",
@@ -3408,33 +3408,33 @@
         "SCHEDULED": "Planifié",
         "IN_PROGRESS": "En cours",
         "REPORT_DRAFTING": "Rédaction du rapport",
-        "REPORT_REVIEW": "Examen du rapport",
+        "REPORT_REVIEW": "Évaluation du rapport",
         "COMPLETED": "Terminé",
         "CANCELLED": "Annulé"
       },
       "type": {
-        "FULL": "Examen complet",
-        "FOCUSED": "Examen ciblé",
-        "FOLLOW_UP": "Examen de suivi",
-        "SURVEILLANCE": "Examen de surveillance"
+        "FULL": "Évaluation complet",
+        "FOCUSED": "Évaluation ciblé",
+        "FOLLOW_UP": "Évaluation de suivi",
+        "SURVEILLANCE": "Évaluation de surveillance"
       },
       "actions": {
         "edit": "Modifier",
         "submit": "Soumettre",
         "download": "Télécharger",
         "upload": "Téléverser",
-        "cancel": "Annuler l'examen",
+        "cancel": "Annuler l'évaluation",
         "keyboardShortcuts": "Raccourcis clavier"
       },
       "overview": {
         "progress": {
-          "title": "Progression de l'examen",
+          "title": "Progression de l'évaluation",
           "fieldwork": "Liste de contrôle terrain",
           "phase": {
             "PLANNING": "Planification",
             "PREPARATION": "Préparation",
             "ON_SITE": "Sur site",
-            "POST_REVIEW": "Post-examen"
+            "POST_REVIEW": "Post-évaluation"
           }
         },
         "quickActions": {
@@ -3465,9 +3465,9 @@
           "andMore": "et {count} autres éléments..."
         },
         "team": {
-          "title": "Équipe d'examen",
-          "leadReviewer": "Examinateur principal",
-          "reviewers": "examinateurs",
+          "title": "Équipe d'évaluation",
+          "leadReviewer": "Évaluateur principal",
+          "reviewers": "évaluateurs",
           "viewAll": "Voir l'équipe complète"
         },
         "schedule": {
@@ -3505,7 +3505,7 @@
           "tryDifferent": "Essayez d'ajuster votre recherche ou filtre",
           "new": {
             "title": "Nouvelle discussion",
-            "description": "Créez un fil de discussion pour collaborer avec votre équipe d'examen"
+            "description": "Créez un fil de discussion pour collaborer avec votre équipe d'évaluation"
           },
           "form": {
             "title": "Sujet",
@@ -3723,8 +3723,8 @@
         }
       },
       "report": {
-        "title": "Rapport d'examen",
-        "description": "Générer et gérer le rapport d'examen par les pairs",
+        "title": "Rapport d'évaluation",
+        "description": "Générer et gérer le rapport d'évaluation par les pairs",
         "currentReport": "Rapport actuel",
         "noReport": "Aucun rapport généré",
         "noReportDescription": "Générez un rapport une fois tous les prérequis remplis",
@@ -3753,7 +3753,7 @@
           "findingsDetail": "{count} constatations enregistrées",
           "capsSubmitted": "PAC soumis pour constatations critiques/majeures",
           "capsDetail": "{submitted} sur {total} PAC soumis",
-          "reviewStatus": "Examen en cours ou terminé",
+          "reviewStatus": "Évaluation en cours ou terminé",
           "reviewDetail": "Statut actuel : {status}"
         },
         "versionHistory": "Historique des versions",
@@ -3836,10 +3836,10 @@
       },
       "accessibility": {
         "skipToContent": "Aller au contenu principal",
-        "tabNavigation": "Sections de l'examen"
+        "tabNavigation": "Sections de l'évaluation"
       },
       "breadcrumb": {
-        "reviews": "Examens"
+        "reviews": "Évaluations"
       }
     }
   },
@@ -4128,7 +4128,7 @@
     "success": {
       "created": "Plan d'Action Corrective créé avec succès",
       "updated": "Plan d'Action Corrective mis à jour avec succès",
-      "submitted": "Plan d'Action Corrective soumis pour examen",
+      "submitted": "Plan d'Action Corrective soumis pour évaluation",
       "accepted": "Plan d'Action Corrective accepté",
       "rejected": "Plan d'Action Corrective rejeté",
       "implementationStarted": "Mise en œuvre commencée",
@@ -4167,13 +4167,13 @@
       "verificationMethod": "Méthode de Vérification",
       "verificationMethodPlaceholder": "Décrivez comment l'achèvement sera vérifié...",
       "verificationNotes": "Notes de Vérification",
-      "verificationNotesPlaceholder": "Notes de l'examen de vérification...",
+      "verificationNotesPlaceholder": "Notes de l'évaluation de vérification...",
       "noAssignee": "Non assigné"
     },
     "status": {
       "DRAFT": "Brouillon",
       "SUBMITTED": "Soumis",
-      "UNDER_REVIEW": "En cours d'examen",
+      "UNDER_REVIEW": "En cours d'évaluation",
       "ACCEPTED": "Accepté",
       "REJECTED": "Rejeté",
       "IN_PROGRESS": "En cours",
@@ -4183,9 +4183,9 @@
     },
     "actions": {
       "edit": "Modifier le PAC",
-      "submit": "Soumettre pour examen",
-      "submitConfirm": "Êtes-vous sûr de vouloir soumettre ce PAC pour examen ? Vous ne pourrez plus le modifier tant qu'il n'aura pas été examiné.",
-      "startReview": "Commencer l'examen",
+      "submit": "Soumettre pour évaluation",
+      "submitConfirm": "Êtes-vous sûr de vouloir soumettre ce PAC pour évaluation ? Vous ne pourrez plus le modifier tant qu'il n'aura pas été examiné.",
+      "startReview": "Commencer l'évaluation",
       "accept": "Accepter le PAC",
       "acceptConfirm": "L'acceptation de ce PAC confirme que les actions correctives proposées sont appropriées.",
       "reject": "Rejeter le PAC",
@@ -4226,12 +4226,12 @@
       "methodPlaceholder": "Sélectionner la méthode de vérification",
       "methodHint": "Sélectionnez la méthode utilisée pour vérifier la mise en œuvre du PAC",
       "methods": {
-        "DOCUMENT_REVIEW": "Examen documentaire",
+        "DOCUMENT_REVIEW": "Évaluation documentaire",
         "ON_SITE_INSPECTION": "Inspection sur site",
         "INTERVIEW": "Entretien / Discussion",
-        "EVIDENCE_REVIEW": "Examen des preuves",
+        "EVIDENCE_REVIEW": "Évaluation des preuves",
         "TEST_DEMONSTRATION": "Test / Démonstration",
-        "documentReview": "Examen documentaire",
+        "documentReview": "Évaluation documentaire",
         "onSiteInspection": "Inspection sur site",
         "remoteAssessment": "Évaluation à distance",
         "interview": "Entretien",
@@ -4293,8 +4293,8 @@
       "onTrack": "Dans les délais",
       "actions": {
         "created": "PAC créé",
-        "submitted": "Soumis pour examen",
-        "underReview": "En cours d'examen",
+        "submitted": "Soumis pour évaluation",
+        "underReview": "En cours d'évaluation",
         "accepted": "PAC accepté",
         "rejected": "PAC rejeté - révision requise",
         "inProgress": "Mise en œuvre commencée",
@@ -4329,7 +4329,7 @@
       "add": "Ajouter un commentaire",
       "noComments": "Aucun commentaire",
       "internal": "Note interne",
-      "internalHint": "Ce commentaire n'est visible que par les examinateurs",
+      "internalHint": "Ce commentaire n'est visible que par les évaluateurs",
       "placeholder": "Ajouter un commentaire...",
       "postedBy": "Publié par {name} le {date}"
     },
@@ -4388,7 +4388,7 @@
       "stages": {
         "draft": "Brouillon",
         "submitted": "Soumis",
-        "underReview": "En cours d'examen",
+        "underReview": "En cours d'évaluation",
         "accepted": "Accepté",
         "rejected": "Rejeté",
         "inProgress": "En cours",
@@ -4405,7 +4405,7 @@
       "dueInDays": "Échéance dans {days} jours"
     },
     "toast": {
-      "submitSuccess": "PAC soumis pour examen",
+      "submitSuccess": "PAC soumis pour évaluation",
       "acceptSuccess": "PAC accepté",
       "rejectSuccess": "PAC rejeté et renvoyé pour évaluation",
       "inProgressSuccess": "Mise en œuvre du PAC commencée",
@@ -4438,7 +4438,7 @@
       "description": "Aucun plan d'action corrective n'a encore été créé pour cette constatation."
     },
     "confirm": {
-      "submit": "Êtes-vous sûr de vouloir soumettre ce PAC pour examen ?",
+      "submit": "Êtes-vous sûr de vouloir soumettre ce PAC pour évaluation ?",
       "accept": "Êtes-vous sûr de vouloir accepter ce PAC ?",
       "reject": "Êtes-vous sûr de vouloir rejeter ce PAC ?",
       "startImplementation": "Êtes-vous prêt à commencer la mise en œuvre de ce plan d'action corrective ?",
@@ -4488,7 +4488,7 @@
       "review": "Examiner la preuve",
       "reviewTitle": "Examiner la preuve",
       "reviewDescription": "Examinez la preuve téléchargée et prenez une décision",
-      "reviewSuccess": "Examen de la preuve soumis",
+      "reviewSuccess": "Évaluation de la preuve soumis",
       "viewFile": "Voir le fichier",
       "decision": "Décision",
       "acceptEvidence": "Accepter la preuve",
@@ -4496,16 +4496,16 @@
       "requestMoreInfo": "Demander plus d'informations",
       "rejectionReason": "Raison du rejet",
       "rejectionReasonPlaceholder": "Expliquez pourquoi cette preuve est rejetée...",
-      "reviewerComment": "Commentaire de l'examinateur",
+      "reviewerComment": "Commentaire de l'évaluateur",
       "commentPlaceholder": "Ajouter un commentaire pour l'organisation...",
       "commentHelp": "Ce commentaire sera visible par l'organisation",
-      "submitReview": "Soumettre l'examen",
+      "submitReview": "Soumettre l'évaluation",
       "delete": "Supprimer la preuve",
       "deleteSuccess": "Preuve supprimée",
       "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette preuve ? Cette action est irréversible.",
       "status": {
-        "pending": "En attente d'examen",
-        "under_review": "En cours d'examen",
+        "pending": "En attente d'évaluation",
+        "under_review": "En cours d'évaluation",
         "accepted": "Acceptée",
         "rejected": "Rejetée",
         "more_info_required": "Plus d'infos requises"
@@ -4640,7 +4640,7 @@
       "assessmentStatus": "Statut",
       "assessmentDate": "Date",
       "noReviews": "Aucune évaluation par les pairs",
-      "noReviewsDescription": "Cette organisation n'a pas encore accueilli de évaluations par les pairs.",
+      "noReviewsDescription": "Cette organisation n'a pas encore accueilli d'évaluations par les pairs.",
       "noUsers": "Aucun utilisateur trouvé",
       "noUsersDescription": "Aucun utilisateur n'est enregistré pour cette organisation.",
       "usersDescription": "{count} utilisateur(s) enregistré(s)",
@@ -4655,7 +4655,7 @@
     },
     "form": {
       "createTitle": "Ajouter une organisation",
-      "createDescription": "Ajouter une nouvelle organisation au Programme AFI de évaluation par les pairs",
+      "createDescription": "Ajouter une nouvelle organisation au Programme AFI d'évaluation par les pairs",
       "editTitle": "Modifier l'organisation",
       "editDescription": "Mettre à jour les informations de {name}",
       "editDescriptionMeta": "Mettre à jour les informations de l'organisation",
@@ -4708,7 +4708,7 @@
   "review": {
     "detail": {
       "pageTitle": "Détails de l'évaluation",
-      "pageDescription": "Voir les détails de la demande de évaluation par les pairs",
+      "pageDescription": "Voir les détails de la demande d'évaluation par les pairs",
       "backToReviews": "Retour aux évaluations",
       "loading": "Chargement des détails de l'évaluation...",
       "createdOn": "Créée le {date}",
@@ -4746,7 +4746,7 @@
         "scheduled": "Planifiée",
         "in_progress": "En cours",
         "report_drafting": "Rédaction du rapport",
-        "report_review": "Examen du rapport",
+        "report_review": "Évaluation du rapport",
         "completed": "Terminée",
         "cancelled": "Annulée"
       },
@@ -4784,7 +4784,7 @@
       },
       "report": {
         "title": "Rapport d'évaluation",
-        "description": "Générer et gérer le rapport de évaluation par les pairs",
+        "description": "Générer et gérer le rapport d'évaluation par les pairs",
         "status": {
           "not_generated": "Non généré",
           "draft": "Brouillon",
@@ -4816,7 +4816,7 @@
     },
     "teamWizard": {
       "pageTitle": "Assigner l'équipe d'évaluation",
-      "pageDescription": "Sélectionner et assigner des évaluateurs à l'équipe de évaluation par les pairs",
+      "pageDescription": "Sélectionner et assigner des évaluateurs à l'équipe d'évaluation par les pairs",
       "title": "Assigner l'équipe d'évaluation",
       "subtitle": "Évaluation {reference} - {organization}",
       "backToReview": "Retour à l'évaluation",
@@ -4841,8 +4841,8 @@
         "areasInScope": "Domaines concernés",
         "notSet": "Non défini",
         "teamSize": "Taille de l'équipe",
-        "teamSizeDescription": "Sélectionner le nombre de évaluateurs nécessaires",
-        "numberOfReviewers": "Nombre de évaluateurs",
+        "teamSizeDescription": "Sélectionner le nombre d'évaluateurs nécessaires",
+        "numberOfReviewers": "Nombre d'évaluateurs",
         "minimum": "Min",
         "recommended": "Rec",
         "maximum": "Max",
@@ -5149,8 +5149,8 @@
       }
     },
     "request": {
-      "pageTitle": "Demande de évaluation par les pairs",
-      "pageDescription": "Soumettre une demande de évaluation par les pairs pour votre organisation",
+      "pageTitle": "Demande d'évaluation par les pairs",
+      "pageDescription": "Soumettre une demande d'évaluation par les pairs pour votre organisation",
       "title": "Demander une évaluation par les pairs",
       "description": "Complétez les étapes suivantes pour demander une évaluation par les pairs pour votre organisation.",
       "backToReviews": "Retour aux évaluations",
@@ -5166,7 +5166,7 @@
         "description": "Choisissez les auto-évaluations à inclure dans la évaluation par les pairs.",
         "placeholder": "La sélection des évaluations sera disponible ici.",
         "selectLabel": "Auto-évaluations",
-        "selectDescription": "Sélectionnez une ou plusieurs auto-évaluations complétées à inclure dans cette demande de évaluation par les pairs.",
+        "selectDescription": "Sélectionnez une ou plusieurs auto-évaluations complétées à inclure dans cette demande d'évaluation par les pairs.",
         "submittedOn": "Soumise le {date}",
         "noAssessments": "Aucune évaluation disponible",
         "noAssessmentsDescription": "Vous devez compléter et soumettre au moins une auto-évaluation avant de pouvoir demander une évaluation par les pairs.",
@@ -5241,7 +5241,7 @@
         "title": "Vérifier et soumettre",
         "description": "Vérifiez votre demande avant de la soumettre.",
         "confirmTitle": "Prêt à soumettre",
-        "confirmDescription": "Veuillez vérifier les détails ci-dessous avant de soumettre votre demande de évaluation par les pairs. Vous pouvez revenir aux étapes précédentes pour apporter des modifications.",
+        "confirmDescription": "Veuillez vérifier les détails ci-dessous avant de soumettre votre demande d'évaluation par les pairs. Vous pouvez revenir aux étapes précédentes pour apporter des modifications.",
         "organization": "Organisation",
         "assessments": "Évaluations à examiner",
         "reviewType": "Type d'évaluation",
@@ -5280,7 +5280,7 @@
       },
       "success": {
         "title": "Demande soumise",
-        "description": "Votre demande de évaluation par les pairs {referenceNumber} a été soumise avec succès."
+        "description": "Votre demande d'évaluation par les pairs {referenceNumber} a été soumise avec succès."
       },
       "error": {
         "title": "Échec de la soumission",
@@ -5876,7 +5876,7 @@
       "members": "Membres",
       "reviewsHosted": "Évaluations Accueillies",
       "memberSince": "Membre Depuis",
-      "peerReviewTeam": "Équipe de Évaluation par les pairs",
+      "peerReviewTeam": "Équipe d'Évaluation par les pairs",
       "team": "Équipe",
       "contactNote": "Pour mettre à jour les informations de l'organisation, veuillez contacter l'administrateur du programme.",
       "regions": {
@@ -5919,7 +5919,7 @@
     }
   },
   "joinRequest": {
-    "title": "Rejoindre le Programme de Évaluation par les pairs",
+    "title": "Rejoindre le Programme d'Évaluation par les pairs",
     "subtitle": "Soumettez la candidature de votre organisation pour participer",
     "form": {
       "organizationSection": "Informations sur l'Organisation",
@@ -5953,7 +5953,7 @@
       "maturityD": "Phase D - Surveillance",
       "maturityE": "Phase E - Amélioration Continue",
       "motivationStatement": "Déclaration de Motivation",
-      "motivationStatementPlaceholder": "Décrivez pourquoi votre organisation souhaite participer au Programme de Évaluation par les pairs AFI et comment cela s'aligne sur vos objectifs de sécurité...",
+      "motivationStatementPlaceholder": "Décrivez pourquoi votre organisation souhaite participer au Programme d'Évaluation par les pairs AFI et comment cela s'aligne sur vos objectifs de sécurité...",
       "motivationStatementHelp": "Minimum 100 caractères requis",
       "proposedReviewerCount": "Nombre d'Évaluateurs à Nommer",
       "proposedReviewerCountHelp": "Combien d'évaluateurs qualifiés votre organisation peut-elle apporter ?",
@@ -5988,15 +5988,15 @@
       "backToLogin": "Retour à la Connexion"
     },
     "status": {
-      "pending": "En Attente d'Examen",
-      "coordinatorReview": "En Cours d'Examen par le Coordinateur",
-      "scReview": "En Cours d'Examen par le Comité de Pilotage",
+      "pending": "En Attente d'Évaluation",
+      "coordinatorReview": "En Cours d'Évaluation par le Coordinateur",
+      "scReview": "En Cours d'Évaluation par le Comité de Pilotage",
       "approved": "Approuvée",
       "rejected": "Non Approuvée",
       "withdrawn": "Retirée",
       "MORE_INFO": "Informations Supplémentaires Demandées",
-      "COORDINATOR_REVIEW": "En Cours d'Examen par le Coordinateur",
-      "SC_REVIEW": "En Cours d'Examen par le CP",
+      "COORDINATOR_REVIEW": "En Cours d'Évaluation par le Coordinateur",
+      "SC_REVIEW": "En Cours d'Évaluation par le CP",
       "PENDING": "En Attente",
       "APPROVED": "Approuvée",
       "REJECTED": "Rejetée",
@@ -6042,22 +6042,22 @@
       "organizationInfo": "Informations sur l'Organisation",
       "contactInfo": "Coordonnées du Contact",
       "applicationInfo": "Détails de la Candidature",
-      "coordinatorReview": "Examen du Coordinateur",
+      "coordinatorReview": "Évaluation du Coordinateur",
       "scDecision": "Décision du Comité de Pilotage"
     },
     "coordinatorReview": {
-      "title": "Examen du Coordinateur",
+      "title": "Évaluation du Coordinateur",
       "instructions": "Examinez la candidature et fournissez votre recommandation au Comité de Pilotage",
       "recommendation": "Recommandation",
       "recommend": "Recommander l'Approbation",
       "notRecommend": "Ne Pas Recommander",
       "needsInfo": "Demander des Informations Supplémentaires",
       "recommendedTeam": "Équipe Recommandée",
-      "comments": "Commentaires de l'Examen",
+      "comments": "Commentaires de l'Évaluation",
       "commentsPlaceholder": "Fournissez votre évaluation et toute observation pertinente...",
       "additionalInfoRequest": "Informations Demandées",
       "additionalInfoRequestPlaceholder": "Précisez quelles informations supplémentaires sont nécessaires...",
-      "submit": "Soumettre l'Examen",
+      "submit": "Soumettre l'Évaluation",
       "submitting": "Soumission en cours..."
     },
     "scReview": {
@@ -6082,21 +6082,21 @@
       "withdraw": "Retirer"
     },
     "success": {
-      "reviewSubmitted": "Examen soumis avec succès",
+      "reviewSubmitted": "Évaluation soumis avec succès",
       "decisionSubmitted": "Décision enregistrée avec succès",
       "applicationApproved": "Candidature approuvée - l'organisation est maintenant ACTIVE",
       "applicationRejected": "La candidature a été rejetée"
     },
     "errors": {
       "loadFailed": "Échec du chargement de la demande d'adhésion",
-      "reviewFailed": "Échec de la soumission de l'examen",
+      "reviewFailed": "Échec de la soumission de l'évaluation",
       "decisionFailed": "Échec de l'enregistrement de la décision"
     },
     "filters": {
       "all": "Toutes les Demandes",
       "pending": "En Attente",
-      "coordinatorReview": "Examen Coordinateur",
-      "scReview": "Examen CP",
+      "coordinatorReview": "Évaluation Coordinateur",
+      "scReview": "Évaluation CP",
       "approved": "Approuvées",
       "rejected": "Rejetées"
     },
@@ -6121,7 +6121,7 @@
     },
     "empty": {
       "pending": "Aucune candidature en attente",
-      "inReview": "Aucune candidature en cours d'examen",
+      "inReview": "Aucune candidature en cours d'évaluation",
       "decided": "Aucune candidature décidée",
       "all": "Aucune candidature trouvée"
     }
@@ -6180,7 +6180,7 @@
     "openFindings": "{count} ouverts",
     "totalCAPs": "Total des PAC",
     "overdueCAPs": "{count} en retard",
-    "totalReviewers": "Total des Examinateurs",
+    "totalReviewers": "Total des Évaluateurs",
     "availableReviewers": "{count} disponibles",
     "tabs": {
       "overview": "Vue d'ensemble",
@@ -6235,9 +6235,9 @@
     "avgReviewsPerReviewer": "Moy. Évaluations/Évaluateur",
     "topPerformers": "Meilleurs Contributeurs",
     "byReviewsCompleted": "Par évaluations terminées",
-    "reviewerPerformance": "Performance des Examinateurs",
-    "reviewerPerformanceDescription": "Métriques de performance individuelles pour tous les examinateurs",
-    "reviewer": "Examinateur",
+    "reviewerPerformance": "Performance des Évaluateurs",
+    "reviewerPerformanceDescription": "Métriques de performance individuelles pour tous les évaluateurs",
+    "reviewer": "Évaluateur",
     "completed": "Terminées",
     "inProgress": "En Cours",
     "findings": "Constats",
@@ -6323,7 +6323,7 @@
     },
     "navigation": {
       "dashboard": "Tableau de bord",
-      "reviews": "Examens",
+      "reviews": "Évaluations",
       "findings": "Constatations",
       "caps": "Actions correctives",
       "assessments": "Évaluations",
@@ -6331,7 +6331,7 @@
       "settings": "Paramètres"
     },
     "create": {
-      "newReview": "Nouvel examen",
+      "newReview": "Nouvel évaluation",
       "newFinding": "Nouvelle constatation",
       "newAssessment": "Nouvelle évaluation"
     },
@@ -6356,16 +6356,16 @@
     },
     "navigation": {
       "dashboard": "Aller au tableau de bord",
-      "reviews": "Aller aux examens",
+      "reviews": "Aller aux évaluations",
       "findings": "Aller aux constatations",
       "caps": "Aller aux PAC",
       "assessments": "Aller aux évaluations",
-      "reviewers": "Aller aux examinateurs",
+      "reviewers": "Aller aux évaluateurs",
       "organizations": "Aller aux organisations",
       "settings": "Aller aux paramètres"
     },
     "actions": {
-      "newReview": "Créer un nouvel examen",
+      "newReview": "Créer un nouvel évaluation",
       "newFinding": "Créer une constatation",
       "newAssessment": "Démarrer une évaluation"
     },
@@ -6376,26 +6376,26 @@
     },
     "commands": {
       "dashboard": "Aller au tableau de bord",
-      "reviews": "Aller aux examens",
+      "reviews": "Aller aux évaluations",
       "findings": "Aller aux constatations",
       "caps": "Aller aux PAC",
       "organizations": "Aller aux organisations",
-      "reviewers": "Aller aux examinateurs",
+      "reviewers": "Aller aux évaluateurs",
       "analytics": "Aller aux analyses",
       "settings": "Aller aux paramètres",
-      "newReview": "Créer un nouvel examen",
+      "newReview": "Créer un nouvel évaluation",
       "showShortcuts": "Afficher les raccourcis clavier"
     },
     "descriptions": {
       "dashboard": "Voir l'aperçu de votre tableau de bord",
-      "reviews": "Gérer les examens par les pairs",
+      "reviews": "Gérer les évaluations par les pairs",
       "findings": "Voir et gérer les constatations",
       "caps": "Voir les plans d'action corrective",
       "organizations": "Parcourir les organisations",
-      "reviewers": "Parcourir les profils d'examinateurs",
+      "reviewers": "Parcourir les profils d'évaluateurs",
       "analytics": "Voir les analyses et rapports",
       "settings": "Gérer vos paramètres",
-      "newReview": "Démarrer un nouvel examen",
+      "newReview": "Démarrer un nouvel évaluation",
       "showShortcuts": "Voir tous les raccourcis clavier"
     },
     "footer": {

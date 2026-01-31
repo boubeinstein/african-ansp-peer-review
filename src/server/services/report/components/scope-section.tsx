@@ -98,7 +98,7 @@ export function ScopeSection({ review, locale }: ReportPageProps) {
       <View style={styles.infoBox}>
         <Text style={{ fontSize: 10, color: colors.gray[700], marginBottom: 8 }}>
           {locale === "fr"
-            ? `${review.interviewsConducted.length} entretiens ont été menés avec le personnel de l'organisation hôte, couvrant tous les domaines de l'examen.`
+            ? `${review.interviewsConducted.length} entretiens ont été menés avec le personnel de l'organisation hôte, couvrant tous les domaines de l'évaluation.`
             : `${review.interviewsConducted.length} interviews were conducted with host organization personnel, covering all areas of the review.`}
         </Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
@@ -157,7 +157,7 @@ export function ScopeSection({ review, locale }: ReportPageProps) {
       <View style={styles.box}>
         <Text style={{ fontSize: 9, color: colors.gray[600], lineHeight: 1.5 }}>
           {locale === "fr"
-            ? "Cet examen a été mené conformément aux procédures du Programme Africain d'Examen par les Pairs des ANSP (AAPRP), alignées sur les normes et pratiques recommandées de l'OACI."
+            ? "Cet évaluation a été mené conformément aux procédures du Programme Africain d'Évaluation par les Pairs des ANSP (AAPRP), alignées sur les normes et pratiques recommandées de l'OACI."
             : "This review was conducted in accordance with the African ANSP Peer Review Programme (AAPRP) procedures, aligned with ICAO Standards and Recommended Practices."}
         </Text>
       </View>

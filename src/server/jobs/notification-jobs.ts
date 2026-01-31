@@ -162,10 +162,10 @@ export async function cleanupOldDigests(daysOld: number = 30): Promise<number> {
  */
 function formatNotificationType(type: string, isFrench: boolean): string {
   const typeLabels: Record<string, { en: string; fr: string }> = {
-    REVIEW_ASSIGNED: { en: "Review Assigned", fr: "Examen assigné" },
+    REVIEW_ASSIGNED: { en: "Review Assigned", fr: "Évaluation assigné" },
     REVIEW_STATUS_CHANGE: {
       en: "Review Status Change",
-      fr: "Changement de statut d'examen",
+      fr: "Changement de statut d'évaluation",
     },
     FINDING_CREATED: { en: "Finding Created", fr: "Constatation créée" },
     FINDING_STATUS_CHANGE: {

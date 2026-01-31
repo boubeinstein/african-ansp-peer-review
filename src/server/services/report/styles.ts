@@ -520,17 +520,17 @@ export const labels = {
   },
   fr: {
     // Document
-    peerReviewReport: "Rapport d'Examen par les Pairs",
+    peerReviewReport: "Rapport d'Évaluation par les Pairs",
     confidential: "CONFIDENTIEL",
-    reviewReference: "Référence de l'examen",
+    reviewReference: "Référence de l'évaluation",
     reportDate: "Date du rapport",
     page: "Page",
     of: "sur",
-    preparedBy: "Préparé par l'équipe d'examen AAPRP",
+    preparedBy: "Préparé par l'équipe d'évaluation AAPRP",
 
     // Sections
     executiveSummary: "Résumé Exécutif",
-    reviewTeam: "Équipe d'Examen",
+    reviewTeam: "Équipe d'Évaluation",
     scopeMethodology: "Portée et Méthodologie",
     findingsSummary: "Résumé des Constatations",
     detailedFindings: "Constatations Détaillées",
@@ -546,7 +546,7 @@ export const labels = {
     summaryStatistics: "Statistiques Résumées",
 
     // Team
-    leadReviewer: "Examinateur Principal",
+    leadReviewer: "Évaluateur Principal",
     teamMembers: "Membres de l'Équipe",
     organization: "Organisation",
     role: "Rôle",
@@ -557,7 +557,7 @@ export const labels = {
     documentsExamined: "Documents Examinés",
     interviewsConducted: "Entretiens Menés",
     facilitiesVisited: "Installations Visitées",
-    reviewPeriod: "Période d'Examen",
+    reviewPeriod: "Période d'Évaluation",
 
     // Findings
     findingsByArea: "Constatations par Domaine",
@@ -600,11 +600,11 @@ export const labels = {
 
     // Conclusion
     conclusionIntro:
-      "Cet examen par les pairs a fourni des informations précieuses sur les opérations et les pratiques de gestion de la sécurité de l'organisation examinée.",
+      "Cet évaluation par les pairs a fourni des informations précieuses sur les opérations et les pratiques de gestion de la sécurité de l'organisation examinée.",
     recommendations: "Recommandations",
     acknowledgments: "Remerciements",
     acknowledgmentText:
-      "L'équipe d'examen tient à remercier l'organisation hôte pour sa coopération et son ouverture tout au long du processus d'examen.",
+      "L'équipe d'évaluation tient à remercier l'organisation hôte pour sa coopération et son ouverture tout au long du processus d'évaluation.",
 
     // Annexes
     annexA: "Annexe A : Liste des Entretiens",

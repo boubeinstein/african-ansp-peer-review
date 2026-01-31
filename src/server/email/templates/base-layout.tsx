@@ -211,10 +211,10 @@ export const footerContent = {
   },
   fr: {
     description:
-      "Cet e-mail a été envoyé par le Programme Africain d'Examen par les Pairs des ANSP (AAPRP), une initiative collaborative approuvée par l'OACI, CANSO et l'AFCAC pour améliorer la sécurité aérienne en Afrique.",
+      "Cet e-mail a été envoyé par le Programme Africain d'Évaluation par les Pairs des ANSP (AAPRP), une initiative collaborative approuvée par l'OACI, CANSO et l'AFCAC pour améliorer la sécurité aérienne en Afrique.",
     unsubscribe: "Gérer vos préférences de notification",
     contact: "Contacter le support",
-    copyright: `${new Date().getFullYear()} Programme Africain d'Examen par les Pairs des ANSP. Tous droits réservés.`,
+    copyright: `${new Date().getFullYear()} Programme Africain d'Évaluation par les Pairs des ANSP. Tous droits réservés.`,
   },
 };
 
@@ -243,7 +243,7 @@ export function BaseLayout({ locale, previewText, children }: BaseLayoutProps) {
             <Text style={styles.headerText}>AAPRP</Text>
             <Text style={styles.headerSubtext}>
               {locale === "fr"
-                ? "Programme Africain d'Examen par les Pairs"
+                ? "Programme Africain d'Évaluation par les Pairs"
                 : "African ANSP Peer Review Programme"}
             </Text>
           </Section>

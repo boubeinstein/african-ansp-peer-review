@@ -108,7 +108,7 @@ const content = {
         "Ceci est l'avis FINAL. L'absence de réponse peut entraîner une escalade formelle auprès des autorités réglementaires et des organes de gouvernance du programme.",
     },
     details: "Détails du PAC en retard",
-    review: "Référence de l'examen",
+    review: "Référence de l'évaluation",
     finding: "Référence de la constatation",
     findingTitle: "Constatation",
     severity: "Gravité",
@@ -120,7 +120,7 @@ const content = {
     actions: [
       "Compléter immédiatement toutes les actions correctives en suspens",
       "Télécharger les preuves justificatives de mise en œuvre",
-      "Contacter l'équipe d'examen si vous avez besoin d'aide ou d'une prolongation",
+      "Contacter l'équipe d'évaluation si vous avez besoin d'aide ou d'une prolongation",
       "Fournir une explication écrite du retard",
     ],
     viewCAP: "Voir les détails du PAC",

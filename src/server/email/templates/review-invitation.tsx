@@ -56,17 +56,17 @@ const content = {
     signature: "The AAPRP Coordination Team",
   },
   fr: {
-    subject: (ref: string) => `Invitation à l'examen par les pairs ${ref}`,
-    preview: (org: string) => `Vous avez été invité(e) à participer à l'examen par les pairs de ${org}`,
+    subject: (ref: string) => `Invitation à l'évaluation par les pairs ${ref}`,
+    preview: (org: string) => `Vous avez été invité(e) à participer à l'évaluation par les pairs de ${org}`,
     greeting: (name: string) => `Cher/Chère ${name},`,
     intro: (role: string, org: string) =>
-      `Vous avez été invité(e) à participer en tant que ${role} à un prochain examen par les pairs de ${org}.`,
-    details: "Détails de l'examen",
+      `Vous avez été invité(e) à participer en tant que ${role} à un prochain évaluation par les pairs de ${org}.`,
+    details: "Détails de l'évaluation",
     reference: "Référence",
     organization: "Organisation hôte",
     country: "Pays",
     role: "Votre rôle",
-    dates: "Dates de l'examen",
+    dates: "Dates de l'évaluation",
     areas: "Domaines couverts",
     invitedBy: "Invité(e) par",
     deadline: "Date limite de réponse",
@@ -74,7 +74,7 @@ const content = {
     acceptButton: "Accepter l'invitation",
     declineButton: "Décliner l'invitation",
     viewDetails: "Voir les détails",
-    note: "Si vous avez des questions sur cet examen ou si vous devez discuter de votre disponibilité, veuillez contacter le coordinateur de l'examen.",
+    note: "Si vous avez des questions sur cet évaluation ou si vous devez discuter de votre disponibilité, veuillez contacter le coordinateur de l'évaluation.",
     closing: "Nous espérons votre participation à cette importante initiative.",
     signature: "L'équipe de coordination AAPRP",
   },
@@ -85,7 +85,7 @@ const content = {
 // =============================================================================
 
 const roleTranslations: Record<string, { en: string; fr: string }> = {
-  LEAD_REVIEWER: { en: "Lead Reviewer", fr: "Examinateur principal" },
+  LEAD_REVIEWER: { en: "Lead Reviewer", fr: "Évaluateur principal" },
   TEAM_MEMBER: { en: "Team Member", fr: "Membre de l'équipe" },
   OBSERVER: { en: "Observer", fr: "Observateur" },
   TECHNICAL_EXPERT: { en: "Technical Expert", fr: "Expert technique" },

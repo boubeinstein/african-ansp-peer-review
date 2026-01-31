@@ -27,7 +27,7 @@ export function ConclusionSection({ review, locale }: ReportPageProps) {
       <View style={styles.box}>
         <Text style={{ fontSize: 10, color: colors.gray[700], lineHeight: 1.5 }}>
           {locale === "fr"
-            ? `Cet examen a identifié ${review.findingsSummary.total} constatation(s), dont ${review.findingsSummary.bySeverity.critical} critique(s) et ${review.findingsSummary.bySeverity.major} majeure(s). ${review.findingsSummary.goodPractices > 0 ? `${review.findingsSummary.goodPractices} bonne(s) pratique(s) remarquable(s) ont également été identifiée(s).` : ""}`
+            ? `Cet évaluation a identifié ${review.findingsSummary.total} constatation(s), dont ${review.findingsSummary.bySeverity.critical} critique(s) et ${review.findingsSummary.bySeverity.major} majeure(s). ${review.findingsSummary.goodPractices > 0 ? `${review.findingsSummary.goodPractices} bonne(s) pratique(s) remarquable(s) ont également été identifiée(s).` : ""}`
             : `This review identified ${review.findingsSummary.total} finding(s), including ${review.findingsSummary.bySeverity.critical} critical and ${review.findingsSummary.bySeverity.major} major. ${review.findingsSummary.goodPractices > 0 ? `${review.findingsSummary.goodPractices} noteworthy best practice(s) were also identified.` : ""}`}
         </Text>
       </View>
@@ -76,7 +76,7 @@ export function ConclusionSection({ review, locale }: ReportPageProps) {
           }}
         >
           {locale === "fr"
-            ? "L'équipe d'examen reste disponible pour fournir des conseils supplémentaires et un soutien pendant la phase de mise en œuvre des actions correctives."
+            ? "L'équipe d'évaluation reste disponible pour fournir des conseils supplémentaires et un soutien pendant la phase de mise en œuvre des actions correctives."
             : "The review team remains available to provide additional guidance and support during the corrective action implementation phase."}
         </Text>
       </View>

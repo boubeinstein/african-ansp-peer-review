@@ -118,11 +118,11 @@ const mockObjectives: Partial<Record<CANSOStudyArea, ObjectiveMaturity[]>> = {
       maturityDescriptors: {
         LEVEL_A: {
           en: "No formal safety performance review process",
-          fr: "Aucun processus formel d'examen des performances de sécurité",
+          fr: "Aucun processus formel d'évaluation des performances de sécurité",
         },
         LEVEL_B: {
           en: "Annual review of major incidents only",
-          fr: "Examen annuel des incidents majeurs uniquement",
+          fr: "Évaluation annuel des incidents majeurs uniquement",
         },
         LEVEL_C: {
           en: "Quarterly management review of safety metrics",

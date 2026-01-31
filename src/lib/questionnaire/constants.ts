@@ -376,7 +376,7 @@ export const CANSO_STUDY_AREAS: Record<CANSOStudyArea, StudyAreaMeta> = {
     },
     description: {
       en: "Appointment of a safety manager and safety review board",
-      fr: "Designation d'un responsable securite et d'un comite d'examen de la securite",
+      fr: "Designation d'un responsable securite et d'un comite d'évaluation de la securite",
     },
     sortOrder: 3,
   },

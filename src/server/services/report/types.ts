@@ -211,7 +211,7 @@ export function getRoleLabel(
   locale: Locale
 ): string {
   const labels: Record<string, Record<Locale, string>> = {
-    LEAD_REVIEWER: { en: "Lead Reviewer", fr: "Examinateur principal" },
+    LEAD_REVIEWER: { en: "Lead Reviewer", fr: "Évaluateur principal" },
     TEAM_MEMBER: { en: "Team Member", fr: "Membre de l'équipe" },
     OBSERVER: { en: "Observer", fr: "Observateur" },
     TECHNICAL_EXPERT: { en: "Technical Expert", fr: "Expert technique" },

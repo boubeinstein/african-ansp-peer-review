@@ -29,7 +29,7 @@ export function AnnexInterviews({ review, locale }: ReportPageProps) {
 
       <Text style={styles.paragraph}>
         {locale === "fr"
-          ? `${review.interviewsConducted.length} entretiens ont été menés au cours de cet examen.`
+          ? `${review.interviewsConducted.length} entretiens ont été menés au cours de cet évaluation.`
           : `${review.interviewsConducted.length} interviews were conducted during this review.`}
       </Text>
 
@@ -88,7 +88,7 @@ export function AnnexDocuments({ review, locale }: ReportPageProps) {
 
       <Text style={styles.paragraph}>
         {locale === "fr"
-          ? `${review.documentsExamined.length} documents ont été examinés au cours de cet examen.`
+          ? `${review.documentsExamined.length} documents ont été examinés au cours de cet évaluation.`
           : `${review.documentsExamined.length} documents were examined during this review.`}
       </Text>
 
@@ -134,7 +134,7 @@ export function AnnexAcronyms({ review, locale }: ReportPageProps) {
 
   // Default aviation acronyms
   const defaultAcronyms = [
-    { acronym: "AAPRP", meaning: locale === "fr" ? "Programme Africain d'Examen par les Pairs des ANSP" : "African ANSP Peer Review Programme" },
+    { acronym: "AAPRP", meaning: locale === "fr" ? "Programme Africain d'Évaluation par les Pairs des ANSP" : "African ANSP Peer Review Programme" },
     { acronym: "AFCAC", meaning: locale === "fr" ? "Commission Africaine de l'Aviation Civile" : "African Civil Aviation Commission" },
     { acronym: "ANS", meaning: locale === "fr" ? "Services de Navigation Aérienne" : "Air Navigation Services" },
     { acronym: "ANSP", meaning: locale === "fr" ? "Fournisseur de Services de Navigation Aérienne" : "Air Navigation Service Provider" },

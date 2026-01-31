@@ -68,7 +68,7 @@ export function CAPSection({ review, locale }: ReportPageProps) {
         <View style={styles.infoBox}>
           <Text style={{ fontSize: 10, color: colors.gray[600] }}>
             {locale === "fr"
-              ? "Aucun Plan d'Action Corrective n'est requis suite à cet examen."
+              ? "Aucun Plan d'Action Corrective n'est requis suite à cet évaluation."
               : "No Corrective Action Plans are required following this review."}
           </Text>
         </View>

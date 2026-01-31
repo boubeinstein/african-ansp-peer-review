@@ -57,7 +57,7 @@ export function ApproachingDeadlines({ deadlines }: ApproachingDeadlinesProps) {
       case "FINDING":
         return locale === "fr" ? "Constatation" : "Finding";
       case "REVIEW":
-        return locale === "fr" ? "Examen" : "Review";
+        return locale === "fr" ? "Évaluation" : "Review";
       default:
         return entityType;
     }

@@ -80,7 +80,7 @@ function getShortcutCategories(locale: string): ShortcutCategory[] {
         },
         {
           keys: "G R",
-          description: isFr ? "Aller aux examens" : "Go to Reviews",
+          description: isFr ? "Aller aux évaluations" : "Go to Reviews",
         },
         {
           keys: "G F",
@@ -96,7 +96,7 @@ function getShortcutCategories(locale: string): ShortcutCategory[] {
         },
         {
           keys: "G E",
-          description: isFr ? "Aller aux examinateurs" : "Go to Reviewers",
+          description: isFr ? "Aller aux évaluateurs" : "Go to Reviewers",
         },
         {
           keys: "G A",
@@ -114,7 +114,7 @@ function getShortcutCategories(locale: string): ShortcutCategory[] {
       shortcuts: [
         {
           keys: "N R",
-          description: isFr ? "Nouvel examen" : "New Review",
+          description: isFr ? "Nouvel évaluation" : "New Review",
         },
         {
           keys: "N F",

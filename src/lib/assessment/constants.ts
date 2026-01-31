@@ -83,7 +83,7 @@ export const ASSESSMENT_STATUSES: Record<AssessmentStatus, AssessmentStatusConfi
     },
     description: {
       en: "Assessment has been submitted for review",
-      fr: "L'évaluation a été soumise pour examen",
+      fr: "L'évaluation a été soumise pour évaluation",
     },
     color: "amber",
     bgColor: "bg-amber-100 dark:bg-amber-900/30",
@@ -95,7 +95,7 @@ export const ASSESSMENT_STATUSES: Record<AssessmentStatus, AssessmentStatusConfi
   UNDER_REVIEW: {
     label: {
       en: "Under Review",
-      fr: "En cours d'examen",
+      fr: "En cours d'évaluation",
     },
     description: {
       en: "Assessment is being reviewed by peers or auditors",

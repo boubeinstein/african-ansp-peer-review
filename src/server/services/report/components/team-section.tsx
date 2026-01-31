@@ -89,7 +89,7 @@ export function TeamSection({ review, locale }: ReportPageProps) {
       <View style={{ ...styles.infoBox, marginTop: 15 }}>
         <Text style={{ fontSize: 9, color: colors.gray[600] }}>
           {locale === "fr"
-            ? `L'équipe d'examen était composée de ${review.teamMembers.length + 1} membres représentant ${new Set([review.leadReviewer.organization, ...review.teamMembers.map((m) => m.organization)]).size} organisations différentes.`
+            ? `L'équipe d'évaluation était composée de ${review.teamMembers.length + 1} membres représentant ${new Set([review.leadReviewer.organization, ...review.teamMembers.map((m) => m.organization)]).size} organisations différentes.`
             : `The review team was composed of ${review.teamMembers.length + 1} members representing ${new Set([review.leadReviewer.organization, ...review.teamMembers.map((m) => m.organization)]).size} different organizations.`}
         </Text>
       </View>

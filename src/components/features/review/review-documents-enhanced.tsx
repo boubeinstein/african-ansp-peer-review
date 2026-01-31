@@ -192,7 +192,7 @@ const STATUS_CONFIG: Record<
   },
   UNDER_REVIEW: {
     labelEn: "Under Review",
-    labelFr: "En cours d'examen",
+    labelFr: "En cours d'évaluation",
     icon: Eye,
     color: "bg-blue-100 text-blue-700",
   },
@@ -490,7 +490,7 @@ export function ReviewDocumentsEnhanced({
                 {stats.pendingReview}
               </p>
               <p className="text-xs text-muted-foreground">
-                {isEnglish ? "Pending Review" : "En attente d'examen"}
+                {isEnglish ? "Pending Review" : "En attente d'évaluation"}
               </p>
             </div>
             <div className="text-center p-3 rounded-lg bg-green-50 dark:bg-green-950/20">

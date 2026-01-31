@@ -108,15 +108,15 @@ const content = {
     greeting: (name: string) => `Cher/Chère ${name},`,
     intro: {
       created:
-        "Une constatation a été identifiée lors de l'examen par les pairs de votre organisation. Veuillez examiner les détails ci-dessous.",
+        "Une constatation a été identifiée lors de l'évaluation par les pairs de votre organisation. Veuillez examiner les détails ci-dessous.",
       updated:
-        "Une constatation de votre examen par les pairs a été mise à jour. Veuillez examiner les modifications ci-dessous.",
+        "Une constatation de votre évaluation par les pairs a été mise à jour. Veuillez examiner les modifications ci-dessous.",
     },
     criticalWarning:
       "Il s'agit d'une constatation CRITIQUE qui nécessite une attention immédiate et un Plan d'Action Corrective.",
     details: "Détails de la constatation",
     reference: "Référence de la constatation",
-    review: "Référence de l'examen",
+    review: "Référence de l'évaluation",
     title: "Titre de la constatation",
     severity: "Gravité",
     auditArea: "Domaine d'audit",
@@ -139,14 +139,14 @@ const content = {
       noCapRequired: [
         "Examiner les détails de la constatation",
         "Considérer si des actions préventives seraient bénéfiques",
-        "La constatation sera incluse dans le rapport final de l'examen",
+        "La constatation sera incluse dans le rapport final de l'évaluation",
       ],
     },
     viewFinding: "Voir les détails",
     createCAP: "Créer un PAC",
-    note: "Si vous avez des questions sur cette constatation ou avez besoin d'éclaircissements, veuillez contacter l'équipe d'examen.",
+    note: "Si vous avez des questions sur cette constatation ou avez besoin d'éclaircissements, veuillez contacter l'équipe d'évaluation.",
     closing: "Merci de votre engagement envers l'amélioration continue.",
-    signature: "L'équipe d'examen AAPRP",
+    signature: "L'équipe d'évaluation AAPRP",
   },
 };
 

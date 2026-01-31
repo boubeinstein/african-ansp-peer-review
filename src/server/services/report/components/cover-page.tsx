@@ -136,7 +136,7 @@ export function CoverPage({ review, locale }: ReportPageProps) {
         </View>
         <Text style={coverStyles.logoSubtext}>
           {locale === "fr"
-            ? "Programme Africain d'Examen par les Pairs des ANSP"
+            ? "Programme Africain d'Évaluation par les Pairs des ANSP"
             : "African ANSP Peer Review Programme"}
         </Text>
       </View>

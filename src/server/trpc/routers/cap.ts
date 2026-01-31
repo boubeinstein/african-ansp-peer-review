@@ -600,9 +600,9 @@ export const capRouter = router({
           await sendNotification(recipients, {
             type: NotificationType.CAP_SUBMITTED,
             titleEn: "CAP Submitted for Review",
-            titleFr: "PAC soumis pour examen",
+            titleFr: "PAC soumis pour évaluation",
             messageEn: `Corrective Action Plan for finding ${updated.finding.referenceNumber} has been submitted and requires review.`,
-            messageFr: `Le Plan d'Actions Correctives pour la constatation ${updated.finding.referenceNumber} a été soumis et nécessite un examen.`,
+            messageFr: `Le Plan d'Actions Correctives pour la constatation ${updated.finding.referenceNumber} a été soumis et nécessite un évaluation.`,
             entityType: "CAP",
             entityId: updated.id,
             actionUrl: `/caps/${updated.id}`,

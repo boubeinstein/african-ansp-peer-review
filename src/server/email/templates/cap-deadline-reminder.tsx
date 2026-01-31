@@ -77,7 +77,7 @@ const content = {
     urgentIntro: (days: number) =>
       `URGENT: Un jalon de votre Plan d'Action Corrective (PAC) est dû dans ${days} jour${days === 1 ? "" : "s"}. Une action immédiate est requise.`,
     details: "Détails du PAC",
-    review: "Référence de l'examen",
+    review: "Référence de l'évaluation",
     finding: "Référence de la constatation",
     findingTitle: "Constatation",
     severity: "Gravité",
@@ -90,9 +90,9 @@ const content = {
     viewCAP: "Voir les détails du PAC",
     uploadEvidence: "Télécharger les preuves",
     consequences:
-      "Le non-respect des constatations dans les délais convenus peut affecter la position de votre organisation dans le programme d'examen par les pairs.",
+      "Le non-respect des constatations dans les délais convenus peut affecter la position de votre organisation dans le programme d'évaluation par les pairs.",
     support:
-      "Si vous rencontrez des difficultés ou avez besoin d'une prolongation, veuillez contacter l'équipe d'examen immédiatement.",
+      "Si vous rencontrez des difficultés ou avez besoin d'une prolongation, veuillez contacter l'équipe d'évaluation immédiatement.",
     closing: "Merci de votre attention à cette question.",
     signature: "L'équipe de coordination AAPRP",
   },

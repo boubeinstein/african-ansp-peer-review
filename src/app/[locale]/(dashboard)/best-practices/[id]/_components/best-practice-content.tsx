@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Markdown } from "@/components/ui/markdown";
 import {
   FileText,
   Lightbulb,
@@ -61,9 +62,7 @@ export function BestPracticeContent({ practice, locale }: BestPracticeContentPro
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="prose prose-sm dark:prose-invert max-w-none">
-            {formatContentToParagraphs(description)}
-          </div>
+          <Markdown content={description} className="prose-sm" />
         </CardContent>
       </Card>
 
@@ -76,9 +75,7 @@ export function BestPracticeContent({ practice, locale }: BestPracticeContentPro
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="prose prose-sm dark:prose-invert max-w-none">
-            {formatContentToParagraphs(implementation)}
-          </div>
+          <Markdown content={implementation} className="prose-sm" />
         </CardContent>
       </Card>
 
@@ -91,9 +88,7 @@ export function BestPracticeContent({ practice, locale }: BestPracticeContentPro
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="prose prose-sm dark:prose-invert max-w-none">
-            {formatContentToParagraphs(benefits)}
-          </div>
+          <Markdown content={benefits} className="prose-sm" />
         </CardContent>
       </Card>
 
@@ -176,35 +171,6 @@ export function BestPracticeContent({ practice, locale }: BestPracticeContentPro
       )}
     </div>
   );
-}
-
-/**
- * Convert plain text with newlines to React paragraphs
- */
-function formatContentToParagraphs(text: string): React.ReactNode {
-  if (!text) return null;
-
-  const paragraphs = text.split(/\n\n+/);
-
-  return paragraphs.map((paragraph, index) => {
-    // Handle single line breaks within paragraphs
-    const lines = paragraph.split(/\n/);
-
-    if (lines.length === 1) {
-      return <p key={index}>{paragraph}</p>;
-    }
-
-    return (
-      <p key={index}>
-        {lines.map((line, lineIndex) => (
-          <span key={lineIndex}>
-            {line}
-            {lineIndex < lines.length - 1 && <br />}
-          </span>
-        ))}
-      </p>
-    );
-  });
 }
 
 /**

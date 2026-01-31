@@ -4,71 +4,10 @@
 
 @plugin "tailwindcss-animate";
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-border: var(--border);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-
-  /* Maturity level colors */
-  --color-maturity-a: #EF4444;
-  --color-maturity-b: #F97316;
-  --color-maturity-c: #EAB308;
-  --color-maturity-d: #22C55E;
-  --color-maturity-e: #3B82F6;
-
-  /* Aviation theme colors - ICAO */
-  --color-icao: #0072bc;
-  --color-icao-dark: #005a96;
-  --color-icao-light: #e8f4fc;
-
-  /* Aviation theme colors - CANSO */
-  --color-canso: #003366;
-  --color-canso-dark: #002244;
-
-  /* Aviation theme colors - African */
-  --color-african-gold: #d4a84b;
-  --color-african-gold-light: rgba(212, 168, 75, 0.2);
-
-  /* Font families */
-  --font-montserrat: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
-  --font-source-sans: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-sans: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
-}
+/* ============================================
+   Theme Color Variables
+   Define these BEFORE @theme so values are available
+   ============================================ */
 
 :root {
   /* Aviation blue inspired by ICAO (#0072bc) - 52% lightness for visibility */
@@ -140,6 +79,81 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.58 0.16 240);
 }
+
+/* ============================================
+   Tailwind Theme Configuration
+   Maps CSS variables to Tailwind utilities
+   ============================================ */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  /* Maturity level colors */
+  --color-maturity-a: #EF4444;
+  --color-maturity-b: #F97316;
+  --color-maturity-c: #EAB308;
+  --color-maturity-d: #22C55E;
+  --color-maturity-e: #3B82F6;
+
+  /* Aviation theme colors - ICAO */
+  --color-icao: #0072bc;
+  --color-icao-dark: #005a96;
+  --color-icao-light: #e8f4fc;
+
+  /* Aviation theme colors - CANSO */
+  --color-canso: #003366;
+  --color-canso-dark: #002244;
+
+  /* Aviation theme colors - African */
+  --color-african-gold: #d4a84b;
+  --color-african-gold-light: rgba(212, 168, 75, 0.2);
+
+  /* Font families */
+  --font-montserrat: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --font-source-sans: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
 
 body {
   background: var(--background);
@@ -428,7 +442,7 @@ body {
 
 /* Focus visible styles for better accessibility */
 .review-focus-visible:focus-visible {
-  outline: 2px solid hsl(var(--ring));
+  outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
 

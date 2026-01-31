@@ -96,6 +96,7 @@ export const bestPracticePromotionRouter = router({
         targetOrgIds: input.targetOrgIds,
         messageEn: input.messageEn,
         messageFr: input.messageFr,
+        senderId: session.user.id,
       });
 
       return promotion;
@@ -320,6 +321,7 @@ interface PromotionNotificationParams {
   targetOrgIds?: string[];
   messageEn?: string;
   messageFr?: string;
+  senderId: string;
 }
 
 /**
@@ -336,6 +338,7 @@ async function createPromotionNotifications(
     targetOrgIds,
     messageEn,
     messageFr,
+    senderId,
   } = params;
 
   console.log("[Promotion] Creating notifications for:", {
@@ -343,13 +346,30 @@ async function createPromotionNotifications(
     targetType,
     targetTeamIds,
     targetOrgIds,
+    senderId,
   });
 
   // Build user filter based on target type
+  // Target reviewers, committee members, and ANSP roles
+  // Exclude the user who is sending the promotion
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const userFilter: any = {
-    role: { in: ["ANSP_ADMIN", "SAFETY_MANAGER", "QUALITY_MANAGER", "STAFF"] },
+    role: {
+      in: [
+        // Reviewer roles (currently populated)
+        "PEER_REVIEWER",
+        "LEAD_REVIEWER",
+        "STEERING_COMMITTEE",
+        // ANSP roles (for when they're added)
+        "ANSP_ADMIN",
+        "SAFETY_MANAGER",
+        "QUALITY_MANAGER",
+        "STAFF",
+      ],
+    },
     isActive: true,
+    // Don't notify the sender
+    id: { not: senderId },
   };
 
   if (targetType === "BY_TEAM" && targetTeamIds?.length) {
@@ -363,10 +383,14 @@ async function createPromotionNotifications(
   // Get target users
   const users = await prisma.user.findMany({
     where: userFilter,
-    select: { id: true },
+    select: { id: true, role: true },
   });
 
   console.log("[Promotion] Found target users:", users.length);
+  console.log(
+    "[Promotion] Target roles:",
+    [...new Set(users.map((u) => u.role))]
+  );
 
   if (users.length === 0) {
     console.log("[Promotion] No target users found, skipping notifications");

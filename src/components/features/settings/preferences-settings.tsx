@@ -56,13 +56,16 @@ import {
   Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
-import { Locale, Theme } from "@prisma/client";
 import { cn } from "@/lib/utils";
+
+// Define types locally to avoid importing @prisma/client in client component
+type Locale = "EN" | "FR";
+type Theme = "LIGHT" | "DARK" | "SYSTEM";
 import { useOnboardingOptional } from "@/components/onboarding";
 
 const preferencesSchema = z.object({
-  locale: z.nativeEnum(Locale),
-  theme: z.nativeEnum(Theme),
+  locale: z.enum(["EN", "FR"]),
+  theme: z.enum(["LIGHT", "DARK", "SYSTEM"]),
   dateFormat: z.enum(["DD/MM/YYYY", "MM/DD/YYYY", "YYYY-MM-DD"]),
   showTrainingModule: z.boolean(),
   compactView: z.boolean(),

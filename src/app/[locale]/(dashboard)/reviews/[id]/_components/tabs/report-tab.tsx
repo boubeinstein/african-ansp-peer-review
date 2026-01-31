@@ -58,6 +58,7 @@ interface Prerequisite {
 
 export function ReportTab({ review }: ReportTabProps) {
   const t = useTranslations("reviews.detail.report");
+  const tStatus = useTranslations("reviews.status");
   const locale = useLocale();
   const dateLocale = locale === "fr" ? fr : enUS;
   const utils = trpc.useUtils();
@@ -146,7 +147,7 @@ export function ReportTab({ review }: ReportTabProps) {
       label: t("prerequisites.reviewStatus"),
       met: reviewCompleted,
       required: false,
-      detail: t("prerequisites.reviewDetail", { status: review.status }),
+      detail: t("prerequisites.reviewDetail", { status: tStatus(review.status) }),
     },
   ];
 

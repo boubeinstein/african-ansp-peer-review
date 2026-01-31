@@ -3972,6 +3972,8 @@
     "detail": {
       "backToList": "Retour aux constatations",
       "review": "Évaluation par les pairs",
+      "reference": "Référence",
+      "reviewStatus": "Statut",
       "organization": "Organisation",
       "question": "Question associée",
       "identifiedAt": "Identifiée le",

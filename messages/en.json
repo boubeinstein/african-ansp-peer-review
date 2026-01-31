@@ -3972,6 +3972,8 @@
     "detail": {
       "backToList": "Back to Findings",
       "review": "Peer Review",
+      "reference": "Reference",
+      "reviewStatus": "Status",
       "organization": "Organization",
       "question": "Related Question",
       "identifiedAt": "Identified",

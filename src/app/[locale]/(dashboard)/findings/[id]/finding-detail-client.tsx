@@ -96,6 +96,7 @@ export function FindingDetailClient({ findingId }: FindingDetailClientProps) {
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("findings");
+  const tReviewStatus = useTranslations("reviews.status");
 
   // Fetch finding details
   const findingQuery = trpc.finding.getById.useQuery({ id: findingId });
@@ -411,7 +412,7 @@ export function FindingDetailClient({ findingId }: FindingDetailClientProps) {
             </CardHeader>
             <CardContent className="space-y-4 text-sm">
               <div>
-                <span className="text-muted-foreground">Reference</span>
+                <span className="text-muted-foreground">{t("detail.reference")}</span>
                 <Link
                   href={`/${locale}/reviews/${finding.review.id}`}
                   className="font-medium flex items-center gap-1 hover:underline"
@@ -421,8 +422,8 @@ export function FindingDetailClient({ findingId }: FindingDetailClientProps) {
                 </Link>
               </div>
               <div>
-                <span className="text-muted-foreground">Status</span>
-                <p className="font-medium">{finding.review.status}</p>
+                <span className="text-muted-foreground">{t("detail.reviewStatus")}</span>
+                <p className="font-medium">{tReviewStatus(finding.review.status)}</p>
               </div>
             </CardContent>
           </Card>

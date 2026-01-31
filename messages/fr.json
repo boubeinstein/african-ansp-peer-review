@@ -2978,6 +2978,69 @@
       "windowExpired": "Période de disponibilité expirée",
       "pastDateError": "Impossible de sélectionner des dates passées",
       "endBeforeStart": "La date de fin doit être après la date de début"
+    },
+    "workload": {
+      "title": "Tableau de bord de charge de travail",
+      "description": "Surveiller la capacité des évaluateurs pour prévenir l'épuisement et assurer une distribution équitable",
+      "backToReviewers": "Retour aux évaluateurs",
+      "noData": "Aucune donnée de charge de travail disponible",
+      "filterByStatus": "Filtrer par statut",
+      "showingCount": "Affichage de {count} évaluateurs",
+      "noReviewersFound": "Aucun évaluateur correspondant au filtre",
+      "lastUpdated": "Dernière mise à jour",
+      "availableNow": "Disponible",
+      "notAvailable": "Non disponible",
+      "leadQualified": "Qualifié chef d'équipe",
+      "currentStatus": "Statut actuel",
+      "availableSlots": "Créneaux disponibles",
+      "totalCompleted": "Total complété",
+      "asLead": "En tant que chef",
+      "currentAssignments": "Missions en cours",
+      "upcomingAssignments": "Missions à venir",
+      "noCurrentAssignments": "Aucune mission en cours",
+      "noUpcomingAssignments": "Aucune mission à venir",
+      "availability": "Disponibilité",
+      "next30Days": "30 prochains jours",
+      "next60Days": "31-60 jours",
+      "next90Days": "61-90 jours",
+      "summary": {
+        "totalReviewers": "Total évaluateurs",
+        "available": "Disponibles",
+        "moderate": "Modéré",
+        "overloaded": "Surchargés",
+        "activeAssignments": "Évaluations actives",
+        "upcoming30Days": "À venir (30j)",
+        "avgReviews12m": "Moy. éval./12m"
+      },
+      "indicators": {
+        "available": "Disponible",
+        "moderate": "Modéré",
+        "overloaded": "Surchargé"
+      },
+      "filters": {
+        "all": "Tous les évaluateurs",
+        "available": "Disponibles",
+        "moderate": "Modéré",
+        "overloaded": "Surchargés"
+      },
+      "table": {
+        "reviewer": "Évaluateur",
+        "status": "Statut",
+        "active": "Actif",
+        "upcoming": "À venir",
+        "historical": "Éval. 12m",
+        "availability": "Disponibilité",
+        "qualifications": "Qualifications"
+      },
+      "benefits": {
+        "title": "Avantages du tableau de bord",
+        "preventBurnout": "Prévenir l'épuisement",
+        "preventBurnoutDesc": "Surveiller la charge pour éviter la surcharge des évaluateurs",
+        "fairDistribution": "Distribution équitable",
+        "fairDistributionDesc": "Permettre une répartition équitable des missions",
+        "capacityPlanning": "Planification de capacité",
+        "capacityPlanningDesc": "Soutenir la planification proactive des évaluations"
+      }
     }
   },
   "reviews": {

@@ -64,6 +64,7 @@ export const anspStaffTour: TourDefinition = {
       titleKey: "onboarding.welcome.title",
       descriptionKey: "onboarding.welcome.description",
       placement: "center",
+      route: "/dashboard",
     },
     {
       id: "sidebar",
@@ -72,6 +73,7 @@ export const anspStaffTour: TourDefinition = {
       descriptionKey: "onboarding.sidebar.description",
       placement: "right",
       highlightPadding: 8,
+      route: "/dashboard",
     },
     {
       id: "dashboard",
@@ -87,6 +89,7 @@ export const anspStaffTour: TourDefinition = {
       titleKey: "onboarding.questionnaires.title",
       descriptionKey: "onboarding.questionnaires.description",
       placement: "right",
+      route: "/questionnaires",
     },
     {
       id: "assessments",
@@ -102,6 +105,7 @@ export const anspStaffTour: TourDefinition = {
       titleKey: "onboarding.findings.title",
       descriptionKey: "onboarding.findings.description",
       placement: "right",
+      route: "/findings",
     },
     {
       id: "caps",
@@ -109,6 +113,7 @@ export const anspStaffTour: TourDefinition = {
       titleKey: "onboarding.caps.title",
       descriptionKey: "onboarding.caps.description",
       placement: "right",
+      route: "/caps",
     },
     {
       id: "training",
@@ -116,6 +121,7 @@ export const anspStaffTour: TourDefinition = {
       titleKey: "onboarding.training.title",
       descriptionKey: "onboarding.training.description",
       placement: "right",
+      route: "/training",
     },
     {
       id: "settings",
@@ -123,6 +129,7 @@ export const anspStaffTour: TourDefinition = {
       titleKey: "onboarding.settings.title",
       descriptionKey: "onboarding.settings.description",
       placement: "right",
+      route: "/settings",
     },
     {
       id: "complete",
@@ -151,6 +158,7 @@ export const peerReviewerTour: TourDefinition = {
       titleKey: "onboarding.reviewer.welcome.title",
       descriptionKey: "onboarding.reviewer.welcome.description",
       placement: "center",
+      route: "/dashboard",
     },
     {
       id: "dashboard",
@@ -174,6 +182,7 @@ export const peerReviewerTour: TourDefinition = {
       titleKey: "onboarding.reviewWorkspace.title",
       descriptionKey: "onboarding.reviewWorkspace.description",
       placement: "bottom",
+      route: "/reviews",
       skippable: true,
     },
     {
@@ -182,6 +191,7 @@ export const peerReviewerTour: TourDefinition = {
       titleKey: "onboarding.reviewer.findings.title",
       descriptionKey: "onboarding.reviewer.findings.description",
       placement: "right",
+      route: "/findings",
     },
     {
       id: "best-practices",
@@ -189,6 +199,7 @@ export const peerReviewerTour: TourDefinition = {
       titleKey: "onboarding.bestPractices.title",
       descriptionKey: "onboarding.bestPractices.description",
       placement: "right",
+      route: "/best-practices",
     },
     {
       id: "reviewers",
@@ -196,6 +207,7 @@ export const peerReviewerTour: TourDefinition = {
       titleKey: "onboarding.reviewers.title",
       descriptionKey: "onboarding.reviewers.description",
       placement: "right",
+      route: "/reviewers",
     },
     {
       id: "shortcuts",
@@ -232,6 +244,7 @@ export const coordinatorTour: TourDefinition = {
       titleKey: "onboarding.coordinator.welcome.title",
       descriptionKey: "onboarding.coordinator.welcome.description",
       placement: "center",
+      route: "/dashboard",
     },
     {
       id: "dashboard",
@@ -255,6 +268,7 @@ export const coordinatorTour: TourDefinition = {
       titleKey: "onboarding.coordinator.peerReviews.title",
       descriptionKey: "onboarding.coordinator.peerReviews.description",
       placement: "right",
+      route: "/reviews",
     },
     {
       id: "teams",
@@ -262,6 +276,7 @@ export const coordinatorTour: TourDefinition = {
       titleKey: "onboarding.teams.title",
       descriptionKey: "onboarding.teams.description",
       placement: "right",
+      route: "/teams",
     },
     {
       id: "organizations",
@@ -269,6 +284,7 @@ export const coordinatorTour: TourDefinition = {
       titleKey: "onboarding.organizations.title",
       descriptionKey: "onboarding.organizations.description",
       placement: "right",
+      route: "/organizations",
     },
     {
       id: "reviewers",
@@ -276,14 +292,15 @@ export const coordinatorTour: TourDefinition = {
       titleKey: "onboarding.coordinator.reviewers.title",
       descriptionKey: "onboarding.coordinator.reviewers.description",
       placement: "right",
+      route: "/reviewers",
     },
     {
-      id: "workflow",
-      targetSelector: "[data-tour='nav-workflow']",
-      titleKey: "onboarding.workflow.title",
-      descriptionKey: "onboarding.workflow.description",
+      id: "best-practices",
+      targetSelector: "[data-tour='nav-best-practices']",
+      titleKey: "onboarding.bestPractices.title",
+      descriptionKey: "onboarding.bestPractices.description",
       placement: "right",
-      skippable: true,
+      route: "/best-practices",
     },
     {
       id: "shortcuts",

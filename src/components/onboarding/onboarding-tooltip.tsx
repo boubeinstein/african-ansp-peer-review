@@ -13,6 +13,7 @@ import {
   SkipForward,
   Sparkles,
   PartyPopper,
+  Loader2,
 } from "lucide-react";
 
 // =============================================================================
@@ -251,6 +252,9 @@ export function OnboardingTooltip() {
     if (!isActive || !onboarding) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore keyboard navigation while navigating between pages
+      if (onboarding.isNavigating) return;
+
       switch (e.key) {
         case "Escape":
           e.preventDefault();
@@ -280,6 +284,7 @@ export function OnboardingTooltip() {
   const {
     currentStepIndex,
     totalSteps,
+    isNavigating,
     nextStep,
     prevStep,
     skipStep,
@@ -398,6 +403,7 @@ export function OnboardingTooltip() {
                 variant="ghost"
                 size="sm"
                 onClick={skipStep}
+                disabled={isNavigating}
                 className="text-muted-foreground hover:text-foreground"
               >
                 <SkipForward className="h-3.5 w-3.5 mr-1.5" />
@@ -407,14 +413,32 @@ export function OnboardingTooltip() {
           </div>
           <div className="flex gap-2">
             {!isFirstStep && (
-              <Button variant="outline" size="sm" onClick={prevStep}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={prevStep}
+                disabled={isNavigating}
+              >
                 <ChevronLeft className="h-4 w-4 mr-1" />
                 {t("back")}
               </Button>
             )}
-            <Button size="sm" onClick={nextStep} className="min-w-[80px]">
-              {isLastStep ? t("finish") : t("next")}
-              {!isLastStep && <ChevronRight className="h-4 w-4 ml-1" />}
+            <Button
+              size="sm"
+              onClick={nextStep}
+              disabled={isNavigating}
+              className="min-w-[80px]"
+            >
+              {isNavigating ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : isLastStep ? (
+                t("finish")
+              ) : (
+                <>
+                  {t("next")}
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </>
+              )}
             </Button>
           </div>
         </div>

@@ -25,6 +25,7 @@ import {
 interface OnboardingContextType {
   // State
   isActive: boolean;
+  isNavigating: boolean;
   currentStep: TourStep | null;
   currentStepIndex: number;
   totalSteps: number;
@@ -36,12 +37,12 @@ interface OnboardingContextType {
 
   // Actions
   startTour: () => void;
-  nextStep: () => void;
-  prevStep: () => void;
+  nextStep: () => Promise<void>;
+  prevStep: () => Promise<void>;
   skipStep: () => void;
   endTour: (completed?: boolean) => void;
   resetTour: () => void;
-  goToStep: (stepIndex: number) => void;
+  goToStep: (stepIndex: number) => Promise<void>;
   setShowTooltips: (show: boolean) => void;
 }
 
@@ -70,8 +71,9 @@ export function OnboardingProvider({
   const pathname = usePathname();
   const utils = trpc.useUtils();
 
-  // Only local state we need - whether the tour UI is showing
+  // Local state for tour UI
   const [isActive, setIsActive] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   // Compute tour based on user role (memoized)
   const tour = useMemo<TourDefinition | null>(() => {
@@ -173,15 +175,23 @@ export function OnboardingProvider({
   const hasCompletedTour = !!onboardingState?.tourCompletedAt;
   const showTooltips = onboardingState?.showTooltips ?? true;
 
-  // Navigate to a route if needed
+  // Navigate to a route if needed (async with delay for page load)
   const navigateToRoute = useCallback(
-    (route?: string) => {
+    async (route?: string): Promise<boolean> => {
       if (route) {
         const targetPath = `/${locale}${route}`;
-        if (!pathname.startsWith(targetPath)) {
+        // Check if we're not already on the target path
+        const currentPath = pathname.replace(`/${locale}`, "");
+        if (currentPath !== route && !pathname.startsWith(targetPath)) {
+          setIsNavigating(true);
           router.push(targetPath);
+          // Wait for navigation and page render
+          await new Promise((resolve) => setTimeout(resolve, 600));
+          setIsNavigating(false);
+          return true;
         }
       }
+      return false;
     },
     [locale, pathname, router]
   );
@@ -197,9 +207,9 @@ export function OnboardingProvider({
     }
   }, [startTourMutation, tour, navigateToRoute]);
 
-  // Next step
-  const nextStep = useCallback(() => {
-    if (!tour || !currentStep) return;
+  // Next step (async to handle navigation)
+  const nextStep = useCallback(async () => {
+    if (!tour || !currentStep || isNavigating) return;
 
     const nextIndex = currentStepIndex + 1;
 
@@ -209,8 +219,8 @@ export function OnboardingProvider({
     if (nextIndex < tour.steps.length) {
       const nextStepDef = tour.steps[nextIndex];
 
-      // Navigate if needed
-      navigateToRoute(nextStepDef.route);
+      // Navigate if needed and wait for page load
+      await navigateToRoute(nextStepDef.route);
 
       // Update server state (this will trigger re-render with new step index)
       updateState.mutate({ currentStep: nextStepDef.id });
@@ -223,22 +233,24 @@ export function OnboardingProvider({
     tour,
     currentStep,
     currentStepIndex,
+    isNavigating,
     completeStepMutation,
     navigateToRoute,
     updateState,
     completeTourMutation,
   ]);
 
-  // Previous step
-  const prevStep = useCallback(() => {
-    if (currentStepIndex > 0 && tour) {
+  // Previous step (async to handle navigation)
+  const prevStep = useCallback(async () => {
+    if (currentStepIndex > 0 && tour && !isNavigating) {
       const prevIndex = currentStepIndex - 1;
       const prevStepDef = tour.steps[prevIndex];
 
-      navigateToRoute(prevStepDef?.route);
+      // Navigate if needed and wait for page load
+      await navigateToRoute(prevStepDef?.route);
       updateState.mutate({ currentStep: prevStepDef?.id ?? null });
     }
-  }, [currentStepIndex, tour, navigateToRoute, updateState]);
+  }, [currentStepIndex, tour, isNavigating, navigateToRoute, updateState]);
 
   // Skip step
   const skipStep = useCallback(() => {
@@ -248,16 +260,17 @@ export function OnboardingProvider({
     nextStep();
   }, [currentStep, skipStepMutation, nextStep]);
 
-  // Go to specific step
+  // Go to specific step (async to handle navigation)
   const goToStep = useCallback(
-    (stepIndex: number) => {
-      if (!tour || stepIndex < 0 || stepIndex >= tour.steps.length) return;
+    async (stepIndex: number) => {
+      if (!tour || stepIndex < 0 || stepIndex >= tour.steps.length || isNavigating) return;
 
       const targetStep = tour.steps[stepIndex];
-      navigateToRoute(targetStep.route);
+      // Navigate if needed and wait for page load
+      await navigateToRoute(targetStep.route);
       updateState.mutate({ currentStep: targetStep.id });
     },
-    [tour, navigateToRoute, updateState]
+    [tour, isNavigating, navigateToRoute, updateState]
   );
 
   // End tour
@@ -292,6 +305,7 @@ export function OnboardingProvider({
     <OnboardingContext.Provider
       value={{
         isActive,
+        isNavigating,
         currentStep,
         currentStepIndex,
         totalSteps,

@@ -7,6 +7,7 @@
  * Visually hidden by default, visible on focus for keyboard users.
  */
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +26,16 @@ const skipLinkStyles = cn(
 
 export function SkipLinks() {
   const t = useTranslations("accessibility.skipLinks");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Don't render on server to avoid hydration mismatch
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className="skip-links">

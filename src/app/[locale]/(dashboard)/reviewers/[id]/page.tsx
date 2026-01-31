@@ -16,6 +16,34 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, AlertCircle } from "lucide-react";
 import { ReviewerProfileView } from "@/components/features/reviewer/reviewer-profile-view";
 
+// Reserved paths that should NOT be treated as reviewer IDs
+const RESERVED_PATHS = new Set([
+  "new",
+  "workload",
+  "build-team",
+  "import",
+  "export",
+  "settings",
+]);
+
+/**
+ * Validates that an ID is a valid CUID/CUID2 format and not a reserved path
+ * Returns true if valid, false if should 404
+ */
+function isValidReviewerId(id: string): boolean {
+  // Check reserved paths first (case-insensitive)
+  if (RESERVED_PATHS.has(id.toLowerCase())) {
+    return false;
+  }
+
+  // CUID format: starts with 'c', 25 chars total
+  const isCuid = /^c[a-z0-9]{24}$/.test(id);
+  // CUID2 format: 24+ lowercase alphanumeric
+  const isCuid2 = /^[a-z0-9]{24,}$/.test(id);
+
+  return isCuid || isCuid2;
+}
+
 interface ReviewerProfilePageProps {
   params: Promise<{ locale: string; id: string }>;
 }
@@ -23,6 +51,11 @@ interface ReviewerProfilePageProps {
 export async function generateMetadata({ params }: ReviewerProfilePageProps) {
   const { locale, id } = await params;
   const t = await getTranslations({ locale, namespace: "reviewer" });
+
+  // Skip database lookup for invalid IDs
+  if (!isValidReviewerId(id)) {
+    return { title: t("title") };
+  }
 
   try {
     const ctx = await createServerContext();
@@ -49,6 +82,12 @@ export default async function ReviewerProfilePage({
 }: ReviewerProfilePageProps) {
   const { locale, id } = await params;
   setRequestLocale(locale);
+
+  // Validate ID format early - return 404 for reserved paths or invalid IDs
+  if (!isValidReviewerId(id)) {
+    notFound();
+  }
+
   const t = await getTranslations({ locale, namespace: "reviewer" });
 
   // Get session for permission checking

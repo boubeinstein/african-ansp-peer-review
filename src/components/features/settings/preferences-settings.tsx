@@ -7,10 +7,12 @@
  * language, theme, date format, and feature toggles.
  */
 
+import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useTheme } from "next-themes";
 import { trpc } from "@/lib/trpc/client";
 import {
   Card,
@@ -119,8 +121,17 @@ export function PreferencesSettings() {
   const tOnboarding = useTranslations("onboarding");
   const utils = trpc.useUtils();
   const onboarding = useOnboardingOptional();
+  const { setTheme: setNextTheme } = useTheme();
 
   const { data: preferences, isLoading } = trpc.settings.getPreferences.useQuery();
+
+  // Sync database theme preference to next-themes on load
+  useEffect(() => {
+    if (preferences?.theme) {
+      // Convert Prisma enum (LIGHT, DARK, SYSTEM) to next-themes format (light, dark, system)
+      setNextTheme(preferences.theme.toLowerCase());
+    }
+  }, [preferences?.theme, setNextTheme]);
 
   const updateMutation = trpc.settings.updatePreferences.useMutation({
     onSuccess: (_, variables) => {
@@ -258,7 +269,14 @@ export function PreferencesSettings() {
                     <div className="flex items-center gap-3">
                       <ThemePreview theme={field.value} />
                       <FormControl>
-                        <Select value={field.value} onValueChange={field.onChange}>
+                        <Select
+                          value={field.value}
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                            // Apply theme immediately via next-themes
+                            setNextTheme(value.toLowerCase());
+                          }}
+                        >
                           <SelectTrigger className="w-[140px]">
                             <SelectValue />
                           </SelectTrigger>

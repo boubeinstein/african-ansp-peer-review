@@ -3436,7 +3436,25 @@
         "documents": "Documents",
         "findings": "Findings",
         "report": "Report",
+        "retrospective": "Retrospective",
         "settings": "Settings"
+      },
+      "retrospectiveTab": {
+        "title": "Review Retrospective",
+        "description": "Capture lessons learned and feedback to improve future reviews",
+        "emptyState": {
+          "title": "No Retrospective Yet",
+          "description": "Share your team's experience and lessons learned from this review to help improve the programme."
+        },
+        "notAvailable": {
+          "title": "Retrospective Not Available",
+          "description": "The retrospective form becomes available once the review enters the post-review or completed phase."
+        },
+        "status": {
+          "draft": "Draft",
+          "submitted": "Submitted",
+          "published": "Published"
+        }
       },
       "status": {
         "DRAFT": "Draft",
@@ -6974,6 +6992,103 @@
         "IN_PROGRESS": "In Progress",
         "COMPLETED": "Completed",
         "NOT_APPLICABLE": "N/A"
+      }
+    }
+  },
+  "onboarding": {
+    "close": "Close tour",
+    "progress": "Step {current} of {total}",
+    "next": "Next",
+    "back": "Back",
+    "skip": "Skip",
+    "finish": "Finish",
+    "restartTour": "Restart Tour",
+    "actions": {
+      "click": "Click to interact",
+      "hover": "Hover for more"
+    },
+    "welcome": {
+      "title": "Welcome to AAPRP!",
+      "description": "Let's take a quick tour of the African ANSP Peer Review Programme platform. This will help you navigate the key features."
+    },
+    "sidebar": {
+      "title": "Navigation Menu",
+      "description": "Access all platform features from here. The menu adapts based on your role and permissions."
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "description": "Your command center showing key metrics, pending actions, and programme overview at a glance."
+    },
+    "analytics": {
+      "title": "Analytics",
+      "description": "View trends, benchmarks, and performance indicators across the entire programme."
+    },
+    "assessments": {
+      "title": "Self-Assessments",
+      "description": "Create and manage assessments against ICAO USOAP and CANSO SoE frameworks for your organization."
+    },
+    "peerReviews": {
+      "title": "Peer Reviews",
+      "description": "View reviews you're participating in. Access workspace, documents, findings, and reports."
+    },
+    "findings": {
+      "title": "Findings",
+      "description": "Track findings from peer reviews. Each finding links to specific ICAO Protocol Questions."
+    },
+    "caps": {
+      "title": "Corrective Action Plans",
+      "description": "Manage CAPs through the 6-stage workflow: Draft → Submitted → Accepted → Implemented → Verified → Closed."
+    },
+    "bestPractices": {
+      "title": "Best Practices Library",
+      "description": "Discover and adopt proven aviation safety practices shared by ANSPs across Africa."
+    },
+    "reviewers": {
+      "title": "Reviewer Directory",
+      "description": "Find qualified peer reviewers by expertise area, language proficiency, and availability."
+    },
+    "teams": {
+      "title": "Regional Teams",
+      "description": "View and manage the 5 regional review teams coordinating peer reviews across Africa."
+    },
+    "organizations": {
+      "title": "Organizations",
+      "description": "Browse the 54 participating ANSPs and their profiles across the African continent."
+    },
+    "training": {
+      "title": "Training Modules",
+      "description": "Access training materials covering ICAO USOAP methodology, CANSO SoE, and review best practices."
+    },
+    "shortcuts": {
+      "title": "Keyboard Shortcuts",
+      "description": "Press Ctrl+K (or Cmd+K on Mac) anytime to open the command palette for quick navigation."
+    },
+    "complete": {
+      "title": "You're All Set!",
+      "description": "You now know the essentials. You can restart this tour anytime from Settings > Preferences."
+    },
+    "reviewer": {
+      "welcome": {
+        "title": "Welcome, Peer Reviewer!",
+        "description": "Let's explore the tools you'll use to conduct effective and consistent peer reviews."
+      },
+      "complete": {
+        "title": "Ready to Review!",
+        "description": "You're all set to conduct peer reviews. Access this tour again from Settings if needed."
+      }
+    },
+    "coordinator": {
+      "welcome": {
+        "title": "Welcome, Coordinator!",
+        "description": "As a programme coordinator, you have access to all features. Let's explore your capabilities."
+      },
+      "peerReviews": {
+        "title": "Manage Reviews",
+        "description": "Create peer reviews, assign teams, track progress, and approve final reports."
+      },
+      "complete": {
+        "title": "Tour Complete!",
+        "description": "You're ready to coordinate the programme. Restart this tour anytime from Settings."
       }
     }
   }

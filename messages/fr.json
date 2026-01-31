@@ -3436,7 +3436,25 @@
         "documents": "Documents",
         "findings": "Constatations",
         "report": "Rapport",
+        "retrospective": "Rétrospective",
         "settings": "Paramètres"
+      },
+      "retrospectiveTab": {
+        "title": "Rétrospective de l'évaluation",
+        "description": "Capturez les leçons apprises et les retours pour améliorer les futures évaluations",
+        "emptyState": {
+          "title": "Pas encore de rétrospective",
+          "description": "Partagez l'expérience de votre équipe et les leçons apprises de cette évaluation pour aider à améliorer le programme."
+        },
+        "notAvailable": {
+          "title": "Rétrospective non disponible",
+          "description": "Le formulaire de rétrospective devient disponible une fois que l'évaluation entre dans la phase post-évaluation ou terminée."
+        },
+        "status": {
+          "draft": "Brouillon",
+          "submitted": "Soumis",
+          "published": "Publié"
+        }
       },
       "status": {
         "DRAFT": "Brouillon",
@@ -6974,6 +6992,103 @@
         "IN_PROGRESS": "En cours",
         "COMPLETED": "Terminé",
         "NOT_APPLICABLE": "N/A"
+      }
+    }
+  },
+  "onboarding": {
+    "close": "Fermer la visite",
+    "progress": "Étape {current} sur {total}",
+    "next": "Suivant",
+    "back": "Retour",
+    "skip": "Passer",
+    "finish": "Terminer",
+    "restartTour": "Recommencer la visite",
+    "actions": {
+      "click": "Cliquez pour interagir",
+      "hover": "Survolez pour plus d'infos"
+    },
+    "welcome": {
+      "title": "Bienvenue sur AAPRP !",
+      "description": "Faisons une visite rapide de la plateforme du Programme Africain de Revue par les Pairs des ANSP. Cela vous aidera à naviguer les fonctionnalités clés."
+    },
+    "sidebar": {
+      "title": "Menu de Navigation",
+      "description": "Accédez à toutes les fonctionnalités depuis ici. Le menu s'adapte selon votre rôle et vos permissions."
+    },
+    "dashboard": {
+      "title": "Tableau de Bord",
+      "description": "Votre centre de commande affichant les métriques clés, les actions en attente et l'aperçu du programme."
+    },
+    "analytics": {
+      "title": "Analytique",
+      "description": "Visualisez les tendances, les benchmarks et les indicateurs de performance à travers le programme."
+    },
+    "assessments": {
+      "title": "Auto-évaluations",
+      "description": "Créez et gérez les évaluations selon les cadres OACI USOAP et CANSO SoE pour votre organisation."
+    },
+    "peerReviews": {
+      "title": "Revues par les Pairs",
+      "description": "Consultez les revues auxquelles vous participez. Accédez à l'espace de travail, documents, constats et rapports."
+    },
+    "findings": {
+      "title": "Constats",
+      "description": "Suivez les constats des revues par les pairs. Chaque constat est lié aux Questions de Protocole OACI."
+    },
+    "caps": {
+      "title": "Plans d'Actions Correctives",
+      "description": "Gérez les PAC à travers le workflow en 6 étapes : Brouillon → Soumis → Accepté → Mis en œuvre → Vérifié → Clôturé."
+    },
+    "bestPractices": {
+      "title": "Bibliothèque des Bonnes Pratiques",
+      "description": "Découvrez et adoptez les pratiques de sécurité aérienne éprouvées partagées par les ANSP à travers l'Afrique."
+    },
+    "reviewers": {
+      "title": "Répertoire des Évaluateurs",
+      "description": "Trouvez des évaluateurs qualifiés par domaine d'expertise, compétences linguistiques et disponibilité."
+    },
+    "teams": {
+      "title": "Équipes Régionales",
+      "description": "Visualisez et gérez les 5 équipes régionales coordonnant les revues par les pairs en Afrique."
+    },
+    "organizations": {
+      "title": "Organisations",
+      "description": "Parcourez les 54 ANSP participants et leurs profils à travers le continent africain."
+    },
+    "training": {
+      "title": "Modules de Formation",
+      "description": "Accédez aux supports de formation couvrant la méthodologie OACI USOAP, CANSO SoE et les bonnes pratiques de revue."
+    },
+    "shortcuts": {
+      "title": "Raccourcis Clavier",
+      "description": "Appuyez sur Ctrl+K (ou Cmd+K sur Mac) à tout moment pour ouvrir la palette de commandes."
+    },
+    "complete": {
+      "title": "Vous Êtes Prêt !",
+      "description": "Vous connaissez maintenant l'essentiel. Vous pouvez relancer cette visite depuis Paramètres > Préférences."
+    },
+    "reviewer": {
+      "welcome": {
+        "title": "Bienvenue, Évaluateur !",
+        "description": "Explorons les outils que vous utiliserez pour mener des revues par les pairs efficaces et cohérentes."
+      },
+      "complete": {
+        "title": "Prêt à Évaluer !",
+        "description": "Vous êtes prêt à mener des revues par les pairs. Accédez à cette visite depuis les Paramètres si besoin."
+      }
+    },
+    "coordinator": {
+      "welcome": {
+        "title": "Bienvenue, Coordinateur !",
+        "description": "En tant que coordinateur du programme, vous avez accès à toutes les fonctionnalités. Explorons vos capacités."
+      },
+      "peerReviews": {
+        "title": "Gérer les Revues",
+        "description": "Créez des revues par les pairs, assignez les équipes, suivez la progression et approuvez les rapports finaux."
+      },
+      "complete": {
+        "title": "Visite Terminée !",
+        "description": "Vous êtes prêt à coordonner le programme. Relancez cette visite depuis les Paramètres à tout moment."
       }
     }
   }

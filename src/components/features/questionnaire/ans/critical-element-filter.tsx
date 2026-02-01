@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getCriticalElementsArray } from "@/lib/questionnaire/constants";
-import type { CriticalElement } from "@prisma/client";
+import type { CriticalElement } from "@/types/prisma-enums";
 
 interface CriticalElementFilterProps {
   selected: CriticalElement[];

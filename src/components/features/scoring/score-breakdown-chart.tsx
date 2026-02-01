@@ -22,7 +22,7 @@ import {
   SMS_COMPONENTS,
   MATURITY_LEVEL_VALUES,
 } from "@/lib/constants/scoring";
-import type { MaturityLevel, USOAPAuditArea, CriticalElement } from "@prisma/client";
+import type { MaturityLevel, USOAPAuditArea, CriticalElement } from "@/types/prisma-enums";
 
 // =============================================================================
 // PROPS

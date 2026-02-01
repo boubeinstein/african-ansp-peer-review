@@ -69,7 +69,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { CAPStatus, UserRole } from "@prisma/client";
+import { CAPStatus, UserRole } from "@/types/prisma-enums";
 
 // =============================================================================
 // ROLE DEFINITIONS

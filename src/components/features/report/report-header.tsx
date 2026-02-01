@@ -31,7 +31,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ReviewType, ReviewPhase, MaturityLevel } from "@prisma/client";
+import { ReviewType, ReviewPhase, MaturityLevel } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

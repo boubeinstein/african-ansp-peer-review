@@ -37,7 +37,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { trpc } from "@/lib/trpc/client";
-import type { DocumentCategory } from "@prisma/client";
+import type { DocumentCategory } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

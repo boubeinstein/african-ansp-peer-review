@@ -29,7 +29,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import type { AssessmentStatus, QuestionnaireType } from "@prisma/client";
+import type { AssessmentStatus, QuestionnaireType } from "@/types/prisma-enums";
 
 interface AssessmentsListProps {
   organizationId?: string;

@@ -120,7 +120,7 @@ import type {
   FindingSeverity,
   CriticalElement,
   USOAPAuditArea,
-} from "@prisma/client";
+} from "@/types/prisma-enums";
 
 // =============================================================================
 // FORM SCHEMA

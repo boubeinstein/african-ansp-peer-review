@@ -8,7 +8,7 @@
  */
 
 import { useTranslations } from "next-intl";
-import type { TeamRole } from "@prisma/client";
+import type { TeamRole } from "@/types/prisma-enums";
 
 // UI Components
 import {

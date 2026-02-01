@@ -41,7 +41,7 @@ import {
 import { format, differenceInDays } from "date-fns";
 import { cn } from "@/lib/utils";
 import { CAPStatusBadge } from "./cap-status-badge";
-import { CAPStatus, FindingSeverity } from "@prisma/client";
+import { CAPStatus, FindingSeverity } from "@/types/prisma-enums";
 
 interface CAPCardProps {
   cap: {

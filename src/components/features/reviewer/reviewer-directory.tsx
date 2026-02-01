@@ -10,7 +10,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/prisma-enums";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc/client";
 import { canEditReviewer } from "@/lib/rbac";
@@ -60,7 +60,7 @@ import type {
   ReviewerFilterOptions,
   ReviewerSortField,
 } from "@/types/reviewer";
-import type { ExpertiseArea, Language, ReviewerSelectionStatus } from "@prisma/client";
+import type { ExpertiseArea, Language, ReviewerSelectionStatus } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

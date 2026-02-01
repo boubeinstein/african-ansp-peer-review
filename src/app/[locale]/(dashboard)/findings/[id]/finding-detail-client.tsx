@@ -54,7 +54,7 @@ import { PublishBestPracticeButton } from "./_components/publish-best-practice-b
 import { WorkflowTransitionButtons } from "@/components/features/workflow/workflow-transition-buttons";
 import { WorkflowHistory } from "@/components/features/workflow/workflow-history";
 import { SLAIndicator } from "@/components/features/workflow/sla-indicator";
-import type { FindingStatus, FindingSeverity, FindingType } from "@prisma/client";
+import type { FindingStatus, FindingSeverity, FindingType } from "@/types/prisma-enums";
 
 interface FindingDetailClientProps {
   findingId: string;

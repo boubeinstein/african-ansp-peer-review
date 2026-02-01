@@ -37,7 +37,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { CAPStatus } from "@prisma/client";
+import { CAPStatus } from "@/types/prisma-enums";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {

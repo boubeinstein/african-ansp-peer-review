@@ -54,7 +54,7 @@ import { Progress } from "@/components/ui/progress";
 import { trpc } from "@/lib/trpc/client";
 import { DocumentPreview, type PreviewDocument } from "../document/DocumentPreview";
 import { DocumentLibrary } from "../document/DocumentLibrary";
-import type { DocumentCategory } from "@prisma/client";
+import type { DocumentCategory } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

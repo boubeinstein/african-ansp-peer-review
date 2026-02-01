@@ -8,7 +8,7 @@
 
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
-import type { AvailabilityType } from "@prisma/client";
+import type { AvailabilityType } from "@/types/prisma-enums";
 import { AVAILABILITY_TYPE_COLOR } from "@/lib/reviewer/labels";
 
 // =============================================================================

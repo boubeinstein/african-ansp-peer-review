@@ -24,7 +24,7 @@ import {
   SMS_COMPONENTS,
   SMS_STUDY_AREAS,
 } from "@/lib/constants/scoring";
-import type { MaturityLevel, SMSComponent } from "@prisma/client";
+import type { MaturityLevel, SMSComponent } from "@/types/prisma-enums";
 
 // =============================================================================
 // PROPS

@@ -51,7 +51,7 @@ import {
 } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
-import { DigestFrequency } from "@prisma/client";
+import { DigestFrequency } from "@/types/prisma-enums";
 
 const notificationSchema = z.object({
   emailNotifications: z.boolean(),

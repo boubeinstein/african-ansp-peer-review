@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/prisma-enums";
 import { useTranslations } from "next-intl";
 import { trpc } from "@/lib/trpc/client";
 import {

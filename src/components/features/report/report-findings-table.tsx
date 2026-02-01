@@ -54,7 +54,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { FindingType, FindingSeverity, FindingStatus } from "@prisma/client";
+import { FindingType, FindingSeverity, FindingStatus } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

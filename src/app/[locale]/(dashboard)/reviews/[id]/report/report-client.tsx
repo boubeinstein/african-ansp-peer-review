@@ -16,7 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
 import { ReportDetailView } from "@/components/features/report/report-detail-view";
-import type { UserRole } from "@prisma/client";
+import type { UserRole } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

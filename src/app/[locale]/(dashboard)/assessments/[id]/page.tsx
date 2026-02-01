@@ -21,7 +21,7 @@ import { trpc } from "@/lib/trpc/client";
 import { format } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import { AssessmentScoreSummary } from "@/components/features/assessment/assessment-score-summary";
-import type { AssessmentStatus } from "@prisma/client";
+import type { AssessmentStatus } from "@/types/prisma-enums";
 
 interface PageProps {
   params: Promise<{ id: string; locale: string }>;

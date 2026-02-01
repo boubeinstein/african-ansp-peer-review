@@ -17,7 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { QuestionnaireType, AssessmentType, USOAPAuditArea } from "@prisma/client";
+import type { QuestionnaireType, AssessmentType, USOAPAuditArea } from "@/types/prisma-enums";
 
 // Audit areas for ANS USOAP CMA - properly typed
 const ANS_AUDIT_AREAS: USOAPAuditArea[] = [

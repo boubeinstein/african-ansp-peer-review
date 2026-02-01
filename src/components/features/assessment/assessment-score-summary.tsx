@@ -14,7 +14,7 @@ import {
   SMSComponentBreakdown,
   StudyAreaBreakdown,
 } from "./score-breakdown";
-import type { MaturityLevel, QuestionnaireType } from "@prisma/client";
+import type { MaturityLevel, QuestionnaireType } from "@/types/prisma-enums";
 
 interface AssessmentScoreSummaryProps {
   assessment: {

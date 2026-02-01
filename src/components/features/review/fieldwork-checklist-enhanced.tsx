@@ -51,7 +51,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import type { FieldworkPhase } from "@prisma/client";
+import type { FieldworkPhase } from "@/types/prisma-enums";
 
 interface FieldworkChecklistEnhancedProps {
   reviewId: string;

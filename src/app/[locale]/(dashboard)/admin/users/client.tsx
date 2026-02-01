@@ -13,7 +13,7 @@ import { format } from "date-fns";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import type { UserRole } from "@prisma/client";
+import type { UserRole } from "@/types/prisma-enums";
 import {
   getRoleDisplayName,
   canManageUser,

@@ -28,7 +28,7 @@ import {
   FileWarning,
   Eye,
 } from "lucide-react";
-import type { FindingSeverity } from "@prisma/client";
+import type { FindingSeverity } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

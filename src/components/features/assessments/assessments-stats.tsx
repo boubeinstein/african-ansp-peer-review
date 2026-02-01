@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { ClipboardList, Clock, CheckCircle2, FileText } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
-import type { QuestionnaireType, AssessmentStatus } from "@prisma/client";
+import type { QuestionnaireType, AssessmentStatus } from "@/types/prisma-enums";
 
 interface AssessmentsStatsProps {
   organizationId?: string;

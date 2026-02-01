@@ -14,7 +14,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { PQCard } from "./pq-card";
-import type { USOAPAuditArea, CriticalElement } from "@prisma/client";
+import type { USOAPAuditArea, CriticalElement } from "@/types/prisma-enums";
 
 interface PQListProps {
   locale: string;

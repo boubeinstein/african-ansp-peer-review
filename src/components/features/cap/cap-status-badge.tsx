@@ -21,7 +21,7 @@ import {
   Lock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { CAPStatus } from "@prisma/client";
+import { CAPStatus } from "@/types/prisma-enums";
 
 interface CAPStatusBadgeProps {
   status: CAPStatus;

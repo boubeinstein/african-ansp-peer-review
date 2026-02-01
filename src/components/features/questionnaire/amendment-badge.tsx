@@ -10,7 +10,7 @@ import {
   Trash2,
   FileEdit,
 } from "lucide-react";
-import type { PQAmendmentStatus } from "@prisma/client";
+import type { PQAmendmentStatus } from "@/types/prisma-enums";
 
 interface AmendmentBadgeProps {
   status: PQAmendmentStatus;

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import { BarChart3, Users, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { TransversalArea } from "@prisma/client";
+import type { TransversalArea } from "@/types/prisma-enums";
 import { TRANSVERSAL_AREAS } from "@/lib/questionnaire/constants";
 
 interface TransversalBadgeProps {

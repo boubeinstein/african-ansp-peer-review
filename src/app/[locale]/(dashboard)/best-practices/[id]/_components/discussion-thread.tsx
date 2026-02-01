@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { MessageSquare, Reply, Send, Shield, User } from "lucide-react";
 import { canModerateDiscussion } from "@/lib/permissions";
-import type { UserRole } from "@prisma/client";
+import type { UserRole } from "@/types/prisma-enums";
 
 interface DiscussionThreadProps {
   bestPracticeId: string;

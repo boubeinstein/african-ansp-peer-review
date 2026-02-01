@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowRight, Zap } from "lucide-react";
-import type { UserRole } from "@prisma/client";
+import type { UserRole } from "@/types/prisma-enums";
 import { getQuickActionsForRole, type QuickActionConfig } from "@/lib/dashboard-config";
 import { AvailabilityDialog } from "@/components/features/reviewers/availability-dialog";
 

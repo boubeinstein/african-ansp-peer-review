@@ -12,7 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import type { AssessmentType } from "@prisma/client";
+import type { AssessmentType } from "@/types/prisma-enums";
 
 interface AssessmentTypeStepProps {
   value: AssessmentType | null;

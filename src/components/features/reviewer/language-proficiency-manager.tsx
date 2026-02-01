@@ -39,7 +39,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import type { Language, LanguageProficiency } from "@prisma/client";
+import type { Language, LanguageProficiency } from "@/types/prisma-enums";
 import {
   LANGUAGE_LABELS,
   LANGUAGE_PROFICIENCY_LABELS,

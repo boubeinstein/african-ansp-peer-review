@@ -8,7 +8,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { formatDistanceToNow } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { WorkflowEntityType } from "@prisma/client";
+import type { WorkflowEntityType } from "@/types/prisma-enums";
 
 interface WorkflowHistoryProps {
   entityType: WorkflowEntityType;

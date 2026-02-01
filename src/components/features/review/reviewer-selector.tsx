@@ -20,7 +20,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
-import type { TeamRole, ExpertiseArea, Language } from "@prisma/client";
+import type { TeamRole, ExpertiseArea, Language } from "@/types/prisma-enums";
 
 // UI Components
 import { Button } from "@/components/ui/button";

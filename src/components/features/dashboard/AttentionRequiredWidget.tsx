@@ -15,7 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProgressBar } from "../progress/ProgressBar";
-import type { AssessmentStatus } from "@prisma/client";
+import type { AssessmentStatus } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

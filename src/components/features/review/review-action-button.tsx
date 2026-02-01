@@ -11,7 +11,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
-import type { ReviewStatus } from "@prisma/client";
+import type { ReviewStatus } from "@/types/prisma-enums";
 
 // UI Components
 import { Button } from "@/components/ui/button";

@@ -52,7 +52,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { ApprovalStatus } from "@prisma/client";
+import type { ApprovalStatus } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

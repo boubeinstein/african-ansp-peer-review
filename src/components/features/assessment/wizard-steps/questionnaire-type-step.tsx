@@ -6,7 +6,7 @@ import { ClipboardCheck, Shield, CheckCircle, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import type { QuestionnaireType } from "@prisma/client";
+import type { QuestionnaireType } from "@/types/prisma-enums";
 
 interface QuestionnaireTypeStepProps {
   value: QuestionnaireType | null;

@@ -44,7 +44,7 @@ import {
 } from "lucide-react";
 
 // Types
-import type { CAPStatus, MilestoneStatus } from "@prisma/client";
+import type { CAPStatus, MilestoneStatus } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

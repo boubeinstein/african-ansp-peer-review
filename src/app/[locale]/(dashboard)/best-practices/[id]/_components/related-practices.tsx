@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowRight, Lightbulb, Users, Eye } from "lucide-react";
-import { BestPracticeCategory } from "@prisma/client";
+import { BestPracticeCategory } from "@/types/prisma-enums";
 
 interface RelatedPracticesProps {
   currentId: string;

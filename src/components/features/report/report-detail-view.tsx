@@ -56,7 +56,7 @@ import type {
   ReviewType,
   ReviewPhase,
   TeamRole,
-} from "@prisma/client";
+} from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

@@ -11,7 +11,7 @@ import {
 } from "react";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc/client";
-import type { QuestionnaireType } from "@prisma/client";
+import type { QuestionnaireType } from "@/types/prisma-enums";
 import {
   isANSResponseAnswered,
   isSMSResponseAnswered,

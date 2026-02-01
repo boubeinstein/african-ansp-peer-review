@@ -72,7 +72,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import type { DocumentCategory, DocumentStatus } from "@prisma/client";
+import type { DocumentCategory, DocumentStatus } from "@/types/prisma-enums";
 
 interface ReviewDocumentsEnhancedProps {
   reviewId: string;

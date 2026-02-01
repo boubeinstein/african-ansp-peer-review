@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { CheckCircle2, Loader2, Plus, Send, Trash2, TrendingUp } from "lucide-react";
 import { isOversightRole } from "@/lib/permissions";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/prisma-enums";
 import { PromoteDialog } from "@/components/features/best-practices/promote-dialog";
 
 interface AdoptionButtonProps {

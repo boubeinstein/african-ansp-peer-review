@@ -30,7 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CAPStatus } from "@prisma/client";
+import { CAPStatus } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

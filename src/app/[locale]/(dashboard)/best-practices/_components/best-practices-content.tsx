@@ -4,7 +4,7 @@ import { trpc } from "@/lib/trpc/client";
 import { BestPracticesStats } from "./best-practices-stats";
 import { BestPracticesFilters } from "./best-practices-filters";
 import { BestPracticesGrid } from "./best-practices-grid";
-import { BestPracticeCategory } from "@prisma/client";
+import { BestPracticeCategory } from "@/types/prisma-enums";
 
 interface BestPracticesContentProps {
   locale: string;

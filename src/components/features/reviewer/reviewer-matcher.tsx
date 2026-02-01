@@ -66,7 +66,7 @@ import {
   type TeamBuildResult,
 } from "@/lib/reviewer/matching";
 import type { ReviewerProfileFull } from "@/types/reviewer";
-import type { ExpertiseArea, Language } from "@prisma/client";
+import type { ExpertiseArea, Language } from "@/types/prisma-enums";
 import {
   EXPERTISE_AREA_ABBREV,
   LANGUAGE_LABELS,

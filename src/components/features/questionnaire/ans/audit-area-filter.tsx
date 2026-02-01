@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { getAuditAreasArray } from "@/lib/questionnaire/constants";
-import type { USOAPAuditArea } from "@prisma/client";
+import type { USOAPAuditArea } from "@/types/prisma-enums";
 
 interface AuditAreaFilterProps {
   selected: USOAPAuditArea[];

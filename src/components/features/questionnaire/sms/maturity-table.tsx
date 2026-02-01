@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { maturityColors } from "./maturity-legend";
 import { getMaturityLevelsArray } from "@/lib/questionnaire/constants";
-import type { CANSOStudyArea, MaturityLevel } from "@prisma/client";
+import type { CANSOStudyArea, MaturityLevel } from "@/types/prisma-enums";
 
 interface MaturityTableProps {
   studyArea: CANSOStudyArea;

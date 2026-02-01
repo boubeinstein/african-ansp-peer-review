@@ -21,7 +21,7 @@ import { MyTeamWidget } from "@/components/features/dashboard/my-team-widget";
 import { TeamPerformanceOverview } from "@/components/features/dashboard/team-performance-overview";
 import { RoleQuickActions } from "@/components/features/dashboard/role-quick-actions";
 import { RecentActivityWidget } from "@/components/features/dashboard/RecentActivityWidget";
-import type { UserRole } from "@prisma/client";
+import type { UserRole } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

@@ -58,7 +58,7 @@ import {
   type VerificationDecision,
 } from "./coi-verification-dialog";
 import { COI_TYPE_LABELS, getSelectOptions } from "@/lib/reviewer/labels";
-import type { COIType } from "@prisma/client";
+import type { COIType } from "@/types/prisma-enums";
 import type {
   CreateCOIInput,
   UpdateCOIInput,

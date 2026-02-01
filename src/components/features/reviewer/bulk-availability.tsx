@@ -42,7 +42,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import type { AvailabilitySlot, CreateAvailabilityInput } from "@/types/reviewer";
-import type { AvailabilityType } from "@prisma/client";
+import type { AvailabilityType } from "@/types/prisma-enums";
 import { AVAILABILITY_TYPE_LABELS, AVAILABILITY_TYPE_COLOR } from "@/lib/reviewer/labels";
 
 // =============================================================================

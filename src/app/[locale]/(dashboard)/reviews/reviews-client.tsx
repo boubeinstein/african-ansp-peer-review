@@ -53,7 +53,7 @@ import {
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { trpc } from "@/lib/trpc/client";
-import type { ReviewStatus, ReviewType } from "@prisma/client";
+import type { ReviewStatus, ReviewType } from "@/types/prisma-enums";
 
 // Feature Components
 import { ReviewTeamWizard } from "@/components/features/review/review-team-wizard";

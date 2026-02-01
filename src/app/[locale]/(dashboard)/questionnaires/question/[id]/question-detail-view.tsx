@@ -36,8 +36,8 @@ import type {
   ICAOReference,
   Questionnaire,
   QuestionnaireCategory,
-  PQAmendmentStatus,
 } from "@prisma/client";
+import type { PQAmendmentStatus } from "@/types/prisma-enums";
 
 interface QuestionWithRelations extends Question {
   icaoReferences: ICAOReference[];

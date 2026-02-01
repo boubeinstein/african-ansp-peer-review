@@ -36,7 +36,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { trpc } from "@/lib/trpc/client";
-import type { DocumentCategory } from "@prisma/client";
+import type { DocumentCategory } from "@/types/prisma-enums";
 import { DocumentPreview, type PreviewDocument } from "./DocumentPreview";
 
 // =============================================================================

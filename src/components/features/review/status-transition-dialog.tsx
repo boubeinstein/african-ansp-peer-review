@@ -33,7 +33,7 @@ import {
   Info,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { ReviewStatus } from "@prisma/client";
+import type { ReviewStatus } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

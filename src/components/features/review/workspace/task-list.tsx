@@ -26,7 +26,7 @@ import {
   AlertTriangle,
   User,
 } from "lucide-react";
-import { TaskStatus, TaskPriority } from "@prisma/client";
+import { TaskStatus, TaskPriority } from "@/types/prisma-enums";
 import { TaskCard } from "./task-card";
 import { CreateTaskDialog } from "./create-task-dialog";
 

@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { TransversalBadges } from "./transversal-badge";
 import { MaturityTable } from "./maturity-table";
 import { getStudyAreasByComponent } from "@/lib/questionnaire/constants";
-import type { SMSComponent, CANSOStudyArea, TransversalArea } from "@prisma/client";
+import type { SMSComponent, CANSOStudyArea, TransversalArea } from "@/types/prisma-enums";
 
 interface StudyAreaAccordionProps {
   component: SMSComponent;

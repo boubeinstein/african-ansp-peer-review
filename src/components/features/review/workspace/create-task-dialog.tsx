@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
-import { TaskPriority } from "@prisma/client";
+import { TaskPriority } from "@/types/prisma-enums";
 import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 

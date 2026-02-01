@@ -10,7 +10,7 @@ import {
 import { Clock, AlertTriangle, CheckCircle } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
 import { useTranslations } from "next-intl";
-import type { WorkflowEntityType } from "@prisma/client";
+import type { WorkflowEntityType } from "@/types/prisma-enums";
 
 interface SLAIndicatorProps {
   entityType: WorkflowEntityType;

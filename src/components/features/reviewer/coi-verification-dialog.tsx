@@ -35,7 +35,7 @@ import {
 } from "lucide-react";
 import { COIBadge, type COISeverity } from "./coi-badge";
 import { COI_TYPE_LABELS } from "@/lib/reviewer/labels";
-import type { COIType } from "@prisma/client";
+import type { COIType } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

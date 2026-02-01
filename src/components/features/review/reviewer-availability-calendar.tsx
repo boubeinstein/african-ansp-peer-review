@@ -55,7 +55,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 
-import type { AvailabilityType } from "@prisma/client";
+import type { AvailabilityType } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

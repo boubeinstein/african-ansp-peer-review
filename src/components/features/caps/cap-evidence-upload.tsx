@@ -18,7 +18,7 @@ import { enUS, fr } from "date-fns/locale";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { EvidenceCategory, EvidenceStatus, MilestoneStatus } from "@prisma/client";
+import { EvidenceCategory, EvidenceStatus, MilestoneStatus } from "@/types/prisma-enums";
 import {
   Upload,
   FileText,

@@ -9,7 +9,7 @@ import { ComponentTabs } from "./component-tabs";
 import { StudyAreaAccordion } from "./study-area-accordion";
 import { MaturityLegend } from "./maturity-legend";
 import { SMS_COMPONENTS } from "@/lib/questionnaire/constants";
-import type { SMSComponent, CANSOStudyArea } from "@prisma/client";
+import type { SMSComponent, CANSOStudyArea } from "@/types/prisma-enums";
 
 interface SMSBrowserProps {
   locale: string;

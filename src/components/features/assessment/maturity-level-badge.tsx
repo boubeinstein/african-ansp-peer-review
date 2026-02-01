@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
-import type { MaturityLevel } from "@prisma/client";
+import type { MaturityLevel } from "@/types/prisma-enums";
 
 interface MaturityLevelBadgeProps {
   level: MaturityLevel | string | null | undefined;

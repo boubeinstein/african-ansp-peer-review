@@ -30,7 +30,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Progress } from "@/components/ui/progress";
-import { FindingType, FindingSeverity, MaturityLevel } from "@prisma/client";
+import { FindingType, FindingSeverity, MaturityLevel } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

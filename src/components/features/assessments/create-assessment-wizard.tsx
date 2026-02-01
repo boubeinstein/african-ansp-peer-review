@@ -55,7 +55,7 @@ import {
   AlertTriangle,
   Loader2,
 } from "lucide-react";
-import type { QuestionnaireType } from "@prisma/client";
+import type { QuestionnaireType } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

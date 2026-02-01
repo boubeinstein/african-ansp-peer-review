@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search, X } from "lucide-react";
-import { BestPracticeCategory } from "@prisma/client";
+import { BestPracticeCategory } from "@/types/prisma-enums";
 import { useCallback, useState, useTransition } from "react";
 import { useDebouncedCallback } from "use-debounce";
 

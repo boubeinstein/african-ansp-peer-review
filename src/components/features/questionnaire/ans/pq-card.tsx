@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { USOAP_AUDIT_AREAS, CRITICAL_ELEMENTS } from "@/lib/questionnaire/constants";
-import type { USOAPAuditArea, CriticalElement } from "@prisma/client";
+import type { USOAPAuditArea, CriticalElement } from "@/types/prisma-enums";
 
 interface ICAOReference {
   id: string;

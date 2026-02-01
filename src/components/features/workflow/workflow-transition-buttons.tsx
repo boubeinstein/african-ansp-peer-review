@@ -18,7 +18,7 @@ import { Loader2 } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
 import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
-import type { WorkflowEntityType } from "@prisma/client";
+import type { WorkflowEntityType } from "@/types/prisma-enums";
 
 interface WorkflowTransitionButtonsProps {
   entityType: WorkflowEntityType;

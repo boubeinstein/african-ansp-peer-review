@@ -40,7 +40,7 @@ import {
   Trophy,
 } from "lucide-react";
 import { isOversightRole, canAddLessonLearned } from "@/lib/permissions";
-import type { UserRole } from "@prisma/client";
+import type { UserRole } from "@/types/prisma-enums";
 
 interface LessonsLearnedProps {
   bestPracticeId: string;

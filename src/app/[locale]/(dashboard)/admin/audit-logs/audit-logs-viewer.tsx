@@ -60,7 +60,7 @@ import {
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
-import { AuditAction } from "@prisma/client";
+import { AuditAction } from "@/types/prisma-enums";
 
 // Helper to format dates
 function formatDateForDisplay(date: Date, locale: string): string {

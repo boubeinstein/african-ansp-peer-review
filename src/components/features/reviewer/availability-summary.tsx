@@ -15,7 +15,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { CalendarCheck, CalendarClock, CalendarX, Calendar } from "lucide-react";
 import type { AvailabilitySlot, AvailabilitySummaryData } from "@/types/reviewer";
-import type { AvailabilityType } from "@prisma/client";
+import type { AvailabilityType } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

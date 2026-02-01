@@ -47,7 +47,7 @@ import type {
   ExpertiseArea,
   Language,
   ReviewerSelectionStatus,
-} from "@prisma/client";
+} from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

@@ -59,7 +59,7 @@ import type {
   FindingType,
   FindingSeverity,
   CriticalElement,
-} from "@prisma/client";
+} from "@/types/prisma-enums";
 
 // =============================================================================
 // FORM SCHEMA

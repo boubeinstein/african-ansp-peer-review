@@ -16,7 +16,7 @@ import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
 import { format, differenceInDays, isPast } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
-import { UserRole, CAPStatus } from "@prisma/client";
+import { UserRole, CAPStatus } from "@/types/prisma-enums";
 import {
   ArrowLeft,
   Calendar,

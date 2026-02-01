@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import type { QuestionnaireType, AssessmentType } from "@prisma/client";
+import type { QuestionnaireType, AssessmentType } from "@/types/prisma-enums";
 
 interface ReviewConfirmStepProps {
   questionnaireType: QuestionnaireType | null;

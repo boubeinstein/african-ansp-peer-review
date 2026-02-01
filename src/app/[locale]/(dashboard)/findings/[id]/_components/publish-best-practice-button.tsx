@@ -8,7 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Lightbulb, ExternalLink, CheckCircle2 } from "lucide-react";
-import type { FindingType } from "@prisma/client";
+import type { FindingType } from "@/types/prisma-enums";
 
 interface PublishBestPracticeButtonProps {
   findingId: string;

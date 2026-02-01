@@ -29,7 +29,7 @@ import {
   Clock,
 } from "lucide-react";
 import { isOversightRole, canRequestMentorship } from "@/lib/permissions";
-import type { UserRole } from "@prisma/client";
+import type { UserRole } from "@/types/prisma-enums";
 
 interface RequestMentorshipProps {
   bestPracticeId: string;

@@ -31,7 +31,7 @@ import { OrganizationStatsCards } from "./organization-stats-cards";
 import { OrganizationFilterPanel } from "./organization-filter-panel";
 import { OrganizationViewToggle, type ViewMode } from "./organization-view-toggle";
 import type { OrganizationFilters, OrganizationListItem } from "@/types/organization";
-import type { AfricanRegion, MembershipStatus } from "@prisma/client";
+import type { AfricanRegion, MembershipStatus } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

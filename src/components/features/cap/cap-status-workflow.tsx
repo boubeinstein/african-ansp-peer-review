@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { CAPStatus } from "@prisma/client";
+import { CAPStatus } from "@/types/prisma-enums";
 import {
   Tooltip,
   TooltipContent,

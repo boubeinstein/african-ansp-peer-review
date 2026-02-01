@@ -6,7 +6,7 @@ import { format, isPast, isToday, isTomorrow } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
-import { TaskStatus, TaskPriority } from "@prisma/client";
+import { TaskStatus, TaskPriority } from "@/types/prisma-enums";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

@@ -35,7 +35,7 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
-import type { ExpertiseArea, ProficiencyLevel } from "@prisma/client";
+import type { ExpertiseArea, ProficiencyLevel } from "@/types/prisma-enums";
 import {
   getExpertiseAreasByCategory,
   PROFICIENCY_LEVEL_LABELS,

@@ -37,7 +37,7 @@ import { AuditAreaFilter } from "./audit-area-filter";
 import { CriticalElementFilter } from "./critical-element-filter";
 import { PQList } from "./pq-list";
 import { USOAP_AUDIT_AREAS } from "@/lib/questionnaire/constants";
-import type { USOAPAuditArea, CriticalElement } from "@prisma/client";
+import type { USOAPAuditArea, CriticalElement } from "@/types/prisma-enums";
 
 interface ANSBrowserProps {
   locale: string;

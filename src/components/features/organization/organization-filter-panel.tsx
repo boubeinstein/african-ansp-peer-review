@@ -39,7 +39,7 @@ import {
   X,
 } from "lucide-react";
 import type { OrganizationFilters, CountryOption } from "@/types/organization";
-import type { AfricanRegion, MembershipStatus } from "@prisma/client";
+import type { AfricanRegion, MembershipStatus } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

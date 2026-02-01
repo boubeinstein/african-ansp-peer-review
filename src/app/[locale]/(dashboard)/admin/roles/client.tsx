@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/prisma-enums";
 import {
   ROLE_HIERARCHY,
   ASSIGNABLE_ROLES,

@@ -24,7 +24,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import type { DocumentCategory } from "@prisma/client";
+import type { DocumentCategory } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

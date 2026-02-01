@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { Shield, AlertTriangle, CheckCircle, Megaphone } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getSMSComponentsArray } from "@/lib/questionnaire/constants";
-import type { SMSComponent } from "@prisma/client";
+import type { SMSComponent } from "@/types/prisma-enums";
 
 interface ComponentTabsProps {
   selected: SMSComponent;

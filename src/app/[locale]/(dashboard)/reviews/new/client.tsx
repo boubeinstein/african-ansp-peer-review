@@ -75,7 +75,7 @@ import {
 
 // Permissions
 import { isOversightRole } from "@/lib/permissions";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

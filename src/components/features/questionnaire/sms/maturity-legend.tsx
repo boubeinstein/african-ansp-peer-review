@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { MATURITY_LEVELS, getMaturityLevelsArray } from "@/lib/questionnaire/constants";
-import type { MaturityLevel } from "@prisma/client";
+import type { MaturityLevel } from "@/types/prisma-enums";
 
 interface MaturityLegendProps {
   locale: string;

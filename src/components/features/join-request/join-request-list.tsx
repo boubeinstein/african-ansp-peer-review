@@ -10,7 +10,7 @@
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { format } from "date-fns";
-import { UserRole, JoinRequestStatus } from "@prisma/client";
+import { UserRole, JoinRequestStatus } from "@/types/prisma-enums";
 import {
   FileText,
   Clock,

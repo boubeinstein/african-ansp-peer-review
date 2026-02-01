@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import { trpc } from "@/lib/trpc/client";
-import type { DocumentCategory } from "@prisma/client";
+import type { DocumentCategory } from "@/types/prisma-enums";
 import {
   Card,
   CardContent,

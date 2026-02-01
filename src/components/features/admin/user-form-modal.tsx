@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/prisma-enums";
 import { useTranslations } from "next-intl";
 import { trpc } from "@/lib/trpc/client";
 import { getRoleDisplayName } from "@/lib/permissions/user-management";

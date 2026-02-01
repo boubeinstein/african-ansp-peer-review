@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { FindingStatus, FindingSeverity } from "@prisma/client";
+import { FindingStatus, FindingSeverity } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

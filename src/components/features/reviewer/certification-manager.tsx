@@ -41,7 +41,7 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
-import type { CertificationType } from "@prisma/client";
+import type { CertificationType } from "@/types/prisma-enums";
 import {
   CERTIFICATION_TYPE_LABELS,
   getSelectOptions,

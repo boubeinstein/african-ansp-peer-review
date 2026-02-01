@@ -133,7 +133,7 @@ export function JoinRequestList({ userRole, userId }: JoinRequestListProps) {
   });
 
   // Get organization name based on locale (supports both linked org and free-text)
-  const getOrgName = (org: { nameEn: string; nameFr: string } | null, request?: { organizationName?: string | null }) => {
+  const getOrgName = (org: { nameEn: string; nameFr: string } | null | undefined, request?: { organizationName?: string | null }) => {
     if (org) {
       return locale === "fr" ? org.nameFr : org.nameEn;
     }
@@ -244,7 +244,7 @@ export function JoinRequestList({ userRole, userId }: JoinRequestListProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredItems.map((request) => (
+                {filteredItems.map((request: JoinRequestItem) => (
                   <TableRow key={request.id}>
                     <TableCell>
                       <div className="font-medium">

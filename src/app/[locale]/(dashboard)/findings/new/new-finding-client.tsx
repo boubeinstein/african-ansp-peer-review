@@ -174,7 +174,7 @@ export function NewFindingClient({ reviewId: initialReviewId }: NewFindingClient
                 <SelectValue placeholder="Select a peer review" />
               </SelectTrigger>
               <SelectContent>
-                {reviewsQuery.data?.items.map((review) => (
+                {reviewsQuery.data?.items.map((review: { id: string; referenceNumber: string; hostOrganization: { nameEn: string; nameFr: string } }) => (
                   <SelectItem key={review.id} value={review.id}>
                     {review.referenceNumber} - {locale === "fr"
                       ? review.hostOrganization.nameFr

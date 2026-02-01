@@ -261,7 +261,7 @@ export function ReviewerProfileView({
                           {EXPERTISE_AREA_LABELS[expertise.area][locale]}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {expertise.yearsExperience > 0 &&
+                          {expertise.yearsExperience && expertise.yearsExperience > 0 &&
                             `${expertise.yearsExperience} ${t("expertise.years")}`}
                         </p>
                       </div>
@@ -370,7 +370,7 @@ export function ReviewerProfileView({
                               : cert.certificationName}
                           </p>
                           <p className="text-xs text-muted-foreground mt-1">
-                            {CERTIFICATION_TYPE_LABELS[cert.certificationType][locale]}
+                            {CERTIFICATION_TYPE_LABELS[cert.certificationType as keyof typeof CERTIFICATION_TYPE_LABELS]?.[locale]}
                           </p>
                           <p className="text-xs text-muted-foreground">
                             {cert.issuingAuthority}

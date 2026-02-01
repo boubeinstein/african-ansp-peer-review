@@ -14,6 +14,20 @@ interface FindingsTabProps {
   review: ReviewData;
 }
 
+interface TransformedFinding {
+  id: string;
+  reference: string;
+  title: string;
+  description?: string;
+  severity: string;
+  status: string;
+  category?: string;
+  assignee: { id: string; name: string } | null;
+  cap: { id: string; status: string } | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export function FindingsTab({ review }: FindingsTabProps) {
   const t = useTranslations("reviews.detail.findings");
   const locale = useLocale();
@@ -29,13 +43,13 @@ export function FindingsTab({ review }: FindingsTabProps) {
   );
 
   // Transform findings to match FindingList interface
-  const findings =
-    findingsData?.map((finding) => ({
+  const findings: TransformedFinding[] =
+    findingsData?.map((finding: { id: string; referenceNumber: string; titleFr: string | null; titleEn: string | null; descriptionFr: string | null; descriptionEn: string | null; severity: string; status: string; criticalElement?: string | null; assignedTo?: { id: string; firstName: string; lastName: string } | null; correctiveActionPlan?: { id: string; status: string } | null; createdAt: Date | string; updatedAt: Date | string }) => ({
       id: finding.id,
       reference: finding.referenceNumber,
-      title: locale === "fr" ? finding.titleFr : finding.titleEn,
+      title: (locale === "fr" ? finding.titleFr : finding.titleEn) || "Untitled",
       description:
-        locale === "fr" ? finding.descriptionFr : finding.descriptionEn,
+        (locale === "fr" ? finding.descriptionFr : finding.descriptionEn) || undefined,
       severity: finding.severity,
       status: finding.status,
       category: finding.criticalElement || undefined,

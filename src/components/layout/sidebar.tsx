@@ -113,7 +113,7 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
     <div
       suppressHydrationWarning
       className={cn(
-        "relative hidden md:flex flex-col h-full flex-shrink-0 border-r bg-background transition-all duration-300 overflow-hidden",
+        "relative hidden md:flex flex-col h-full flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-all duration-300 overflow-hidden",
         collapsed ? "w-16" : "w-64"
       )}
     >
@@ -243,7 +243,7 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
       </ScrollArea>
 
       {/* Footer - always stays at bottom */}
-      <div className="flex-shrink-0 border-t p-2 bg-background" data-tour="keyboard-hint">
+      <div className="flex-shrink-0 border-t border-slate-200 dark:border-slate-800 p-2 bg-white dark:bg-slate-900" data-tour="keyboard-hint">
         <Tooltip delayDuration={0}>
           <TooltipTrigger asChild>
             <Button

@@ -26,7 +26,7 @@ import { MATCHING_WEIGHTS, QUALIFICATION_REQUIREMENTS } from "./constants";
 export interface ExpertiseInput {
   area: ExpertiseArea;
   proficiencyLevel: ProficiencyLevel;
-  yearsExperience: number;
+  yearsExperience: number | null;
 }
 
 /**
@@ -120,7 +120,7 @@ export function scoreExpertise(
   for (const exp of reviewerExpertise) {
     expertiseMap.set(exp.area, {
       level: exp.proficiencyLevel,
-      years: exp.yearsExperience,
+      years: exp.yearsExperience ?? 0,
     });
   }
 

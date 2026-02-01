@@ -1,5 +1,23 @@
 "use client";
 
+/**
+ * Progress Dashboard Component
+ *
+ * Displays review progress using phase-based calculation.
+ * Progress percentage aligns with the current review status/phase,
+ * not fieldwork checklist items (which would be misleading in early phases).
+ *
+ * Phase Progress Mapping:
+ * - REQUESTED:       ~12% (Phase 1/4 - early Planning)
+ * - APPROVED:        ~19% (Phase 1/4 - Planning approved)
+ * - PLANNING:        ~25% (Phase 1/4 - Planning complete)
+ * - SCHEDULED:       ~37% (Phase 2/4 - Preparation)
+ * - IN_PROGRESS:     ~50% (Phase 3/4 - On-Site)
+ * - REPORT_DRAFTING: ~75% (Phase 4/4 - Post-Review)
+ * - REPORT_REVIEW:   ~87% (Phase 4/4 - Post-Review, near complete)
+ * - COMPLETED:       100% (Phase 4/4 - Done)
+ */
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -9,11 +27,6 @@ import { cn } from "@/lib/utils";
 
 interface ProgressDashboardProps {
   currentPhase: "PLANNING" | "PREPARATION" | "ON_SITE" | "POST_REVIEW";
-  fieldworkProgress: {
-    total: number;
-    completed: number;
-    percentage: number;
-  };
   status: string;
 }
 
@@ -24,8 +37,42 @@ const phases = [
   { id: "POST_REVIEW", labelKey: "POST_REVIEW", icon: "4" },
 ] as const;
 
-export function ProgressDashboard({ currentPhase, fieldworkProgress }: ProgressDashboardProps) {
+/**
+ * Calculate overall review progress based on status.
+ * This provides a more accurate representation than showing
+ * fieldwork checklist completion (which includes on-site items
+ * that shouldn't show progress during planning phase).
+ */
+function getOverallProgress(status: string): { percentage: number; stepDescription: string } {
+  switch (status) {
+    case "REQUESTED":
+      return { percentage: 12, stepDescription: "1/8" };
+    case "APPROVED":
+      return { percentage: 19, stepDescription: "1.5/8" };
+    case "PLANNING":
+      return { percentage: 25, stepDescription: "2/8" };
+    case "SCHEDULED":
+      return { percentage: 37, stepDescription: "3/8" };
+    case "IN_PROGRESS":
+      return { percentage: 50, stepDescription: "4/8" };
+    case "REPORT_DRAFTING":
+      return { percentage: 75, stepDescription: "6/8" };
+    case "REPORT_REVIEW":
+      return { percentage: 87, stepDescription: "7/8" };
+    case "COMPLETED":
+      return { percentage: 100, stepDescription: "8/8" };
+    case "CANCELLED":
+      return { percentage: 0, stepDescription: "0/8" };
+    default:
+      return { percentage: 0, stepDescription: "0/8" };
+  }
+}
+
+export function ProgressDashboard({ currentPhase, status }: ProgressDashboardProps) {
   const t = useTranslations("reviews.detail.overview.progress");
+
+  // Calculate phase-based progress that aligns with current status
+  const { percentage: overallProgress } = getOverallProgress(status);
 
   const getPhaseStatus = (phaseId: string) => {
     const phaseOrder = phases.map(p => p.id);
@@ -46,7 +93,7 @@ export function ProgressDashboard({ currentPhase, fieldworkProgress }: ProgressD
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Phase Progress */}
+        {/* Phase Progress Stepper */}
         <div className="flex items-center justify-between">
           {phases.map((phase, index) => {
             const phaseStatus = getPhaseStatus(phase.id);
@@ -85,15 +132,15 @@ export function ProgressDashboard({ currentPhase, fieldworkProgress }: ProgressD
           })}
         </div>
 
-        {/* Fieldwork Progress */}
+        {/* Overall Review Progress - aligned with status/phase */}
         <div className="pt-2 border-t">
           <div className="flex items-center justify-between text-sm mb-2">
-            <span className="text-muted-foreground">{t("fieldwork")}</span>
+            <span className="text-muted-foreground">{t("overall")}</span>
             <span className="font-medium">
-              {fieldworkProgress.completed}/{fieldworkProgress.total} ({fieldworkProgress.percentage}%)
+              {overallProgress}%
             </span>
           </div>
-          <Progress value={fieldworkProgress.percentage} className="h-2" />
+          <Progress value={overallProgress} className="h-2" />
         </div>
       </CardContent>
     </Card>

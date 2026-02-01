@@ -37,7 +37,7 @@ export function WorkspaceTab({ review }: WorkspaceTabProps) {
     createdAt: Date;
     author: { id: string; name: string; image: string | null };
     _count: { replies: number };
-  }> = review.discussions.map(d => ({
+  }> = review.discussions.map((d: { id: string; isResolved: boolean }) => ({
     id: d.id,
     title: d.isResolved ? "Resolved Discussion" : "Open Discussion",
     status: d.isResolved ? "CLOSED" : "OPEN",
@@ -54,7 +54,7 @@ export function WorkspaceTab({ review }: WorkspaceTabProps) {
     priority: string;
     dueDate: Date | null;
     assignee: { id: string; name: string; image: string | null } | null;
-  }> = review.tasks.map(t => ({
+  }> = review.tasks.map((t: { id: string; status: string }) => ({
     id: t.id,
     title: "Task",
     status: t.status,

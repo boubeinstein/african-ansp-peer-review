@@ -143,7 +143,18 @@ export function ReviewFindingsClient({
     reviewId,
   });
 
-  const findings = data ?? [];
+  type FindingItem = {
+    id: string;
+    referenceNumber: string;
+    severity: FindingSeverity;
+    status: FindingStatus;
+    titleEn: string | null;
+    titleFr: string | null;
+    descriptionEn: string | null;
+    descriptionFr: string | null;
+    createdAt: Date | string;
+  };
+  const findings: FindingItem[] = data ?? [];
 
   return (
     <div className="container max-w-6xl py-6 space-y-6">

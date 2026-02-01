@@ -77,7 +77,7 @@ export function Header({ locale, user }: HeaderProps) {
 
   return (
     <>
-      <header className="flex h-16 items-center justify-between border-b bg-background px-6">
+      <header className="flex h-16 items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6">
         <div className="flex items-center gap-4">
           <h1 className="text-lg font-semibold">{t("appName")}</h1>
         </div>

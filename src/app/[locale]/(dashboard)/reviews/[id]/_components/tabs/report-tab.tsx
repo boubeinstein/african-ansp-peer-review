@@ -99,7 +99,8 @@ export function ReportTab({ review }: ReportTabProps) {
   });
 
   // Calculate prerequisites based on findings
-  const findings = findingsData || [];
+  type FindingWithCap = { severity: string; correctiveActionPlan?: { status: string } | null };
+  const findings: FindingWithCap[] = findingsData || [];
   const criticalFindings = findings.filter((f) => f.severity === "CRITICAL");
   const majorFindings = findings.filter((f) => f.severity === "MAJOR");
   const findingsNeedingCap = [...criticalFindings, ...majorFindings];

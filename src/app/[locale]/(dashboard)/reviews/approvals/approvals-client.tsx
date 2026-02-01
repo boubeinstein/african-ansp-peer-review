@@ -164,7 +164,7 @@ function PendingApprovalsList({
 
   return (
     <div className="space-y-3">
-      {pendingReviews.map((review) => (
+      {pendingReviews.map((review: { id: string; referenceNumber: string; reviewType: string; hostOrganization: { nameEn: string; organizationCode: string | null; country: string | null }; requestedDate: Date | string }) => (
         <Card
           key={review.id}
           className={cn(
@@ -244,7 +244,7 @@ function RecentDecisions() {
 
   return (
     <div className="space-y-3">
-      {decisions.map((decision) => (
+      {decisions.map((decision: { id: string; status: string; review: { hostOrganization: { nameEn: string }; referenceNumber: string }; approvedBy?: { firstName: string; lastName: string } | null; approvedAt?: Date | string | null }) => (
         <div
           key={decision.id}
           className="flex items-center gap-3 p-3 border rounded-lg"
@@ -293,7 +293,7 @@ export function ApprovalsPageClient({}: ApprovalsPageClientProps) {
 
   const { data: pendingReviews } = trpc.review.getPendingApprovals.useQuery();
 
-  const selectedReview = pendingReviews?.find((r) => r.id === selectedReviewId);
+  const selectedReview = pendingReviews?.find((r: { id: string }) => r.id === selectedReviewId);
 
   return (
     <div className="container mx-auto py-6 space-y-6">

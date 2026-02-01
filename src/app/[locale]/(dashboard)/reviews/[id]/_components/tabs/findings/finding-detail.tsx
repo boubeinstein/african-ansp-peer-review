@@ -370,7 +370,7 @@ export function FindingDetail({
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {finding.documents.map((doc) => (
+              {finding.documents.map((doc: { id: string; name?: string | null; originalName?: string | null; fileUrl?: string | null }) => (
                 <div
                   key={doc.id}
                   className="flex items-center justify-between p-2 bg-muted/50 rounded"

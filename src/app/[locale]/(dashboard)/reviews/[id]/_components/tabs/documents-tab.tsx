@@ -74,7 +74,7 @@ export function DocumentsTab({ review }: DocumentsTabProps) {
 
   // Transform documents data to match DocumentList interface
   const documents =
-    documentsData?.map((doc) => ({
+    documentsData?.map((doc: { id: string; name?: string | null; originalName?: string | null; category: string; fileType?: string | null; fileSize?: number | null; status?: string | null; uploadedBy?: { id: string; firstName: string; lastName: string } | null; createdAt: Date | string; fileUrl?: string | null }) => ({
       id: doc.id,
       name: doc.name || doc.originalName || "Unnamed",
       category: doc.category,

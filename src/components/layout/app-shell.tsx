@@ -28,7 +28,7 @@ export function AppShell({ children, locale, user }: AppShellProps) {
           <Header locale={locale} user={user} />
           <main
             id="main-content"
-            className="flex-1 overflow-y-auto overflow-x-hidden bg-muted/30 p-6 pb-20 md:pb-6"
+            className="flex-1 overflow-y-auto overflow-x-hidden bg-slate-50 dark:bg-slate-950 p-6 pb-20 md:pb-6"
             tabIndex={-1}
             suppressHydrationWarning
           >

@@ -202,7 +202,7 @@ export function DiscussionDetail({ discussionId, reviewId, onBack }: DiscussionD
             {t("replies", { count: discussion.replies.length })}
           </h3>
 
-          {discussion.replies.map((reply) => {
+          {discussion.replies.map((reply: { id: string; content: string; createdAt: Date | string; author: { firstName: string; lastName: string } }) => {
             const replyAuthorName = `${reply.author.firstName} ${reply.author.lastName}`;
             return (
               <Card key={reply.id} className="bg-muted/30">

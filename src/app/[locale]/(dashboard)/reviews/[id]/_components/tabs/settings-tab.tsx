@@ -81,13 +81,14 @@ export function SettingsTab({ review, canEdit = true }: SettingsTabProps) {
       : review.hostOrganization.nameEn;
 
   // Find lead reviewer from team members
+  type TeamMemberType = { id: string; role: string; user: { firstName: string; lastName: string; email: string } };
   const leadReviewer = review.teamMembers.find(
-    (m) => m.role === "LEAD_REVIEWER"
+    (m: TeamMemberType) => m.role === "LEAD_REVIEWER"
   );
 
   // Get non-lead team members
-  const teamMembers = review.teamMembers.filter(
-    (m) => m.role !== "LEAD_REVIEWER"
+  const teamMembers: TeamMemberType[] = review.teamMembers.filter(
+    (m: TeamMemberType) => m.role !== "LEAD_REVIEWER"
   );
 
   const handleDelete = async () => {
@@ -362,7 +363,7 @@ export function SettingsTab({ review, canEdit = true }: SettingsTabProps) {
         <CardContent>
           {review.assessments && review.assessments.length > 0 ? (
             <div className="space-y-2">
-              {review.assessments.map((assessment) => (
+              {review.assessments.map((assessment: { id: string; title: string; status: string }) => (
                 <div
                   key={assessment.id}
                   className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"

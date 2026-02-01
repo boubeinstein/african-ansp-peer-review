@@ -1,8 +1,7 @@
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
-import type { Prisma } from "@prisma/client";
 
-// Define the include type for type safety
+// Define the include for the review query
 const reviewInclude = {
   hostOrganization: {
     select: { id: true, organizationCode: true, nameEn: true, nameFr: true },
@@ -32,11 +31,7 @@ const reviewInclude = {
   report: {
     select: { id: true, status: true },
   },
-} satisfies Prisma.ReviewInclude;
-
-export type ReviewWithRelations = Prisma.ReviewGetPayload<{
-  include: typeof reviewInclude;
-}>;
+} as const;
 
 export interface ReviewCounts {
   discussions: number;
@@ -59,12 +54,12 @@ export async function fetchReviewWithCounts(reviewId: string) {
   // Compute counts for tab badges
   const counts: ReviewCounts = {
     discussions: review.discussions.length,
-    openDiscussions: review.discussions.filter(d => !d.isResolved).length,
+    openDiscussions: review.discussions.filter((d: { isResolved: boolean }) => !d.isResolved).length,
     tasks: review.tasks.length,
-    openTasks: review.tasks.filter(t => t.status !== "COMPLETED" && t.status !== "CANCELLED").length,
+    openTasks: review.tasks.filter((t: { status: string }) => t.status !== "COMPLETED" && t.status !== "CANCELLED").length,
     documents: review.documents.length,
     findings: review.findings.length,
-    criticalFindings: review.findings.filter(f => f.severity === "CRITICAL").length,
+    criticalFindings: review.findings.filter((f: { severity: string }) => f.severity === "CRITICAL").length,
   };
 
   // Transform hostOrganization to match expected interface

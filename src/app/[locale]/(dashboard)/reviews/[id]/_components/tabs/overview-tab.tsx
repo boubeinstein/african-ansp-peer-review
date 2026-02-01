@@ -13,16 +13,18 @@ import { HostCard } from "./overview/host-card";
 interface OverviewTabProps {
   review: ReviewData;
   counts: ReviewCounts;
-  fieldworkProgress?: {
-    total: number;
-    completed: number;
-    percentage: number;
-  };
   canEdit?: boolean;
 }
 
-export function OverviewTab({ review, counts, fieldworkProgress, canEdit = true }: OverviewTabProps) {
-  // Determine current phase based on status
+export function OverviewTab({ review, counts, canEdit = true }: OverviewTabProps) {
+  /**
+   * Determine current phase based on review status.
+   * This maps the detailed ReviewStatus enum to the 4-phase UI model:
+   * - PLANNING: Initial request through team planning
+   * - PREPARATION: Scheduled, preparing for on-site visit
+   * - ON_SITE: Active fieldwork in progress
+   * - POST_REVIEW: Report drafting through completion
+   */
   const getCurrentPhase = (): "PLANNING" | "PREPARATION" | "ON_SITE" | "POST_REVIEW" => {
     switch (review.status) {
       case "REQUESTED":
@@ -43,11 +45,12 @@ export function OverviewTab({ review, counts, fieldworkProgress, canEdit = true 
     }
   };
 
-  const defaultFieldworkProgress = fieldworkProgress || { total: 14, completed: 12, percentage: 86 };
+  // Team member type
+  type TeamMember = { role: string; user: { id: string; firstName: string; lastName: string } };
 
   // Transform teamMembers to lead reviewer and reviewers
-  const leadReviewer = review.teamMembers.find(tm => tm.role === "LEAD_REVIEWER");
-  const reviewers = review.teamMembers.filter(tm => tm.role !== "LEAD_REVIEWER");
+  const leadReviewer = review.teamMembers.find((tm: TeamMember) => tm.role === "LEAD_REVIEWER");
+  const reviewers = review.teamMembers.filter((tm: TeamMember) => tm.role !== "LEAD_REVIEWER");
 
   // Transform team member data for TeamCard
   const transformedLeadReviewer = leadReviewer ? {
@@ -57,7 +60,7 @@ export function OverviewTab({ review, counts, fieldworkProgress, canEdit = true 
     role: leadReviewer.role,
   } : null;
 
-  const transformedReviewers = reviewers.map(tm => ({
+  const transformedReviewers = reviewers.map((tm: TeamMember) => ({
     id: tm.user.id,
     name: `${tm.user.firstName} ${tm.user.lastName}`,
     image: null,
@@ -103,10 +106,9 @@ export function OverviewTab({ review, counts, fieldworkProgress, canEdit = true 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-6">
         {/* Left Column - 3/5 width on large screens */}
         <div className="lg:col-span-3 space-y-4 md:space-y-6">
-          {/* Progress Dashboard */}
+          {/* Progress Dashboard - Phase-based progress aligned with review status */}
           <ProgressDashboard
             currentPhase={getCurrentPhase()}
-            fieldworkProgress={defaultFieldworkProgress}
             status={review.status}
           />
 

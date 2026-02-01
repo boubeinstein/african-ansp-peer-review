@@ -208,12 +208,12 @@ export function ReviewerCreateForm({ locale }: ReviewerCreateFormProps) {
 
   // Auto-select organization when user is selected
   const selectedUserId = useWatch({ control: form.control, name: "userId" });
-  const selectedUser = availableUsers?.find((u) => u.id === selectedUserId);
+  const selectedUser = availableUsers?.find((u: { id: string }) => u.id === selectedUserId);
 
   // When user changes, auto-fill organization if user has one
   const handleUserChange = (userId: string) => {
     form.setValue("userId", userId);
-    const user = availableUsers?.find((u) => u.id === userId);
+    const user = availableUsers?.find((u: { id: string }) => u.id === userId);
     if (user?.organizationId) {
       form.setValue("homeOrganizationId", user.organizationId);
     }
@@ -263,7 +263,7 @@ export function ReviewerCreateForm({ locale }: ReviewerCreateFormProps) {
                       <SelectContent>
                         <ScrollArea className="h-[200px]">
                           {availableUsers && availableUsers.length > 0 ? (
-                            availableUsers.map((user) => (
+                            availableUsers.map((user: { id: string; name: string | null; email: string; organization?: { nameEn: string } | null }) => (
                               <SelectItem key={user.id} value={user.id}>
                                 {user.name || user.email}
                                 {user.organization && ` (${user.organization.nameEn})`}
@@ -318,7 +318,7 @@ export function ReviewerCreateForm({ locale }: ReviewerCreateFormProps) {
                       </FormControl>
                       <SelectContent>
                         <ScrollArea className="h-[200px]">
-                          {organizations?.map((org) => (
+                          {organizations?.map((org: { id: string; nameEn: string; nameFr: string; organizationCode: string | null }) => (
                             <SelectItem key={org.id} value={org.id}>
                               {currentLocale === "fr" ? org.nameFr : org.nameEn} ({org.organizationCode})
                             </SelectItem>

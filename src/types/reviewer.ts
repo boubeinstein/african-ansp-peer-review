@@ -5,17 +5,20 @@
  * @module types/reviewer
  */
 
-import type {
-  ReviewerProfile as PrismaReviewerProfile,
-  ReviewerExpertise as PrismaReviewerExpertise,
-  ReviewerLanguage as PrismaReviewerLanguage,
-  ReviewerCertification as PrismaReviewerCertification,
-  ReviewerTraining as PrismaReviewerTraining,
-  ReviewerAvailability as PrismaReviewerAvailability,
-  ReviewerCOI as PrismaReviewerCOI,
-  User,
-  Organization,
-} from "@prisma/client";
+import {
+  ReviewerSelectionStatus,
+  ReviewerType,
+  ContactMethod,
+  ExpertiseArea,
+  ProficiencyLevel,
+  Language,
+  LanguageProficiency,
+  AvailabilityType,
+  COIType,
+  CertificationType,
+  TrainingType,
+  TrainingStatus,
+} from "@/types/prisma-enums";
 
 // ============================================
 // ENUM RE-EXPORTS (for client-side use)
@@ -34,7 +37,90 @@ export {
   CertificationType,
   TrainingType,
   TrainingStatus,
-} from "@prisma/client";
+};
+
+// ============================================
+// BASE TYPES (for extending) - Permissive to match Prisma
+// ============================================
+
+interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+interface Organization {
+  id: string;
+  nameEn: string;
+  nameFr: string;
+  organizationCode: string | null;
+  country: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type PrismaReviewerProfile = Record<string, any> & {
+  id: string;
+  userId: string;
+  reviewerType: ReviewerType;
+  selectionStatus: ReviewerSelectionStatus;
+  isLeadQualified: boolean;
+  currentPosition: string;
+  homeOrganizationId: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type PrismaReviewerExpertise = Record<string, any> & {
+  id: string;
+  reviewerProfileId: string;
+  area: ExpertiseArea;
+  proficiencyLevel: ProficiencyLevel;
+  yearsExperience: number | null;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type PrismaReviewerLanguage = Record<string, any> & {
+  id: string;
+  reviewerProfileId: string;
+  language: Language;
+  proficiency: LanguageProficiency;
+  canConductInterviews: boolean;
+  canWriteReports: boolean;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type PrismaReviewerCertification = Record<string, any> & {
+  id: string;
+  reviewerProfileId: string;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type PrismaReviewerTraining = Record<string, any> & {
+  id: string;
+  reviewerProfileId: string;
+  trainingType: TrainingType;
+  status: TrainingStatus;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type PrismaReviewerAvailability = Record<string, any> & {
+  id: string;
+  reviewerProfileId: string;
+  startDate: Date;
+  endDate: Date;
+  availabilityType: AvailabilityType;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type PrismaReviewerCOI = Record<string, any> & {
+  id: string;
+  reviewerProfileId: string;
+  organizationId: string;
+  coiType: COIType;
+  isActive: boolean;
+};
 
 // ============================================
 // TYPE RE-EXPORTS

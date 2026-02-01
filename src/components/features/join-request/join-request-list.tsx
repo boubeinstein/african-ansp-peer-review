@@ -46,6 +46,23 @@ interface JoinRequestListProps {
   userId: string;
 }
 
+interface JoinRequestItem {
+  id: string;
+  status: JoinRequestStatus;
+  contactName: string;
+  contactEmail: string;
+  organizationName?: string | null;
+  organizationCode?: string | null;
+  organizationCountry?: string | null;
+  createdAt: Date | string;
+  organization?: {
+    nameEn: string;
+    nameFr: string;
+    organizationCode?: string | null;
+    country?: string | null;
+  } | null;
+}
+
 const statusConfig: Record<
   JoinRequestStatus,
   { icon: typeof Clock; color: string; bgColor: string }
@@ -102,7 +119,7 @@ export function JoinRequestList({ userRole, userId }: JoinRequestListProps) {
   ];
 
   // Filter items based on tab
-  const filteredItems = data?.items.filter((item) => {
+  const filteredItems = data?.items.filter((item: JoinRequestItem) => {
     switch (activeTab) {
       case "pending":
         return item.status === JoinRequestStatus.PENDING;

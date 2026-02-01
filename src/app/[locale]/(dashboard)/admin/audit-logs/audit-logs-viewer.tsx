@@ -625,7 +625,7 @@ export function AuditLogsViewer({ locale }: AuditLogsViewerProps) {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">{t("allActions")}</SelectItem>
-                    {actions?.map((a: string) => (
+                    {(actions as string[])?.map((a) => (
                         <SelectItem key={a} value={a}>
                         {a.replace(/_/g, " ")}
                       </SelectItem>

@@ -5,8 +5,17 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, FileText, ScrollText } from "lucide-react";
 import { ICAO_REFERENCE_TYPES } from "@/lib/questionnaire/constants";
-import type { ICAOReference, ICAOReferenceType } from "@prisma/client";
+import type { ICAOReferenceType } from "@/types/prisma-enums";
 import type { ContentLanguage } from "./language-toggle";
+
+// Local interface to avoid importing from @prisma/client in client component
+interface ICAOReference {
+  id: string;
+  referenceType: ICAOReferenceType;
+  document: string;
+  chapter?: string | null;
+  description?: string | null;
+}
 
 interface ICAOReferenceListProps {
   references: ICAOReference[];

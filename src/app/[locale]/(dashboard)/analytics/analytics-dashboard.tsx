@@ -277,20 +277,11 @@ export function AnalyticsDashboard({ locale }: AnalyticsDashboardProps) {
     teamLoading ||
     overdueLoading;
 
-  // Combine all overdue items
+  // Combine all overdue items (router already provides type field)
   const allOverdueItems: OverdueItem[] = [
-    ...(overdueItems?.overdueCaps || []).map((item) => ({
-      ...item,
-      type: "CAP" as const,
-    })),
-    ...(overdueItems?.overdueReviews || []).map((item) => ({
-      ...item,
-      type: "REVIEW" as const,
-    })),
-    ...(overdueItems?.findingsWithoutCap || []).map((item) => ({
-      ...item,
-      type: "FINDING" as const,
-    })),
+    ...(overdueItems?.overdueCaps || []),
+    ...(overdueItems?.overdueReviews || []),
+    ...(overdueItems?.findingsWithoutCap || []),
   ].sort((a, b) => b.daysOverdue - a.daysOverdue);
 
   return (

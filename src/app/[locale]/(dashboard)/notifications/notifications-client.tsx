@@ -43,6 +43,20 @@ import { fr, enUS } from "date-fns/locale";
 import Link from "next/link";
 import { NotificationType, NotificationPriority } from "@/types/prisma-enums";
 
+interface Notification {
+  id: string;
+  type: NotificationType;
+  priority: NotificationPriority;
+  titleEn: string;
+  titleFr: string;
+  messageEn: string;
+  messageFr: string;
+  readAt?: Date | string | null;
+  createdAt: Date | string;
+  linkUrl?: string | null;
+  actionUrl?: string | null;
+}
+
 const priorityColors: Record<NotificationPriority, string> = {
   LOW: "bg-gray-100 text-gray-800 border-gray-200",
   NORMAL: "bg-blue-100 text-blue-800 border-blue-200",
@@ -405,7 +419,7 @@ export function NotificationsClient({ locale }: NotificationsClientProps) {
 
               {/* Notification Items */}
               <div className="divide-y">
-                {notifications.map((notification) => (
+                {notifications.map((notification: Notification) => (
                   <div
                     key={notification.id}
                     className={cn(

@@ -63,8 +63,8 @@ export function BestPracticesContent({
         category={category}
         auditArea={auditArea}
         sortBy={sortBy}
-        categories={categories || []}
-        auditAreas={auditAreas || []}
+        categories={(categories || []) as BestPracticeCategory[]}
+        auditAreas={(auditAreas || []) as string[]}
       />
 
       {/* Grid */}

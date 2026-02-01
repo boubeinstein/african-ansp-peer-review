@@ -190,7 +190,7 @@ export function NotificationsClient({ locale }: NotificationsClientProps) {
     if (selectedIds.length === notifications.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(notifications.map((n) => n.id));
+      setSelectedIds(notifications.map((n: { id: string }) => n.id));
     }
   };
 

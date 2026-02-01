@@ -388,7 +388,7 @@ export function FindingDetailClient({ findingId }: FindingDetailClientProps) {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
-                  {finding.documents.map((doc) => (
+                  {finding.documents.map((doc: { id: string; name: string }) => (
                     <li key={doc.id} className="flex items-center gap-2">
                       <FileText className="h-4 w-4 text-muted-foreground" />
                       <span className="text-sm">{doc.name}</span>

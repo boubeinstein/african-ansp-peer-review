@@ -267,10 +267,10 @@ export function FindingDetailClient({ findingId }: FindingDetailClientProps) {
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <Badge variant="outline">{finding.referenceNumber}</Badge>
-                    <Badge {...TYPE_STYLES[finding.findingType]}>
+                    <Badge {...TYPE_STYLES[finding.findingType as FindingType]}>
                       {t(`type.${finding.findingType}`)}
                     </Badge>
-                    <Badge {...SEVERITY_STYLES[finding.severity]}>
+                    <Badge {...SEVERITY_STYLES[finding.severity as FindingSeverity]}>
                       {t(`severity.${finding.severity}`)}
                     </Badge>
                   </div>
@@ -278,8 +278,8 @@ export function FindingDetailClient({ findingId }: FindingDetailClientProps) {
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge
-                    {...STATUS_STYLES[finding.status]}
-                    className={STATUS_STYLES[finding.status].className}
+                    {...STATUS_STYLES[finding.status as FindingStatus]}
+                    className={STATUS_STYLES[finding.status as FindingStatus].className}
                   >
                     {t(`status.${finding.status}`)}
                   </Badge>

@@ -71,7 +71,7 @@ export function MatchingPageClient({ locale }: MatchingPageClientProps) {
     );
 
   // Get selected organization details
-  const selectedOrg = organizations?.find((org) => org.id === selectedOrgId);
+  const selectedOrg = organizations?.find((org: { id: string }) => org.id === selectedOrgId);
 
   // Transform reviewers to match expected type (items include canEdit from RBAC)
   const availableReviewers: ReviewerProfileFull[] =

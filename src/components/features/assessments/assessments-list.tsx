@@ -31,6 +31,31 @@ import {
 import { cn } from "@/lib/utils";
 import type { AssessmentStatus, QuestionnaireType } from "@/types/prisma-enums";
 
+// Type for assessment list items from tRPC
+interface AssessmentListItem {
+  id: string;
+  referenceNumber: string | null;
+  title: string;
+  status: AssessmentStatus;
+  progress: number;
+  dueDate: Date | string | null;
+  updatedAt: Date | string;
+  eiScore: number | null;
+  overallScore: number | null;
+  maturityLevel: string | null;
+  questionnaire: {
+    id: string;
+    type: string;
+    titleEn: string;
+    titleFr: string;
+  };
+  organization: {
+    id: string;
+    nameEn: string;
+    nameFr: string;
+  };
+}
+
 interface AssessmentsListProps {
   organizationId?: string;
   status?: string;
@@ -160,7 +185,7 @@ export function AssessmentsList({
   return (
     <>
       <div className="space-y-4">
-        {assessments.map((assessment) => (
+        {assessments.map((assessment: AssessmentListItem) => (
           <Card key={assessment.id} className="hover:shadow-md transition-shadow">
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

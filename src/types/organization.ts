@@ -8,17 +8,35 @@
  */
 
 import { z } from "zod";
-import type {
-  Organization as PrismaOrganization,
-  AfricanRegion,
-  MembershipStatus,
-} from "@prisma/client";
+import { AfricanRegion, MembershipStatus } from "@/types/prisma-enums";
 
 // ============================================
 // ENUM RE-EXPORTS (for client-side use)
 // ============================================
 
-export { AfricanRegion, MembershipStatus } from "@prisma/client";
+export { AfricanRegion, MembershipStatus };
+
+// ============================================
+// BASE ORGANIZATION TYPE (for extending)
+// ============================================
+
+interface PrismaOrganization {
+  id: string;
+  nameEn: string;
+  nameFr: string;
+  organizationCode: string | null;
+  country: string;
+  region: AfricanRegion;
+  city: string | null;
+  peerReviewTeam: number | null;
+  membershipStatus: MembershipStatus;
+  joinedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+  joinedProgrammeAt: Date | null;
+  participationStatus: string;
+  regionalTeamId: string | null;
+}
 
 // ============================================
 // ZOD SCHEMAS

@@ -1,3 +1,5 @@
+
+
 "use client";
 
 /**
@@ -277,15 +279,15 @@ export function AnalyticsDashboard({ locale }: AnalyticsDashboardProps) {
 
   // Combine all overdue items
   const allOverdueItems: OverdueItem[] = [
-    ...(overdueItems?.overdueCaps || []).map((item: any) => ({
+    ...(overdueItems?.overdueCaps || []).map((item) => ({
       ...item,
       type: "CAP" as const,
     })),
-    ...(overdueItems?.overdueReviews || []).map((item: any) => ({
+    ...(overdueItems?.overdueReviews || []).map((item) => ({
       ...item,
       type: "REVIEW" as const,
     })),
-    ...(overdueItems?.findingsWithoutCap || []).map((item: any) => ({
+    ...(overdueItems?.findingsWithoutCap || []).map((item) => ({
       ...item,
       type: "FINDING" as const,
     })),

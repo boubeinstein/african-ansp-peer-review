@@ -121,7 +121,7 @@ export default async function RegionalTeamsPage() {
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {teams.map((team: any) => (
+          {teams.map((team) => (
             <RegionalTeamCard key={team.id} team={team} locale={locale} />
           ))}
         </div>

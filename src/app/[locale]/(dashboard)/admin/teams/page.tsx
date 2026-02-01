@@ -18,9 +18,7 @@ import { Users, Globe } from "lucide-react";
 // =============================================================================
 
 async function getRegionalTeams() {
-  const prisma = db;
-
-  const teams = await prisma.regionalTeam.findMany({
+  const teams = await db.regionalTeam.findMany({
     orderBy: { teamNumber: "asc" },
     include: {
       leadOrganization: {
@@ -50,6 +48,8 @@ async function getRegionalTeams() {
 
   return teams;
 }
+
+type RegionalTeam = Awaited<ReturnType<typeof getRegionalTeams>>[number];
 
 // =============================================================================
 // PAGE COMPONENT
@@ -121,7 +121,7 @@ export default async function RegionalTeamsPage() {
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {teams.map((team) => (
+          {teams.map((team: RegionalTeam) => (
             <RegionalTeamCard key={team.id} team={team} locale={locale} />
           ))}
         </div>

@@ -9,7 +9,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
-import { BestPracticeCategory } from "@prisma/client";
+// Local type to avoid @prisma/client in client component
+const BestPracticeCategory = {
+  SAFETY_MANAGEMENT: "SAFETY_MANAGEMENT",
+  OPERATIONAL_EFFICIENCY: "OPERATIONAL_EFFICIENCY",
+  TRAINING_COMPETENCY: "TRAINING_COMPETENCY",
+  TECHNOLOGY_INNOVATION: "TECHNOLOGY_INNOVATION",
+  REGULATORY_COMPLIANCE: "REGULATORY_COMPLIANCE",
+  STAKEHOLDER_ENGAGEMENT: "STAKEHOLDER_ENGAGEMENT",
+} as const;
+type BestPracticeCategory = (typeof BestPracticeCategory)[keyof typeof BestPracticeCategory];
 
 import { Button } from "@/components/ui/button";
 import {

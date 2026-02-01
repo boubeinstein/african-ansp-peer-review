@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/prisma-enums";
 import { canSubmitBestPractice } from "@/lib/permissions";
 import { BestPracticeForm } from "./_components/best-practice-form";
 

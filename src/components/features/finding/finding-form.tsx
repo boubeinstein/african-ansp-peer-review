@@ -452,7 +452,7 @@ export function FindingForm({
                                 Type at least 2 characters to search
                               </div>
                             )}
-                            {questionsQuery.data?.questions.map((q) => (
+                            {questionsQuery.data?.questions.map((q: Question) => (
                               <button
                                 key={q.id}
                                 type="button"

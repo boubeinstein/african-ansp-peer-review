@@ -32,7 +32,7 @@ export function RelatedPractices({
 
   // Filter out current practice and limit to 3
   const relatedPractices = data?.items
-    .filter((p) => p.id !== currentId)
+    .filter((p: { id: string }) => p.id !== currentId)
     .slice(0, 3) || [];
 
   // Loading state

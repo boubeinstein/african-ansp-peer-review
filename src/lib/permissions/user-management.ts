@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/prisma-enums";
 
 /**
  * Enterprise User Role Management Permissions

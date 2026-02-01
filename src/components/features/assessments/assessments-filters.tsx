@@ -67,7 +67,7 @@ export function AssessmentsFilters({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t("allOrganizations")}</SelectItem>
-            {organizations.map((org) => (
+            {organizations.map((org: { id: string; nameEn: string; nameFr: string; organizationCode: string | null }) => (
               <SelectItem key={org.id} value={org.id}>
                 {locale === "fr" ? org.nameFr : org.nameEn} ({org.organizationCode})
               </SelectItem>

@@ -22,6 +22,20 @@ interface DiscussionThreadProps {
   userRole?: string;
 }
 
+interface CommentAuthor {
+  firstName: string;
+  lastName: string;
+  organization?: { organizationCode: string | null } | null;
+}
+
+interface Comment {
+  id: string;
+  content: string;
+  createdAt: Date | string;
+  author: CommentAuthor;
+  replies?: Comment[];
+}
+
 export function DiscussionThread({
   bestPracticeId,
   locale,
@@ -103,7 +117,7 @@ export function DiscussionThread({
 
   const totalComments =
     (comments?.length || 0) +
-    (comments?.reduce((acc: number, c: { replies?: unknown[] }) => acc + (c.replies?.length || 0), 0) || 0);
+    (comments?.reduce((acc: number, c: Comment) => acc + (c.replies?.length || 0), 0) || 0);
 
   return (
     <Card>
@@ -167,7 +181,7 @@ export function DiscussionThread({
           </div>
         ) : (
           <div className="space-y-6">
-            {comments.map((comment) => (
+            {comments.map((comment: Comment) => (
               <div key={comment.id} className="space-y-4">
                 {/* Main comment */}
                 <div className="flex gap-3">

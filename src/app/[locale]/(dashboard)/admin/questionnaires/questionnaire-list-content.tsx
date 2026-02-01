@@ -193,7 +193,7 @@ export function QuestionnaireListContent({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                  {questionnaires.map((q) => (
+                  {questionnaires.map((q: { _count: { assessments: number; categories: number; questions: number }; type: string; id: string; isActive: boolean; code: string; titleEn: string; titleFr: string; version: string; effectiveDate: Date }) => (
                   <TableRow key={q.id} className={cn(!q.isActive && "opacity-60")}>
                     <TableCell>
                       <Badge

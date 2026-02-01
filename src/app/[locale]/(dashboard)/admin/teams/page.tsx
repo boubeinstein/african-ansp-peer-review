@@ -5,9 +5,7 @@
  */
 
 import { getLocale } from "next-intl/server";
-import { Pool } from "pg";
-import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "@prisma/client";
+import { db } from "@/lib/db";
 
 // Components
 import { RegionalTeamCard } from "@/components/features/teams/regional-team-card";
@@ -20,44 +18,37 @@ import { Users, Globe } from "lucide-react";
 // =============================================================================
 
 async function getRegionalTeams() {
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-  const adapter = new PrismaPg(pool);
-  const prisma = new PrismaClient({ adapter });
+  const prisma = db;
 
-  try {
-    const teams = await prisma.regionalTeam.findMany({
-      orderBy: { teamNumber: "asc" },
-      include: {
-        leadOrganization: {
-          select: {
-            id: true,
-            nameEn: true,
-            nameFr: true,
-            organizationCode: true,
-            country: true,
-          },
-        },
-        memberOrganizations: {
-          select: {
-            id: true,
-            nameEn: true,
-            nameFr: true,
-            organizationCode: true,
-            country: true,
-          },
-          orderBy: { nameEn: "asc" },
-        },
-        _count: {
-          select: { memberOrganizations: true },
+  const teams = await prisma.regionalTeam.findMany({
+    orderBy: { teamNumber: "asc" },
+    include: {
+      leadOrganization: {
+        select: {
+          id: true,
+          nameEn: true,
+          nameFr: true,
+          organizationCode: true,
+          country: true,
         },
       },
-    });
+      memberOrganizations: {
+        select: {
+          id: true,
+          nameEn: true,
+          nameFr: true,
+          organizationCode: true,
+          country: true,
+        },
+        orderBy: { nameEn: "asc" },
+      },
+      _count: {
+        select: { memberOrganizations: true },
+      },
+    },
+  });
 
-    return teams;
-  } finally {
-    await prisma.$disconnect();
-    await pool.end();
-  }
+  return teams;
 }
 
 // =============================================================================

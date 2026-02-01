@@ -6,7 +6,7 @@
  * - CANSO Standard of Excellence (SoE) for SMS assessments
  */
 
-import type { QuestionnaireType, SMSComponent, CANSOStudyArea, USOAPAuditArea, CriticalElement } from "@prisma/client";
+import type { QuestionnaireType, SMSComponent, CANSOStudyArea, USOAPAuditArea, CriticalElement } from "@/types/prisma-enums";
 
 // =============================================================================
 // ENUMS & LITERAL TYPES

@@ -5,7 +5,7 @@
  * and dashboard layout settings for the AAPRP dashboard.
  */
 
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/prisma-enums";
 import {
   Building2,
   Users,

@@ -6,7 +6,7 @@
  */
 
 import { z } from "zod";
-import { MaturityLevel } from "@prisma/client";
+import { MaturityLevel } from "@/types/prisma-enums";
 
 // =============================================================================
 // ANS RESPONSE VALUES (USOAP CMA)

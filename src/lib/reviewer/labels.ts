@@ -18,7 +18,7 @@ import type {
   AvailabilityType,
   COIType,
   ContactMethod,
-} from "@prisma/client";
+} from "@/types/prisma-enums";
 
 type BilingualLabel = { en: string; fr: string };
 

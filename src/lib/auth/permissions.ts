@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/prisma-enums";
 
 export type Permission =
   | "users:read" | "users:create" | "users:update" | "users:delete"

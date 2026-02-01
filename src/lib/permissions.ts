@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/prisma-enums";
 
 // Roles that represent programme-level oversight (no ANSP affiliation required)
 export const OVERSIGHT_ROLES: UserRole[] = [

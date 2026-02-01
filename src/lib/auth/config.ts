@@ -2,7 +2,7 @@ import { type NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
-import { UserRole, Locale } from "@prisma/client";
+import { UserRole, Locale } from "@/types/prisma-enums";
 
 export const authConfig: NextAuthConfig = {
   session: {

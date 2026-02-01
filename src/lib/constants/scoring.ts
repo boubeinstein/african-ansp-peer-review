@@ -10,7 +10,7 @@ import type {
   CriticalElement,
   SMSComponent,
   CANSOStudyArea,
-} from "@prisma/client";
+} from "@/types/prisma-enums";
 
 // =============================================================================
 // ICAO CRITICAL ELEMENTS

@@ -5,7 +5,7 @@
  * to ensure consistent counting between UI and server.
  */
 
-import type { QuestionnaireType } from "@prisma/client";
+import type { QuestionnaireType } from "@/types/prisma-enums";
 
 /**
  * Valid ANS response values that count as "answered"

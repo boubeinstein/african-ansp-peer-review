@@ -13,7 +13,7 @@ import type {
 } from "./types";
 import { maturityLevelToScore } from "./scoring";
 import { getMaturityLevelFromScore } from "./constants";
-import type { QuestionnaireType } from "@prisma/client";
+import type { QuestionnaireType } from "@/types/prisma-enums";
 import {
   isANSResponseAnswered,
   isSMSResponseAnswered,

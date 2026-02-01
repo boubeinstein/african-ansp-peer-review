@@ -1,4 +1,4 @@
-import { UserRole, Locale } from "@prisma/client";
+import { UserRole, Locale } from "@/types/prisma-enums";
 import type { DefaultSession } from "next-auth";
 
 declare module "next-auth" {

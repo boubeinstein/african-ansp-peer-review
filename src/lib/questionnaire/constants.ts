@@ -6,7 +6,7 @@ import type {
   MaturityLevel,
   TransversalArea,
   ICAOReferenceType,
-} from "@prisma/client";
+} from "@/types/prisma-enums";
 import type {
   AuditAreaMeta,
   CriticalElementMeta,

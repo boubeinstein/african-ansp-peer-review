@@ -7,7 +7,7 @@
  * @module lib/availability/utils
  */
 
-import type { AvailabilityType } from "@prisma/client";
+import type { AvailabilityType } from "@/types/prisma-enums";
 import type {
   AvailabilitySlot,
   DateRange,

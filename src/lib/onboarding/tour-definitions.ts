@@ -5,7 +5,7 @@
  * Tours are customized based on user roles to highlight relevant features.
  */
 
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

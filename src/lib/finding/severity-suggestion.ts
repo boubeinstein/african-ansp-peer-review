@@ -10,7 +10,7 @@ import type {
   FindingSeverity,
   USOAPAuditArea,
   CriticalElement,
-} from "@prisma/client";
+} from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES

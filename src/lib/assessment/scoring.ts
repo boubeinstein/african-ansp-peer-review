@@ -18,7 +18,7 @@ import {
   getMaturityLevelFromScore,
   SMS_MATURITY_LEVELS,
 } from "./constants";
-import type { USOAPAuditArea, CriticalElement, SMSComponent, CANSOStudyArea } from "@prisma/client";
+import type { USOAPAuditArea, CriticalElement, SMSComponent, CANSOStudyArea } from "@/types/prisma-enums";
 import {
   isANSResponseAnswered,
   isSMSResponseAnswered,

@@ -144,7 +144,7 @@ export function QuestionnaireListContent({
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-emerald-600">
-              {questionnaires?.filter((q) => q.isActive).length || 0}
+              {questionnaires?.filter((q: { isActive: boolean }) => q.isActive).length || 0}
             </p>
           </CardContent>
         </Card>
@@ -156,7 +156,7 @@ export function QuestionnaireListContent({
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-blue-600">
-              {questionnaires?.filter((q) => q.type === "ANS_USOAP_CMA").length || 0}
+              {questionnaires?.filter((q: { type: string }) => q.type === "ANS_USOAP_CMA").length || 0}
             </p>
           </CardContent>
         </Card>
@@ -168,7 +168,7 @@ export function QuestionnaireListContent({
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-emerald-600">
-              {questionnaires?.filter((q) => q.type === "SMS_CANSO_SOE").length || 0}
+              {questionnaires?.filter((q: { type: string }) => q.type === "SMS_CANSO_SOE").length || 0}
             </p>
           </CardContent>
         </Card>
@@ -193,7 +193,7 @@ export function QuestionnaireListContent({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {questionnaires.map((q) => (
+                  {questionnaires.map((q) => (
                   <TableRow key={q.id} className={cn(!q.isActive && "opacity-60")}>
                     <TableCell>
                       <Badge

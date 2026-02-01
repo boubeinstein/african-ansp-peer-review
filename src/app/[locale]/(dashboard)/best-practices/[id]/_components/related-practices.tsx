@@ -15,6 +15,21 @@ interface RelatedPracticesProps {
   locale: string;
 }
 
+interface RelatedPractice {
+  id: string;
+  referenceNumber: string;
+  titleEn: string;
+  titleFr: string;
+  viewCount: number;
+  organization: {
+    nameEn: string;
+    nameFr: string;
+  };
+  _count: {
+    adoptions: number;
+  };
+}
+
 export function RelatedPractices({
   currentId,
   category,
@@ -31,7 +46,7 @@ export function RelatedPractices({
   });
 
   // Filter out current practice and limit to 3
-  const relatedPractices = data?.items
+  const relatedPractices: RelatedPractice[] = data?.items
     .filter((p: { id: string }) => p.id !== currentId)
     .slice(0, 3) || [];
 

@@ -75,7 +75,7 @@ export function BestPracticeDetail({
   const isOwnOrg = practice.organizationId === userOrgId;
   const canAdopt = !!userOrgId && !isOwnOrg && practice.status === "PUBLISHED";
   const hasAdopted = practice.adoptions.some(
-    (a) => a.organization.id === userOrgId
+    (a: { organization: { id: string } }) => a.organization.id === userOrgId
   );
 
   // Get practice reference for breadcrumb

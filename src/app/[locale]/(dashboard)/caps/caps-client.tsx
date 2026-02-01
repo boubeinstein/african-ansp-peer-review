@@ -47,7 +47,21 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { CAPStatus, FindingSeverity } from "@prisma/client";
+// Local types to avoid @prisma/client in client component
+// CAPStatus as both type and value
+const CAPStatus = {
+  DRAFT: "DRAFT",
+  SUBMITTED: "SUBMITTED",
+  UNDER_REVIEW: "UNDER_REVIEW",
+  ACCEPTED: "ACCEPTED",
+  REJECTED: "REJECTED",
+  IN_PROGRESS: "IN_PROGRESS",
+  COMPLETED: "COMPLETED",
+  VERIFIED: "VERIFIED",
+  CLOSED: "CLOSED",
+} as const;
+type CAPStatus = (typeof CAPStatus)[keyof typeof CAPStatus];
+type FindingSeverity = "CRITICAL" | "MAJOR" | "MINOR" | "OBSERVATION";
 import { CAPCard } from "@/components/features/cap/cap-card";
 import { CAPStatusBadge } from "@/components/features/cap/cap-status-badge";
 

@@ -277,15 +277,15 @@ export function AnalyticsDashboard({ locale }: AnalyticsDashboardProps) {
 
   // Combine all overdue items
   const allOverdueItems: OverdueItem[] = [
-    ...(overdueItems?.overdueCaps || []).map((item) => ({
+    ...(overdueItems?.overdueCaps || []).map((item: any) => ({
       ...item,
       type: "CAP" as const,
     })),
-    ...(overdueItems?.overdueReviews || []).map((item) => ({
+    ...(overdueItems?.overdueReviews || []).map((item: any) => ({
       ...item,
       type: "REVIEW" as const,
     })),
-    ...(overdueItems?.findingsWithoutCap || []).map((item) => ({
+    ...(overdueItems?.findingsWithoutCap || []).map((item: any) => ({
       ...item,
       type: "FINDING" as const,
     })),

@@ -1,6 +1,6 @@
 "use client";
 
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/prisma-enums";
 import { TRPCProvider } from "@/lib/trpc/provider";
 import { KeyboardShortcutsProvider } from "@/components/features/shortcuts";
 import { TooltipProvider } from "@/components/ui/tooltip";

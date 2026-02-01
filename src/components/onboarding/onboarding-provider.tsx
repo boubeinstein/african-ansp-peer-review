@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/prisma-enums";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc/client";
 import { fireCelebrationConfetti } from "@/lib/confetti";

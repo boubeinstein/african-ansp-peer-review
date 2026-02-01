@@ -24,7 +24,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Loader2, Play } from "lucide-react";
 import { toast } from "sonner";
-import { SessionType } from "@prisma/client";
+import { SessionType } from "@/types/prisma-enums";
 
 interface StartSessionDialogProps {
   open: boolean;

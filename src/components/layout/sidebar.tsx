@@ -4,7 +4,7 @@ import { useMemo, useEffect, useCallback, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/prisma-enums";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc/client";
 import { getNavigationForRole } from "@/lib/rbac";

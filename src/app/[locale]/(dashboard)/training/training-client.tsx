@@ -327,8 +327,8 @@ export function TrainingPageClient() {
   }
 
   // Calculate stats
-  const totalTopics = modules.reduce((acc, m) => acc + m.topics.length, 0);
-  const totalResources = modules.reduce((acc, m) => acc + m.resources.length, 0);
+  const totalTopics = modules.reduce((acc: number, m: { topics: unknown[] }) => acc + m.topics.length, 0);
+  const totalResources = modules.reduce((acc: number, m: { resources: unknown[] }) => acc + m.resources.length, 0);
 
   return (
     <div className="container mx-auto py-6 px-4 lg:px-6">

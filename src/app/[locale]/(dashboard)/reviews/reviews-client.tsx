@@ -156,8 +156,27 @@ export function ReviewsPageClient({
   const canRequestReview = prerequisites?.canRequestReview ?? false;
 
   // Filter reviews by search query
-  const filteredReviews =
-    reviewsData?.items.filter((review) => {
+  type ReviewItem = {
+    id: string;
+    referenceNumber: string;
+    reviewType: ReviewType;
+    status: ReviewStatus;
+    hostOrganization: {
+      id: string;
+      nameEn: string;
+      nameFr: string;
+      organizationCode: string | null;
+      country: string | null;
+    };
+    plannedStartDate: Date | null;
+    plannedEndDate: Date | null;
+    actualStartDate: Date | null;
+    actualEndDate: Date | null;
+    teamMemberCount: number;
+    findingCount: number;
+  };
+  const filteredReviews: ReviewItem[] =
+    reviewsData?.items.filter((review: ReviewItem) => {
       if (!searchQuery) return true;
       const query = searchQuery.toLowerCase();
       return (

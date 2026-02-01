@@ -17,33 +17,6 @@ interface OverviewTabProps {
 }
 
 export function OverviewTab({ review, counts, canEdit = true }: OverviewTabProps) {
-  /**
-   * Determine current phase based on review status.
-   * This maps the detailed ReviewStatus enum to the 4-phase UI model:
-   * - PLANNING: Initial request through team planning
-   * - PREPARATION: Scheduled, preparing for on-site visit
-   * - ON_SITE: Active fieldwork in progress
-   * - POST_REVIEW: Report drafting through completion
-   */
-  const getCurrentPhase = (): "PLANNING" | "PREPARATION" | "ON_SITE" | "POST_REVIEW" => {
-    switch (review.status) {
-      case "REQUESTED":
-      case "APPROVED":
-      case "PLANNING":
-        return "PLANNING";
-      case "SCHEDULED":
-        return "PREPARATION";
-      case "IN_PROGRESS":
-        return "ON_SITE";
-      case "REPORT_DRAFTING":
-      case "REPORT_REVIEW":
-      case "COMPLETED":
-      case "CANCELLED":
-        return "POST_REVIEW";
-      default:
-        return "PLANNING";
-    }
-  };
 
   // Team member type
   type TeamMember = { role: string; user: { id: string; firstName: string; lastName: string } };
@@ -107,10 +80,7 @@ export function OverviewTab({ review, counts, canEdit = true }: OverviewTabProps
         {/* Left Column - 3/5 width on large screens */}
         <div className="lg:col-span-3 space-y-4 md:space-y-6">
           {/* Progress Dashboard - Phase-based progress aligned with review status */}
-          <ProgressDashboard
-            currentPhase={getCurrentPhase()}
-            status={review.status}
-          />
+          <ProgressDashboard status={review.status} />
 
           {/* Quick Actions */}
           <QuickActions reviewId={review.id} canEdit={canEdit} />

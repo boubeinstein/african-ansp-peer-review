@@ -3494,6 +3494,16 @@
             "PREPARATION": "Preparation",
             "ON_SITE": "On-Site",
             "POST_REVIEW": "Post-Review"
+          },
+          "statusLabel": {
+            "REQUESTED": "Requested",
+            "APPROVED": "Approved",
+            "PLANNING": "Planning",
+            "PREPARATION": "Preparation",
+            "ON_SITE": "On-Site",
+            "POST_REVIEW": "Post-Review",
+            "COMPLETED": "Completed",
+            "CANCELLED": "Cancelled"
           }
         },
         "quickActions": {

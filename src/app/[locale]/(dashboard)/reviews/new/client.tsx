@@ -151,7 +151,7 @@ export function NewReviewClient({
   );
 
   // Filter out user's own org from dropdown for oversight roles
-  const eligibleOrganizations = organizations?.filter((org) => {
+  const eligibleOrganizations = organizations?.filter((org: { id: string }) => {
     if (isOversight && org.id === userOrgId) {
       return false; // Exclude PC's own org
     }
@@ -204,7 +204,7 @@ export function NewReviewClient({
     form.setValue("assessmentIds", []); // Reset assessments when org changes
 
     // Try to set contact info from organization
-    const org = organizations?.find((o) => o.id === orgId);
+    const org = organizations?.find((o: { id: string }) => o.id === orgId);
     if (org) {
       // We'd need to fetch org contact info - for now just leave blank
     }
@@ -283,7 +283,7 @@ export function NewReviewClient({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {eligibleOrganizations?.map((org) => (
+                          {eligibleOrganizations?.map((org: { id: string; nameEn: string; nameFr: string; organizationCode: string | null }) => (
                             <SelectItem key={org.id} value={org.id}>
                               {locale === "fr" && org.nameFr
                                 ? org.nameFr
@@ -349,7 +349,7 @@ export function NewReviewClient({
                         </div>
                       ) : assessments && assessments.length > 0 ? (
                         <div className="space-y-2 mt-2">
-                          {assessments.map((assessment) => (
+                          {assessments.map((assessment: { id: string; questionnaire?: { titleFr: string | null; titleEn: string | null } | null; submittedAt?: Date | string | null; eiScore?: number | null }) => (
                             <FormField
                               key={assessment.id}
                               control={form.control}
@@ -398,7 +398,7 @@ export function NewReviewClient({
                                             )
                                           : "-"}
                                       </span>
-                                      {assessment.eiScore !== null && (
+                                      {assessment.eiScore != null && (
                                         <Badge variant="secondary">
                                           EI: {assessment.eiScore.toFixed(1)}%
                                         </Badge>

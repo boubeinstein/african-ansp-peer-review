@@ -288,7 +288,7 @@ export function TrainingDetailClient({ code }: TrainingDetailClientProps) {
       {allModules && allModules.length > 1 && (
         <ModuleNavigation
           currentCode={code}
-          modules={allModules.map((m) => ({
+          modules={allModules.map((m: { code: string; titleEn: string; titleFr: string }) => ({
             code: m.code,
             titleEn: m.titleEn,
             titleFr: m.titleFr,

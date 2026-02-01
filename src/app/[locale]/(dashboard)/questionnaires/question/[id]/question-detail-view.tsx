@@ -31,30 +31,29 @@ import {
   SMS_COMPONENTS,
   CANSO_STUDY_AREAS,
 } from "@/lib/questionnaire/constants";
-import type {
-  Question,
-  ICAOReference,
-  Questionnaire,
-  QuestionnaireCategory,
-} from "@prisma/client";
 import type { PQAmendmentStatus } from "@/types/prisma-enums";
 
-interface QuestionWithRelations extends Question {
-  icaoReferences: ICAOReference[];
-  questionnaire: Pick<
-    Questionnaire,
-    "id" | "type" | "code" | "titleEn" | "titleFr"
-  > | null;
-  category: Pick<
-    QuestionnaireCategory,
-    "id" | "code" | "nameEn" | "nameFr"
-  > | null;
-  relatedQuestions?: {
+// Using Record type to allow any properties from Prisma while keeping essential ones typed
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type QuestionWithRelations = Record<string, any> & {
+  id: string;
+  pqNumber: string | null;
+  questionTextEn: string | null;
+  questionTextFr: string | null;
+  questionnaire: {
     id: string;
-    pqNumber: string | null;
-    questionTextEn: string | null;
-  }[];
-}
+    type: string;
+    code: string;
+    titleEn: string;
+    titleFr: string;
+  } | null;
+  category: {
+    id: string;
+    code: string;
+    nameEn: string;
+    nameFr: string;
+  } | null;
+};
 
 interface QuestionDetailViewProps {
   question: QuestionWithRelations;
@@ -85,18 +84,18 @@ export function QuestionDetailView({
   const isSMS = question.questionnaire?.type === "SMS_CANSO_SOE";
   const questionnairePath = isANS ? "ans" : "sms";
 
-  // Get metadata labels
+  // Get metadata labels (with type assertions for enum lookups)
   const auditAreaMeta = question.auditArea
-    ? USOAP_AUDIT_AREAS[question.auditArea]
+    ? USOAP_AUDIT_AREAS[question.auditArea as keyof typeof USOAP_AUDIT_AREAS]
     : null;
   const criticalElementMeta = question.criticalElement
-    ? CRITICAL_ELEMENTS[question.criticalElement]
+    ? CRITICAL_ELEMENTS[question.criticalElement as keyof typeof CRITICAL_ELEMENTS]
     : null;
   const smsComponentMeta = question.smsComponent
-    ? SMS_COMPONENTS[question.smsComponent]
+    ? SMS_COMPONENTS[question.smsComponent as keyof typeof SMS_COMPONENTS]
     : null;
   const studyAreaMeta = question.studyArea
-    ? CANSO_STUDY_AREAS[question.studyArea]
+    ? CANSO_STUDY_AREAS[question.studyArea as keyof typeof CANSO_STUDY_AREAS]
     : null;
 
   return (
@@ -352,7 +351,7 @@ export function QuestionDetailView({
           </CardHeader>
           <CardContent className="pt-0">
             <div className="grid gap-2 sm:grid-cols-2">
-              {question.relatedQuestions.map((related) => (
+              {question.relatedQuestions.map((related: { id: string; pqNumber: string | null; questionTextEn: string | null }) => (
                 <Link
                   key={related.id}
                   href={`/${locale}/questionnaires/question/${related.id}`}

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { auth } from "@/lib/auth";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/prisma-enums";
 import { USER_CRUD_PERMISSIONS } from "@/lib/permissions/user-management";
 import { AdminUsersClient } from "./client";
 

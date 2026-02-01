@@ -18,6 +18,19 @@ import { fr, enUS } from "date-fns/locale";
 import Link from "next/link";
 import { NotificationType, NotificationPriority } from "@/types/prisma-enums";
 
+interface NotificationItem {
+  id: string;
+  type: NotificationType;
+  titleEn: string;
+  titleFr: string;
+  messageEn: string;
+  messageFr: string;
+  priority: NotificationPriority;
+  readAt: Date | string | null;
+  createdAt: Date | string;
+  actionUrl: string | null;
+}
+
 const priorityColors: Record<NotificationPriority, string> = {
   LOW: "bg-gray-100 text-gray-800",
   NORMAL: "bg-blue-100 text-blue-800",
@@ -166,7 +179,7 @@ export function NotificationBell({ locale }: NotificationBellProps) {
             </div>
           ) : (
             <div className="divide-y">
-              {notifications.map((notification) => (
+              {notifications.map((notification: NotificationItem) => (
                 <div
                   key={notification.id}
                   className={cn(

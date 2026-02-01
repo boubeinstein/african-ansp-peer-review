@@ -176,7 +176,7 @@ export function DocumentLibrary({
   // Filter out excluded documents
   const availableDocuments = useMemo(() => {
     if (!documents) return [];
-    return documents.filter((doc) => !excludeIds.includes(doc.id));
+    return documents.filter((doc: { id: string }) => !excludeIds.includes(doc.id));
   }, [documents, excludeIds]);
 
   // Handlers
@@ -202,9 +202,9 @@ export function DocumentLibrary({
 
   const handleConfirm = useCallback(() => {
     if (!documents) return;
-    const selectedDocs = documents.filter((doc) => selectedIds.has(doc.id));
+    const selectedDocs = documents.filter((doc: { id: string }) => selectedIds.has(doc.id));
     onSelect(
-      selectedDocs.map((doc) => ({
+      selectedDocs.map((doc: DocumentLibraryDocument) => ({
         id: doc.id,
         name: doc.name,
         originalName: doc.originalName,

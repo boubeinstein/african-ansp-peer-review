@@ -26,6 +26,31 @@ export type ANSResponseValue =
 
 export type SMSMaturityLevel = "A" | "B" | "C" | "D" | "E";
 
+// Type for API response items from the responses query
+interface APIResponseItem {
+  id: string;
+  questionId: string;
+  responseValue: string | null;
+  maturityLevel: string | null;
+  notes: string | null;
+  evidenceUrls: string[];
+  question: {
+    id: string;
+    pqNumber: string | null;
+    questionTextEn: string;
+    questionTextFr: string;
+    guidanceEn: string | null;
+    guidanceFr: string | null;
+    auditArea: string | null;
+    criticalElement: string | null;
+    smsComponent: string | null;
+    studyArea: string | null;
+    isPriorityPQ: boolean;
+    requiresOnSite: boolean;
+    weight: number;
+  };
+}
+
 export interface QuestionData {
   id: string;
   pqNumber?: string;
@@ -218,7 +243,7 @@ export function AssessmentWorkspaceProvider({
   // Build questions list from responses
   const questions = useMemo<QuestionData[]>(() => {
     if (!responsesData?.responses) return [];
-    return responsesData.responses.map((r) => ({
+    return responsesData.responses.map((r: APIResponseItem) => ({
       id: r.question.id,
       pqNumber: r.question.pqNumber ?? undefined,
       questionTextEn: r.question.questionTextEn,
@@ -243,7 +268,7 @@ export function AssessmentWorkspaceProvider({
     // Debug: Track value breakdown from API
     const apiValueBreakdown: Record<string, number> = {};
 
-    for (const r of responsesData.responses) {
+    for (const r of responsesData.responses as APIResponseItem[]) {
       const hasContent = (r.notes && r.notes.length > 0) ||
         (r.evidenceUrls && r.evidenceUrls.length > 0);
 

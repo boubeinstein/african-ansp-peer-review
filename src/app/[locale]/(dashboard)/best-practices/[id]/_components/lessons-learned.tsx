@@ -50,6 +50,31 @@ interface LessonsLearnedProps {
   userOrgId?: string | null;
 }
 
+interface Lesson {
+  id: string;
+  title: string;
+  content: string;
+  challengesFaced?: string | null;
+  keySuccessFactors?: string | null;
+  recommendations?: string | null;
+  implementationDifficulty?: number | null;
+  overallEffectiveness?: number | null;
+  timeToImplementMonths?: number | null;
+  helpfulCount: number;
+  publishedAt?: Date | string | null;
+  organization: {
+    id: string;
+    nameEn: string;
+    nameFr: string;
+    organizationCode?: string | null;
+  };
+  author: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
+}
+
 export function LessonsLearned({
   bestPracticeId,
   locale,
@@ -377,7 +402,7 @@ export function LessonsLearned({
           </p>
         ) : (
           <div className="space-y-4">
-            {lessons.map((lesson) => {
+            {lessons.map((lesson: Lesson) => {
               const orgName =
                 locale === "fr"
                   ? lesson.organization.nameFr

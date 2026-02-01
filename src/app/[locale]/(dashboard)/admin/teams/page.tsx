@@ -63,8 +63,8 @@ export default async function RegionalTeamsPage() {
 
   // Calculate totals
   const totalMembers = teams.reduce(
-    (sum, team) => sum + (team._count?.memberOrganizations ?? 0),
-    0
+  (sum: number, team) => sum + (team._count?.memberOrganizations ?? 0),
+  0
   );
 
   return (

@@ -103,7 +103,7 @@ export function DiscussionThread({
 
   const totalComments =
     (comments?.length || 0) +
-    (comments?.reduce((acc, c) => acc + (c.replies?.length || 0), 0) || 0);
+    (comments?.reduce((acc: number, c: { replies?: unknown[] }) => acc + (c.replies?.length || 0), 0) || 0);
 
   return (
     <Card>

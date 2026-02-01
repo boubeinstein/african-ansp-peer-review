@@ -177,7 +177,7 @@ export function FindingDetailClient({ findingId }: FindingDetailClientProps) {
     DEFERRED: ["OPEN", "CAP_REQUIRED"],
   };
 
-  const allowedTransitions = statusTransitions[finding.status] || [];
+  const allowedTransitions = statusTransitions[finding.status as FindingStatus] || [];
 
   return (
     <div className="space-y-6">

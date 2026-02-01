@@ -135,7 +135,7 @@ export function StartSessionDialog({
                   <SelectValue placeholder="Select session type" />
                 </SelectTrigger>
                 <SelectContent>
-                  {SESSION_TYPES.map((type) => (
+                  {SESSION_TYPES.map((type: { value: SessionType; label: string; description: string }) => (
                     <SelectItem key={type.value} value={type.value}>
                       <div className="flex flex-col">
                         <span>{type.label}</span>

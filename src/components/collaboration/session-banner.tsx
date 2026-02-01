@@ -32,6 +32,14 @@ interface SessionBannerProps {
   className?: string;
 }
 
+interface DisplayMember {
+  id: string;
+  name: string;
+  avatar: string;
+  color: string;
+  isOnline: boolean;
+}
+
 // Generate a consistent color from user ID
 function generateColor(userId: string): string {
   const colors = [
@@ -234,7 +242,7 @@ export function SessionBanner({
               {displayMembers.length}
             </span>
             <div className="flex -space-x-2">
-              {displayMembers.slice(0, 5).map((member) => (
+              {displayMembers.slice(0, 5).map((member: DisplayMember) => (
                 <Tooltip key={member.id}>
                   <TooltipTrigger asChild>
                     <Avatar

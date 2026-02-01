@@ -300,7 +300,7 @@ function MembersList({
 }) {
   return (
     <div className="space-y-2">
-      {members.map((member) => (
+      {members.map((member: DisplayMember) => (
         <div
           key={member.id}
           className={cn(
@@ -375,7 +375,7 @@ function ActivityFeed({
 }) {
   return (
     <div className="space-y-3">
-      {activities.map((activity) => (
+      {activities.map((activity: { id: string; activityType: string; targetType?: string | null; timestamp: Date; user: { id: string; firstName: string; lastName: string } }) => (
         <div key={activity.id} className="flex gap-3 text-sm">
           <Clock className="h-4 w-4 mt-1 text-muted-foreground" />
           <div className="flex-1">

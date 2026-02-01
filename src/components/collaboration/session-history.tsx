@@ -11,6 +11,17 @@ interface SessionHistoryProps {
   reviewId: string;
 }
 
+interface SessionHistoryItem {
+  id: string;
+  title: string | null;
+  sessionType: string;
+  status: string;
+  startedAt: Date | string;
+  endedAt: Date | string | null;
+  startedBy: { firstName: string; lastName: string };
+  _count: { participants: number };
+}
+
 export function SessionHistory({ reviewId }: SessionHistoryProps) {
   const { data: sessions, isLoading } =
     trpc.collaboration.getSessionHistory.useQuery({
@@ -38,7 +49,7 @@ export function SessionHistory({ reviewId }: SessionHistoryProps) {
 
   return (
     <div className="space-y-3">
-      {sessions.map((session) => {
+      {sessions.map((session: SessionHistoryItem) => {
         const duration = session.endedAt
           ? intervalToDuration({
               start: new Date(session.startedAt),

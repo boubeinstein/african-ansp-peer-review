@@ -19,14 +19,14 @@ export function LiveCursors({
 }: LiveCursorsProps) {
   // Filter out current user and only show members with cursor positions
   const otherMembersWithCursors = useMemo(
-    () => members.filter((m) => m.id !== userId && m.cursorPosition),
+    () => members.filter((m: PresenceMember) => m.id !== userId && m.cursorPosition),
     [members, userId]
   );
 
   return (
     <div className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}>
       <AnimatePresence>
-        {otherMembersWithCursors.map((member) => (
+        {otherMembersWithCursors.map((member: PresenceMember) => (
           <Cursor
             key={member.id}
             x={member.cursorPosition!.x}

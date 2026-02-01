@@ -123,7 +123,7 @@ export function ActivityFeed({
       <ScrollArea className="flex-1" onScrollCapture={handleScroll}>
         <div ref={scrollRef} className="space-y-1 p-2">
           <AnimatePresence initial={false}>
-            {displayedActivities.map((activity) => (
+            {displayedActivities.map((activity: ActivityItem) => (
               <ActivityItemCard
                 key={activity.id}
                 activity={activity}

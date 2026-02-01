@@ -63,9 +63,9 @@ export default async function RegionalTeamsPage() {
 
   // Calculate totals
   const totalMembers = teams.reduce(
-  (sum: number, team) => sum + (team._count?.memberOrganizations ?? 0),
+  (sum: number, team: { _count?: { memberOrganizations: number } }) => sum + (team._count?.memberOrganizations ?? 0),
   0
-  );
+);
 
   return (
     <div className="container mx-auto py-6 space-y-6">

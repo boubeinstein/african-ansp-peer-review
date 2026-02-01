@@ -123,7 +123,7 @@ export function CreateDiscussionDialog({
   };
 
   // Filter team members based on search
-  const filteredMembers = teamMembers?.filter((member) => {
+  const filteredMembers = teamMembers?.filter((member: TeamMember) => {
     if (!mentionFilter) return true;
     const fullName = `${member.firstName} ${member.lastName}`.toLowerCase();
     const email = member.email.toLowerCase();
@@ -166,7 +166,7 @@ export function CreateDiscussionDialog({
 
   // Get member name by ID
   const getMemberName = (memberId: string) => {
-    const member = teamMembers?.find((m) => m.id === memberId);
+    const member = teamMembers?.find((m: TeamMember) => m.id === memberId);
     return member ? `${member.firstName} ${member.lastName}` : memberId;
   };
 

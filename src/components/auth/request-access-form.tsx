@@ -83,7 +83,7 @@ export function RequestAccessForm() {
 
   // eslint-disable-next-line react-hooks/incompatible-library -- React Hook Form watch() is not memoizable
   const selectedOrgId = watch("organizationId");
-  const selectedOrg = organizations?.find((org) => org.id === selectedOrgId);
+  const selectedOrg = organizations?.find((org: { id: string; nameEn: string; nameFr: string; organizationCode: string | null }) => org.id === selectedOrgId);
 
   async function onSubmit(data: AccessRequestFormData) {
     submitMutation.mutate({
@@ -144,7 +144,7 @@ export function RequestAccessForm() {
               <SelectValue placeholder={orgsLoading ? tCommon("actions.loading") : t("selectOrganization")} />
             </SelectTrigger>
             <SelectContent className="max-h-60 overflow-y-auto">
-              {organizations?.map((org) => (
+              {organizations?.map((org: { id: string; nameEn: string; nameFr: string; organizationCode: string | null }) => (
                 <SelectItem key={org.id} value={org.id}>
                   <div className="flex items-center gap-2">
                     <span>{locale === "fr" ? org.nameFr : org.nameEn}</span>

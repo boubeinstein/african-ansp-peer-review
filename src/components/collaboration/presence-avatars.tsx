@@ -50,7 +50,7 @@ export function PresenceAvatars({
   return (
     <TooltipProvider>
       <div className={cn("flex items-center", overlapClasses[size], className)}>
-        {visibleMembers.map((member) => (
+        {visibleMembers.map((member: PresenceMember) => (
           <PresenceAvatar
             key={member.id}
             member={member}
@@ -75,7 +75,7 @@ export function PresenceAvatars({
             <TooltipContent>
               <p>{remainingCount} more online</p>
               <div className="mt-1 space-y-1">
-                {members.slice(maxVisible).map((m) => (
+                {members.slice(maxVisible).map((m: PresenceMember) => (
                   <p key={m.id} className="text-xs">
                     {m.name}
                   </p>

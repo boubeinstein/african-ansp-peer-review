@@ -318,7 +318,7 @@ export function UserFormModal({
                       <SelectItem value="none">
                         {t("form.noOrganization")}
                       </SelectItem>
-                      {orgsData?.map((org) => (
+                      {orgsData?.map((org: { id: string; nameEn: string; organizationCode: string | null }) => (
                         <SelectItem key={org.id} value={org.id}>
                           {org.organizationCode ? `${org.organizationCode} - ` : ""}{org.nameEn}
                         </SelectItem>

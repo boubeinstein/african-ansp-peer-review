@@ -333,7 +333,7 @@ function StepIndicator({
   return (
     <nav aria-label="Progress">
       <ol className="flex items-center justify-between">
-        {steps.map((step, index) => {
+        {steps.map((step: Step, index: number) => {
           const status = getStepStatus(step);
           return (
             <li key={step} className="flex items-center">
@@ -420,7 +420,7 @@ function OrganizationStep({
           value={draft.organizationId ?? ""}
           onValueChange={(value) => {
             const org = context.availableOrganizations.find(
-              (o) => o.id === value
+              (o: { id: string; name: string }) => o.id === value
             );
             setDraft((prev) => ({
               ...prev,
@@ -433,7 +433,7 @@ function OrganizationStep({
             <SelectValue placeholder={t("selectOrganizationPlaceholder")} />
           </SelectTrigger>
           <SelectContent>
-            {context.availableOrganizations.map((org) => (
+            {context.availableOrganizations.map((org: { id: string; name: string; code: string; country: string }) => (
               <SelectItem key={org.id} value={org.id}>
                 <div className="flex items-center gap-2">
                   <span className="font-medium">{org.name}</span>
@@ -519,7 +519,7 @@ function QuestionnaireStep({
         }}
         className="space-y-3"
       >
-        {questionnaireOptions.map(([type, q]) => (
+        {questionnaireOptions.map(([type, q]: [QuestionnaireType, { id: string; titleEn: string; titleFr: string }]) => (
           <div
             key={type}
             className={cn(

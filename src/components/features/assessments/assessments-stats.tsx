@@ -31,10 +31,10 @@ export function AssessmentsStats({ organizationId }: AssessmentsStatsProps) {
   // Calculate stats
   const stats = {
     total: assessments.length,
-    inProgress: assessments.filter((a) => a.status === "DRAFT").length,
-    completed: assessments.filter((a) => a.status === "COMPLETED").length,
+    inProgress: assessments.filter((a: { status: string }) => a.status === "DRAFT").length,
+    completed: assessments.filter((a: { status: string }) => a.status === "COMPLETED").length,
     submitted: assessments.filter(
-      (a) => a.status === "SUBMITTED" || a.status === "UNDER_REVIEW"
+      (a: { status: string }) => a.status === "SUBMITTED" || a.status === "UNDER_REVIEW"
     ).length,
   };
 

@@ -175,7 +175,7 @@ export function MatchingPageClient({ locale }: MatchingPageClientProps) {
                     <SelectValue placeholder="Select organization..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {organizations?.map((org) => (
+                    {organizations?.map((org: { id: string; nameEn: string; organizationCode: string | null }) => (
                       <SelectItem key={org.id} value={org.id}>
                         {org.nameEn}
                         {org.organizationCode && ` (${org.organizationCode})`}

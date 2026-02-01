@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/prisma-enums";
 import { canSubmitBestPractice } from "@/lib/permissions";
 import { BestPracticesHeader } from "./_components/best-practices-header";
 import { BestPracticesContent } from "./_components/best-practices-content";

@@ -1,7 +1,7 @@
 import { redirect, notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { auth } from "@/lib/auth";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/prisma-enums";
 import { isOversightRole, canRequestPeerReview } from "@/lib/permissions";
 import { NewReviewClient } from "./client";
 

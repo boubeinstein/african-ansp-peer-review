@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -84,7 +85,7 @@ export function BestPracticesStats({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {statCards.map((stat) => (
+      {statCards.map((stat: { title: string; value: number; icon: React.ElementType; color: string; bgColor: string }) => (
         <Card key={stat.title}>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">

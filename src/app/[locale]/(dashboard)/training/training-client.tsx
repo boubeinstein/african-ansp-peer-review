@@ -365,10 +365,10 @@ export function TrainingPageClient() {
 
       {/* Module Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {modules.map((module) => (
+        {modules.map((module: TrainingModuleData) => (
           <ModuleCard
             key={module.id}
-            module={module as TrainingModuleData}
+            module={module}
             locale={locale}
           />
         ))}

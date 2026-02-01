@@ -54,7 +54,7 @@ export function AdoptionList({ adoptions, locale }: AdoptionListProps) {
 
   return (
     <ul className="space-y-3">
-      {displayedAdoptions.map((adoption) => {
+      {displayedAdoptions.map((adoption: Adoption) => {
         const orgName = locale === "fr"
           ? adoption.organization.nameFr
           : adoption.organization.nameEn;

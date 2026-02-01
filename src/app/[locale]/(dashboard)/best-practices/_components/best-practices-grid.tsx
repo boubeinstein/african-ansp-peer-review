@@ -99,7 +99,7 @@ export function BestPracticesGrid({
 
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {items.map((item) => (
+        {items.map((item: BestPracticeItem) => (
           <BestPracticeCard
             key={item.id}
             item={item}

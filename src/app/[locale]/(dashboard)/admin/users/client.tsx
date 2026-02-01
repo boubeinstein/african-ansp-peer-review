@@ -286,7 +286,7 @@ function Filters({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t("allOrganizations")}</SelectItem>
-            {organizations?.map((org) => (
+            {organizations?.map((org: { id: string; nameEn: string; nameFr: string | null; organizationCode: string | null }) => (
               <SelectItem key={org.id} value={org.id}>
                 {org.organizationCode ? `${org.organizationCode} - ` : ""}{locale === "fr" && org.nameFr ? org.nameFr : org.nameEn}
               </SelectItem>
@@ -374,7 +374,7 @@ function UsersTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users.map((user) => {
+        {users.map((user: User) => {
           const isSelf = user.id === currentUserId;
           const canEdit = canManageUser(
             currentUserRole,

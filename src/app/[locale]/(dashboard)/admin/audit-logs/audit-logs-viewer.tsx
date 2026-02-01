@@ -602,7 +602,7 @@ export function AuditLogsViewer({ locale }: AuditLogsViewerProps) {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">{t("allEntityTypes")}</SelectItem>
-                    {entityTypes?.map((type) => (
+                    {entityTypes?.map((type: string) => (
                       <SelectItem key={type} value={type}>
                         {type}
                       </SelectItem>
@@ -625,7 +625,7 @@ export function AuditLogsViewer({ locale }: AuditLogsViewerProps) {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">{t("allActions")}</SelectItem>
-                    {(actions as string[])?.map((a) => (
+                    {(actions as string[])?.map((a: string) => (
                         <SelectItem key={a} value={a}>
                         {a.replace(/_/g, " ")}
                       </SelectItem>
@@ -732,7 +732,7 @@ export function AuditLogsViewer({ locale }: AuditLogsViewerProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {logsData?.logs.map((log) => (
+                  {logsData?.logs.map((log: AuditLogEntry) => (
                     <TableRow key={log.id}>
                       <TableCell className="font-mono text-sm">
                         {new Date(log.createdAt).toLocaleString()}

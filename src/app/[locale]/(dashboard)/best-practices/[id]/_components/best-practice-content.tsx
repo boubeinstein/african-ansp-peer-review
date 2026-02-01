@@ -130,7 +130,7 @@ export function BestPracticeContent({ practice, locale }: BestPracticeContentPro
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
-              {practice.tags.map((tag) => (
+              {practice.tags.map((tag: string) => (
                 <Badge key={tag} variant="secondary">
                   {tag}
                 </Badge>
@@ -151,7 +151,7 @@ export function BestPracticeContent({ practice, locale }: BestPracticeContentPro
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
-              {practice.attachments.map((attachment, index) => (
+              {practice.attachments.map((attachment: string, index: number) => (
                 <li key={index}>
                   <a
                     href={attachment}

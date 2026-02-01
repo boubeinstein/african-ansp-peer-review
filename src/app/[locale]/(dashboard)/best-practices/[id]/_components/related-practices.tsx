@@ -91,7 +91,7 @@ export function RelatedPractices({
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {relatedPractices.map((practice) => {
+          {relatedPractices.map((practice: RelatedPractice) => {
             const title = locale === "fr" ? practice.titleFr : practice.titleEn;
             const orgName = locale === "fr"
               ? practice.organization.nameFr

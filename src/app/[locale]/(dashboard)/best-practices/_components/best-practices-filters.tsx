@@ -144,7 +144,7 @@ export function BestPracticesFilters({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">{t("allCategories")}</SelectItem>
-          {categories.map((cat) => (
+          {categories.map((cat: BestPracticeCategory) => (
             <SelectItem key={cat} value={cat}>
               {CATEGORY_LABELS[cat]?.[locale as "en" | "fr"] || cat}
             </SelectItem>
@@ -165,7 +165,7 @@ export function BestPracticesFilters({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t("allAreas")}</SelectItem>
-            {auditAreas.map((area) => (
+            {auditAreas.map((area: string) => (
               <SelectItem key={area} value={area}>
                 {area}
               </SelectItem>

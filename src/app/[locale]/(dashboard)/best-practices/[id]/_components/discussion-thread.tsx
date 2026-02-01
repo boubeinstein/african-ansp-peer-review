@@ -269,7 +269,7 @@ export function DiscussionThread({
                 {/* Replies */}
                 {comment.replies && comment.replies.length > 0 && (
                   <div className="ml-12 space-y-4 border-l-2 border-muted pl-4">
-                    {comment.replies.map((reply) => (
+                    {comment.replies.map((reply: Comment) => (
                       <div key={reply.id} className="flex gap-3">
                         <Avatar className="h-7 w-7 flex-shrink-0">
                           <AvatarFallback className="bg-secondary text-secondary-foreground text-xs">

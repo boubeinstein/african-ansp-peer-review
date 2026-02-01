@@ -359,7 +359,7 @@ export function BestPracticeForm({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {CATEGORY_OPTIONS.map((cat) => (
+                          {CATEGORY_OPTIONS.map((cat: { value: BestPracticeCategory; labelEn: string; labelFr: string }) => (
                             <SelectItem key={cat.value} value={cat.value}>
                               {locale === "fr" ? cat.labelFr : cat.labelEn}
                             </SelectItem>
@@ -392,7 +392,7 @@ export function BestPracticeForm({
                           <SelectItem value="_none">
                             {t("fields.noAuditArea")}
                           </SelectItem>
-                          {AUDIT_AREAS.map((area) => (
+                          {AUDIT_AREAS.map((area: string) => (
                             <SelectItem key={area} value={area}>
                               {area}
                             </SelectItem>
@@ -430,7 +430,7 @@ export function BestPracticeForm({
                 </div>
                 {tags.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {tags.map((tag) => (
+                    {tags.map((tag: string) => (
                       <Badge key={tag} variant="secondary" className="gap-1">
                         {tag}
                         <button

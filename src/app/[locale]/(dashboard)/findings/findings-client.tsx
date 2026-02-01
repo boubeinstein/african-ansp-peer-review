@@ -59,7 +59,35 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { FindingStatus, FindingSeverity, FindingType } from "@prisma/client";
+// Local types to avoid @prisma/client in client component
+const FindingStatus = {
+  OPEN: "OPEN",
+  CAP_REQUIRED: "CAP_REQUIRED",
+  CAP_SUBMITTED: "CAP_SUBMITTED",
+  CAP_ACCEPTED: "CAP_ACCEPTED",
+  IN_PROGRESS: "IN_PROGRESS",
+  VERIFICATION: "VERIFICATION",
+  CLOSED: "CLOSED",
+  DEFERRED: "DEFERRED",
+} as const;
+type FindingStatus = (typeof FindingStatus)[keyof typeof FindingStatus];
+
+const FindingSeverity = {
+  CRITICAL: "CRITICAL",
+  MAJOR: "MAJOR",
+  MINOR: "MINOR",
+  OBSERVATION: "OBSERVATION",
+} as const;
+type FindingSeverity = (typeof FindingSeverity)[keyof typeof FindingSeverity];
+
+const FindingType = {
+  NON_CONFORMITY: "NON_CONFORMITY",
+  OBSERVATION: "OBSERVATION",
+  RECOMMENDATION: "RECOMMENDATION",
+  GOOD_PRACTICE: "GOOD_PRACTICE",
+  CONCERN: "CONCERN",
+} as const;
+type FindingType = (typeof FindingType)[keyof typeof FindingType];
 
 // Stats Card Component
 function StatsCard({

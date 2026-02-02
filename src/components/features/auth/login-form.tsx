@@ -24,7 +24,7 @@ import { toast } from "sonner";
 import { Loader2, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LanguageSelector } from "./language-selector";
-import { PartnerLogos } from "./partner-logos";
+import { ICAOCANSOLogos } from "./icao-canso-logos";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -95,14 +95,17 @@ export function LoginForm() {
       </div>
 
       {/* Header */}
-      <div className="space-y-2 text-center">
+      <div className="space-y-4 text-center">
         {/* Logos - Desktop only */}
-        <div className="hidden lg:flex justify-center mb-6">
-          <PartnerLogos variant="light" size="md" showDividers={false} />
+        <div className="hidden lg:flex flex-col items-center gap-3 mb-4">
+          <ICAOCANSOLogos variant="light" size="md" showDivider />
+          <p className="text-xs text-slate-500">
+            African ANSP Peer Review Programme
+          </p>
         </div>
 
-        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("description")}</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{t("title")}</h1>
+        <p className="text-sm text-slate-500">{t("description")}</p>
       </div>
 
       {/* Form */}
@@ -181,7 +184,11 @@ export function LoginForm() {
         )}
 
         {/* Submit Button */}
-        <Button type="submit" className="w-full h-11" disabled={isLoading}>
+        <Button
+          type="submit"
+          className="w-full h-11 bg-[#1B3A5C] hover:bg-[#142D48] text-white font-medium rounded-lg transition-colors"
+          disabled={isLoading}
+        >
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -194,21 +201,21 @@ export function LoginForm() {
       </form>
 
       {/* Links */}
-      <div className="space-y-3 pt-4 border-t text-center text-sm">
-        <p className="text-muted-foreground">
+      <div className="space-y-3 pt-4 border-t border-slate-200 text-center text-sm">
+        <p className="text-slate-500">
           {t("noAccount")}{" "}
           <Link
             href={`/${locale}/request-access`}
-            className="text-primary hover:underline font-medium"
+            className="text-[#1B3A5C] hover:underline font-medium"
           >
             {t("requestAccess")}
           </Link>
         </p>
-        <p className="text-muted-foreground">
+        <p className="text-slate-500">
           {t("notParticipant")}{" "}
           <Link
             href={`/${locale}/join-programme`}
-            className="text-primary hover:underline font-medium"
+            className="text-[#1B3A5C] hover:underline font-medium"
           >
             {t("requestToJoin")}
           </Link>

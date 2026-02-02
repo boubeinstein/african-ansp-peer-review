@@ -165,7 +165,63 @@
       "loginFailed": "Login failed. Please try again.",
       "sessionRequired": "Please sign in to access this page.",
       "notParticipant": "Your organization is not yet a programme participant?",
-      "requestToJoin": "Request to Join"
+      "requestToJoin": "Request to Join",
+      "carousel": {
+        "slide1": {
+          "badge": "ICAO-Endorsed Programme",
+          "title": "African ANSP Peer Review Programme",
+          "subtitle": "Enhancing aviation safety across Africa through collaborative peer reviews between Air Navigation Service Providers.",
+          "stats": {
+            "ansps": "Participating ANSPs",
+            "states": "Eligible States",
+            "teams": "Regional Teams",
+            "reviewers": "Expert Reviewers"
+          }
+        },
+        "slide2": {
+          "badge": "International Standards",
+          "title": "Dual Assessment Framework",
+          "subtitle": "Comprehensive safety evaluation combining ICAO oversight protocols with CANSO SMS maturity assessment.",
+          "usoap": {
+            "title": "USOAP CMA 2024",
+            "description": "ICAO Protocol Questions",
+            "detail1": "9 Audit Areas",
+            "detail2": "8 Critical Elements",
+            "tags": "ANS · AGA · SSP"
+          },
+          "canso": {
+            "title": "CANSO SoE 2024",
+            "description": "SMS Maturity Assessment",
+            "detail1": "4 Components",
+            "detail2": "5 Maturity Levels (A–E)",
+            "tags": "Policy · Risk · Assurance"
+          }
+        },
+        "slide3": {
+          "badge": "Structured Methodology",
+          "title": "Peer Review Workflow",
+          "subtitle": "A systematic four-phase approach ensuring thorough, objective, and actionable safety assessments.",
+          "phases": {
+            "planning": {
+              "name": "Planning",
+              "description": "Team assignment & scheduling"
+            },
+            "preparation": {
+              "name": "Preparation",
+              "description": "Document review & preparation"
+            },
+            "onsite": {
+              "name": "On-Site Review",
+              "description": "Fieldwork & evidence gathering"
+            },
+            "reporting": {
+              "name": "Reporting",
+              "description": "Findings, CAP & final report"
+            }
+          },
+          "milestone": "Next Milestone: AFI Peer Reviewers Training — Feb 2–5, 2026 · Dar es Salaam"
+        }
+      }
     },
     "register": {
       "title": "Get Started",

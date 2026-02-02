@@ -165,7 +165,63 @@
       "loginFailed": "Échec de la connexion. Veuillez réessayer.",
       "sessionRequired": "Veuillez vous connecter pour accéder à cette page.",
       "notParticipant": "Organisation pas encore participante ?",
-      "requestToJoin": "Demander à Rejoindre"
+      "requestToJoin": "Demander à Rejoindre",
+      "carousel": {
+        "slide1": {
+          "badge": "Programme Approuvé par l'OACI",
+          "title": "Programme Africain de Revue par les Pairs des ANSP",
+          "subtitle": "Améliorer la sécurité aérienne en Afrique grâce aux revues collaboratives entre les Fournisseurs de Services de Navigation Aérienne.",
+          "stats": {
+            "ansps": "ANSP Participants",
+            "states": "États Éligibles",
+            "teams": "Équipes Régionales",
+            "reviewers": "Experts Évaluateurs"
+          }
+        },
+        "slide2": {
+          "badge": "Normes Internationales",
+          "title": "Double Cadre d'Évaluation",
+          "subtitle": "Évaluation complète de la sécurité combinant les protocoles de supervision de l'OACI avec l'évaluation de maturité SMS de CANSO.",
+          "usoap": {
+            "title": "USOAP CMA 2024",
+            "description": "Questions de Protocole OACI",
+            "detail1": "9 Domaines d'Audit",
+            "detail2": "8 Éléments Critiques",
+            "tags": "ANS · AGA · SSP"
+          },
+          "canso": {
+            "title": "CANSO SoE 2024",
+            "description": "Évaluation de Maturité SMS",
+            "detail1": "4 Composantes",
+            "detail2": "5 Niveaux de Maturité (A–E)",
+            "tags": "Politique · Risque · Assurance"
+          }
+        },
+        "slide3": {
+          "badge": "Méthodologie Structurée",
+          "title": "Processus de Revue par les Pairs",
+          "subtitle": "Une approche systématique en quatre phases garantissant des évaluations de sécurité approfondies, objectives et exploitables.",
+          "phases": {
+            "planning": {
+              "name": "Planification",
+              "description": "Affectation d'équipe et planification"
+            },
+            "preparation": {
+              "name": "Préparation",
+              "description": "Revue documentaire et préparation"
+            },
+            "onsite": {
+              "name": "Revue Sur Site",
+              "description": "Travail de terrain et collecte de preuves"
+            },
+            "reporting": {
+              "name": "Rapport",
+              "description": "Constats, PAC et rapport final"
+            }
+          },
+          "milestone": "Prochaine Étape : Formation des Réviseurs Pairs AFI — 2–5 fév. 2026 · Dar es Salaam"
+        }
+      }
     },
     "register": {
       "title": "Commencer",

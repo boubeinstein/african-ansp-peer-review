@@ -6045,6 +6045,8 @@
       "currentSession": "Current",
       "lastActive": "Last active",
       "revoke": "Revoke",
+      "unknownDevice": "Unknown device",
+      "unknownLocation": "Unknown",
       "dangerZone": "Danger Zone",
       "dangerZoneDescription": "Irreversible account actions",
       "deactivateAccount": "Deactivate Account",

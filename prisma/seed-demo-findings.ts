@@ -163,7 +163,7 @@ const COMPLETED_FINDINGS: FindingData[] = [
     titleEn: "Safety Promotion Program Excellence",
     titleFr: "Excellence du programme de promotion de la sécurité",
     descriptionEn:
-      "The organization has implemented an exemplary safety promotion program with regular safety bulletins, recognition awards, and innovative engagement activities.",
+      "L'organisation a mis en place un programme exemplaire de promotion de la sécurité comprenant des bulletins réguliers sur la sécurité, des prix de reconnaissance et des activités innovantes visant à susciter l'engagement.",
     descriptionFr:
       "L'organisation a mis en œuvre un programme exemplaire de promotion de la sécurité.",
     evidenceEn: "Safety bulletin archives, staff engagement metrics",
@@ -171,7 +171,7 @@ const COMPLETED_FINDINGS: FindingData[] = [
     findingType: "GOOD_PRACTICE" as FindingType,
     severity: "OBSERVATION" as FindingSeverity,
     status: "CLOSED" as FindingStatus,
-    icaoReference: "Annex 19, Chapter 4.4",
+    icaoReference: "Annex 19, Chapter 3.5",
     capRequired: false,
   },
   {

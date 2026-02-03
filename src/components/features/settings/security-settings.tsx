@@ -7,7 +7,7 @@
  * password changes and active sessions.
  */
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useFormatter, useNow } from "next-intl";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -57,7 +57,6 @@ import {
 } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
-import { formatDistanceToNow } from "date-fns";
 
 const passwordSchema = z
   .object({
@@ -112,6 +111,8 @@ function SecuritySkeleton() {
 export function SecuritySettings({}: SecuritySettingsProps) {
   const t = useTranslations("settings.security");
   const tCommon = useTranslations("common");
+  const format = useFormatter();
+  const now = useNow({ updateInterval: 60000 });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -312,7 +313,7 @@ export function SecuritySettings({}: SecuritySettingsProps) {
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-medium">{session.device}</span>
+                      <span className="font-medium">{session.device === "Unknown" ? t("unknownDevice") : session.device}</span>
                       {session.isCurrent && (
                         <Badge variant="secondary" className="text-xs">
                           <CheckCircle2 className="h-3 w-3 mr-1" />
@@ -322,13 +323,11 @@ export function SecuritySettings({}: SecuritySettingsProps) {
                     </div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Globe className="h-3 w-3" />
-                      <span>{session.location}</span>
-                      <span>\u2022</span>
+                      <span>{session.location === "Unknown" ? t("unknownLocation") : session.location}</span>
+                      <span>•</span>
                       <span>
                         {t("lastActive")}{" "}
-                        {formatDistanceToNow(new Date(session.lastActive), {
-                          addSuffix: true,
-                        })}
+                        {format.relativeTime(new Date(session.lastActive), now)}
                       </span>
                     </div>
                   </div>

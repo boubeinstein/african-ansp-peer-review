@@ -30,7 +30,7 @@
     "db:seed:demo:cleanup": "npx tsx prisma/seed-demo.ts cleanup",
     "db:seed:demo:reseed": "npx tsx prisma/seed-demo.ts reseed",
     "db:seed:demo:status": "npx tsx prisma/seed-demo.ts status",
-    "db:seed:training": "npx tsx prisma/seed-training.ts",
+    "db:seed:training": "npx tsx prisma/seed-comprehensive-training.ts",
     "db:seed:participants": "npx tsx prisma/seed-programme-participants.ts",
     "db:seed:participation": "npx tsx prisma/seed-participation-status.ts",
     "db:seed:teams": "npx tsx prisma/seed-teams-and-orgs.ts",

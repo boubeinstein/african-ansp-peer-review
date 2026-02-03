@@ -32,6 +32,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
+import { toast } from "sonner";
 
 function AdminSkeleton() {
   return (
@@ -94,7 +95,17 @@ function StatCard({
 export function AdminSettings() {
   const t = useTranslations("settings.admin");
 
+  const utils = trpc.useUtils();
   const { data: adminSettings, isLoading } = trpc.settings.getAdminSettings.useQuery();
+  const updateSettings = trpc.settings.updateAdminSettings.useMutation({
+    onSuccess: () => {
+      toast.success(t("updateSuccess"));
+      utils.settings.getAdminSettings.invalidate();
+    },
+    onError: (error) => {
+      toast.error(error.message || t("updateError"));
+    },
+  });
 
   if (isLoading) {
     return <AdminSkeleton />;
@@ -207,7 +218,10 @@ export function AdminSettings() {
             <Switch
               id="training-module"
               checked={adminSettings.trainingModuleEnabled}
-              disabled
+              onCheckedChange={(checked) => {
+                updateSettings.mutate({ trainingModuleEnabled: checked });
+              }}
+              disabled={updateSettings.isPending}
             />
           </div>
 
@@ -226,7 +240,10 @@ export function AdminSettings() {
             <Switch
               id="new-registrations"
               checked={adminSettings.allowNewRegistrations}
-              disabled
+              onCheckedChange={(checked) => {
+                updateSettings.mutate({ allowNewRegistrations: checked });
+              }}
+              disabled={updateSettings.isPending}
             />
           </div>
         </CardContent>
@@ -259,7 +276,9 @@ export function AdminSettings() {
       {/* Info Note */}
       <Card className="bg-muted/50 border-dashed">
         <CardContent className="py-4">
-          <p className="text-sm text-muted-foreground">{t("readOnlyNote")}</p>
+          <p className="text-sm text-muted-foreground">
+            {t("adminNote")}
+          </p>
         </CardContent>
       </Card>
     </div>

@@ -6101,7 +6101,9 @@
       "systemLimitsDescription": "Configurer les limites de ressources du système",
       "maxUploadSize": "Taille Maximale de Téléchargement",
       "maxUploadSizeDescription": "Taille maximale des fichiers pour le téléchargement de documents",
-      "readOnlyNote": "Ces paramètres sont en lecture seule. Pour modifier la configuration du système, veuillez contacter l'administrateur système.",
+      "updateSuccess": "Paramètres système mis à jour avec succès",
+      "updateError": "Échec de la mise à jour des paramètres système",
+      "adminNote": "Les modifications des indicateurs de fonctionnalités et des paramètres système prennent effet immédiatement pour tous les utilisateurs.",
       "loadError": "Échec du chargement des paramètres admin"
     }
   },

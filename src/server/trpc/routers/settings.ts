@@ -321,6 +321,17 @@ export const settingsRouter = router({
    * Get admin settings (system-wide configuration)
    */
   getAdminSettings: adminProcedure.query(async ({ ctx }) => {
+    // Get or create system settings (singleton pattern)
+    let settings = await ctx.db.systemSettings.findUnique({
+      where: { id: "system-settings" },
+    });
+
+    if (!settings) {
+      settings = await ctx.db.systemSettings.create({
+        data: { id: "system-settings" },
+      });
+    }
+
     // Get system statistics
     const [userCount, reviewCount, organizationCount] = await Promise.all([
       ctx.db.user.count({ where: { isActive: true } }),
@@ -328,13 +339,11 @@ export const settingsRouter = router({
       ctx.db.organization.count({ where: { membershipStatus: "ACTIVE" } }),
     ]);
 
-    // Return system-wide settings
-    // In a real implementation, these would come from a SystemSettings table
     return {
-      trainingModuleEnabled: true,
-      maintenanceMode: false,
-      allowNewRegistrations: true,
-      maxUploadSizeMB: 50,
+      trainingModuleEnabled: settings.trainingModuleEnabled,
+      maintenanceMode: settings.maintenanceMode,
+      allowNewRegistrations: settings.allowNewRegistrations,
+      maxUploadSizeMB: settings.maxUploadSizeMB,
       statistics: {
         activeUsers: userCount,
         totalReviews: reviewCount,
@@ -342,6 +351,45 @@ export const settingsRouter = router({
       },
     };
   }),
+
+  /**
+   * Update admin settings (system-wide configuration)
+   * Only SUPER_ADMIN and SYSTEM_ADMIN can modify system settings
+   */
+  updateAdminSettings: adminProcedure
+    .input(
+      z.object({
+        trainingModuleEnabled: z.boolean().optional(),
+        allowNewRegistrations: z.boolean().optional(),
+        maintenanceMode: z.boolean().optional(),
+        maxUploadSizeMB: z.number().min(1).max(500).optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const allowedRoles = ["SUPER_ADMIN", "SYSTEM_ADMIN"];
+      if (!allowedRoles.includes(ctx.session.user.role)) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "Only Super Admin and System Admin can modify system settings",
+        });
+      }
+
+      const settings = await ctx.db.systemSettings.upsert({
+        where: { id: "system-settings" },
+        update: {
+          ...input,
+          updatedById: ctx.session.user.id,
+        },
+        create: {
+          id: "system-settings",
+          ...input,
+          updatedById: ctx.session.user.id,
+        },
+      });
+
+      return settings;
+    }),
 
   /**
    * Delete user account (self-service)

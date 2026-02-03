@@ -6101,7 +6101,9 @@
       "systemLimitsDescription": "Configure system resource limits",
       "maxUploadSize": "Maximum Upload Size",
       "maxUploadSizeDescription": "Maximum file size for document uploads",
-      "readOnlyNote": "These settings are read-only. To modify system configuration, please contact the system administrator.",
+      "updateSuccess": "System settings updated successfully",
+      "updateError": "Failed to update system settings",
+      "adminNote": "Changes to feature flags and system settings take effect immediately for all users.",
       "loadError": "Failed to load admin settings"
     }
   },

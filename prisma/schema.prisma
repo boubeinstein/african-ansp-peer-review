@@ -133,6 +133,7 @@ model User {
   workflowActions          WorkflowHistory[]           @relation("WorkflowActor")
   onboarding               UserOnboarding?
   promotedBestPractices    BestPracticePromotion[]     @relation("PromotedBestPractices")
+  systemSettingsUpdates    SystemSettings[]            @relation("SystemSettingsUpdatedBy")
 
   @@map("users")
 }
@@ -2478,4 +2479,23 @@ model UserOnboarding {
   updatedAt       DateTime  @updatedAt @map("updated_at")
 
   @@map("user_onboarding")
+}
+
+// =============================================================================
+// SYSTEM SETTINGS (Singleton)
+// =============================================================================
+
+/// System-wide configuration settings (singleton table)
+model SystemSettings {
+  id                    String   @id @default("system-settings")
+  trainingModuleEnabled Boolean  @default(true) @map("training_module_enabled")
+  allowNewRegistrations Boolean  @default(true) @map("allow_new_registrations")
+  maintenanceMode       Boolean  @default(false) @map("maintenance_mode")
+  maxUploadSizeMB       Int      @default(50) @map("max_upload_size_mb")
+
+  updatedAt             DateTime @updatedAt @map("updated_at")
+  updatedById           String?  @map("updated_by_id")
+  updatedBy             User?    @relation("SystemSettingsUpdatedBy", fields: [updatedById], references: [id])
+
+  @@map("system_settings")
 }

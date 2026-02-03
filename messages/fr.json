@@ -51,13 +51,13 @@
     },
     "comingSoon": "Bientôt disponible",
     "theme": {
+      "label": "Thème",
       "light": "Clair",
       "dark": "Sombre",
       "system": "Système"
     },
     "commandPalette": "Palette de Commandes",
     "keyboardShortcuts": "Raccourcis Clavier",
-    "theme": "Thème",
     "autoSave": {
       "saving": "Enregistrement...",
       "saved": "Enregistré",

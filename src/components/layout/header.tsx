@@ -135,7 +135,7 @@ export function Header({ locale, user }: HeaderProps) {
                   </div>
                 </TooltipTrigger>
                 <TooltipContent side="bottom">
-                  <p>{t("theme")}</p>
+                  <p>{t("theme.label")}</p>
                 </TooltipContent>
               </Tooltip>
 

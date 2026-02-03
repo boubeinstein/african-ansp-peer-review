@@ -51,13 +51,13 @@
     },
     "comingSoon": "Coming Soon",
     "theme": {
+      "label": "Theme",
       "light": "Light",
       "dark": "Dark",
       "system": "System"
     },
     "commandPalette": "Command Palette",
     "keyboardShortcuts": "Keyboard Shortcuts",
-    "theme": "Theme",
     "autoSave": {
       "saving": "Saving...",
       "saved": "Saved",

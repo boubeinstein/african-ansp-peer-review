@@ -1,5 +1,6 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -11,10 +12,20 @@ import { useNetworkStatus } from "@/hooks/use-network-status";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
+const emptySubscribe = () => () => {};
+
+function useIsMounted() {
+  return useSyncExternalStore(emptySubscribe, () => true, () => false);
+}
+
 export function OfflineIndicator() {
   const t = useTranslations("offline");
+  const mounted = useIsMounted();
   const { isOnline, pendingSyncCount, isSyncing, hasUnsyncedChanges } =
     useNetworkStatus();
+
+  // Render nothing during SSR to avoid hydration mismatch
+  if (!mounted) return null;
 
   // Don't render if online and nothing pending
   if (isOnline && !hasUnsyncedChanges) return null;

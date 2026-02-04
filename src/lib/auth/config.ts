@@ -37,6 +37,19 @@ export const authConfig: NextAuthConfig = {
       return session;
     },
   },
+  events: {
+    async signOut(message) {
+      try {
+        const { logLogout } = await import("@/server/services/audit");
+        const token = "token" in message ? message.token : null;
+        if (token?.sub) {
+          await logLogout({ userId: token.sub });
+        }
+      } catch (error) {
+        console.error("[Auth] Failed to log sign-out:", error);
+      }
+    },
+  },
   providers: [
     Credentials({
       name: "credentials",

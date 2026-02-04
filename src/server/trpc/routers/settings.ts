@@ -10,6 +10,7 @@ import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure, adminProcedure } from "../trpc";
 import { Locale, Theme, DigestFrequency } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { logUpdate, logDelete } from "@/server/services/audit";
 
 // =============================================================================
 // VALIDATION SCHEMAS
@@ -266,6 +267,14 @@ export const settingsRouter = router({
         data: { passwordHash: hashedPassword },
       });
 
+      // Audit log
+      logUpdate({
+        userId: ctx.session.user.id,
+        entityType: "User",
+        entityId: ctx.session.user.id,
+        metadata: { action: "password_change" },
+      }).catch(() => {});
+
       return { success: true };
     }),
 
@@ -375,6 +384,11 @@ export const settingsRouter = router({
         });
       }
 
+      // Get previous settings for audit
+      const previousSettings = await ctx.db.systemSettings.findUnique({
+        where: { id: "system-settings" },
+      });
+
       const settings = await ctx.db.systemSettings.upsert({
         where: { id: "system-settings" },
         update: {
@@ -387,6 +401,22 @@ export const settingsRouter = router({
           updatedById: ctx.session.user.id,
         },
       });
+
+      // Audit log
+      logUpdate({
+        userId: ctx.session.user.id,
+        entityType: "SystemSettings",
+        entityId: "system-settings",
+        previousState: previousSettings
+          ? {
+              trainingModuleEnabled: previousSettings.trainingModuleEnabled,
+              maintenanceMode: previousSettings.maintenanceMode,
+              allowNewRegistrations: previousSettings.allowNewRegistrations,
+              maxUploadSizeMB: previousSettings.maxUploadSizeMB,
+            }
+          : undefined,
+        newState: input,
+      }).catch(() => {});
 
       return settings;
     }),
@@ -419,6 +449,14 @@ export const settingsRouter = router({
         where: { id: ctx.session.user.id },
         data: { isActive: false },
       });
+
+      // Audit log
+      logDelete({
+        userId: ctx.session.user.id,
+        entityType: "User",
+        entityId: ctx.session.user.id,
+        metadata: { action: "self_deactivation" },
+      }).catch(() => {});
 
       return { success: true };
     }),

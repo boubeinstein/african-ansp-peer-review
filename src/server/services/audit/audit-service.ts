@@ -6,6 +6,7 @@
  * user context, and request metadata.
  */
 
+import { headers as getRequestHeaders } from "next/headers";
 import { prisma } from "@/lib/db";
 import { AuditAction, Prisma } from "@prisma/client";
 
@@ -64,7 +65,7 @@ export async function logAudit(params: AuditLogParams): Promise<void> {
     request,
   } = params;
 
-  // Extract IP and user agent from request if available
+  // Extract IP and user agent from request or Next.js request context
   let ipAddress: string | null = null;
   let userAgent: string | null = null;
 
@@ -76,6 +77,15 @@ export async function logAudit(params: AuditLogParams): Promise<void> {
       request.headers.get("cf-connecting-ip") || // Cloudflare
       null;
     userAgent = request.headers.get("user-agent");
+  } else {
+    // Fallback: try to get headers from Next.js request context
+    try {
+      const hdrs = await getRequestHeaders();
+      ipAddress = hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() || hdrs.get("x-real-ip") || null;
+      userAgent = hdrs.get("user-agent") || null;
+    } catch {
+      // headers() unavailable outside request context (e.g., background jobs)
+    }
   }
 
   try {

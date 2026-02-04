@@ -106,6 +106,7 @@
     "administration": "Administration",
     "adminUsers": "Users",
     "adminRoles": "Roles",
+    "auditLogs": "Audit Logs",
     "notifications": "Alerts",
     "profile": "Profile"
   },

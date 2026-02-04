@@ -65,6 +65,7 @@ export function LoginForm() {
         setError(t("invalidCredentials"));
         toast.error(t("invalidCredentials"));
       } else if (result?.ok) {
+        fetch("/api/audit/login", { method: "POST" }).catch(() => {});
         router.push(callbackUrl);
         router.refresh();
       }

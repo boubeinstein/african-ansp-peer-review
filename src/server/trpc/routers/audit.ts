@@ -8,6 +8,7 @@
 import { z } from "zod";
 import { router, adminProcedure } from "../trpc";
 import { AuditAction } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import {
   getAuditLogs,
   getEntityAuditLogs,
@@ -116,6 +117,37 @@ export const auditRouter = router({
       });
 
       return exportAuditLogsToCSV(logs);
+    }),
+
+  /**
+   * Get a single audit log entry with full details
+   */
+  getById: adminProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const log = await ctx.db.auditLog.findUnique({
+        where: { id: input.id },
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+              role: true,
+            },
+          },
+        },
+      });
+
+      if (!log) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Audit log entry not found",
+        });
+      }
+
+      return log;
     }),
 
   /**

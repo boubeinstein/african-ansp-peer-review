@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure } from "../../trpc";
 import { prisma } from "@/lib/db";
 import { UserRole, Prisma } from "@prisma/client";
+import { logCreate, logUpdate, logDelete } from "@/server/services/audit";
 import {
   USER_CRUD_PERMISSIONS,
   ASSIGNABLE_ROLES,
@@ -333,6 +334,13 @@ export const adminUserRouter = router({
       },
     });
 
+    logCreate({
+      userId: ctx.user.id,
+      entityType: "User",
+      entityId: newUser.id,
+      newState: { email: input.email, role: input.role, organizationId: input.organizationId },
+    }).catch(() => {});
+
     // In development, return temp password
     if (process.env.NODE_ENV === "development") {
       return { user: newUser, tempPassword };
@@ -401,6 +409,14 @@ export const adminUserRouter = router({
       },
     });
 
+    logUpdate({
+      userId: ctx.user.id,
+      entityType: "User",
+      entityId: input.id,
+      previousState: { firstName: targetUser.firstName, lastName: targetUser.lastName },
+      newState: { updatedFields: Object.keys(input).filter((k) => k !== "id") },
+    }).catch(() => {});
+
     return updated;
   }),
 
@@ -463,6 +479,14 @@ export const adminUserRouter = router({
       },
     });
 
+    logUpdate({
+      userId: ctx.user.id,
+      entityType: "User",
+      entityId: userId,
+      previousState: { role: targetUser.role },
+      newState: { role },
+    }).catch(() => {});
+
     // Create notification for the user
     await prisma.notification.create({
       data: {
@@ -520,6 +544,14 @@ export const adminUserRouter = router({
         isActive: true,
       },
     });
+
+    logUpdate({
+      userId: ctx.user.id,
+      entityType: "User",
+      entityId: userId,
+      previousState: { isActive: !isActive },
+      newState: { isActive },
+    }).catch(() => {});
 
     // Create notification
     await prisma.notification.create({
@@ -583,6 +615,13 @@ export const adminUserRouter = router({
       },
     });
 
+    logDelete({
+      userId: ctx.user.id,
+      entityType: "User",
+      entityId: userId,
+      previousState: { role: targetUser.role },
+    }).catch(() => {});
+
     return { success: true };
   }),
 
@@ -639,6 +678,13 @@ export const adminUserRouter = router({
         mustChangePassword: true,
       },
     });
+
+    logUpdate({
+      userId: ctx.user.id,
+      entityType: "User",
+      entityId: userId,
+      newState: { action: "admin_password_reset" },
+    }).catch(() => {});
 
     // Create notification for the user
     await prisma.notification.create({

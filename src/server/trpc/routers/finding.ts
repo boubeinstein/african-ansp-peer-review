@@ -17,6 +17,7 @@ import {
 
 // Notification service import
 import { notifyFindingCreated } from "@/server/services/notification-service";
+import { logCreate, logUpdate, logDelete, logStatusChange, logAssignment } from "@/server/services/audit";
 
 // ============================================================================
 // Role Definitions
@@ -312,6 +313,13 @@ export const findingRouter = router({
           },
         },
       });
+
+      logCreate({
+        userId: user.id,
+        entityType: "Finding",
+        entityId: finding.id,
+        newState: { referenceNumber: finding.referenceNumber, findingType: finding.findingType, severity: finding.severity },
+      }).catch(() => {});
 
       // Send notification to host organization
       try {
@@ -621,6 +629,13 @@ export const findingRouter = router({
         },
       });
 
+      logUpdate({
+        userId: user.id,
+        entityType: "Finding",
+        entityId: input.id,
+        newState: { updatedFields: Object.keys(input).filter((k) => k !== "id") },
+      }).catch(() => {});
+
       return updated;
     }),
 
@@ -739,6 +754,14 @@ export const findingRouter = router({
         },
       });
 
+      logStatusChange({
+        userId: user.id,
+        entityType: "Finding",
+        entityId: id,
+        previousStatus: finding.status,
+        newStatus: newStatus,
+      }).catch(() => {});
+
       return updated;
     }),
 
@@ -814,6 +837,13 @@ export const findingRouter = router({
           },
         },
       });
+
+      logAssignment({
+        userId: user.id,
+        entityType: "Finding",
+        entityId: id,
+        assigneeId: assignedToId ?? "unassigned",
+      }).catch(() => {});
 
       return updated;
     }),
@@ -1071,6 +1101,13 @@ export const findingRouter = router({
       await ctx.db.finding.delete({
         where: { id: input.id },
       });
+
+      logDelete({
+        userId: ctx.user.id,
+        entityType: "Finding",
+        entityId: input.id,
+        previousState: { referenceNumber: finding.referenceNumber, status: finding.status },
+      }).catch(() => {});
 
       return { success: true };
     }),

@@ -16,6 +16,7 @@ import {
   deleteFile,
   extractPathFromUrl,
 } from "@/server/services/storage.service";
+import { logCreate, logUpdate, logDelete, logStatusChange } from "@/server/services/audit";
 
 // All document categories as zod enum
 const AllDocumentCategories = z.nativeEnum(DocumentCategory);
@@ -178,6 +179,15 @@ export const documentRouter = router({
           organizationId: input.organizationId ?? ctx.user.organizationId ?? undefined,
           uploadedById: ctx.user.id,
         });
+
+        // Audit log
+        logCreate({
+          userId: ctx.user.id,
+          entityType: "Document",
+          entityId: document.id,
+          newState: { name: input.name, category: input.category, fileType: input.fileType },
+          metadata: { organizationId: input.organizationId, assessmentId: input.assessmentId },
+        }).catch(() => {});
 
         return {
           success: true,
@@ -520,6 +530,14 @@ export const documentRouter = router({
           ctx.user.id
         );
 
+        // Audit log
+        logUpdate({
+          userId: ctx.user.id,
+          entityType: "Document",
+          entityId: documentId,
+          newState: updateData,
+        }).catch(() => {});
+
         return {
           success: true,
           document,
@@ -558,6 +576,13 @@ export const documentRouter = router({
 
       try {
         await documentService.deleteDocument(input.documentId, ctx.user.id);
+
+        // Audit log
+        logDelete({
+          userId: ctx.user.id,
+          entityType: "Document",
+          entityId: input.documentId,
+        }).catch(() => {});
 
         return { success: true };
       } catch (error) {
@@ -737,6 +762,14 @@ export const documentRouter = router({
         },
       });
 
+      // Audit log
+      logCreate({
+        userId: ctx.user.id,
+        entityType: "Document",
+        entityId: document.id,
+        newState: { name: input.name, category: input.category, reviewId: input.reviewId },
+      }).catch(() => {});
+
       return document;
     }),
 
@@ -853,6 +886,14 @@ export const documentRouter = router({
           deletedAt: new Date(),
         },
       });
+
+      // Audit log
+      logDelete({
+        userId: ctx.user.id,
+        entityType: "Document",
+        entityId: input.documentId,
+        previousState: { name: document.name, category: document.category, reviewId: document.reviewId },
+      }).catch(() => {});
 
       return { success: true };
     }),
@@ -1192,6 +1233,16 @@ export const documentRouter = router({
           },
         },
       });
+
+      // Audit log
+      logStatusChange({
+        userId,
+        entityType: "Document",
+        entityId: documentId,
+        previousStatus: document.status,
+        newStatus: status,
+        metadata: { reviewId: document.reviewId },
+      }).catch(() => {});
 
       return updated;
     }),

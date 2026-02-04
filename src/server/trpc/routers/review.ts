@@ -62,8 +62,12 @@ import {
 // Audit logging
 import {
   logCreate,
+  logUpdate,
+  logDelete,
   logStatusChange,
   logAssignment,
+  logApproval,
+  logRejection,
 } from "@/server/services/audit";
 
 // =============================================================================
@@ -1006,7 +1010,7 @@ export const reviewRouter = router({
         });
       }
 
-      return ctx.db.review.update({
+      const cancelled = await ctx.db.review.update({
         where: { id: input.id },
         data: {
           status: "CANCELLED",
@@ -1015,6 +1019,18 @@ export const reviewRouter = router({
             : `Cancellation reason: ${input.reason}`,
         },
       });
+
+      // Audit log
+      logStatusChange({
+        userId: ctx.session.user.id,
+        entityType: "Review",
+        entityId: input.id,
+        previousStatus: review.status,
+        newStatus: "CANCELLED",
+        metadata: { reason: input.reason },
+      }).catch(() => {});
+
+      return cancelled;
     }),
 
   // ==========================================================================
@@ -1315,6 +1331,20 @@ export const reviewRouter = router({
           }
         }
       }
+
+      // Audit log
+      const auditFn = input.decision === "APPROVED" ? logApproval : input.decision === "REJECTED" ? logRejection : logUpdate;
+      auditFn({
+        userId: ctx.session.user.id,
+        entityType: "Review",
+        entityId: input.reviewId,
+        metadata: {
+          action: "approval_decision",
+          decision: input.decision,
+          previousStatus: review.status,
+          newStatus,
+        },
+      }).catch(() => {});
 
       return {
         approval,
@@ -1756,6 +1786,14 @@ export const reviewRouter = router({
         });
       }
 
+      // Audit log
+      logDelete({
+        userId: ctx.user.id,
+        entityType: "ReviewTeamMember",
+        entityId: `${input.reviewId}:${input.userId}`,
+        metadata: { reviewId: input.reviewId, removedUserId: input.userId },
+      }).catch(() => {});
+
       return { success: true };
     }),
 
@@ -1834,6 +1872,16 @@ export const reviewRouter = router({
         },
       });
 
+      // Audit log
+      logUpdate({
+        userId: ctx.session.user.id,
+        entityType: "ReviewTeamMember",
+        entityId: input.membershipId,
+        previousState: { invitationStatus: "INVITED" },
+        newState: { invitationStatus: updated.invitationStatus },
+        metadata: { reviewId: updated.reviewId, action: "invitation_response" },
+      }).catch(() => {});
+
       return {
         success: true,
         status: updated.invitationStatus,
@@ -1855,7 +1903,7 @@ export const reviewRouter = router({
     .mutation(async ({ ctx, input }) => {
       const { id, ...data } = input;
 
-      return ctx.db.reviewTeamMember.update({
+      const updated = await ctx.db.reviewTeamMember.update({
         where: { id },
         data,
         include: {
@@ -1869,6 +1917,17 @@ export const reviewRouter = router({
           },
         },
       });
+
+      // Audit log
+      logUpdate({
+        userId: ctx.user.id,
+        entityType: "ReviewTeamMember",
+        entityId: id,
+        newState: { role: input.role, assignedAreas: input.assignedAreas },
+        metadata: { userId: updated.userId },
+      }).catch(() => {});
+
+      return updated;
     }),
 
   /**
@@ -2135,6 +2194,19 @@ export const reviewRouter = router({
         }
       }
 
+      // Audit log
+      logAssignment({
+        userId: ctx.user.id,
+        entityType: "ReviewTeam",
+        entityId: reviewId,
+        assigneeId: assignments.find((a) => a.role === "LEAD_REVIEWER")?.userId ?? assignments[0].userId,
+        metadata: {
+          action: "bulk_team_assignment",
+          memberCount: assignments.length,
+          replaceExisting,
+        },
+      }).catch(() => {});
+
       return {
         success: true,
         teamMembers: result,
@@ -2271,12 +2343,17 @@ export const reviewRouter = router({
         return teamMembers;
       });
 
-      console.log("[Review Team] Assigned:", {
-        reviewId: input.reviewId,
-        assignedBy: user.id,
-        memberCount: input.members.length,
-        lead: input.members.find((m) => m.role === "LEAD_REVIEWER")?.userId,
-      });
+      // Audit log
+      logAssignment({
+        userId: user.id,
+        entityType: "ReviewTeam",
+        entityId: input.reviewId,
+        assigneeId: input.members.find((m) => m.role === "LEAD_REVIEWER")?.userId ?? input.members[0].userId,
+        metadata: {
+          action: "team_assignment",
+          memberCount: input.members.length,
+        },
+      }).catch(() => {});
 
       // Send team assignment notifications
       try {
@@ -2482,6 +2559,15 @@ export const reviewRouter = router({
           },
         });
 
+        // Audit log
+        logAssignment({
+          userId: ctx.user.id,
+          entityType: "ReviewTeamMember",
+          entityId: member.id,
+          assigneeId: input.userId,
+          metadata: { reviewId: input.reviewId, role: input.role, isCrossTeam: validation.isCrossTeam },
+        }).catch(() => {});
+
         return member;
       }
 
@@ -2558,6 +2644,15 @@ export const reviewRouter = router({
         },
       });
 
+      // Audit log
+      logAssignment({
+        userId: ctx.user.id,
+        entityType: "ReviewTeamMember",
+        entityId: member.id,
+        assigneeId: input.userId,
+        metadata: { reviewId: input.reviewId, role: input.role },
+      }).catch(() => {});
+
       return member;
     }),
 
@@ -2632,6 +2727,16 @@ export const reviewRouter = router({
           },
         },
       });
+
+      // Audit log
+      logUpdate({
+        userId: ctx.user.id,
+        entityType: "ReviewTeamMember",
+        entityId: teamMember.id,
+        previousState: { role: teamMember.role },
+        newState: { role: input.role },
+        metadata: { reviewId: input.reviewId, userId: input.userId },
+      }).catch(() => {});
 
       return member;
     }),
@@ -2778,13 +2883,33 @@ export const reviewRouter = router({
         updateData.closedAt = new Date();
       }
 
-      return ctx.db.finding.update({
+      const updated = await ctx.db.finding.update({
         where: { id },
         data: updateData,
         include: {
           correctiveActionPlan: true,
         },
       });
+
+      // Audit log
+      if (data.status && data.status !== finding.status) {
+        logStatusChange({
+          userId: ctx.session.user.id,
+          entityType: "Finding",
+          entityId: id,
+          previousStatus: finding.status,
+          newStatus: data.status,
+        }).catch(() => {});
+      } else {
+        logUpdate({
+          userId: ctx.session.user.id,
+          entityType: "Finding",
+          entityId: id,
+          metadata: { referenceNumber: finding.referenceNumber },
+        }).catch(() => {});
+      }
+
+      return updated;
     }),
 
   /**
@@ -2813,9 +2938,19 @@ export const reviewRouter = router({
         });
       }
 
-      return ctx.db.finding.delete({
+      const deleted = await ctx.db.finding.delete({
         where: { id: input.id },
       });
+
+      // Audit log
+      logDelete({
+        userId: ctx.user.id,
+        entityType: "Finding",
+        entityId: input.id,
+        previousState: { referenceNumber: finding.referenceNumber, reviewId: finding.reviewId },
+      }).catch(() => {});
+
+      return deleted;
     }),
 
   // ==========================================================================
@@ -2871,7 +3006,7 @@ export const reviewRouter = router({
         });
       }
 
-      return ctx.db.correctiveActionPlan.create({
+      const cap = await ctx.db.correctiveActionPlan.create({
         data: {
           findingId: input.findingId,
           status: "DRAFT",
@@ -2895,6 +3030,17 @@ export const reviewRouter = router({
           },
         },
       });
+
+      // Audit log
+      logCreate({
+        userId: ctx.session.user.id,
+        entityType: "CorrectiveActionPlan",
+        entityId: cap.id,
+        newState: { findingId: input.findingId, status: "DRAFT" },
+        metadata: { findingReference: cap.finding.referenceNumber },
+      }).catch(() => {});
+
+      return cap;
     }),
 
   /**
@@ -2975,7 +3121,7 @@ export const reviewRouter = router({
         }
       }
 
-      return ctx.db.correctiveActionPlan.update({
+      const updated = await ctx.db.correctiveActionPlan.update({
         where: { id },
         data: updateData,
         include: {
@@ -2988,6 +3134,26 @@ export const reviewRouter = router({
           },
         },
       });
+
+      // Audit log
+      if (status && status !== cap.status) {
+        logStatusChange({
+          userId: ctx.session.user.id,
+          entityType: "CorrectiveActionPlan",
+          entityId: id,
+          previousStatus: cap.status,
+          newStatus: status,
+          metadata: { findingReference: updated.finding.referenceNumber },
+        }).catch(() => {});
+      } else {
+        logUpdate({
+          userId: ctx.session.user.id,
+          entityType: "CorrectiveActionPlan",
+          entityId: id,
+        }).catch(() => {});
+      }
+
+      return updated;
     }),
 
   /**

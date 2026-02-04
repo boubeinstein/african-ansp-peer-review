@@ -15,6 +15,7 @@ import {
   Settings,
   UserCog,
   ShieldCheck,
+  ScrollText,
   Lightbulb,
   type LucideIcon,
 } from "lucide-react";
@@ -130,6 +131,13 @@ const allNavItems: NavItem[] = [
     href: "/admin/roles",
     icon: ShieldCheck,
     feature: "admin.roles",
+    section: "admin",
+  },
+  {
+    name: "auditLogs",
+    href: "/audit-logs",
+    icon: ScrollText,
+    feature: "admin.logs",
     section: "admin",
   },
 ];

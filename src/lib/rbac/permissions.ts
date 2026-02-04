@@ -204,6 +204,7 @@ const permissions: Record<UserRole, Feature[]> = {
     "settings.users",
     "admin",
     "admin.roles",
+    "admin.logs",
   ],
 
   STEERING_COMMITTEE: [
@@ -232,6 +233,7 @@ const permissions: Record<UserRole, Feature[]> = {
     "settings",
     "admin",
     "admin.roles",
+    "admin.logs",
   ],
 
   LEAD_REVIEWER: [

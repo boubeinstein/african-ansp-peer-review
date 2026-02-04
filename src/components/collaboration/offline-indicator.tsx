@@ -1,46 +1,62 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { WifiOff, Wifi } from "lucide-react";
 
-// Get initial online state safely (default to true for SSR)
-function getInitialOnlineState(): boolean {
-  if (typeof navigator !== "undefined") {
-    return navigator.onLine;
-  }
+function subscribeOnlineStatus(callback: () => void) {
+  window.addEventListener("online", callback);
+  window.addEventListener("offline", callback);
+  return () => {
+    window.removeEventListener("online", callback);
+    window.removeEventListener("offline", callback);
+  };
+}
+
+function getOnlineSnapshot() {
+  return navigator.onLine;
+}
+
+function getOnlineServerSnapshot() {
   return true;
 }
 
+const emptySubscribe = () => () => {};
+
+function useIsMounted() {
+  return useSyncExternalStore(emptySubscribe, () => true, () => false);
+}
+
 export function OfflineIndicator() {
-  const [isOnline, setIsOnline] = useState(getInitialOnlineState);
+  const mounted = useIsMounted();
+  const isOnline = useSyncExternalStore(
+    subscribeOnlineStatus,
+    getOnlineSnapshot,
+    getOnlineServerSnapshot
+  );
   const [showReconnected, setShowReconnected] = useState(false);
 
-  useEffect(() => {
-    const handleOnline = () => {
-      setIsOnline(true);
-      setShowReconnected(true);
-      setTimeout(() => setShowReconnected(false), 3000);
-    };
+  // Render nothing during SSR to avoid hydration mismatch
+  if (!mounted) return null;
 
-    const handleOffline = () => {
-      setIsOnline(false);
-      setShowReconnected(false);
-    };
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
+  // Handle reconnection notification via a wrapper
+  // We track previous state via a ref-like approach in the AnimatePresence
+  if (isOnline && !showReconnected) {
+    // Will be triggered by AnimatePresence exit
+  }
 
   return (
-    <AnimatePresence>
+    <AnimatePresence
+      onExitComplete={() => {
+        if (isOnline) {
+          setShowReconnected(true);
+          setTimeout(() => setShowReconnected(false), 3000);
+        }
+      }}
+    >
       {!isOnline && (
         <motion.div
+          key="offline"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -50 }}
@@ -53,6 +69,7 @@ export function OfflineIndicator() {
 
       {showReconnected && isOnline && (
         <motion.div
+          key="reconnected"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -50 }}

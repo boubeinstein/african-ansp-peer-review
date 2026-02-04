@@ -4,6 +4,7 @@
 
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { headers as getRequestHeaders } from "next/headers";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { AuditAction } from "@prisma/client";
@@ -184,6 +185,15 @@ export const authRouter = router({
       ]);
 
       // Log for audit
+      let ipAddress: string | null = null;
+      let userAgent: string | null = null;
+      try {
+        const hdrs = await getRequestHeaders();
+        ipAddress = hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() || hdrs.get("x-real-ip") || null;
+        userAgent = hdrs.get("user-agent") || null;
+      } catch {
+        // headers() unavailable outside request context
+      }
       await prisma.auditLog.create({
         data: {
           action: AuditAction.UPDATE,
@@ -191,6 +201,8 @@ export const authRouter = router({
           entityId: resetRecord.userId,
           userId: resetRecord.userId,
           metadata: { action: "password_reset" },
+          ipAddress,
+          userAgent,
         },
       });
 

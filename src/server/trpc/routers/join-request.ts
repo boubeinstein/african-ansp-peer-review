@@ -26,6 +26,7 @@ import {
   sendMoreInfoRequestEmail,
   sendCredentialsEmail,
 } from "@/lib/email";
+import { logUpdate, logApproval, logRejection } from "@/server/services/audit";
 
 // =============================================================================
 // INPUT SCHEMAS
@@ -447,6 +448,16 @@ export const joinRequestRouter = router({
         include: { organization: true },
       });
 
+      // Audit log
+      logUpdate({
+        userId: ctx.session.user.id,
+        entityType: "JoinRequest",
+        entityId: input.id,
+        previousState: { status: joinRequest.status },
+        newState: { status: JoinRequestStatus.SC_REVIEW, recommendation: input.coordinatorRecommendation },
+        metadata: { action: "coordinator_review" },
+      }).catch(() => {});
+
       // Update organization status if organization exists
       if (updated.organizationId) {
         await prisma.organization.update({
@@ -545,6 +556,19 @@ export const joinRequestRouter = router({
         },
         include: { organization: true },
       });
+
+      // Audit log for SC decision
+      const auditFn = input.scDecision === "APPROVED" ? logApproval : input.scDecision === "REJECTED" ? logRejection : logUpdate;
+      auditFn({
+        userId: ctx.session.user.id,
+        entityType: "JoinRequest",
+        entityId: input.id,
+        metadata: {
+          action: "sc_decision",
+          decision: input.scDecision,
+          assignedTeam: input.scAssignedTeam,
+        },
+      }).catch(() => {});
 
       // Get organization name (from linked org or free-text field)
       const orgName = updated.organization?.nameEn || updated.organizationName || "Unknown Organization";

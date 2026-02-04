@@ -8,6 +8,7 @@
 
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { headers as getRequestHeaders } from "next/headers";
 import { router, protectedProcedure, adminProcedure } from "../trpc";
 import { prisma } from "@/lib/db";
 import {
@@ -111,6 +112,15 @@ async function logAuditEntry(
   newState?: Record<string, unknown>
 ): Promise<void> {
   try {
+    let ipAddress: string | null = null;
+    let userAgent: string | null = null;
+    try {
+      const hdrs = await getRequestHeaders();
+      ipAddress = hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() || hdrs.get("x-real-ip") || null;
+      userAgent = hdrs.get("user-agent") || null;
+    } catch {
+      // headers() unavailable outside request context
+    }
     await prisma.auditLog.create({
       data: {
         userId,
@@ -118,6 +128,8 @@ async function logAuditEntry(
         entityType: "ReviewerProfile",
         entityId,
         newState: newState ? JSON.stringify(newState) : Prisma.JsonNull,
+        ipAddress,
+        userAgent,
       },
     });
   } catch (error) {

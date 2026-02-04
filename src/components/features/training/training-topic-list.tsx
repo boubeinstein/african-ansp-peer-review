@@ -50,8 +50,10 @@ interface TrainingResource {
   titleEn: string;
   titleFr: string;
   resourceType: "DOCUMENT" | "VIDEO" | "PRESENTATION" | "CHECKLIST" | "TEMPLATE" | "EXTERNAL_LINK";
-  url: string | null;
-  fileUrl: string | null;
+  urlEn: string | null;
+  urlFr: string | null;
+  fileUrlEn: string | null;
+  fileUrlFr: string | null;
   sortOrder: number;
 }
 
@@ -238,14 +240,19 @@ function ResourceCard({ resource, locale }: ResourceCardProps) {
   const Icon = RESOURCE_TYPE_ICONS[resource.resourceType];
   const colorClass = RESOURCE_TYPE_COLORS[resource.resourceType];
 
-  const href = resource.url || resource.fileUrl;
-  const isExternal = resource.resourceType === "EXTERNAL_LINK" || resource.url?.startsWith("http");
+  const url = (locale === "fr" ? resource.urlFr : resource.urlEn) || resource.urlEn;
+  const fileUrl = (locale === "fr" ? resource.fileUrlFr : resource.fileUrlEn) || resource.fileUrlEn;
+  const href = url || fileUrl;
+  const isExternal = resource.resourceType === "EXTERNAL_LINK" || url?.startsWith("http");
+
+  const isDownload = !!(!isExternal && fileUrl);
 
   return (
     <a
       href={href || "#"}
       target={isExternal ? "_blank" : undefined}
       rel={isExternal ? "noopener noreferrer" : undefined}
+      download={isDownload || undefined}
       className={cn(
         "block p-4 border rounded-lg transition-all duration-200",
         "hover:shadow-md hover:-translate-y-0.5",
@@ -265,7 +272,7 @@ function ResourceCard({ resource, locale }: ResourceCardProps) {
         {isExternal && (
           <ExternalLink className="h-4 w-4 text-muted-foreground shrink-0" />
         )}
-        {resource.fileUrl && !isExternal && (
+        {fileUrl && !isExternal && (
           <FileDown className="h-4 w-4 text-muted-foreground shrink-0" />
         )}
       </div>

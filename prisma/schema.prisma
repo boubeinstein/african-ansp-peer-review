@@ -906,8 +906,10 @@ model TrainingResource {
   titleEn      String         @map("title_en")
   titleFr      String         @map("title_fr")
   resourceType ResourceType   @map("resource_type")
-  url          String?
-  fileUrl      String?        @map("file_url")
+  urlEn        String?        @map("url_en")
+  urlFr        String?        @map("url_fr")
+  fileUrlEn    String?        @map("file_url_en")
+  fileUrlFr    String?        @map("file_url_fr")
   sortOrder    Int            @map("sort_order")
   module       TrainingModule @relation(fields: [moduleId], references: [id])
 

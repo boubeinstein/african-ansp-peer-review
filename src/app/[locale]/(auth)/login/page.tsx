@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth";
 import { LoginCarousel } from "@/components/features/auth/login-carousel";
 import { LoginForm } from "@/components/features/auth/login-form";
 import { LoginFormSkeleton } from "@/components/features/auth/login-form-skeleton";
+import { Logo } from "@/components/ui/logo";
 
 interface LoginPageProps {
   params: Promise<{ locale: string }>;
@@ -91,6 +92,7 @@ function CarouselSkeleton() {
 function MobileHeader() {
   return (
     <div className="flex flex-col items-center gap-3">
+      <Logo size="xl" />
       <div className="flex items-center gap-3">
         <Image
           src="/images/logos/International_Civil_Aviation_Organization_logo.svg"

@@ -10,6 +10,7 @@ import { trpc } from "@/lib/trpc/client";
 import { getNavigationForRole } from "@/lib/rbac";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/ui/logo";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Tooltip,
@@ -59,6 +60,7 @@ interface SidebarProps {
 export function Sidebar({ locale, userRole }: SidebarProps) {
   const pathname = usePathname();
   const t = useTranslations("navigation");
+  const tCommon = useTranslations("common");
   const tSidebar = useTranslations("navSidebar");
 
   // Use localStorage-synced state with SSR-safe defaults
@@ -118,19 +120,19 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
       )}
     >
       <div className="flex-shrink-0 flex h-16 items-center justify-center border-b px-4">
-        {!collapsed && (
-          <Link href={`/${locale}`} className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
-              A
+        <Link href={`/${locale}`} className="flex items-center gap-2.5 group">
+          <Logo size={collapsed ? "md" : "lg"} className="transition-transform group-hover:scale-105" />
+          {!collapsed && (
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-bold tracking-tight text-foreground leading-tight truncate">
+                AAPRP
+              </span>
+              <span className="text-[10px] text-muted-foreground leading-tight truncate">
+                {tCommon("appTagline")}
+              </span>
             </div>
-            <span className="font-semibold text-sm">ANSP Peer Review</span>
-          </Link>
-        )}
-        {collapsed && (
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
-            A
-          </div>
-        )}
+          )}
+        </Link>
       </div>
 
       <ScrollArea className="flex-1 px-3 py-4">

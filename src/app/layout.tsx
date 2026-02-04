@@ -18,9 +18,34 @@ const sourceSans = Source_Sans_3({
 });
 
 export const metadata: Metadata = {
-  title: "African ANSP Peer Review",
-  description: "Collaborative Excellence in Aviation Safety",
+  title: {
+    default: "AAPRP - African ANSP Peer Review Programme",
+    template: "%s | AAPRP",
+  },
+  description: "Collaborative Excellence in Aviation Safety — ICAO-endorsed peer review platform for African Air Navigation Service Providers",
   manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/images/logos/favicon/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/images/logos/favicon/favicon-16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180" },
+    ],
+  },
+  openGraph: {
+    title: "AAPRP - African ANSP Peer Review Programme",
+    description: "Collaborative Excellence in Aviation Safety",
+    images: [{ url: "/images/logos/social/og-image-1200x630.png", width: 1200, height: 630 }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AAPRP - African ANSP Peer Review Programme",
+    description: "Collaborative Excellence in Aviation Safety",
+    images: ["/images/logos/social/twitter-card-1200x600.png"],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -51,7 +76,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body
         className={`${montserrat.variable} ${sourceSans.variable} font-sans antialiased`}

@@ -1,60 +1,54 @@
 {
-  "name": "African ANSP Peer Review Programme",
+  "name": "AAPRP - African ANSP Peer Review Programme",
   "short_name": "AAPRP",
-  "description": "Aviation safety peer review platform for African ANSPs",
+  "description": "Collaborative Excellence in Aviation Safety",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#1e40af",
+  "theme_color": "#0070b5",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/icons/icon-72x72.png",
+      "src": "/images/logos/blue-on-white/aaprp-logo-48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/logos/blue-on-white/aaprp-logo-72.png",
       "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "maskable any"
+      "type": "image/png"
     },
     {
-      "src": "/icons/icon-96x96.png",
+      "src": "/images/logos/blue-on-white/aaprp-logo-96.png",
       "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "maskable any"
+      "type": "image/png"
     },
     {
-      "src": "/icons/icon-128x128.png",
+      "src": "/images/logos/blue-on-white/aaprp-logo-128.png",
       "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "maskable any"
+      "type": "image/png"
     },
     {
-      "src": "/icons/icon-144x144.png",
+      "src": "/images/logos/blue-on-white/aaprp-logo-144.png",
       "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "maskable any"
+      "type": "image/png"
     },
     {
-      "src": "/icons/icon-152x152.png",
-      "sizes": "152x152",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/icons/icon-192x192.png",
+      "src": "/images/logos/blue-on-white/aaprp-logo-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
-      "src": "/icons/icon-384x384.png",
+      "src": "/images/logos/blue-on-white/aaprp-logo-384.png",
       "sizes": "384x384",
-      "type": "image/png",
-      "purpose": "maskable any"
+      "type": "image/png"
     },
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "/images/logos/pwa/pwa-splash-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     }
   ],
   "shortcuts": [
@@ -63,14 +57,14 @@
       "short_name": "Reviews",
       "description": "View your assigned reviews",
       "url": "/en/reviews?filter=my",
-      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+      "icons": [{ "src": "/images/logos/blue-on-white/aaprp-logo-96.png", "sizes": "96x96" }]
     },
     {
       "name": "My CAPs",
       "short_name": "CAPs",
       "description": "View corrective action plans",
       "url": "/en/caps?filter=my",
-      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+      "icons": [{ "src": "/images/logos/blue-on-white/aaprp-logo-96.png", "sizes": "96x96" }]
     }
   ],
   "categories": ["business", "productivity"],

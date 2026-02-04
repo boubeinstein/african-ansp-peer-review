@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,6 +29,7 @@ import { KeyboardShortcutsDialog, ShortcutIndicator } from "@/components/feature
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { OfflineIndicator } from "@/components/pwa/offline-indicator";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { Logo } from "@/components/ui/logo";
 
 interface HeaderProps {
   locale: string;
@@ -40,11 +41,57 @@ interface HeaderProps {
   };
 }
 
+const routeTitleMap: Record<string, string> = {
+  "/dashboard": "dashboard",
+  "/analytics": "analytics",
+  "/questionnaires": "questionnaires",
+  "/assessments": "assessments",
+  "/reviews": "reviews",
+  "/findings": "findings",
+  "/caps": "caps",
+  "/best-practices": "bestPractices",
+  "/reviewers": "reviewers",
+  "/teams": "teams",
+  "/organizations": "organizations",
+  "/join-requests": "joinRequests",
+  "/training": "training",
+  "/settings": "settings",
+  "/admin/users": "adminUsers",
+  "/admin/roles": "adminRoles",
+  "/audit-logs": "auditLogs",
+};
+
 export function Header({ locale, user }: HeaderProps) {
   const t = useTranslations("common");
+  const tNav = useTranslations("navigation");
   const router = useRouter();
+  const pathname = usePathname();
   const otherLocale = locale === "en" ? "fr" : "en";
   const initials = `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
+
+  const pageTitle = useMemo(() => {
+    // Strip locale prefix from pathname
+    const cleanPath = pathname.replace(new RegExp(`^/${locale}`), "") || "/dashboard";
+
+    // Try exact match first
+    if (routeTitleMap[cleanPath]) {
+      return tNav(routeTitleMap[cleanPath]);
+    }
+
+    // Try parent path for detail pages (e.g. /reviews/abc123 → /reviews)
+    const parentPath = cleanPath.split("/").slice(0, 2).join("/");
+    if (routeTitleMap[parentPath]) {
+      return tNav(routeTitleMap[parentPath]);
+    }
+
+    // Try two-segment paths for admin pages (e.g. /admin/users/abc → /admin/users)
+    const twoSegment = cleanPath.split("/").slice(0, 3).join("/");
+    if (routeTitleMap[twoSegment]) {
+      return tNav(routeTitleMap[twoSegment]);
+    }
+
+    return t("appName");
+  }, [pathname, locale, tNav, t]);
 
   // Hydration fix: delay Radix UI components until mounted
   const [mounted, setMounted] = useState(false);
@@ -79,7 +126,9 @@ export function Header({ locale, user }: HeaderProps) {
     <>
       <header className="flex h-16 items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6">
         <div className="flex items-center gap-4">
-          <h1 className="text-lg font-semibold">{t("appName")}</h1>
+          <Logo size="sm" showText className="mr-2" />
+          <div className="h-5 w-px bg-border" />
+          <h1 className="text-lg font-semibold">{pageTitle}</h1>
         </div>
 
         <div className="flex items-center gap-1">

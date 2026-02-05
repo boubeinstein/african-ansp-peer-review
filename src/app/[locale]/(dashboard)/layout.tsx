@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { AppShell } from "@/components/layout/app-shell";
 import { DashboardProviders } from "@/components/providers/dashboard-providers";
 import { InstallPrompt } from "@/components/pwa/install-prompt";
+import { SessionTracker } from "@/components/auth/session-tracker";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -44,6 +45,7 @@ export default async function DashboardLayout({
         {children}
       </AppShell>
       <InstallPrompt />
+      <SessionTracker loginSessionId={session?.loginSessionId} />
     </DashboardProviders>
   );
 }

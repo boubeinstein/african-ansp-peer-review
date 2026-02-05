@@ -164,6 +164,7 @@
       "invalidCredentials": "Email ou mot de passe invalide. Veuillez réessayer.",
       "loginFailed": "Échec de la connexion. Veuillez réessayer.",
       "sessionRequired": "Veuillez vous connecter pour accéder à cette page.",
+      "sessionRevoked": "Votre session a été terminée depuis un autre appareil. Veuillez vous reconnecter.",
       "carousel": {
         "slide1": {
           "badge": "Programme Approuvé par l'OACI",
@@ -5986,6 +5987,7 @@
       "revokeAllConfirmDescription": "Cela déconnectera toutes les sessions sauf la session actuelle. Vous resterez connecté sur cet appareil.",
       "sessionRevoked": "Session révoquée avec succès",
       "allSessionsRevoked": "{count} session(s) révoquée(s)",
+      "sessionConflict": "Votre session a été terminée par un autre appareil. Déconnexion...",
       "cannotRevokeCurrent": "Impossible de révoquer votre session actuelle",
       "noOtherSessions": "Aucune autre session active",
       "deviceTypes": {

@@ -2,10 +2,7 @@ import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { router, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
-import {
-  revokeLoginSession,
-  revokeAllUserSessions,
-} from "@/lib/session-tracker";
+import { revokeLoginSession } from "@/lib/session-tracker";
 
 const ADMIN_ROLES = ["SUPER_ADMIN", "SYSTEM_ADMIN"];
 
@@ -45,17 +42,18 @@ export const loginSessionRouter = router({
     .input(z.object({ sessionId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
+      const currentSessionId = ctx.session.loginSessionId;
 
       // Verify the session belongs to this user
-      const session = await ctx.db.loginSession.findUnique({
+      const targetSession = await ctx.db.loginSession.findUnique({
         where: { id: input.sessionId },
       });
 
-      if (!session || session.userId !== userId) {
+      if (!targetSession || targetSession.userId !== userId) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Session not found" });
       }
 
-      if (session.id === ctx.session.loginSessionId) {
+      if (input.sessionId === currentSessionId) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Cannot revoke your current session. Use sign out instead.",
@@ -63,6 +61,21 @@ export const loginSessionRouter = router({
       }
 
       await revokeLoginSession(input.sessionId);
+
+      // Race condition check: verify our own session wasn't revoked by another device
+      if (currentSessionId) {
+        const ownSession = await ctx.db.loginSession.findUnique({
+          where: { id: currentSessionId },
+          select: { isActive: true },
+        });
+
+        if (!ownSession || !ownSession.isActive) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "Your session was revoked by another device",
+          });
+        }
+      }
 
       // Log to audit trail
       await ctx.db.auditLog.create({
@@ -72,8 +85,8 @@ export const loginSessionRouter = router({
           entityType: "LoginSession",
           entityId: input.sessionId,
           newState: JSON.stringify({
-            revokedDevice: session.deviceName,
-            revokedIp: session.ipAddress,
+            revokedDevice: targetSession.deviceName,
+            revokedIp: targetSession.ipAddress,
           }),
         },
       });
@@ -88,7 +101,35 @@ export const loginSessionRouter = router({
     const userId = ctx.session.user.id;
     const currentSessionId = ctx.session.loginSessionId;
 
-    const result = await revokeAllUserSessions(userId, currentSessionId);
+    if (!currentSessionId) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "No active session found",
+      });
+    }
+
+    // Revoke all other sessions
+    const result = await ctx.db.loginSession.updateMany({
+      where: {
+        userId,
+        isActive: true,
+        id: { not: currentSessionId },
+      },
+      data: { isActive: false, revokedAt: new Date() },
+    });
+
+    // Race condition check: verify our own session wasn't revoked by another device
+    const ownSession = await ctx.db.loginSession.findUnique({
+      where: { id: currentSessionId },
+      select: { isActive: true },
+    });
+
+    if (!ownSession || !ownSession.isActive) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "Your session was revoked by another device",
+      });
+    }
 
     await ctx.db.auditLog.create({
       data: {
@@ -96,7 +137,7 @@ export const loginSessionRouter = router({
         action: "ALL_SESSIONS_REVOKED",
         entityType: "LoginSession",
         entityId: userId,
-        newState: JSON.stringify({ count: result.count }),
+        newState: JSON.stringify({ revokedCount: result.count }),
       },
     });
 

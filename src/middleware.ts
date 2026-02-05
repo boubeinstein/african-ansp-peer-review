@@ -5,9 +5,9 @@ import { routing } from "@/lib/i18n/routing";
 
 const intlMiddleware = createMiddleware(routing);
 
-// In-memory cache to avoid validating on every request (5 min TTL)
+// In-memory cache to reduce DB hits (30s TTL — short enough for timely revocation)
 const sessionValidationCache = new Map<string, { valid: boolean; checkedAt: number }>();
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL_MS = 30 * 1000; // 30 seconds
 
 async function validateSessionViaApi(
   sessionId: string,

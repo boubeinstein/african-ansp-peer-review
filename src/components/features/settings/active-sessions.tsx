@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { signOut } from "next-auth/react";
 import { trpc } from "@/lib/trpc/client";
 import { formatDistanceToNow } from "date-fns";
 import { Monitor, Smartphone, Tablet, HelpCircle, Loader2 } from "lucide-react";
@@ -29,15 +30,22 @@ export function ActiveSessions() {
 
   const { data: sessions, isLoading, refetch } = trpc.loginSession.listMySessions.useQuery();
 
+  const handleConflictOrError = (error: { data?: { code?: string } | null; message: string }) => {
+    if (error.data?.code === "CONFLICT") {
+      toast.error(t("sessionConflict"));
+      signOut({ callbackUrl: "/login?error=SessionRevoked" });
+    } else {
+      toast.error(error.message);
+    }
+  };
+
   const revokeMutation = trpc.loginSession.revokeSession.useMutation({
     onSuccess: () => {
       toast.success(t("sessionRevoked"));
       refetch();
       setRevokeTarget(null);
     },
-    onError: (error) => {
-      toast.error(error.message);
-    },
+    onError: handleConflictOrError,
   });
 
   const revokeAllMutation = trpc.loginSession.revokeAllOtherSessions.useMutation({
@@ -46,9 +54,7 @@ export function ActiveSessions() {
       refetch();
       setShowRevokeAllDialog(false);
     },
-    onError: (error) => {
-      toast.error(error.message);
-    },
+    onError: handleConflictOrError,
   });
 
   const getDeviceIcon = (deviceType: string | null) => {

@@ -164,6 +164,7 @@
       "invalidCredentials": "Invalid email or password. Please try again.",
       "loginFailed": "Login failed. Please try again.",
       "sessionRequired": "Please sign in to access this page.",
+      "sessionRevoked": "Your session was ended from another device. Please sign in again.",
       "carousel": {
         "slide1": {
           "badge": "ICAO-Endorsed Programme",
@@ -5986,6 +5987,7 @@
       "revokeAllConfirmDescription": "This will sign out all sessions except your current one. You will remain signed in on this device.",
       "sessionRevoked": "Session revoked successfully",
       "allSessionsRevoked": "{count} session(s) revoked",
+      "sessionConflict": "Your session was ended by another device. Signing out...",
       "cannotRevokeCurrent": "Cannot revoke your current session",
       "noOtherSessions": "No other active sessions",
       "deviceTypes": {

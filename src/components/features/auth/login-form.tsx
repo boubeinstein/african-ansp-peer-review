@@ -82,6 +82,7 @@ export function LoginForm() {
     if (error) return error;
     if (errorParam === "CredentialsSignin") return t("invalidCredentials");
     if (errorParam === "SessionRequired") return t("sessionRequired");
+    if (errorParam === "SessionRevoked") return t("sessionRevoked");
     if (errorParam) return t("loginFailed");
     return null;
   };

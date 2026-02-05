@@ -7,7 +7,8 @@ import { UserRole, Locale } from "@/types/prisma-enums";
 export const authConfig: NextAuthConfig = {
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60,
+    maxAge: 8 * 60 * 60,    // 8 hours — matches one work day
+    updateAge: 60 * 60,      // Refresh token every 1 hour of activity
   },
   pages: {
     signIn: "/login",

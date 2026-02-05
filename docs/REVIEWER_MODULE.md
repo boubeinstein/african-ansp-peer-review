@@ -412,7 +412,7 @@ src/
 
 ## Status
 
-**Ready for Feb 2026 Training deployment**
+**Ready for March 2026 Training deployment**
 
 - ✅ Data models implemented
 - ✅ Scoring algorithm complete

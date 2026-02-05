@@ -74,7 +74,7 @@ export const publicRouter = router({
       nextMilestone: {
         titleEn: "AFI Peer Reviewers Training",
         titleFr: "Formation des Évaluateurs AFI",
-        date: "Feb 2-5, 2026",
+        date: "March 23-26, 2026",
         location: "Dar es Salaam, Tanzania",
       },
     };

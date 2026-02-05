@@ -4,7 +4,7 @@
 
 **Last Updated**: January 20, 2026  
 **Sprint Status**: Training Demo Final Polish  
-**Days to Training**: 13 days (Feb 2-5, 2026 - Dar es Salaam, Tanzania)
+**Days to Training**: 46 days (March 23-26, 2026 - Dar es Salaam, Tanzania)
 
 ---
 
@@ -18,7 +18,7 @@
 - **Note**: ASECNA (1 ANSP) serves 18 member states; some member states like Rwanda CAA and Madagascar CAA participate separately
 
 **Current State**: 95% Phase 1 complete, entering final polish phase  
-**Target**: Feb 2-5, 2026 AFI Training → Q2 2026 Pilot Launch
+**Target**: March 23-26, 2026 AFI Training → Q2 2026 Pilot Launch
 
 ---
 
@@ -39,7 +39,7 @@
 | Team 5 | Northern | 4 ANSPs including ONDA (Morocco) |
 
 ### 2026 Timeline
-- **Feb 2-5**: AFI Peer Reviewers' Refresher Training (Dar es Salaam)
+- **March 23-26**: AFI Peer Reviewers' Refresher Training (Dar es Salaam)
 - **Q1-Q2**: Pilot peer reviews to validate tools
 - **Q2**: Official programme launch
 - **Q3-Q4**: First cycle of peer reviews

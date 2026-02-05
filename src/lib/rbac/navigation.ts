@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   ScrollText,
   Lightbulb,
+  Monitor,
   type LucideIcon,
 } from "lucide-react";
 import { hasPermission, type Feature } from "./permissions";
@@ -131,6 +132,13 @@ const allNavItems: NavItem[] = [
     href: "/admin/roles",
     icon: ShieldCheck,
     feature: "admin.roles",
+    section: "admin",
+  },
+  {
+    name: "adminSessions",
+    href: "/admin/sessions",
+    icon: Monitor,
+    feature: "admin.sessions",
     section: "admin",
   },
   {

@@ -677,6 +677,7 @@ export const AuditAction = {
   TOKEN_REVOKE_ALL: "TOKEN_REVOKE_ALL",
   SESSION_REVOKED: "SESSION_REVOKED",
   ALL_SESSIONS_REVOKED: "ALL_SESSIONS_REVOKED",
+  ADMIN_SESSION_REVOKED: "ADMIN_SESSION_REVOKED",
 } as const;
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction];
 

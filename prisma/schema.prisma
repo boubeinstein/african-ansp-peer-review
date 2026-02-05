@@ -2327,6 +2327,7 @@ enum AuditAction {
   TOKEN_REVOKE_ALL
   SESSION_REVOKED
   ALL_SESSIONS_REVOKED
+  ADMIN_SESSION_REVOKED
 }
 
 enum BestPracticeCategory {

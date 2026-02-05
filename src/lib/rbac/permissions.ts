@@ -56,6 +56,7 @@ export type Feature =
   | "admin.users"
   | "admin.roles"
   | "admin.settings"
+  | "admin.sessions"
   | "admin.logs";
 
 /**
@@ -109,6 +110,7 @@ const permissions: Record<UserRole, Feature[]> = {
     "admin.users",
     "admin.roles",
     "admin.settings",
+    "admin.sessions",
     "admin.logs",
   ],
 
@@ -158,6 +160,7 @@ const permissions: Record<UserRole, Feature[]> = {
     "admin.users",
     "admin.roles",
     "admin.settings",
+    "admin.sessions",
     "admin.logs",
   ],
 

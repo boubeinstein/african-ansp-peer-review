@@ -106,6 +106,7 @@
     "administration": "Administration",
     "adminUsers": "Utilisateurs",
     "adminRoles": "Rôles",
+    "adminSessions": "Sessions",
     "auditLogs": "Journaux d'Audit",
     "notifications": "Alertes",
     "profile": "Profil"
@@ -1606,6 +1607,33 @@
         "noAssignableRoles": "Il n'y a aucun rôle que vous pouvez attribuer à cet utilisateur",
         "limitedToOwnOrg": "Vous ne pouvez gérer que les utilisateurs de votre organisation"
       }
+    },
+    "sessions": {
+      "title": "Sessions Actives",
+      "description": "Surveiller et gérer toutes les sessions de connexion actives des utilisateurs",
+      "stats": {
+        "totalActive": "Sessions Actives Totales",
+        "currentlyOnline": "Actuellement en Ligne",
+        "uniqueUsers": "Utilisateurs Uniques",
+        "multiDevice": "Utilisateurs Multi-Appareils"
+      },
+      "searchUsers": "Rechercher par nom ou e-mail...",
+      "filterByOrg": "Filtrer par organisation",
+      "allOrganizations": "Toutes les Organisations",
+      "table": {
+        "user": "Utilisateur",
+        "organization": "Organisation",
+        "device": "Appareil",
+        "ipAddress": "Adresse IP",
+        "lastActive": "Dernière Activité",
+        "signedIn": "Connecté le",
+        "actions": "Actions"
+      },
+      "noSessions": "Aucune session active trouvée",
+      "forceRevoke": "Révoquer",
+      "forceRevokeTitle": "Révoquer la Session",
+      "forceRevokeConfirm": "Cela terminera immédiatement la session de {user} sur {device}. L'utilisateur devra se reconnecter.",
+      "sessionRevokedSuccess": "Session révoquée avec succès"
     }
   },
   "roles": {

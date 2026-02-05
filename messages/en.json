@@ -106,6 +106,7 @@
     "administration": "Administration",
     "adminUsers": "Users",
     "adminRoles": "Roles",
+    "adminSessions": "Sessions",
     "auditLogs": "Audit Logs",
     "notifications": "Alerts",
     "profile": "Profile"
@@ -1606,6 +1607,33 @@
         "noAssignableRoles": "There are no roles you can assign to this user",
         "limitedToOwnOrg": "You can only manage users in your organization"
       }
+    },
+    "sessions": {
+      "title": "Active Sessions",
+      "description": "Monitor and manage all active login sessions across users",
+      "stats": {
+        "totalActive": "Total Active Sessions",
+        "currentlyOnline": "Currently Online",
+        "uniqueUsers": "Unique Users",
+        "multiDevice": "Multi-Device Users"
+      },
+      "searchUsers": "Search by name or email...",
+      "filterByOrg": "Filter by organization",
+      "allOrganizations": "All Organizations",
+      "table": {
+        "user": "User",
+        "organization": "Organization",
+        "device": "Device",
+        "ipAddress": "IP Address",
+        "lastActive": "Last Active",
+        "signedIn": "Signed In",
+        "actions": "Actions"
+      },
+      "noSessions": "No active sessions found",
+      "forceRevoke": "Force Revoke",
+      "forceRevokeTitle": "Force Revoke Session",
+      "forceRevokeConfirm": "This will immediately terminate the session for {user} on {device}. They will need to sign in again.",
+      "sessionRevokedSuccess": "Session revoked successfully"
     }
   },
   "roles": {

@@ -73,6 +73,21 @@ export const authConfig: NextAuthConfig = {
     },
   },
   events: {
+    async signIn({ user }) {
+      try {
+        const { logLogin } = await import("@/server/services/audit");
+        await logLogin({
+          userId: user.id!,
+          metadata: {
+            email: user.email,
+            role: (user as unknown as Record<string, unknown>).role,
+            provider: "credentials",
+          },
+        });
+      } catch (error) {
+        console.error("[Auth] Failed to log sign-in:", error);
+      }
+    },
     async signOut(message) {
       try {
         const { logLogout } = await import("@/server/services/audit");
@@ -112,6 +127,13 @@ export const authConfig: NextAuthConfig = {
         );
 
         if (!isPasswordValid) {
+          // Log failed login attempt (fire-and-forget)
+          import("@/server/services/audit").then(({ logLoginFailed }) =>
+            logLoginFailed({
+              userId: user.id,
+              metadata: { email: user.email, reason: "invalid_password" },
+            })
+          ).catch(() => {});
           return null;
         }
 

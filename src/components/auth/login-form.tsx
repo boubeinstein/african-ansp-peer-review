@@ -70,6 +70,7 @@ export function LoginForm() {
       }
 
       if (result?.ok) {
+        fetch("/api/audit/login", { method: "POST" }).catch(() => {});
         router.push(`/${locale}/dashboard`);
         router.refresh();
       }

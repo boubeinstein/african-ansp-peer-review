@@ -329,6 +329,24 @@ export async function logLogin(params: {
 }
 
 /**
+ * Log a failed login attempt
+ */
+export async function logLoginFailed(params: {
+  userId: string;
+  request?: Request;
+  metadata?: Record<string, unknown>;
+}): Promise<void> {
+  await logAudit({
+    userId: params.userId,
+    action: "LOGIN_FAILED",
+    entityType: "User",
+    entityId: params.userId,
+    metadata: { success: false, ...params.metadata },
+    request: params.request,
+  });
+}
+
+/**
  * Log a logout event
  */
 export async function logLogout(params: {

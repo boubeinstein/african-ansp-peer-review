@@ -17,6 +17,7 @@ export {
   logSubmission,
   logVerification,
   logLogin,
+  logLoginFailed,
   logLogout,
   logExport,
   logViewSensitive,

@@ -115,6 +115,7 @@ function ActionBadge({ action }: { action: AuditAction }) {
     VERIFICATION: "bg-teal-100 text-teal-800 border-teal-200",
     LOGIN: "bg-gray-100 text-gray-800 border-gray-200",
     LOGOUT: "bg-gray-100 text-gray-800 border-gray-200",
+    LOGIN_FAILED: "bg-red-100 text-red-800 border-red-200",
     EXPORT: "bg-yellow-100 text-yellow-800 border-yellow-200",
     VIEW_SENSITIVE: "bg-pink-100 text-pink-800 border-pink-200",
     INTEGRITY_CHECK: "bg-sky-100 text-sky-800 border-sky-200",

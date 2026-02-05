@@ -8,7 +8,6 @@
  */
 
 import { useTranslations, useLocale } from "next-intl";
-import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Globe, Shield } from "lucide-react";
@@ -20,10 +19,7 @@ interface AuthLayoutProps {
 export function AuthLayout({ children }: AuthLayoutProps) {
   const t = useTranslations("auth");
   const locale = useLocale();
-  const pathname = usePathname();
   const otherLocale = locale === "en" ? "fr" : "en";
-  const isRegisterPage = pathname.includes("/register");
-  const currentPage = isRegisterPage ? "register" : "login";
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
@@ -115,7 +111,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
           <div className="flex items-center justify-between pt-6 border-t border-white/20 flex-wrap gap-4 mt-auto">
             {/* Language Switcher */}
             <Link
-              href={`/${otherLocale}/${currentPage}`}
+              href={`/${otherLocale}/login`}
               className="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors"
             >
               <Globe className="w-4 h-4" />

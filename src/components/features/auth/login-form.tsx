@@ -207,27 +207,6 @@ export function LoginForm() {
         </Button>
       </form>
 
-      {/* Links */}
-      <div className="space-y-3 pt-4 border-t border-slate-200 text-center text-sm">
-        <p className="text-slate-500">
-          {t("noAccount")}{" "}
-          <Link
-            href={`/${locale}/request-access`}
-            className="text-[#1B3A5C] hover:underline font-medium"
-          >
-            {t("requestAccess")}
-          </Link>
-        </p>
-        <p className="text-slate-500">
-          {t("notParticipant")}{" "}
-          <Link
-            href={`/${locale}/join-programme`}
-            className="text-[#1B3A5C] hover:underline font-medium"
-          >
-            {t("requestToJoin")}
-          </Link>
-        </p>
-      </div>
     </div>
   );
 }

@@ -194,31 +194,6 @@ export function LoginForm() {
           </Button>
         </form>
 
-        {/* Sign Up Link */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-muted-foreground">
-            {t("noAccount")}{" "}
-            <Link
-              href={`/${locale}/register`}
-              className="font-medium text-primary hover:text-primary/80 transition-colors"
-            >
-              {t("signUp")}
-            </Link>
-          </p>
-        </div>
-
-        {/* Separate section for non-participants */}
-        <div className="mt-4 pt-4 border-t text-center">
-          <p className="text-xs text-muted-foreground">
-            {t("notParticipant")}{" "}
-            <Link
-              href={`/${locale}/request-access?tab=join`}
-              className="font-medium text-primary hover:text-primary/80 transition-colors"
-            >
-              {t("requestToJoin")}
-            </Link>
-          </p>
-        </div>
       </CardContent>
     </Card>
   );

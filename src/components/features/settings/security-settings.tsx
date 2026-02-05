@@ -7,7 +7,7 @@
  * password changes and active sessions.
  */
 
-import { useTranslations, useFormatter, useNow } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,8 +30,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -46,10 +44,6 @@ import {
 import {
   Shield,
   Key,
-  Monitor,
-  Smartphone,
-  Globe,
-  CheckCircle2,
   AlertTriangle,
   Loader2,
   Eye,
@@ -57,6 +51,7 @@ import {
 } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
+import { ActiveSessions } from "./active-sessions";
 
 const passwordSchema = z
   .object({
@@ -81,44 +76,15 @@ interface SecuritySettingsProps {
   email: string;
 }
 
-function SecuritySkeleton() {
-  return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <Skeleton className="h-6 w-48" />
-          <Skeleton className="h-4 w-72" />
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <Skeleton className="h-6 w-48" />
-          <Skeleton className="h-4 w-72" />
-        </CardHeader>
-        <CardContent>
-          <Skeleton className="h-20 w-full" />
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
 
 export function SecuritySettings({}: SecuritySettingsProps) {
   const t = useTranslations("settings.security");
   const tCommon = useTranslations("common");
-  const format = useFormatter();
-  const now = useNow({ updateInterval: 60000 });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const { data: sessions, isLoading } = trpc.settings.getSessions.useQuery();
   const changePassword = trpc.settings.changePassword.useMutation();
 
   const form = useForm<PasswordFormValues>({
@@ -153,10 +119,6 @@ export function SecuritySettings({}: SecuritySettingsProps) {
       setIsSubmitting(false);
     }
   };
-
-  if (isLoading) {
-    return <SecuritySkeleton />;
-  }
 
   return (
     <div className="space-y-6">
@@ -297,49 +259,7 @@ export function SecuritySettings({}: SecuritySettingsProps) {
           <CardDescription>{t("activeSessionsDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {sessions?.map((session) => (
-              <div
-                key={session.id}
-                className="flex items-center justify-between p-4 rounded-lg border"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="p-2 bg-muted rounded-lg">
-                    {session.device.toLowerCase().includes("mobile") ? (
-                      <Smartphone className="h-5 w-5" />
-                    ) : (
-                      <Monitor className="h-5 w-5" />
-                    )}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">{session.device === "Unknown" ? t("unknownDevice") : session.device}</span>
-                      {session.isCurrent && (
-                        <Badge variant="secondary" className="text-xs">
-                          <CheckCircle2 className="h-3 w-3 mr-1" />
-                          {t("currentSession")}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Globe className="h-3 w-3" />
-                      <span>{session.location === "Unknown" ? t("unknownLocation") : session.location}</span>
-                      <span>•</span>
-                      <span>
-                        {t("lastActive")}{" "}
-                        {format.relativeTime(new Date(session.lastActive), now)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                {!session.isCurrent && (
-                  <Button variant="ghost" size="sm" className="text-destructive">
-                    {t("revoke")}
-                  </Button>
-                )}
-              </div>
-            ))}
-          </div>
+          <ActiveSessions />
         </CardContent>
       </Card>
 

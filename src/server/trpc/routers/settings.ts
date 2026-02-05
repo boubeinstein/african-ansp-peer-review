@@ -447,7 +447,7 @@ export const settingsRouter = router({
       // Deactivate instead of delete for audit trail
       await ctx.db.user.update({
         where: { id: ctx.session.user.id },
-        data: { isActive: false },
+        data: { isActive: false, tokenVersion: { increment: 1 } },
       });
 
       // Audit log

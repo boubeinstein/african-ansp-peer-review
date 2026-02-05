@@ -23,10 +23,44 @@ export const authConfig: NextAuthConfig = {
         token.firstName = user.firstName;
         token.lastName = user.lastName;
         token.locale = user.locale;
+        token.tokenVersion = user.tokenVersion;
       }
+
+      // Periodically verify token is still valid (every 5 minutes)
+      // This catches deactivated users and role changes
+      const REVALIDATION_INTERVAL = 5 * 60; // 5 minutes in seconds
+      const now = Math.floor(Date.now() / 1000);
+      const lastChecked = (token.lastChecked as number) || 0;
+
+      if (now - lastChecked > REVALIDATION_INTERVAL && token.id) {
+        try {
+          const dbUser = await db.user.findUnique({
+            where: { id: token.id as string },
+            select: { tokenVersion: true, isActive: true, role: true },
+          });
+
+          // Invalidate if user deleted, deactivated, or token version mismatch
+          if (!dbUser || !dbUser.isActive || dbUser.tokenVersion !== token.tokenVersion) {
+            return { ...token, id: null, expired: true };
+          }
+
+          // Also refresh role in case it changed
+          token.role = dbUser.role;
+          token.lastChecked = now;
+        } catch (error) {
+          console.error("[Auth] Token revalidation failed:", error);
+          // On error, allow token to continue (don't lock users out due to transient DB issues)
+        }
+      }
+
       return token;
     },
     async session({ session, token }) {
+      // If token was invalidated by revalidation, return empty session
+      if (token.expired || !token.id) {
+        return { ...session, user: undefined } as unknown as typeof session;
+      }
+
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as UserRole;
@@ -94,6 +128,7 @@ export const authConfig: NextAuthConfig = {
           role: user.role,
           organizationId: user.organizationId,
           locale: user.locale,
+          tokenVersion: user.tokenVersion,
         };
       },
     }),

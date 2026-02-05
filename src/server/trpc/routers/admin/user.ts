@@ -461,7 +461,7 @@ export const adminUserRouter = router({
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },
-      data: { role },
+      data: { role, tokenVersion: { increment: 1 } },
       select: {
         id: true,
         email: true,
@@ -535,7 +535,7 @@ export const adminUserRouter = router({
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },
-      data: { isActive },
+      data: { isActive, tokenVersion: { increment: 1 } },
       select: {
         id: true,
         email: true,
@@ -612,6 +612,7 @@ export const adminUserRouter = router({
         firstName: "Deleted",
         lastName: "User",
         passwordHash: "", // Clear password
+        tokenVersion: { increment: 1 },
       },
     });
 

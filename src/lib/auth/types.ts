@@ -10,6 +10,7 @@ declare module "next-auth" {
     role: UserRole;
     organizationId: string | null;
     locale: Locale;
+    tokenVersion: number;
   }
 
   interface Session extends DefaultSession {

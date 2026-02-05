@@ -23,5 +23,12 @@ declare module "next-auth" {
       organizationId: string | null;
       locale: Locale;
     } & DefaultSession["user"];
+    loginSessionId?: string;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    loginSessionId?: string;
   }
 }

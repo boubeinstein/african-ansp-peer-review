@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { UserRole, Locale } from "@/types/prisma-enums";
+import { createLoginSession } from "@/lib/session-tracker";
 
 export const authConfig: NextAuthConfig = {
   session: {
@@ -15,7 +16,7 @@ export const authConfig: NextAuthConfig = {
     error: "/login",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         token.id = user.id;
         token.role = user.role;
@@ -24,6 +25,19 @@ export const authConfig: NextAuthConfig = {
         token.lastName = user.lastName;
         token.locale = user.locale;
         token.tokenVersion = user.tokenVersion;
+      }
+
+      // Create a LoginSession on sign-in
+      // User-Agent/IP not available here — enriched via /api/audit/login
+      if (trigger === "signIn" && user) {
+        try {
+          const loginSession = await createLoginSession({
+            userId: user.id,
+          });
+          token.loginSessionId = loginSession.id;
+        } catch (error) {
+          console.error("[Auth] Failed to create login session:", error);
+        }
       }
 
       // Periodically verify token is still valid (every 5 minutes)
@@ -69,6 +83,11 @@ export const authConfig: NextAuthConfig = {
         session.user.lastName = token.lastName as string;
         session.user.locale = token.locale as Locale;
       }
+
+      if (token.loginSessionId) {
+        session.loginSessionId = token.loginSessionId;
+      }
+
       return session;
     },
   },
@@ -94,6 +113,11 @@ export const authConfig: NextAuthConfig = {
         const token = "token" in message ? message.token : null;
         if (token?.sub) {
           await logLogout({ userId: token.sub });
+        }
+        // Revoke the login session
+        if (token?.loginSessionId) {
+          const { revokeLoginSession } = await import("@/lib/session-tracker");
+          await revokeLoginSession(token.loginSessionId as string);
         }
       } catch (error) {
         console.error("[Auth] Failed to log sign-out:", error);

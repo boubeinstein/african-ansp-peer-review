@@ -135,6 +135,7 @@ model User {
   onboarding               UserOnboarding?
   promotedBestPractices    BestPracticePromotion[]     @relation("PromotedBestPractices")
   systemSettingsUpdates    SystemSettings[]            @relation("SystemSettingsUpdatedBy")
+  loginSessions            LoginSession[]              @relation("UserLoginSessions")
 
   @@map("users")
 }
@@ -151,6 +152,33 @@ model PasswordReset {
   @@index([userId])
   @@index([expiresAt])
   @@map("password_resets")
+}
+
+model LoginSession {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  user          User     @relation("UserLoginSessions", fields: [userId], references: [id], onDelete: Cascade)
+
+  // Device identification
+  deviceName    String?  @map("device_name")    // e.g. "Chrome on Windows"
+  deviceType    String?  @map("device_type")    // "desktop" | "mobile" | "tablet"
+  browser       String?                          // "Chrome 121", "Firefox 122"
+  os            String?                          // "Windows 11", "macOS 14"
+  ipAddress     String?  @map("ip_address")
+
+  // Session state
+  isActive      Boolean  @default(true) @map("is_active")
+  isCurrent     Boolean  @default(false) @map("is_current") // marked client-side
+  lastActiveAt  DateTime @default(now()) @map("last_active_at")
+  expiresAt     DateTime @map("expires_at")
+
+  createdAt     DateTime @default(now()) @map("created_at")
+  revokedAt     DateTime? @map("revoked_at")
+
+  @@index([userId])
+  @@index([isActive])
+  @@index([expiresAt])
+  @@map("login_sessions")
 }
 
 model Questionnaire {

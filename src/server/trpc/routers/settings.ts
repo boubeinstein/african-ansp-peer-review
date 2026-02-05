@@ -327,6 +327,23 @@ export const settingsRouter = router({
   }),
 
   /**
+   * Get feature flags (accessible to all authenticated users)
+   * Lightweight query returning only boolean feature flags for UI gating
+   */
+  getFeatureFlags: protectedProcedure.query(async ({ ctx }) => {
+    const settings = await ctx.db.systemSettings.findUnique({
+      where: { id: "system-settings" },
+      select: {
+        trainingModuleEnabled: true,
+      },
+    });
+
+    return {
+      trainingModuleEnabled: settings?.trainingModuleEnabled ?? true,
+    };
+  }),
+
+  /**
    * Get admin settings (system-wide configuration)
    */
   getAdminSettings: adminProcedure.query(async ({ ctx }) => {

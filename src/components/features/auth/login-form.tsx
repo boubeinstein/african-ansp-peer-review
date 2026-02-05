@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,7 +25,6 @@ import { toast } from "sonner";
 import { Loader2, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LanguageSelector } from "./language-selector";
-import { ICAOCANSOLogos } from "./icao-canso-logos";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -97,16 +97,22 @@ export function LoginForm() {
 
       {/* Header */}
       <div className="space-y-4 text-center">
-        {/* Logos - Desktop only */}
-        <div className="hidden lg:flex flex-col items-center gap-3 mb-4">
-          <ICAOCANSOLogos variant="light" size="md" showDivider />
-          <p className="text-xs text-slate-500">
-            African ANSP Peer Review Programme
-          </p>
+        {/* AAPRP Brand Banner */}
+        <div className="flex justify-center">
+          <Image
+            src="/images/logos/aaprp-brand-logo.png"
+            alt="AAPRP - African ANSP Peer Review Programme"
+            width={350}
+            height={104}
+            className="h-auto w-[280px] sm:w-[320px] lg:w-[350px]"
+            priority
+          />
         </div>
 
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{t("title")}</h1>
-        <p className="text-sm text-slate-500">{t("description")}</p>
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
+          <p className="text-sm text-muted-foreground">{t("description")}</p>
+        </div>
       </div>
 
       {/* Form */}

@@ -25,6 +25,16 @@ export default async function TrainingPage({ params }: TrainingPageProps) {
     redirect(`/${locale}/login`);
   }
 
+  // Check system-wide feature flag first
+  const systemSettings = await db.systemSettings.findUnique({
+    where: { id: "system-settings" },
+    select: { trainingModuleEnabled: true },
+  });
+
+  if (systemSettings && !systemSettings.trainingModuleEnabled) {
+    redirect(`/${locale}/dashboard`);
+  }
+
   // Check if user has showTrainingModule enabled
   const preferences = await db.userPreferences.findUnique({
     where: { userId: session.user.id },

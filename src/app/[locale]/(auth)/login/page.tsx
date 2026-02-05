@@ -2,12 +2,10 @@ import { Suspense } from "react";
 import { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
-import Image from "next/image";
 import { auth } from "@/lib/auth";
 import { LoginCarousel } from "@/components/features/auth/login-carousel";
 import { LoginForm } from "@/components/features/auth/login-form";
 import { LoginFormSkeleton } from "@/components/features/auth/login-form-skeleton";
-import { Logo } from "@/components/ui/logo";
 
 interface LoginPageProps {
   params: Promise<{ locale: string }>;
@@ -47,10 +45,8 @@ export default async function LoginPage({ params }: LoginPageProps) {
 
       {/* Right Panel - Login Form (40%) */}
       <div className="w-full lg:w-[40%] flex flex-col justify-center bg-[#F8FAFC]">
-        {/* Mobile Header - Only visible on small screens */}
-        <div className="lg:hidden px-6 pt-8 pb-4">
-          <MobileHeader />
-        </div>
+        {/* Mobile spacer - brand banner is now inside LoginForm for all sizes */}
+        <div className="lg:hidden pt-6" />
 
         {/* Login Form */}
         <div className="flex-1 flex items-center justify-center px-6 py-8 lg:px-10">
@@ -89,28 +85,3 @@ function CarouselSkeleton() {
   );
 }
 
-function MobileHeader() {
-  return (
-    <div className="flex flex-col items-center gap-3">
-      <Logo size="xl" />
-      <div className="flex items-center gap-3">
-        <Image
-          src="/images/logos/International_Civil_Aviation_Organization_logo.svg"
-          alt="ICAO"
-          width={80}
-          height={40}
-          className="h-10 w-auto"
-        />
-        <div className="h-6 w-px bg-slate-300" />
-        <Image
-          src="/images/logos/CANSO.svg"
-          alt="CANSO"
-          width={80}
-          height={40}
-          className="h-6 w-auto"
-        />
-      </div>
-      <p className="text-xs text-slate-500">African ANSP Peer Review Programme</p>
-    </div>
-  );
-}

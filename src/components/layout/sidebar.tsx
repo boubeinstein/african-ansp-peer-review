@@ -100,16 +100,28 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
     }
   );
 
-  // Get navigation items based on user role and preferences
+  // Fetch system-wide feature flags
+  const { data: featureFlags } = trpc.settings.getFeatureFlags.useQuery(
+    undefined,
+    {
+      staleTime: 5 * 60 * 1000,
+    }
+  );
+
+  // Get navigation items based on user role, system feature flags, and user preferences
   const navItems = useMemo(() => {
     const roleNavItems = getNavigationForRole(userRole);
     return roleNavItems.filter((item) => {
       if (item.name === "training") {
-        return preferences?.showTrainingModule ?? true;
+        // System-wide flag takes precedence, then user preference
+        return (
+          (featureFlags?.trainingModuleEnabled ?? true) &&
+          (preferences?.showTrainingModule ?? true)
+        );
       }
       return true;
     });
-  }, [userRole, preferences?.showTrainingModule]);
+  }, [userRole, featureFlags?.trainingModuleEnabled, preferences?.showTrainingModule]);
 
   return (
     <div

@@ -6,8 +6,11 @@
  */
 
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Loader2 } from "lucide-react";
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
 import { TrainingDetailClient } from "./training-detail-client";
 
 // =============================================================================
@@ -40,7 +43,32 @@ function LoadingFallback() {
 export default async function TrainingDetailPage({
   params,
 }: TrainingDetailPageProps) {
-  const { code } = await params;
+  const { locale, code } = await params;
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect(`/${locale}/login`);
+  }
+
+  // Check system-wide feature flag
+  const systemSettings = await db.systemSettings.findUnique({
+    where: { id: "system-settings" },
+    select: { trainingModuleEnabled: true },
+  });
+
+  if (systemSettings && !systemSettings.trainingModuleEnabled) {
+    redirect(`/${locale}/dashboard`);
+  }
+
+  // Check user-level preference
+  const preferences = await db.userPreferences.findUnique({
+    where: { userId: session.user.id },
+    select: { showTrainingModule: true },
+  });
+
+  if (preferences && preferences.showTrainingModule === false) {
+    redirect(`/${locale}/dashboard`);
+  }
 
   return (
     <div className="container mx-auto py-6 px-4 lg:px-6">

@@ -20,6 +20,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Cog,
   Users,
   Building2,
@@ -28,6 +35,7 @@ import {
   Shield,
   Server,
   HardDrive,
+  Monitor,
   CheckCircle2,
   AlertTriangle,
 } from "lucide-react";
@@ -269,6 +277,37 @@ export function AdminSettings() {
             <Badge variant="outline" className="text-lg font-mono">
               {adminSettings.maxUploadSizeMB} MB
             </Badge>
+          </div>
+
+          <div className="flex items-center justify-between p-4 rounded-lg border">
+            <div className="flex items-center gap-3">
+              <Monitor className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <p className="font-medium">{t("maxConcurrentSessions")}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("maxConcurrentSessionsDescription")}
+                </p>
+              </div>
+            </div>
+            <Select
+              value={String(adminSettings.maxConcurrentSessions)}
+              onValueChange={(value) => {
+                updateSettings.mutate({ maxConcurrentSessions: parseInt(value, 10) });
+              }}
+              disabled={updateSettings.isPending}
+            >
+              <SelectTrigger className="w-[140px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="0">{t("unlimited")}</SelectItem>
+                <SelectItem value="1">1</SelectItem>
+                <SelectItem value="2">2</SelectItem>
+                <SelectItem value="3">3</SelectItem>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>

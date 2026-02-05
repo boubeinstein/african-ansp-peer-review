@@ -2527,6 +2527,7 @@ model SystemSettings {
   allowNewRegistrations Boolean  @default(true) @map("allow_new_registrations")
   maintenanceMode       Boolean  @default(false) @map("maintenance_mode")
   maxUploadSizeMB       Int      @default(50) @map("max_upload_size_mb")
+  maxConcurrentSessions Int      @default(0) @map("max_concurrent_sessions") // 0 = unlimited
 
   updatedAt             DateTime @updatedAt @map("updated_at")
   updatedById           String?  @map("updated_by_id")

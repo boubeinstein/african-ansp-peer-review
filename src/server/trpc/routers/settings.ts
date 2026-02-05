@@ -370,6 +370,7 @@ export const settingsRouter = router({
       maintenanceMode: settings.maintenanceMode,
       allowNewRegistrations: settings.allowNewRegistrations,
       maxUploadSizeMB: settings.maxUploadSizeMB,
+      maxConcurrentSessions: settings.maxConcurrentSessions,
       statistics: {
         activeUsers: userCount,
         totalReviews: reviewCount,
@@ -389,6 +390,7 @@ export const settingsRouter = router({
         allowNewRegistrations: z.boolean().optional(),
         maintenanceMode: z.boolean().optional(),
         maxUploadSizeMB: z.number().min(1).max(500).optional(),
+        maxConcurrentSessions: z.number().min(0).max(10).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -430,6 +432,7 @@ export const settingsRouter = router({
               maintenanceMode: previousSettings.maintenanceMode,
               allowNewRegistrations: previousSettings.allowNewRegistrations,
               maxUploadSizeMB: previousSettings.maxUploadSizeMB,
+              maxConcurrentSessions: previousSettings.maxConcurrentSessions,
             }
           : undefined,
         newState: input,

@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { UAParser } from "ua-parser-js";
+import { getMaxConcurrentSessions } from "@/lib/system-settings";
 
 interface CreateSessionInput {
   userId: string;
@@ -28,6 +29,28 @@ export async function createLoginSession(input: CreateSessionInput) {
 
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + expiresInDays);
+
+  // Enforce concurrent session limit (0 = unlimited)
+  const maxSessions = await getMaxConcurrentSessions();
+  if (maxSessions > 0) {
+    const activeSessions = await db.loginSession.findMany({
+      where: { userId, isActive: true },
+      orderBy: { lastActiveAt: "asc" },
+      select: { id: true },
+    });
+
+    // If at or over limit, revoke oldest sessions to make room
+    const sessionsToRevoke = activeSessions.length - maxSessions + 1;
+    if (sessionsToRevoke > 0) {
+      const idsToRevoke = activeSessions
+        .slice(0, sessionsToRevoke)
+        .map((s) => s.id);
+      await db.loginSession.updateMany({
+        where: { id: { in: idsToRevoke } },
+        data: { isActive: false, revokedAt: new Date() },
+      });
+    }
+  }
 
   const session = await db.loginSession.create({
     data: {

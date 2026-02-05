@@ -108,16 +108,42 @@ export const authConfig: NextAuthConfig = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        const email = credentials?.email as string | undefined;
+
+        if (!email || !credentials?.password) {
           return null;
         }
 
         const user = await db.user.findUnique({
-          where: { email: credentials.email as string },
-          include: { organization: true },
+          where: { email },
+          select: {
+            id: true,
+            email: true,
+            passwordHash: true,
+            firstName: true,
+            lastName: true,
+            role: true,
+            organizationId: true,
+            locale: true,
+            isActive: true,
+            tokenVersion: true,
+          },
         });
 
+        // User not found — cannot write audit log (FK requires valid user)
         if (!user || !user.passwordHash) {
+          console.warn(`[Auth] Failed login attempt for unknown email: ${email}`);
+          return null;
+        }
+
+        // Account deactivated
+        if (!user.isActive) {
+          import("@/server/services/audit").then(({ logLoginFailed }) =>
+            logLoginFailed({
+              userId: user.id,
+              metadata: { email, reason: "account_deactivated" },
+            })
+          ).catch(() => {});
           return null;
         }
 
@@ -126,12 +152,12 @@ export const authConfig: NextAuthConfig = {
           user.passwordHash
         );
 
+        // Wrong password
         if (!isPasswordValid) {
-          // Log failed login attempt (fire-and-forget)
           import("@/server/services/audit").then(({ logLoginFailed }) =>
             logLoginFailed({
               userId: user.id,
-              metadata: { email: user.email, reason: "invalid_password" },
+              metadata: { email, reason: "invalid_password" },
             })
           ).catch(() => {});
           return null;

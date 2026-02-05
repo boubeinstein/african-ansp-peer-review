@@ -675,6 +675,8 @@ export const AuditAction = {
   TOKEN_ACCESS: "TOKEN_ACCESS",
   TOKEN_REVOKE: "TOKEN_REVOKE",
   TOKEN_REVOKE_ALL: "TOKEN_REVOKE_ALL",
+  SESSION_REVOKED: "SESSION_REVOKED",
+  ALL_SESSIONS_REVOKED: "ALL_SESSIONS_REVOKED",
 } as const;
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction];
 

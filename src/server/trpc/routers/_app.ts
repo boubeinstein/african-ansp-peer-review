@@ -37,6 +37,7 @@ import { documentEnhancedRouter } from "./document-enhanced";
 import { searchRouter } from "./search";
 import { retrospectiveRouter } from "./retrospective";
 import { onboardingRouter } from "./onboarding";
+import { loginSessionRouter } from "./login-session";
 
 /**
  * Main app router combining all sub-routers
@@ -80,6 +81,7 @@ export const appRouter = router({
   search: searchRouter,
   retrospective: retrospectiveRouter,
   onboarding: onboardingRouter,
+  loginSession: loginSessionRouter,
 });
 
 /**

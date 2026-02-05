@@ -125,6 +125,8 @@ function ActionBadge({ action }: { action: AuditAction }) {
     TOKEN_ACCESS: "bg-fuchsia-100 text-fuchsia-800 border-fuchsia-200",
     TOKEN_REVOKE: "bg-rose-100 text-rose-800 border-rose-200",
     TOKEN_REVOKE_ALL: "bg-red-100 text-red-800 border-red-200",
+    SESSION_REVOKED: "bg-orange-100 text-orange-800 border-orange-200",
+    ALL_SESSIONS_REVOKED: "bg-red-100 text-red-800 border-red-200",
   };
 
   return (

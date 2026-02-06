@@ -3,7 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { UserRole, Locale } from "@/types/prisma-enums";
-import { createLoginSession } from "@/lib/session-tracker";
+import { createLoginSession, validateLoginSession } from "@/lib/session-tracker";
 
 export const authConfig: NextAuthConfig = {
   session: {
@@ -56,6 +56,15 @@ export const authConfig: NextAuthConfig = {
           // Invalidate if user deleted, deactivated, or token version mismatch
           if (!dbUser || !dbUser.isActive || dbUser.tokenVersion !== token.tokenVersion) {
             return { ...token, id: null, expired: true };
+          }
+
+          // Check if the login session is still active (catches concurrent session revocation)
+          if (token.loginSessionId) {
+            const isSessionValid = await validateLoginSession(token.loginSessionId as string);
+            if (!isSessionValid) {
+              console.log("[Auth] LoginSession revoked, invalidating token:", token.loginSessionId);
+              return { ...token, id: null, expired: true };
+            }
           }
 
           // Also refresh role in case it changed

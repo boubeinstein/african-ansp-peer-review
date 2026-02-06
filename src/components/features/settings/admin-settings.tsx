@@ -266,17 +266,35 @@ export function AdminSettings() {
           </CardTitle>
           <CardDescription>{t("systemLimitsDescription")}</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <div className="flex items-center justify-between p-4 rounded-lg border">
-            <div>
-              <p className="font-medium">{t("maxUploadSize")}</p>
-              <p className="text-sm text-muted-foreground">
-                {t("maxUploadSizeDescription")}
-              </p>
+            <div className="flex items-center gap-3">
+              <HardDrive className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <p className="font-medium">{t("maxUploadSize")}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("maxUploadSizeDescription")}
+                </p>
+              </div>
             </div>
-            <Badge variant="outline" className="text-lg font-mono">
-              {adminSettings.maxUploadSizeMB} MB
-            </Badge>
+            <Select
+              value={String(adminSettings.maxUploadSizeMB)}
+              onValueChange={(value) => {
+                updateSettings.mutate({ maxUploadSizeMB: parseInt(value, 10) });
+              }}
+              disabled={updateSettings.isPending}
+            >
+              <SelectTrigger className="w-[140px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">10 MB</SelectItem>
+                <SelectItem value="25">25 MB</SelectItem>
+                <SelectItem value="50">50 MB</SelectItem>
+                <SelectItem value="100">100 MB</SelectItem>
+                <SelectItem value="200">200 MB</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex items-center justify-between p-4 rounded-lg border">

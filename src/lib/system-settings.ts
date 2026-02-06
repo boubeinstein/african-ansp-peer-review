@@ -10,5 +10,7 @@ export async function getMaxConcurrentSessions(): Promise<number> {
     select: { maxConcurrentSessions: true },
   });
 
-  return settings?.maxConcurrentSessions ?? 0;
+  const value = settings?.maxConcurrentSessions ?? 0;
+  console.log("[getMaxConcurrentSessions] settings row:", settings, "→ returning:", value);
+  return value;
 }

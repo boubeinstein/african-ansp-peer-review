@@ -427,10 +427,33 @@ async function seedSMSQuestionnaire() {
   return { questionnaire, categoryCount: categoryMap.size, questionCount };
 }
 
+async function seedSystemSettings() {
+  console.log("Seeding system settings...");
+
+  const settings = await prisma.systemSettings.upsert({
+    where: { id: "system-settings" },
+    update: {}, // Don't overwrite existing settings
+    create: {
+      id: "system-settings",
+      trainingModuleEnabled: true,
+      allowNewRegistrations: true,
+      maintenanceMode: false,
+      maxUploadSizeMB: 50,
+      maxConcurrentSessions: 0, // 0 = unlimited by default
+    },
+  });
+
+  console.log(`  System settings initialized (maxConcurrentSessions: ${settings.maxConcurrentSessions})`);
+  return settings;
+}
+
 async function main() {
   console.log("Starting database seed...\n");
 
   try {
+    // Seed system settings (must exist for session enforcement)
+    await seedSystemSettings();
+
     // Seed ANS USOAP CMA questionnaire
     const ansResult = await seedANSQuestionnaire();
     console.log(`\nANS Questionnaire Summary:`);

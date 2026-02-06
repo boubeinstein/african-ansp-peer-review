@@ -561,6 +561,15 @@ async function seedReviewers(organizationIds: string[]) {
       },
     });
 
+    // Delete existing child records before recreating (idempotent on re-runs)
+    await Promise.all([
+      prisma.reviewerExpertise.deleteMany({ where: { reviewerProfileId: profile.id } }),
+      prisma.reviewerLanguage.deleteMany({ where: { reviewerProfileId: profile.id } }),
+      prisma.reviewerCertification.deleteMany({ where: { reviewerProfileId: profile.id } }),
+      prisma.reviewerAvailability.deleteMany({ where: { reviewerProfileId: profile.id } }),
+      prisma.reviewerCOI.deleteMany({ where: { reviewerProfileId: profile.id } }),
+    ]);
+
     // Create expertise records
     for (const exp of reviewerData.expertise) {
       await prisma.reviewerExpertise.create({

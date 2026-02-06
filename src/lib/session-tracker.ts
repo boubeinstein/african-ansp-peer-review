@@ -12,6 +12,48 @@ interface CreateSessionInput {
 export async function createLoginSession(input: CreateSessionInput) {
   const { userId, userAgent, ipAddress, expiresInDays = 30 } = input;
 
+  // === ENFORCE MAX CONCURRENT SESSIONS ===
+  const maxSessions = await getMaxConcurrentSessions();
+  console.log(`[createLoginSession] maxConcurrentSessions setting: ${maxSessions}`);
+
+  if (maxSessions > 0) {
+    const now = new Date();
+
+    // Get all active, non-expired sessions for this user, oldest first
+    const activeSessions = await db.loginSession.findMany({
+      where: {
+        userId,
+        isActive: true,
+        expiresAt: { gt: now },
+      },
+      orderBy: { createdAt: "asc" },
+      select: { id: true, createdAt: true },
+    });
+
+    console.log(
+      `[createLoginSession] User ${userId} has ${activeSessions.length} active sessions, max allowed: ${maxSessions}`
+    );
+
+    // If at or over limit, revoke oldest sessions to make room for the new one
+    if (activeSessions.length >= maxSessions) {
+      const sessionsToRevoke = activeSessions.length - maxSessions + 1;
+      const idsToRevoke = activeSessions
+        .slice(0, sessionsToRevoke)
+        .map((s) => s.id);
+
+      console.log(
+        `[createLoginSession] Revoking ${sessionsToRevoke} oldest session(s):`,
+        idsToRevoke
+      );
+
+      await db.loginSession.updateMany({
+        where: { id: { in: idsToRevoke } },
+        data: { isActive: false, revokedAt: now },
+      });
+    }
+  }
+  // === END ENFORCEMENT ===
+
   // Parse user agent
   const parser = new UAParser(userAgent || "");
   const browser = parser.getBrowser();
@@ -29,28 +71,6 @@ export async function createLoginSession(input: CreateSessionInput) {
 
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + expiresInDays);
-
-  // Enforce concurrent session limit (0 = unlimited)
-  const maxSessions = await getMaxConcurrentSessions();
-  if (maxSessions > 0) {
-    const activeSessions = await db.loginSession.findMany({
-      where: { userId, isActive: true },
-      orderBy: { lastActiveAt: "asc" },
-      select: { id: true },
-    });
-
-    // If at or over limit, revoke oldest sessions to make room
-    const sessionsToRevoke = activeSessions.length - maxSessions + 1;
-    if (sessionsToRevoke > 0) {
-      const idsToRevoke = activeSessions
-        .slice(0, sessionsToRevoke)
-        .map((s) => s.id);
-      await db.loginSession.updateMany({
-        where: { id: { in: idsToRevoke } },
-        data: { isActive: false, revokedAt: new Date() },
-      });
-    }
-  }
 
   const session = await db.loginSession.create({
     data: {

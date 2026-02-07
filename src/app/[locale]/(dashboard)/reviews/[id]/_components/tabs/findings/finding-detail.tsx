@@ -36,6 +36,7 @@ import {
   PauseCircle,
 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
+import { useRouter } from "next/navigation";
 import { format, formatDistanceToNow } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import { trpc } from "@/lib/trpc/client";
@@ -87,6 +88,7 @@ export function FindingDetail({
   const tSeverity = useTranslations("reviews.detail.findings.severity");
   const tStatus = useTranslations("reviews.detail.findings.status");
   const locale = useLocale();
+  const router = useRouter();
   const dateLocale = locale === "fr" ? fr : enUS;
   const utils = trpc.useUtils();
 
@@ -352,7 +354,10 @@ export function FindingDetail({
                 {t("noCapLinked")}
               </p>
               {finding.capRequired && (
-                <Button size="sm">
+                <Button
+                  size="sm"
+                  onClick={() => router.push(`/${locale}/findings/${finding.id}/cap/new`)}
+                >
                   <Plus className="h-4 w-4 mr-1" />
                   {t("createCap")}
                 </Button>

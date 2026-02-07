@@ -8,6 +8,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { trpc } from "@/lib/trpc/client";
 import { FindingList } from "./findings/finding-list";
 import { FindingDetail } from "./findings/finding-detail";
+import { CreateFindingDialog } from "@/components/findings/create-finding-dialog";
 import type { ReviewData } from "../../_lib/fetch-review-data";
 
 interface FindingsTabProps {
@@ -32,9 +33,11 @@ export function FindingsTab({ review }: FindingsTabProps) {
   const t = useTranslations("reviews.detail.findings");
   const locale = useLocale();
 
+  const utils = trpc.useUtils();
   const [selectedFindingId, setSelectedFindingId] = useState<string | null>(
     null
   );
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   // Fetch full findings data via tRPC
   const { data: findingsData, isLoading } = trpc.finding.getByReview.useQuery(
@@ -113,7 +116,7 @@ export function FindingsTab({ review }: FindingsTabProps) {
             })}
           </p>
         </div>
-        <Button>
+        <Button onClick={() => setShowCreateDialog(true)}>
           <Plus className="h-4 w-4 mr-2" />
           {t("addFinding")}
         </Button>
@@ -134,7 +137,7 @@ export function FindingsTab({ review }: FindingsTabProps) {
             <p className="text-sm text-muted-foreground mb-4">
               {t("empty.description")}
             </p>
-            <Button>
+            <Button onClick={() => setShowCreateDialog(true)}>
               <Plus className="h-4 w-4 mr-2" />
               {t("addFinding")}
             </Button>
@@ -147,6 +150,17 @@ export function FindingsTab({ review }: FindingsTabProps) {
           onSelect={(finding) => setSelectedFindingId(finding.id)}
         />
       )}
+
+      <CreateFindingDialog
+        open={showCreateDialog}
+        onOpenChange={setShowCreateDialog}
+        reviewId={review.id}
+        organizationId={review.hostOrganizationId}
+        onCreated={() => {
+          setShowCreateDialog(false);
+          utils.finding.getByReview.invalidate({ reviewId: review.id });
+        }}
+      />
     </div>
   );
 }

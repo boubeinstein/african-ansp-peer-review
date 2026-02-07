@@ -30,6 +30,8 @@ import {
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { trpc } from "@/lib/trpc/client";
+import type { DocumentCategory } from "@/types/prisma-enums";
 
 interface UploadDialogProps {
   open: boolean;
@@ -37,7 +39,8 @@ interface UploadDialogProps {
   reviewId: string;
 }
 
-interface FileWithPreview extends File {
+interface UploadFileEntry {
+  file: File;
   preview?: string;
   id: string;
   status: "pending" | "uploading" | "success" | "error";
@@ -74,26 +77,28 @@ const ACCEPTED_TYPES = {
 export function UploadDialog({
   open,
   onOpenChange,
+  reviewId,
   onUploadComplete,
 }: UploadDialogProps & { onUploadComplete?: () => void }) {
   const t = useTranslations("reviews.detail.documents.upload");
   const tCategories = useTranslations("reviews.detail.documents.categories");
 
-  const [files, setFiles] = useState<FileWithPreview[]>([]);
+  const [files, setFiles] = useState<UploadFileEntry[]>([]);
   const [category, setCategory] = useState<string>("OTHER");
   const [isUploading, setIsUploading] = useState(false);
 
+  const createDocument = trpc.document.createForReview.useMutation();
+
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    const newFiles = acceptedFiles.map((file) =>
-      Object.assign(file, {
-        id: Math.random().toString(36).substring(7),
-        status: "pending" as const,
-        progress: 0,
-        preview: file.type.startsWith("image/")
-          ? URL.createObjectURL(file)
-          : undefined,
-      })
-    );
+    const newFiles: UploadFileEntry[] = acceptedFiles.map((file) => ({
+      file,
+      id: Math.random().toString(36).substring(7),
+      status: "pending" as const,
+      progress: 0,
+      preview: file.type.startsWith("image/")
+        ? URL.createObjectURL(file)
+        : undefined,
+    }));
     setFiles((prev) => [...prev, ...newFiles]);
   }, []);
 
@@ -134,42 +139,67 @@ export function UploadDialog({
     if (files.length === 0) return;
 
     setIsUploading(true);
+    let successCount = 0;
 
-    for (const file of files) {
-      if (file.status !== "pending") continue;
+    for (const entry of files) {
+      if (entry.status !== "pending") continue;
 
       setFiles((prev) =>
         prev.map((f) =>
-          f.id === file.id ? { ...f, status: "uploading", progress: 10 } : f
+          f.id === entry.id ? { ...f, status: "uploading", progress: 10 } : f
         )
       );
 
       try {
-        // Simulate upload progress
-        // In production, this would upload to Supabase Storage and then call document.createForReview
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        // 1. Upload file to storage via API route
+        const formData = new FormData();
+        formData.append("file", entry.file);
+        formData.append("reviewId", reviewId);
+        formData.append("category", category);
 
         setFiles((prev) =>
-          prev.map((f) => (f.id === file.id ? { ...f, progress: 50 } : f))
+          prev.map((f) => (f.id === entry.id ? { ...f, progress: 30 } : f))
         );
 
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
 
-        // TODO: Implement actual file upload to Supabase Storage
-        // 1. Get signed upload URL via trpc.document.getSignedUploadUrl
-        // 2. Upload file to Supabase Storage
-        // 3. Create document record via trpc.document.createForReview
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Upload failed");
+        }
+
+        const uploadResult = await response.json();
+
+        setFiles((prev) =>
+          prev.map((f) => (f.id === entry.id ? { ...f, progress: 60 } : f))
+        );
+
+        // 2. Create document record in database
+        await createDocument.mutateAsync({
+          reviewId,
+          name: entry.file.name,
+          originalName: entry.file.name,
+          fileUrl: uploadResult.url,
+          fileType: entry.file.type,
+          fileSize: entry.file.size,
+          category: category as DocumentCategory,
+        });
 
         setFiles((prev) =>
           prev.map((f) =>
-            f.id === file.id ? { ...f, status: "success", progress: 100 } : f
+            f.id === entry.id ? { ...f, status: "success", progress: 100 } : f
           )
         );
-      } catch {
+        successCount++;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : t("uploadFailed");
         setFiles((prev) =>
           prev.map((f) =>
-            f.id === file.id
-              ? { ...f, status: "error", error: t("uploadFailed") }
+            f.id === entry.id
+              ? { ...f, status: "error", error: message }
               : f
           )
         );
@@ -178,18 +208,20 @@ export function UploadDialog({
 
     setIsUploading(false);
 
-    const successCount = files.filter((f) => f.status === "success").length;
     if (successCount > 0) {
       toast.success(t("uploadSuccess", { count: successCount }));
       onUploadComplete?.();
     }
 
-    // Clear successful uploads after delay
+    // Clear successful uploads after delay and close if all succeeded
     setTimeout(() => {
-      setFiles((prev) => prev.filter((f) => f.status !== "success"));
-      if (files.every((f) => f.status === "success")) {
-        onOpenChange(false);
-      }
+      setFiles((prev) => {
+        const remaining = prev.filter((f) => f.status !== "success");
+        if (remaining.length === 0) {
+          onOpenChange(false);
+        }
+        return remaining;
+      });
     }, 1500);
   };
 
@@ -263,10 +295,10 @@ export function UploadDialog({
                 >
                   <FileText className="h-5 w-5 text-muted-foreground shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{file.name}</p>
+                    <p className="text-sm font-medium truncate">{file.file.name}</p>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-muted-foreground">
-                        {formatFileSize(file.size)}
+                        {formatFileSize(file.file.size)}
                       </span>
                       {file.status === "uploading" && (
                         <Progress value={file.progress} className="h-1 flex-1" />

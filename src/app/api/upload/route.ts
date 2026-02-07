@@ -2,7 +2,10 @@
  * Document Upload API Route
  *
  * Handles multipart form data file uploads for evidence documents.
- * Supports both Supabase Storage (production) and local filesystem (development).
+ * Storage priority:
+ * 1. Vercel Blob (production) - if BLOB_READ_WRITE_TOKEN is set
+ * 2. Supabase Storage - if configured
+ * 3. Local filesystem (development fallback)
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -11,6 +14,7 @@ import { existsSync } from "fs";
 import path from "path";
 import crypto from "crypto";
 import { auth } from "@/lib/auth";
+import { put } from "@vercel/blob";
 import {
   uploadFile,
   generateFilePath,
@@ -35,7 +39,7 @@ const ALLOWED_MIME_TYPES = [
   // Excel
   "application/vnd.ms-excel",
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  // PowerPoint (bonus)
+  // PowerPoint
   "application/vnd.ms-powerpoint",
   "application/vnd.openxmlformats-officedocument.presentationml.presentation",
 ];
@@ -70,7 +74,6 @@ function getFileExtension(mimeType: string): string {
 }
 
 function sanitizeFilename(filename: string): string {
-  // Remove path components and special characters
   return filename
     .replace(/[^a-zA-Z0-9._-]/g, "_")
     .replace(/_{2,}/g, "_")
@@ -83,6 +86,10 @@ async function ensureUploadDir(subDir?: string): Promise<string> {
     await mkdir(targetDir, { recursive: true });
   }
   return targetDir;
+}
+
+function isVercelBlobConfigured(): boolean {
+  return !!process.env.BLOB_READ_WRITE_TOKEN;
 }
 
 // =============================================================================
@@ -137,31 +144,79 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // If reviewId and category provided, upload to Supabase Storage
-    if (reviewId && category && isStorageConfigured()) {
-      const storagePath = generateFilePath(reviewId, category, file.name);
-      const result = await uploadFile(buffer, storagePath, file.type);
-
-      if (!result.success) {
-        console.error("[Upload API] Supabase upload failed:", result.error);
-        // Fall through to local upload as fallback
-      } else {
-        return NextResponse.json({
-          success: true,
-          path: result.path,
-          url: result.url,
-          storage: "supabase",
-        });
-      }
-    }
-
-    // Fallback: Local file storage
+    // Generate unique filename
     const fileId = crypto.randomUUID();
     const extension = getFileExtension(file.type);
     const sanitizedOriginal = sanitizeFilename(file.name);
     const filename = `${fileId}${extension}`;
 
-    // Create subdirectory for review documents if reviewId provided
+    // Build storage path
+    const storagePath = reviewId && category
+      ? `reviews/${reviewId}/${category}/${filename}`
+      : `uploads/${filename}`;
+
+    // ==========================================================================
+    // STORAGE OPTION 1: Vercel Blob (Production)
+    // ==========================================================================
+    if (isVercelBlobConfigured()) {
+      try {
+        console.log("[Upload API] Using Vercel Blob storage");
+        const blob = await put(storagePath, buffer, {
+          access: "public",
+          contentType: file.type,
+        });
+
+        return NextResponse.json({
+          success: true,
+          path: storagePath,
+          url: blob.url,
+          storage: "vercel-blob",
+          file: {
+            id: fileId,
+            filename,
+            originalName: sanitizedOriginal,
+            mimeType: file.type,
+            size: file.size,
+          },
+        });
+      } catch (error) {
+        console.error("[Upload API] Vercel Blob upload failed:", error);
+        // Fall through to other storage options
+      }
+    }
+
+    // ==========================================================================
+    // STORAGE OPTION 2: Supabase Storage
+    // ==========================================================================
+    if (reviewId && category && isStorageConfigured()) {
+      const supabasePath = generateFilePath(reviewId, category, file.name);
+      const result = await uploadFile(buffer, supabasePath, file.type);
+
+      if (result.success) {
+        return NextResponse.json({
+          success: true,
+          path: result.path,
+          url: result.url,
+          storage: "supabase",
+          file: {
+            id: fileId,
+            filename,
+            originalName: sanitizedOriginal,
+            mimeType: file.type,
+            size: file.size,
+          },
+        });
+      } else {
+        console.error("[Upload API] Supabase upload failed:", result.error);
+        // Fall through to local storage
+      }
+    }
+
+    // ==========================================================================
+    // STORAGE OPTION 3: Local Filesystem (Development Only)
+    // ==========================================================================
+    console.log("[Upload API] Using local filesystem storage (dev fallback)");
+
     let targetDir = UPLOAD_DIR;
     let relativePath = filename;
 
@@ -207,12 +262,22 @@ export async function POST(request: NextRequest) {
 // =============================================================================
 
 export async function GET() {
-  const storageConfigured = isStorageConfigured();
+  const blobConfigured = isVercelBlobConfigured();
+  const supabaseConfigured = isStorageConfigured();
+
+  let activeStorage = "local";
+  if (blobConfigured) activeStorage = "vercel-blob";
+  else if (supabaseConfigured) activeStorage = "supabase";
 
   return NextResponse.json(
     {
       message: "Use POST to upload files",
-      storage: storageConfigured ? "supabase" : "local",
+      storage: activeStorage,
+      storageOptions: {
+        "vercel-blob": blobConfigured,
+        supabase: supabaseConfigured,
+        local: true,
+      },
       allowedTypes: ALLOWED_MIME_TYPES,
       maxFileSize: MAX_FILE_SIZE,
       maxFileSizeMB: MAX_FILE_SIZE / 1024 / 1024,

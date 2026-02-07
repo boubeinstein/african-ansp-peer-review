@@ -4,6 +4,7 @@ import { UserRole } from "@/types/prisma-enums";
 import { TRPCProvider } from "@/lib/trpc/provider";
 import { KeyboardShortcutsProvider } from "@/components/features/shortcuts";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/sonner";
 import { OfflineIndicator } from "@/components/collaboration";
 import { OnboardingProvider, OnboardingTooltip, WelcomeModal } from "@/components/onboarding";
 
@@ -27,6 +28,7 @@ export function DashboardProviders({
             {children}
             <WelcomeModal />
             <OnboardingTooltip />
+            <Toaster />
           </OnboardingProvider>
         </KeyboardShortcutsProvider>
       </TooltipProvider>

@@ -1,23 +1,55 @@
 "use client";
 
 import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { httpBatchLink, loggerLink } from "@trpc/client";
+import { QueryClient, QueryClientProvider, QueryCache, MutationCache } from "@tanstack/react-query";
+import { httpBatchLink, loggerLink, TRPCClientError } from "@trpc/client";
+import { signOut } from "next-auth/react";
 import superjson from "superjson";
 import { trpc, getTRPCUrl } from "./client";
+
+/**
+ * Global flag to prevent multiple auth error redirects firing simultaneously.
+ * Reset on full page navigation (signOut triggers window.location redirect).
+ */
+let isRedirectingToLogin = false;
+
+function handleAuthError(error: unknown) {
+  if (isRedirectingToLogin || typeof window === "undefined") return;
+
+  const isUnauthorized =
+    (error instanceof TRPCClientError && error.data?.code === "UNAUTHORIZED") ||
+    (error instanceof Error && error.message.includes("UNAUTHORIZED"));
+
+  if (isUnauthorized) {
+    isRedirectingToLogin = true;
+    console.warn("[TRPCProvider] UNAUTHORIZED error — redirecting to login");
+    // Clear cached data before redirect
+    browserQueryClient?.clear();
+    signOut({ callbackUrl: "/login?error=SessionExpired" });
+  }
+}
 
 /**
  * Create a stable QueryClient instance
  */
 function makeQueryClient() {
   return new QueryClient({
+    queryCache: new QueryCache({
+      onError: handleAuthError,
+    }),
+    mutationCache: new MutationCache({
+      onError: handleAuthError,
+    }),
     defaultOptions: {
       queries: {
         // With SSR, we don't want to refetch immediately on client
         staleTime: 60 * 1000, // 1 minute
         refetchOnWindowFocus: false,
         retry: (failureCount, error) => {
-          // Don't retry on 4xx errors (client errors)
+          // Don't retry on auth errors
+          if (error instanceof TRPCClientError && error.data?.code === "UNAUTHORIZED") {
+            return false;
+          }
           if (error instanceof Error && error.message.includes("UNAUTHORIZED")) {
             return false;
           }

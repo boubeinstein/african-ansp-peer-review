@@ -165,6 +165,7 @@
       "loginFailed": "Échec de la connexion. Veuillez réessayer.",
       "sessionRequired": "Veuillez vous connecter pour accéder à cette page.",
       "sessionRevoked": "Votre session a été terminée depuis un autre appareil. Veuillez vous reconnecter.",
+      "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
       "carousel": {
         "slide1": {
           "badge": "Programme Approuvé par l'OACI",

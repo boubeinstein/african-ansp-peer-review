@@ -165,6 +165,7 @@
       "loginFailed": "Login failed. Please try again.",
       "sessionRequired": "Please sign in to access this page.",
       "sessionRevoked": "Your session was ended from another device. Please sign in again.",
+      "sessionExpired": "Your session has expired. Please sign in again.",
       "carousel": {
         "slide1": {
           "badge": "ICAO-Endorsed Programme",

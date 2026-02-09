@@ -16,7 +16,7 @@ import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
 import { format, differenceInDays, isPast } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
-import { UserRole, CAPStatus } from "@/types/prisma-enums";
+import { UserRole, CAPStatus, EvidenceCategory, EvidenceStatus, MilestoneStatus } from "@/types/prisma-enums";
 import {
   ArrowLeft,
   Calendar,
@@ -27,24 +27,16 @@ import {
   ExternalLink,
   Clock,
   ShieldCheck,
-  Upload,
-  File,
   ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // UI Components
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Feature Components
@@ -54,9 +46,9 @@ import { CAPTimeline } from "./cap-timeline";
 import { CAPStatusBadge } from "./cap-status-badge";
 import { CAPVerificationForm } from "./cap-verification-form";
 import { FindingSeverityBadge } from "../finding/finding-severity-badge";
-import { WorkflowTransitionButtons } from "../workflow/workflow-transition-buttons";
 import { WorkflowHistory } from "../workflow/workflow-history";
 import { SLAIndicator } from "../workflow/sla-indicator";
+import { CAPEvidenceUpload } from "../caps/cap-evidence-upload";
 
 // =============================================================================
 // TYPES
@@ -136,22 +128,41 @@ interface CAPData {
   assignedTo?: UserInfo | null;
   verifiedBy?: UserInfo | null;
   documents?: DocumentInfo[];
+  evidence?: {
+    id: string;
+    category: EvidenceCategory;
+    titleEn: string;
+    titleFr: string | null;
+    descriptionEn: string | null;
+    descriptionFr: string | null;
+    evidenceDate: Date | string;
+    fileUrl: string;
+    fileName: string;
+    fileType: string;
+    fileSize: number;
+    status: EvidenceStatus;
+    uploadedAt: Date | string;
+    reviewedAt: Date | string | null;
+    reviewerCommentEn: string | null;
+    reviewerCommentFr: string | null;
+    rejectionReason: string | null;
+    uploadedBy: { id: string; firstName: string; lastName: string };
+    reviewedBy?: { id: string; firstName: string; lastName: string } | null;
+    milestone?: { id: string; titleEn: string; titleFr: string | null; status: MilestoneStatus; targetDate: Date | string } | null;
+  }[];
+  milestones?: {
+    id: string;
+    titleEn: string;
+    titleFr: string | null;
+    status: MilestoneStatus;
+    targetDate: Date | string;
+  }[];
 }
 
 interface CAPDetailViewProps {
   cap: CAPData;
   userRole: UserRole;
   onStatusChange?: () => void;
-}
-
-// =============================================================================
-// HELPER FUNCTIONS
-// =============================================================================
-
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 // =============================================================================
@@ -275,7 +286,6 @@ function InfoRow({ label, value, className }: InfoRowProps) {
 
 export function CAPDetailView({ cap, userRole, onStatusChange }: CAPDetailViewProps) {
   const t = useTranslations("cap");
-  const tCommon = useTranslations("common");
   const tFinding = useTranslations("findings");
   const locale = useLocale();
   const dateLocale = locale === "fr" ? fr : enUS;
@@ -344,12 +354,6 @@ export function CAPDetailView({ cap, userRole, onStatusChange }: CAPDetailViewPr
               {t("detail.backToFinding")}
             </Link>
           </Button>
-          <WorkflowTransitionButtons
-            entityType="CAP"
-            entityId={cap.id}
-            onTransitionComplete={() => onStatusChange?.()}
-            size="default"
-          />
           <CAPActionButtons
             capId={cap.id}
             findingId={cap.findingId}
@@ -414,61 +418,19 @@ export function CAPDetailView({ cap, userRole, onStatusChange }: CAPDetailViewPr
           )}
 
           {/* Evidence/Documents */}
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <File className="w-4 h-4" />
-                  {t("documents.title") || "Evidence & Documents"}
-                </CardTitle>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline" size="sm" disabled>
-                        <Upload className="w-4 h-4 mr-2" />
-                        {t("documents.upload") || "Upload"}
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{tCommon("comingSoon")}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              <CardDescription>
-                {t("documents.description") || "Supporting documents and evidence for this CAP"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {cap.documents && cap.documents.length > 0 ? (
-                <ul className="space-y-2">
-                  {cap.documents.map((doc) => (
-                    <li
-                      key={doc.id}
-                      className="flex items-center justify-between p-2 rounded-md border bg-muted/30"
-                    >
-                      <div className="flex items-center gap-2">
-                        <File className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm">{doc.originalName || doc.name}</span>
-                        <span className="text-xs text-muted-foreground">
-                          ({formatFileSize(doc.fileSize)})
-                        </span>
-                      </div>
-                      <Button variant="ghost" size="sm" asChild>
-                        <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-muted-foreground italic">
-                  {t("documents.empty") || "No documents uploaded yet"}
-                </p>
-              )}
-            </CardContent>
-          </Card>
+          <CAPEvidenceUpload
+            capId={cap.id}
+            evidence={cap.evidence}
+            milestones={cap.milestones}
+            canUpload={
+              !["VERIFIED", "CLOSED"].includes(cap.status) &&
+              ["SUPER_ADMIN", "SYSTEM_ADMIN", "ANSP_ADMIN", "SAFETY_MANAGER", "QUALITY_MANAGER", "PROGRAMME_COORDINATOR"].includes(userRole)
+            }
+            canReview={
+              ["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR", "STEERING_COMMITTEE", "LEAD_REVIEWER"].includes(userRole)
+            }
+            onEvidenceChange={onStatusChange}
+          />
 
           {/* Timeline/History */}
           <Card>
@@ -503,7 +465,7 @@ export function CAPDetailView({ cap, userRole, onStatusChange }: CAPDetailViewPr
             icon={<FileText className="w-4 h-4" />}
           >
             <InfoRow
-              label={tFinding("form.reference") || "Reference"}
+              label={tFinding("detail.reference")}
               value={
                 <Link
                   href={`/${locale}/findings/${cap.findingId}`}
@@ -515,16 +477,16 @@ export function CAPDetailView({ cap, userRole, onStatusChange }: CAPDetailViewPr
               }
             />
             <InfoRow
-              label={tFinding("form.severity") || "Severity"}
+              label={tFinding("detail.severity")}
               value={<FindingSeverityBadge severity={cap.finding.severity} />}
             />
             <InfoRow
-              label={tFinding("form.type") || "Type"}
+              label={tFinding("detail.type")}
               value={cap.finding.status}
             />
             {cap.finding.question && (
               <InfoRow
-                label={tFinding("form.question") || "Question"}
+                label={tFinding("detail.question")}
                 value={
                   <span className="text-xs">
                     {cap.finding.question.pqNumber}
@@ -544,7 +506,7 @@ export function CAPDetailView({ cap, userRole, onStatusChange }: CAPDetailViewPr
             icon={<Building className="w-4 h-4" />}
           >
             <InfoRow
-              label={tFinding("form.organization") || "Organization"}
+              label={tFinding("detail.organization")}
               value={orgName}
             />
             <InfoRow
@@ -552,7 +514,7 @@ export function CAPDetailView({ cap, userRole, onStatusChange }: CAPDetailViewPr
               value={cap.finding.organization.organizationCode}
             />
             <InfoRow
-              label={tFinding("form.review") || "Review"}
+              label={tFinding("detail.review")}
               value={
                 <Link
                   href={`/${locale}/reviews/${cap.finding.review.id}`}

@@ -4087,6 +4087,8 @@
       "backToList": "Back to Findings",
       "review": "Peer Review",
       "reference": "Reference",
+      "severity": "Severity",
+      "type": "Type",
       "reviewStatus": "Status",
       "organization": "Organization",
       "question": "Related Question",

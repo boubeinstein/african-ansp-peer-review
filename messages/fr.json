@@ -4087,6 +4087,8 @@
       "backToList": "Retour aux constatations",
       "review": "Évaluation par les pairs",
       "reference": "Référence",
+      "severity": "Sévérité",
+      "type": "Type",
       "reviewStatus": "Statut",
       "organization": "Organisation",
       "question": "Question associée",

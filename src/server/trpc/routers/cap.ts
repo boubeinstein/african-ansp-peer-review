@@ -375,6 +375,21 @@ export const capRouter = router({
             },
           },
           documents: true,
+          evidence: {
+            include: {
+              uploadedBy: {
+                select: { id: true, firstName: true, lastName: true },
+              },
+              reviewedBy: {
+                select: { id: true, firstName: true, lastName: true },
+              },
+              milestone: true,
+            },
+            orderBy: { uploadedAt: "desc" },
+          },
+          milestones: {
+            orderBy: { sortOrder: "asc" },
+          },
         },
       });
 

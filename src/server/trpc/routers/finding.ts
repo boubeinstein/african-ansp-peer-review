@@ -15,8 +15,12 @@ import {
   PrismaClient,
 } from "@prisma/client";
 
-// Notification service import
-import { notifyFindingCreated } from "@/server/services/notification-service";
+// Notification service imports
+import {
+  notifyFindingCreated,
+  sendNotification,
+  getRecipientsByRole,
+} from "@/server/services/notification-service";
 import { logCreate, logUpdate, logDelete, logStatusChange, logAssignment } from "@/server/services/audit";
 
 // ============================================================================
@@ -761,6 +765,34 @@ export const findingRouter = router({
         previousStatus: finding.status,
         newStatus: newStatus,
       }).catch(() => {});
+
+      // Notify host organization when CAP is required
+      if (newStatus === "CAP_REQUIRED") {
+        try {
+          const hostOrgRecipients = await getRecipientsByRole(
+            ["ANSP_ADMIN", "SAFETY_MANAGER", "QUALITY_MANAGER"],
+            updated.organization.id
+          );
+
+          if (hostOrgRecipients.length > 0) {
+            await sendNotification(hostOrgRecipients, {
+              type: "CAP_REQUIRED",
+              titleEn: `Corrective Action Plan Required - ${updated.referenceNumber}`,
+              titleFr: `Plan d'action corrective requis - ${updated.referenceNumber}`,
+              messageEn: `Finding ${updated.referenceNumber} from review ${updated.review.referenceNumber} requires a Corrective Action Plan. Please submit a CAP within 30 days.`,
+              messageFr: `La constatation ${updated.referenceNumber} de la revue ${updated.review.referenceNumber} nécessite un Plan d'Action Corrective. Veuillez soumettre un PAC sous 30 jours.`,
+              entityType: "Finding",
+              entityId: updated.id,
+              actionUrl: `/findings/${updated.id}`,
+              actionLabelEn: "Create CAP",
+              actionLabelFr: "Créer un PAC",
+              priority: "HIGH",
+            });
+          }
+        } catch (error) {
+          console.error("[Finding.updateStatus] CAP_REQUIRED notification failed:", error);
+        }
+      }
 
       return updated;
     }),

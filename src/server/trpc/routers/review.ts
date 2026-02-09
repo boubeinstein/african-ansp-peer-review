@@ -42,6 +42,9 @@ import {
   notifyReviewScheduled,
   notifyReviewStarted,
   notifyReviewCompleted,
+  sendNotification,
+  notifyUser,
+  getRecipientsByRole,
 } from "@/server/services/notification-service";
 
 // Team eligibility service
@@ -1882,6 +1885,29 @@ export const reviewRouter = router({
         metadata: { reviewId: updated.reviewId, action: "invitation_response" },
       }).catch(() => {});
 
+      // Notify Programme Coordinators of the response
+      try {
+        const coordinators = await getRecipientsByRole(["PROGRAMME_COORDINATOR"]);
+        if (coordinators.length > 0) {
+          const name = `${updated.user.firstName} ${updated.user.lastName}`;
+          const accepted = input.accept;
+
+          await sendNotification(coordinators, {
+            type: "TEAM_INVITATION_RESPONSE",
+            titleEn: `Invitation ${accepted ? "Accepted" : "Declined"} - ${updated.review.referenceNumber}`,
+            titleFr: `Invitation ${accepted ? "acceptée" : "refusée"} - ${updated.review.referenceNumber}`,
+            messageEn: `${name} has ${accepted ? "accepted" : "declined"} the invitation for review ${updated.review.referenceNumber}.${!accepted && input.declineReason ? ` Reason: ${input.declineReason}` : ""}`,
+            messageFr: `${name} a ${accepted ? "accepté" : "refusé"} l'invitation pour la revue ${updated.review.referenceNumber}.${!accepted && input.declineReason ? ` Raison : ${input.declineReason}` : ""}`,
+            entityType: "Review",
+            entityId: updated.reviewId,
+            actionUrl: `/reviews/${updated.reviewId}`,
+            priority: accepted ? "NORMAL" : "HIGH",
+          });
+        }
+      } catch (error) {
+        console.error("[Review.respondToInvitation] Notification failed:", error);
+      }
+
       return {
         success: true,
         status: updated.invitationStatus,
@@ -3584,8 +3610,35 @@ export const reviewRouter = router({
         },
       });
 
-      // TODO: Send notification emails to invited members
-      // This would integrate with the notification service
+      // Send invitation notifications to invited members
+      try {
+        const invitedMembers = await ctx.db.reviewTeamMember.findMany({
+          where: {
+            reviewId: input.reviewId,
+            invitationStatus: "INVITED",
+            ...(input.memberIds && { id: { in: input.memberIds } }),
+          },
+          select: { userId: true },
+        });
+
+        for (const member of invitedMembers) {
+          await notifyUser(member.userId, {
+            type: "TEAM_INVITATION",
+            titleEn: "Peer Review Team Invitation",
+            titleFr: "Invitation à l'équipe de revue",
+            messageEn: `You have been invited to join the review team for ${review.referenceNumber} (${review.hostOrganization.nameEn}). Please respond within 7 days.`,
+            messageFr: `Vous êtes invité à rejoindre l'équipe de revue pour ${review.referenceNumber} (${review.hostOrganization.nameFr}). Veuillez répondre sous 7 jours.`,
+            entityType: "Review",
+            entityId: review.id,
+            actionUrl: `/reviews/${review.id}`,
+            actionLabelEn: "Respond to Invitation",
+            actionLabelFr: "Répondre à l'invitation",
+            priority: "HIGH",
+          });
+        }
+      } catch (error) {
+        console.error("[Review.sendInvitations] Notification failed:", error);
+      }
 
       return {
         success: true,
@@ -3605,6 +3658,15 @@ export const reviewRouter = router({
     .mutation(async ({ ctx, input }) => {
       const membership = await ctx.db.reviewTeamMember.findUnique({
         where: { id: input.membershipId },
+        include: {
+          review: {
+            include: {
+              hostOrganization: {
+                select: { nameEn: true, nameFr: true },
+              },
+            },
+          },
+        },
       });
 
       if (!membership) {
@@ -3631,7 +3693,24 @@ export const reviewRouter = router({
         },
       });
 
-      // TODO: Resend notification email
+      // Resend invitation notification
+      try {
+        await notifyUser(membership.userId, {
+          type: "TEAM_INVITATION",
+          titleEn: "Peer Review Team Invitation (Reminder)",
+          titleFr: "Invitation à l'équipe de revue (Rappel)",
+          messageEn: `Reminder: You have been invited to join the review team for ${membership.review.referenceNumber} (${membership.review.hostOrganization.nameEn}). Please respond within 7 days.`,
+          messageFr: `Rappel : Vous êtes invité à rejoindre l'équipe de revue pour ${membership.review.referenceNumber} (${membership.review.hostOrganization.nameFr}). Veuillez répondre sous 7 jours.`,
+          entityType: "Review",
+          entityId: membership.reviewId,
+          actionUrl: `/reviews/${membership.reviewId}`,
+          actionLabelEn: "Respond to Invitation",
+          actionLabelFr: "Répondre à l'invitation",
+          priority: "HIGH",
+        });
+      } catch (error) {
+        console.error("[Review.resendInvitation] Notification failed:", error);
+      }
 
       return {
         success: true,
@@ -3651,6 +3730,11 @@ export const reviewRouter = router({
     .mutation(async ({ ctx, input }) => {
       const membership = await ctx.db.reviewTeamMember.findUnique({
         where: { id: input.membershipId },
+        include: {
+          review: {
+            select: { id: true, referenceNumber: true },
+          },
+        },
       });
 
       if (!membership) {
@@ -3676,7 +3760,22 @@ export const reviewRouter = router({
         },
       });
 
-      // TODO: Notify the member that their invitation was withdrawn
+      // Notify the member that their invitation was withdrawn
+      try {
+        await notifyUser(membership.userId, {
+          type: "TEAM_INVITATION",
+          titleEn: `Invitation Withdrawn - ${membership.review.referenceNumber}`,
+          titleFr: `Invitation retirée - ${membership.review.referenceNumber}`,
+          messageEn: `Your invitation to the review team for ${membership.review.referenceNumber} has been withdrawn by a coordinator.`,
+          messageFr: `Votre invitation à l'équipe de revue pour ${membership.review.referenceNumber} a été retirée par un coordinateur.`,
+          entityType: "Review",
+          entityId: membership.review.id,
+          actionUrl: `/reviews/${membership.review.id}`,
+          priority: "NORMAL",
+        });
+      } catch (error) {
+        console.error("[Review.withdrawInvitation] Notification failed:", error);
+      }
 
       return { success: true };
     }),

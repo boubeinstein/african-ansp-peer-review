@@ -10,24 +10,24 @@
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { trpc } from "@/lib/trpc/client";
-import { useSession } from "next-auth/react";
 import { CAPDetailView } from "@/components/features/cap/cap-detail-view";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, ArrowLeft, FileX } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { UserRole } from "@prisma/client";
 
 interface CAPDetailClientProps {
   capId: string;
+  userRole: UserRole;
 }
 
-export function CAPDetailClient({ capId }: CAPDetailClientProps) {
+export function CAPDetailClient({ capId, userRole }: CAPDetailClientProps) {
   const t = useTranslations("cap");
   const tCommon = useTranslations("common");
   const locale = useLocale();
   const router = useRouter();
-  const { data: session } = useSession();
 
   // Fetch CAP data
   const {
@@ -122,7 +122,7 @@ export function CAPDetailClient({ capId }: CAPDetailClientProps) {
   return (
     <CAPDetailView
       cap={cap}
-      userRole={session?.user?.role || "PEER_REVIEWER"}
+      userRole={userRole}
       onStatusChange={() => refetch()}
     />
   );

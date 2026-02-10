@@ -10,13 +10,24 @@ interface UseReviewKeyboardOptions {
   onAction?: (action: string) => void;
 }
 
-const TAB_SHORTCUTS: Record<string, ReviewTab> = {
+const TAB_NUMBER_SHORTCUTS: Record<string, ReviewTab> = {
   "1": "overview",
   "2": "workspace",
   "3": "documents",
   "4": "findings",
   "5": "report",
-  "6": "settings",
+  "6": "retrospective",
+  "7": "settings",
+};
+
+const TAB_LETTER_SHORTCUTS: Record<string, ReviewTab> = {
+  o: "overview",
+  w: "workspace",
+  d: "documents",
+  f: "findings",
+  r: "report",
+  t: "retrospective",
+  s: "settings",
 };
 
 export function useReviewKeyboard({ reviewId, locale, onAction }: UseReviewKeyboardOptions) {
@@ -45,11 +56,13 @@ export function useReviewKeyboard({ reviewId, locale, onAction }: UseReviewKeybo
         return;
       }
 
-      // Tab navigation with g + number (GitHub style)
+      // Tab navigation with g + number/letter (GitHub style)
       if (event.key === "g") {
         // Set up listener for next key
         const handleNextKey = (e: KeyboardEvent) => {
-          const tab = TAB_SHORTCUTS[e.key];
+          const tab =
+            TAB_NUMBER_SHORTCUTS[e.key] ||
+            TAB_LETTER_SHORTCUTS[e.key.toLowerCase()];
           if (tab) {
             e.preventDefault();
             navigateToTab(tab);
@@ -66,12 +79,21 @@ export function useReviewKeyboard({ reviewId, locale, onAction }: UseReviewKeybo
         return;
       }
 
-      // Direct number shortcuts with Alt/Option key
+      // Direct shortcuts with Alt/Option key (numbers and mnemonic letters)
       if (event.altKey && !event.ctrlKey && !event.metaKey) {
-        const tab = TAB_SHORTCUTS[event.key];
+        const tab =
+          TAB_NUMBER_SHORTCUTS[event.key] ||
+          TAB_LETTER_SHORTCUTS[event.key.toLowerCase()];
         if (tab) {
           event.preventDefault();
           navigateToTab(tab);
+          return;
+        }
+
+        // Alt+N: context-aware new action
+        if (event.key.toLowerCase() === "n") {
+          event.preventDefault();
+          onAction?.("new");
           return;
         }
       }

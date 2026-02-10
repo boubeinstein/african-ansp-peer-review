@@ -17,6 +17,7 @@ interface KeyboardShortcutsDialogProps {
 
 interface ShortcutGroup {
   title: string;
+  combo?: boolean;
   shortcuts: Array<{
     keys: string[];
     description: string;
@@ -28,6 +29,20 @@ export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcut
 
   const shortcutGroups: ShortcutGroup[] = [
     {
+      title: t("quickNav"),
+      combo: true,
+      shortcuts: [
+        { keys: ["Alt", "W"], description: t("goToWorkspace") },
+        { keys: ["Alt", "F"], description: t("goToFindings") },
+        { keys: ["Alt", "D"], description: t("goToDocuments") },
+        { keys: ["Alt", "R"], description: t("goToReport") },
+        { keys: ["Alt", "O"], description: t("goToOverview") },
+        { keys: ["Alt", "T"], description: t("goToRetrospective") },
+        { keys: ["Alt", "S"], description: t("goToSettings") },
+        { keys: ["Alt", "N"], description: t("newItem") },
+      ],
+    },
+    {
       title: t("navigation"),
       shortcuts: [
         { keys: ["g", "1"], description: t("goToOverview") },
@@ -35,7 +50,8 @@ export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcut
         { keys: ["g", "3"], description: t("goToDocuments") },
         { keys: ["g", "4"], description: t("goToFindings") },
         { keys: ["g", "5"], description: t("goToReport") },
-        { keys: ["g", "6"], description: t("goToSettings") },
+        { keys: ["g", "6"], description: t("goToRetrospective") },
+        { keys: ["g", "7"], description: t("goToSettings") },
       ],
     },
     {
@@ -64,7 +80,7 @@ export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcut
           <DialogDescription>{t("description")}</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 mt-4">
+        <div className="space-y-6 mt-4 max-h-[60vh] overflow-y-auto pr-1">
           {shortcutGroups.map((group) => (
             <div key={group.title}>
               <h4 className="text-sm font-medium text-muted-foreground mb-3">{group.title}</h4>
@@ -87,7 +103,9 @@ export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcut
                             {key}
                           </kbd>
                           {keyIndex < shortcut.keys.length - 1 && (
-                            <span className="text-muted-foreground text-xs">then</span>
+                            <span className="text-muted-foreground text-xs">
+                              {group.combo ? "+" : "then"}
+                            </span>
                           )}
                         </span>
                       ))}
@@ -100,7 +118,7 @@ export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcut
         </div>
 
         <p className="text-xs text-muted-foreground mt-4">
-          {t("altShortcuts")}
+          {t("altShortcutsTip")}
         </p>
       </DialogContent>
     </Dialog>

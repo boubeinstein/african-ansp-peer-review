@@ -462,6 +462,13 @@
       "openFindingsCount": "open findings",
       "overdueCAPsCount": "overdue CAPs"
     },
+    "activeSessions": {
+      "title": "Live Sessions",
+      "join": "Join",
+      "online": "online",
+      "startedBy": "Started by {name}",
+      "noSessions": "No active sessions"
+    },
     "activity": {
       "title": "Recent Activity",
       "viewAll": "View All",
@@ -2993,6 +3000,11 @@
       "description": "Peer reviews will appear here once the review cycle begins. Request a peer review to get started."
     },
     "needsTeam": "Needs Team",
+    "live": {
+      "badge": "Live",
+      "online": "online",
+      "join": "Join Session"
+    },
     "actions": {
       "requestReview": "Request Review",
       "viewAll": "View All",
@@ -3570,11 +3582,24 @@
         "activityFeed": {
           "title": "Team Activity",
           "empty": "No activity yet. Actions taken during this review will appear here.",
+          "noMatchingActivity": "No matching activity for this filter.",
           "types": {
             "finding": "updated a finding",
             "discussion": "posted a discussion",
             "task": "updated a task",
             "session": "session activity"
+          },
+          "filters": {
+            "all": "All",
+            "finding": "Findings",
+            "discussion": "Discussions",
+            "task": "Tasks",
+            "session": "Sessions"
+          },
+          "timeGroups": {
+            "today": "Today",
+            "yesterday": "Yesterday",
+            "earlier": "Earlier"
           }
         },
         "discussionsList": {
@@ -3913,12 +3938,14 @@
       "keyboard": {
         "title": "Keyboard Shortcuts",
         "description": "Use these shortcuts to navigate quickly",
-        "navigation": "Navigation",
+        "quickNav": "Quick Navigation",
+        "navigation": "Sequence Navigation",
         "goToOverview": "Go to Overview",
         "goToWorkspace": "Go to Workspace",
         "goToDocuments": "Go to Documents",
         "goToFindings": "Go to Findings",
         "goToReport": "Go to Report",
+        "goToRetrospective": "Go to Retrospective",
         "goToSettings": "Go to Settings",
         "actions": "Actions",
         "newItem": "New item (context-aware)",
@@ -3928,7 +3955,8 @@
         "global": "Global",
         "quickSearch": "Quick search",
         "save": "Save changes",
-        "altShortcuts": "Tip: You can also use Alt + number for direct tab access"
+        "altShortcuts": "Tip: You can also use Alt + number for direct tab access",
+        "altShortcutsTip": "Tip: Alt + letter for quick access, or g then number for sequence navigation"
       },
       "accessibility": {
         "skipToContent": "Skip to main content",

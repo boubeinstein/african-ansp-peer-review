@@ -462,6 +462,13 @@
       "openFindingsCount": "constats ouverts",
       "overdueCAPsCount": "PAC en retard"
     },
+    "activeSessions": {
+      "title": "Sessions en direct",
+      "join": "Rejoindre",
+      "online": "en ligne",
+      "startedBy": "Démarrée par {name}",
+      "noSessions": "Aucune session active"
+    },
     "activity": {
       "title": "Activité récente",
       "viewAll": "Voir tout",
@@ -2993,6 +3000,11 @@
       "description": "Les évaluations par les pairs apparaîtront ici une fois le cycle d'évaluation commencé. Demandez une évaluation par les pairs pour commencer."
     },
     "needsTeam": "Équipe requise",
+    "live": {
+      "badge": "En direct",
+      "online": "en ligne",
+      "join": "Rejoindre la session"
+    },
     "actions": {
       "requestReview": "Demander une évaluation",
       "viewAll": "Voir tout",
@@ -3570,11 +3582,24 @@
         "activityFeed": {
           "title": "Activité de l'équipe",
           "empty": "Aucune activité pour le moment. Les actions effectuées lors de cette évaluation apparaîtront ici.",
+          "noMatchingActivity": "Aucune activité correspondant à ce filtre.",
           "types": {
             "finding": "a mis à jour une constatation",
             "discussion": "a publié une discussion",
             "task": "a mis à jour une tâche",
             "session": "activité de session"
+          },
+          "filters": {
+            "all": "Tout",
+            "finding": "Constatations",
+            "discussion": "Discussions",
+            "task": "Tâches",
+            "session": "Sessions"
+          },
+          "timeGroups": {
+            "today": "Aujourd'hui",
+            "yesterday": "Hier",
+            "earlier": "Plus tôt"
           }
         },
         "discussionsList": {
@@ -3913,12 +3938,14 @@
       "keyboard": {
         "title": "Raccourcis clavier",
         "description": "Utilisez ces raccourcis pour naviguer rapidement",
-        "navigation": "Navigation",
+        "quickNav": "Navigation rapide",
+        "navigation": "Navigation par séquence",
         "goToOverview": "Aller à l'aperçu",
         "goToWorkspace": "Aller à l'espace de travail",
         "goToDocuments": "Aller aux documents",
         "goToFindings": "Aller aux constatations",
         "goToReport": "Aller au rapport",
+        "goToRetrospective": "Aller à la rétrospective",
         "goToSettings": "Aller aux paramètres",
         "actions": "Actions",
         "newItem": "Nouvel élément (contextuel)",
@@ -3928,7 +3955,8 @@
         "global": "Global",
         "quickSearch": "Recherche rapide",
         "save": "Enregistrer",
-        "altShortcuts": "Astuce : Vous pouvez aussi utiliser Alt + numéro pour accéder directement aux onglets"
+        "altShortcuts": "Astuce : Vous pouvez aussi utiliser Alt + numéro pour accéder directement aux onglets",
+        "altShortcutsTip": "Astuce : Alt + lettre pour un accès rapide, ou g puis numéro pour la navigation séquentielle"
       },
       "accessibility": {
         "skipToContent": "Aller au contenu principal",

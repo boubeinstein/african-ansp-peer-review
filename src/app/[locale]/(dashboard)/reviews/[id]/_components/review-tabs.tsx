@@ -21,14 +21,14 @@ import {
 import type { ReviewTab } from "../_types";
 import { REVIEW_TABS } from "../_types";
 
-const TAB_SHORTCUTS: Record<ReviewTab, string> = {
-  overview: "Alt+1",
-  workspace: "Alt+2",
-  documents: "Alt+3",
-  findings: "Alt+4",
-  report: "Alt+5",
-  retrospective: "Alt+6",
-  settings: "Alt+7",
+const TAB_SHORTCUTS: Record<ReviewTab, { number: string; letter: string }> = {
+  overview: { number: "Alt+1", letter: "Alt+O" },
+  workspace: { number: "Alt+2", letter: "Alt+W" },
+  documents: { number: "Alt+3", letter: "Alt+D" },
+  findings: { number: "Alt+4", letter: "Alt+F" },
+  report: { number: "Alt+5", letter: "Alt+R" },
+  retrospective: { number: "Alt+6", letter: "Alt+T" },
+  settings: { number: "Alt+7", letter: "Alt+S" },
 };
 
 interface ReviewTabsProps {
@@ -159,7 +159,7 @@ export function ReviewTabs({ currentTab, onTabChange, counts, hasActiveSession }
                         "bg-muted/60 text-muted-foreground",
                         "border border-border/60 rounded"
                       )}>
-                        {TAB_SHORTCUTS[tab.id]}
+                        {TAB_SHORTCUTS[tab.id].letter}
                       </kbd>
                     </div>
                   </TooltipContent>

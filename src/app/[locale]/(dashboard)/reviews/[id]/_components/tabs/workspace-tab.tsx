@@ -39,23 +39,6 @@ export function WorkspaceTab({ review, userId, locale = "en" }: WorkspaceTabProp
     searchParams.get("action") === "task"
   );
 
-  // Transform discussions for the list component
-  const discussions: Array<{
-    id: string;
-    title: string;
-    status: string;
-    createdAt: Date;
-    author: { id: string; name: string; image: string | null };
-    _count: { replies: number };
-  }> = review.discussions.map((d: { id: string; isResolved: boolean }) => ({
-    id: d.id,
-    title: d.isResolved ? "Resolved Discussion" : "Open Discussion",
-    status: d.isResolved ? "CLOSED" : "OPEN",
-    createdAt: new Date(),
-    author: { id: "unknown", name: "Team Member", image: null },
-    _count: { replies: 0 },
-  }));
-
   // Transform tasks for the board component
   const tasks: Array<{
     id: string;
@@ -73,7 +56,7 @@ export function WorkspaceTab({ review, userId, locale = "en" }: WorkspaceTabProp
     assignee: null,
   }));
 
-  const openDiscussions = discussions.filter((d) => d.status === "OPEN").length;
+  const openDiscussions = review.discussions.filter((d: { isResolved: boolean }) => !d.isResolved).length;
   const openTasks = tasks.filter(
     (t) => t.status !== "DONE" && t.status !== "CANCELLED"
   ).length;
@@ -180,7 +163,6 @@ export function WorkspaceTab({ review, userId, locale = "en" }: WorkspaceTabProp
 
         <TabsContent value="discussions" className="mt-4">
           <DiscussionsList
-            discussions={discussions}
             reviewId={review.id}
           />
         </TabsContent>

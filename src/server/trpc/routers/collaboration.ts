@@ -945,10 +945,17 @@ export const collaborationRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
+      // Only show activities from the last 7 days
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - 7);
+
       const [findings, discussions, tasks, sessionActivities] =
         await Promise.all([
           ctx.db.finding.findMany({
-            where: { reviewId: input.reviewId },
+            where: {
+              reviewId: input.reviewId,
+              updatedAt: { gte: cutoffDate },
+            },
             orderBy: { updatedAt: "desc" },
             take: input.limit,
             select: {
@@ -966,7 +973,11 @@ export const collaborationRouter = router({
             },
           }),
           ctx.db.reviewDiscussion.findMany({
-            where: { reviewId: input.reviewId, isDeleted: false },
+            where: {
+              reviewId: input.reviewId,
+              isDeleted: false,
+              createdAt: { gte: cutoffDate },
+            },
             orderBy: { createdAt: "desc" },
             take: input.limit,
             select: {
@@ -981,7 +992,10 @@ export const collaborationRouter = router({
             },
           }),
           ctx.db.reviewTask.findMany({
-            where: { reviewId: input.reviewId },
+            where: {
+              reviewId: input.reviewId,
+              updatedAt: { gte: cutoffDate },
+            },
             orderBy: { updatedAt: "desc" },
             take: input.limit,
             select: {
@@ -1000,7 +1014,10 @@ export const collaborationRouter = router({
             },
           }),
           ctx.db.sessionActivity.findMany({
-            where: { session: { reviewId: input.reviewId } },
+            where: {
+              session: { reviewId: input.reviewId },
+              timestamp: { gte: cutoffDate },
+            },
             orderBy: { timestamp: "desc" },
             take: input.limit,
             select: {
@@ -1025,7 +1042,7 @@ export const collaborationRouter = router({
           label: f.titleEn || f.referenceNumber,
           detail: f.severity,
           status: f.status,
-          user: f.assignedTo ?? { id: "", firstName: "System", lastName: "" },
+          user: f.assignedTo ?? { id: "", firstName: "", lastName: "" },
           timestamp: f.updatedAt,
         })),
         ...discussions.map((d) => ({

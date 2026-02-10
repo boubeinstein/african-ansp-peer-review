@@ -31,21 +31,25 @@ const activityTypeConfig = {
     icon: AlertTriangle,
     color: "text-orange-600",
     bgColor: "bg-orange-50 dark:bg-orange-950",
+    borderColor: "border-l-orange-500",
   },
   discussion: {
     icon: MessageSquare,
     color: "text-blue-600",
     bgColor: "bg-blue-50 dark:bg-blue-950",
+    borderColor: "border-l-blue-500",
   },
   task: {
     icon: CheckSquare,
     color: "text-green-600",
     bgColor: "bg-green-50 dark:bg-green-950",
+    borderColor: "border-l-green-500",
   },
   session: {
     icon: LogIn,
     color: "text-purple-600",
     bgColor: "bg-purple-50 dark:bg-purple-950",
+    borderColor: "border-l-purple-500",
   },
 } as const;
 
@@ -123,33 +127,51 @@ export function TeamActivityFeed({
                 const config =
                   activityTypeConfig[activity.type] || activityTypeConfig.session;
                 const Icon = config.icon;
+                const hasUser = activity.user.firstName || activity.user.lastName;
 
                 return (
                   <div
                     key={activity.id}
-                    className="flex gap-3 rounded-lg p-2 transition-colors hover:bg-muted/50"
+                    className={cn(
+                      "flex gap-3 rounded-r-lg p-2 pl-3 border-l-2 transition-colors hover:bg-muted/50",
+                      config.borderColor
+                    )}
                   >
-                    <Avatar className="h-8 w-8 shrink-0">
-                      <AvatarFallback className="text-xs">
-                        {getInitials(activity.user)}
-                      </AvatarFallback>
-                    </Avatar>
+                    {hasUser ? (
+                      <Avatar className="h-8 w-8 shrink-0">
+                        <AvatarFallback className="text-xs">
+                          {getInitials(activity.user)}
+                        </AvatarFallback>
+                      </Avatar>
+                    ) : (
+                      <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-full", config.bgColor)}>
+                        <Icon className={cn("h-4 w-4", config.color)} />
+                      </div>
+                    )}
 
                     <div className="min-w-0 flex-1">
                       <p className="text-sm leading-tight">
-                        <span className="font-medium">
-                          {activity.user.firstName} {activity.user.lastName}
-                        </span>{" "}
-                        <span className="text-muted-foreground">
-                          {t(`types.${activity.type}`)}
-                        </span>
+                        {hasUser ? (
+                          <>
+                            <span className="font-medium">
+                              {activity.user.firstName} {activity.user.lastName}
+                            </span>{" "}
+                            <span className="text-muted-foreground">
+                              {t(`types.${activity.type}`)}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-muted-foreground capitalize">
+                            {activity.label}
+                          </span>
+                        )}
                       </p>
                       <div className="mt-0.5 flex items-center gap-1.5">
                         <Icon
                           className={cn("h-3 w-3 shrink-0", config.color)}
                         />
                         <span className="text-xs text-muted-foreground truncate">
-                          {activity.label}
+                          {hasUser ? activity.label : t(`types.${activity.type}`)}
                         </span>
                         {activity.detail && (
                           <Badge variant="outline" className="text-[10px] px-1 py-0 h-4 shrink-0">

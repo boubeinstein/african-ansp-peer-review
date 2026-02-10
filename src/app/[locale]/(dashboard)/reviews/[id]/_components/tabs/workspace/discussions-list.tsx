@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,27 +12,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { MessageSquare, Clock, ChevronRight, Search } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { formatDistanceToNow } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
+import { trpc } from "@/lib/trpc/client";
 import { DiscussionDetail } from "./discussion-detail";
 
-interface Discussion {
-  id: string;
-  title: string;
-  status: string;
-  createdAt: Date;
-  author: { id: string; name: string; image: string | null };
-  _count: { replies: number };
-}
-
 interface DiscussionsListProps {
-  discussions: Discussion[];
   reviewId: string;
 }
 
-export function DiscussionsList({ discussions, reviewId }: DiscussionsListProps) {
+export function DiscussionsList({ reviewId }: DiscussionsListProps) {
   const t = useTranslations("reviews.detail.workspace.discussionsList");
   const locale = useLocale();
   const dateLocale = locale === "fr" ? fr : enUS;
@@ -41,14 +33,25 @@ export function DiscussionsList({ discussions, reviewId }: DiscussionsListProps)
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  const getInitials = (name: string) => {
-    return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
+  const includeResolved = statusFilter === "all" || statusFilter === "CLOSED";
+
+  const { data, isLoading } = trpc.reviewDiscussion.list.useQuery(
+    { reviewId, includeResolved, pageSize: 50 },
+    { refetchInterval: 15000 }
+  );
+
+  const discussions = data?.discussions ?? [];
+
+  const getInitials = (firstName: string, lastName: string) => {
+    return `${firstName?.[0] || ""}${lastName?.[0] || ""}`.toUpperCase();
   };
 
-  // Filter discussions
+  // Filter discussions by search query and status
   const filteredDiscussions = discussions.filter((discussion) => {
-    const matchesSearch = discussion.title.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "all" || discussion.status === statusFilter;
+    const title = discussion.subject || "";
+    const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase());
+    const status = discussion.isResolved ? "CLOSED" : "OPEN";
+    const matchesStatus = statusFilter === "all" || status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -89,7 +92,23 @@ export function DiscussionsList({ discussions, reviewId }: DiscussionsListProps)
       </div>
 
       {/* Discussion List */}
-      {filteredDiscussions.length === 0 ? (
+      {isLoading ? (
+        <div className="space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Card key={i}>
+              <CardContent className="p-4">
+                <div className="flex items-start gap-4">
+                  <Skeleton className="h-10 w-10 rounded-full shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-3 w-1/2" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : filteredDiscussions.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
             <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
@@ -103,51 +122,59 @@ export function DiscussionsList({ discussions, reviewId }: DiscussionsListProps)
         </Card>
       ) : (
         <div className="space-y-3">
-          {filteredDiscussions.map((discussion) => (
-            <Card
-              key={discussion.id}
-              className="cursor-pointer hover:bg-muted/50 transition-colors"
-              onClick={() => setSelectedId(discussion.id)}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-start gap-4">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={discussion.author.image || undefined} />
-                    <AvatarFallback>{getInitials(discussion.author.name)}</AvatarFallback>
-                  </Avatar>
+          {filteredDiscussions.map((discussion) => {
+            const status = discussion.isResolved ? "CLOSED" : "OPEN";
+            const authorName = `${discussion.author.firstName} ${discussion.author.lastName}`;
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <h4 className="font-medium truncate">{discussion.title}</h4>
-                      <Badge
-                        variant={discussion.status === "OPEN" ? "default" : "secondary"}
-                        className="shrink-0"
-                      >
-                        {t(`status.${discussion.status}`)}
-                      </Badge>
+            return (
+              <Card
+                key={discussion.id}
+                className="cursor-pointer hover:bg-muted/50 transition-colors"
+                onClick={() => setSelectedId(discussion.id)}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-4">
+                    <Avatar className="h-10 w-10">
+                      <AvatarFallback>
+                        {getInitials(discussion.author.firstName, discussion.author.lastName)}
+                      </AvatarFallback>
+                    </Avatar>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <h4 className="font-medium truncate">
+                          {discussion.subject || discussion.content?.slice(0, 60)}
+                        </h4>
+                        <Badge
+                          variant={status === "OPEN" ? "default" : "secondary"}
+                          className="shrink-0"
+                        >
+                          {t(`status.${status}`)}
+                        </Badge>
+                      </div>
+
+                      <div className="flex items-center gap-3 text-sm text-muted-foreground flex-wrap">
+                        <span>{authorName}</span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {formatDistanceToNow(new Date(discussion.createdAt), {
+                            addSuffix: true,
+                            locale: dateLocale,
+                          })}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <MessageSquare className="h-3 w-3" />
+                          {discussion._count.replies} {t("replies")}
+                        </span>
+                      </div>
                     </div>
 
-                    <div className="flex items-center gap-3 text-sm text-muted-foreground flex-wrap">
-                      <span>{discussion.author.name}</span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        {formatDistanceToNow(discussion.createdAt, {
-                          addSuffix: true,
-                          locale: dateLocale,
-                        })}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <MessageSquare className="h-3 w-3" />
-                        {discussion._count.replies} {t("replies")}
-                      </span>
-                    </div>
+                    <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
                   </div>
-
-                  <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>

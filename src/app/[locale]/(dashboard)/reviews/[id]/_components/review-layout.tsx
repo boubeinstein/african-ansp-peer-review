@@ -12,6 +12,7 @@ import { useReviewUpdates } from "@/hooks/use-review-updates";
 import type { ReviewTab } from "../_types";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
+import { isPusherAvailable } from "@/lib/pusher/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -66,6 +67,18 @@ export function ReviewLayout({ review, userId, children, counts }: ReviewLayoutP
     userId,
     enabled: true,
   });
+
+  // Check for active collaboration session
+  const pusherAvailable = isPusherAvailable();
+  const { data: activeSession } =
+    trpc.collaboration.getActiveSession.useQuery(
+      { reviewId: review.id },
+      {
+        enabled: !!userId,
+        refetchInterval: pusherAvailable ? 30000 : 10000,
+      }
+    );
+  const hasActiveSession = !!activeSession;
 
   const currentTab = (searchParams.get("tab") as ReviewTab) || "overview";
 
@@ -193,6 +206,7 @@ export function ReviewLayout({ review, userId, children, counts }: ReviewLayoutP
         currentTab={currentTab}
         onTabChange={handleTabChange}
         counts={counts}
+        hasActiveSession={hasActiveSession}
       />
 
       {/* Tab Content - no nested scroll, parent main handles scrolling */}

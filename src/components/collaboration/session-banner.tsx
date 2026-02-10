@@ -148,7 +148,7 @@ export function SessionBanner({
       <>
         <div
           className={cn(
-            "flex items-center justify-between rounded-lg border bg-muted/50 px-4 py-2",
+            "flex items-center justify-between rounded-lg border border-border bg-muted/50 px-4 py-2",
             className
           )}
         >
@@ -184,7 +184,7 @@ export function SessionBanner({
   return (
     <div
       className={cn(
-        "flex items-center justify-between rounded-lg border border-green-200 bg-green-50 px-4 py-2 dark:border-green-800 dark:bg-green-950",
+        "flex items-center justify-between rounded-lg border border-green-200 bg-green-50 px-4 py-2.5 dark:border-green-800 dark:bg-green-950/30",
         className
       )}
     >
@@ -192,7 +192,7 @@ export function SessionBanner({
         {/* Live indicator */}
         <div className="flex items-center gap-2">
           <span className="relative flex h-3 w-3">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+            <span className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-[pulse_2s_ease-in-out_infinite]" />
             <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500" />
           </span>
           <span className="text-sm font-medium text-green-700 dark:text-green-300">
@@ -200,14 +200,17 @@ export function SessionBanner({
           </span>
         </div>
 
-        {/* Session info */}
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        {/* Session info - clickable title */}
+        <button
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          onClick={() => {/* session panel placeholder */}}
+        >
           <Radio className="h-4 w-4" />
-          <span>
+          <span className="hover:underline">
             {activeSession.title ||
               activeSession.sessionType.replace(/_/g, " ")}
           </span>
-        </div>
+        </button>
 
         {/* Connection status */}
         {pusherAvailable ? (

@@ -43,6 +43,7 @@ interface ReviewTabsProps {
     findings: number;
     criticalFindings: number;
   };
+  hasActiveSession?: boolean;
 }
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -57,7 +58,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 
 const TAB_ORDER: ReviewTab[] = ["overview", "workspace", "documents", "findings", "report", "retrospective", "settings"];
 
-export function ReviewTabs({ currentTab, onTabChange, counts }: ReviewTabsProps) {
+export function ReviewTabs({ currentTab, onTabChange, counts, hasActiveSession }: ReviewTabsProps) {
   const t = useTranslations("reviews.detail.tabs");
   const tA11y = useTranslations("reviews.detail.accessibility");
 
@@ -143,6 +144,9 @@ export function ReviewTabs({ currentTab, onTabChange, counts }: ReviewTabsProps)
                         >
                           {badge.count}
                         </Badge>
+                      )}
+                      {tab.id === "workspace" && hasActiveSession && (
+                        <span className="ml-1.5 h-2 w-2 rounded-full bg-green-500 animate-pulse shrink-0" />
                       )}
                     </button>
                   </TooltipTrigger>

@@ -77,9 +77,9 @@ export function WorkspaceTab({ review, userId, locale = "en" }: WorkspaceTabProp
       />
 
       {/* Quick Actions */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
+        {/* Primary action */}
         <Button
-          variant="outline"
           size="sm"
           onClick={() => navigateToTab("findings")}
         >
@@ -94,6 +94,9 @@ export function WorkspaceTab({ review, userId, locale = "en" }: WorkspaceTabProp
           <Upload className="mr-1.5 h-4 w-4" />
           {t("quickActions.uploadDocument")}
         </Button>
+
+        <div className="w-px h-5 bg-border mx-1 hidden sm:block" />
+
         <Button
           variant="outline"
           size="sm"

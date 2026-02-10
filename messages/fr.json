@@ -3474,6 +3474,19 @@
         "cancel": "Annuler l'évaluation",
         "keyboardShortcuts": "Raccourcis clavier"
       },
+      "cancelSuccess": "Évaluation annulée avec succès",
+      "submitSuccess": "Rapport soumis pour évaluation",
+      "confirmCancel": {
+        "title": "Annuler l'évaluation",
+        "description": "Êtes-vous sûr de vouloir annuler cette évaluation ? Cette action est irréversible. Tous les membres de l'équipe seront notifiés.",
+        "reasonLabel": "Raison de l'annulation",
+        "reasonPlaceholder": "Expliquez pourquoi cette évaluation est annulée...",
+        "reasonMinLength": "La raison doit comporter au moins 10 caractères"
+      },
+      "confirmSubmit": {
+        "title": "Soumettre le rapport pour évaluation",
+        "description": "Le rapport sera soumis pour évaluation. Les parties prenantes seront notifiées et l'évaluation passera à la phase de révision du rapport."
+      },
       "overview": {
         "progress": {
           "title": "Progression de l'évaluation",

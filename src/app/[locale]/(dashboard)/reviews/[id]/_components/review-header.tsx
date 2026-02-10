@@ -31,6 +31,8 @@ import { format } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 
+export type ReviewHeaderAction = "edit" | "submit" | "download" | "upload" | "cancelReview";
+
 interface ReviewHeaderProps {
   review: {
     id: string;
@@ -41,6 +43,7 @@ interface ReviewHeaderProps {
     scheduledStartDate: Date | null;
     scheduledEndDate: Date | null;
   };
+  onAction?: (action: ReviewHeaderAction) => void;
 }
 
 const statusColors: Record<string, string> = {
@@ -57,7 +60,9 @@ const statusColors: Record<string, string> = {
   CANCELLED: "bg-red-100 text-red-800 border-red-300",
 };
 
-export function ReviewHeader({ review }: ReviewHeaderProps) {
+const TERMINAL_STATUSES = ["COMPLETED", "CANCELLED"];
+
+export function ReviewHeader({ review, onAction }: ReviewHeaderProps) {
   const t = useTranslations("reviews.detail");
   const locale = useLocale();
   const router = useRouter();
@@ -70,6 +75,9 @@ export function ReviewHeader({ review }: ReviewHeaderProps) {
   const dateRange = review.scheduledStartDate && review.scheduledEndDate
     ? `${format(new Date(review.scheduledStartDate), "MMM d", { locale: dateLocale })} - ${format(new Date(review.scheduledEndDate), "MMM d, yyyy", { locale: dateLocale })}`
     : null;
+
+  const isTerminal = TERMINAL_STATUSES.includes(review.status);
+  const canSubmitReport = ["REPORT_DRAFTING"].includes(review.status);
 
   return (
     <header className="sticky top-0 z-40 bg-background border-b">
@@ -122,15 +130,27 @@ export function ReviewHeader({ review }: ReviewHeaderProps) {
 
           {/* Actions */}
           <div className="flex items-center gap-2 shrink-0">
-            <Button variant="outline" size="sm" className="hidden sm:flex">
-              <Edit className="h-4 w-4 mr-1.5" />
-              {t("actions.edit")}
-            </Button>
+            {!isTerminal && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="hidden sm:flex"
+                onClick={() => onAction?.("edit")}
+              >
+                <Edit className="h-4 w-4 mr-1.5" />
+                {t("actions.edit")}
+              </Button>
+            )}
 
-            <Button variant="outline" size="sm">
-              <Send className="h-4 w-4 mr-1.5" />
-              {t("actions.submit")}
-            </Button>
+            {canSubmitReport && (
+              <Button
+                size="sm"
+                onClick={() => onAction?.("submit")}
+              >
+                <Send className="h-4 w-4 mr-1.5" />
+                {t("actions.submit")}
+              </Button>
+            )}
 
             <Tooltip>
               <TooltipTrigger asChild>
@@ -158,22 +178,36 @@ export function ReviewHeader({ review }: ReviewHeaderProps) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem className="sm:hidden">
-                  <Edit className="h-4 w-4 mr-2" />
-                  {t("actions.edit")}
-                </DropdownMenuItem>
-                <DropdownMenuItem>
+                {!isTerminal && (
+                  <DropdownMenuItem
+                    className="sm:hidden"
+                    onSelect={() => onAction?.("edit")}
+                  >
+                    <Edit className="h-4 w-4 mr-2" />
+                    {t("actions.edit")}
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem onSelect={() => onAction?.("download")}>
                   <Download className="h-4 w-4 mr-2" />
                   {t("actions.download")}
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Upload className="h-4 w-4 mr-2" />
-                  {t("actions.upload")}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive">
-                  {t("actions.cancel")}
-                </DropdownMenuItem>
+                {!isTerminal && (
+                  <DropdownMenuItem onSelect={() => onAction?.("upload")}>
+                    <Upload className="h-4 w-4 mr-2" />
+                    {t("actions.upload")}
+                  </DropdownMenuItem>
+                )}
+                {!isTerminal && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="text-destructive"
+                      onSelect={() => onAction?.("cancelReview")}
+                    >
+                      {t("actions.cancel")}
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

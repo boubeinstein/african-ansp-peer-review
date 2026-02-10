@@ -3474,6 +3474,19 @@
         "cancel": "Cancel Review",
         "keyboardShortcuts": "Keyboard Shortcuts"
       },
+      "cancelSuccess": "Review cancelled successfully",
+      "submitSuccess": "Report submitted for review",
+      "confirmCancel": {
+        "title": "Cancel Review",
+        "description": "Are you sure you want to cancel this review? This action cannot be undone. All team members will be notified.",
+        "reasonLabel": "Reason for cancellation",
+        "reasonPlaceholder": "Explain why this review is being cancelled...",
+        "reasonMinLength": "Reason must be at least 10 characters"
+      },
+      "confirmSubmit": {
+        "title": "Submit Report for Review",
+        "description": "The report will be submitted for review. Stakeholders will be notified and the review will move to the Report Review phase."
+      },
       "overview": {
         "progress": {
           "title": "Review Progress",

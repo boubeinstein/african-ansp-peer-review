@@ -8,6 +8,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure } from "@/server/trpc/trpc";
 import { TaskStatus, TaskPriority, Prisma, PrismaClient } from "@prisma/client";
+import { getPusherServer, CHANNELS, EVENTS } from "@/lib/pusher/server";
 
 // =============================================================================
 // INPUT SCHEMAS
@@ -411,6 +412,34 @@ export const reviewTaskRouter = router({
         review?.referenceNumber || ""
       );
 
+      // Broadcast via Pusher
+      try {
+        const pusher = getPusherServer();
+        await pusher.trigger(
+          CHANNELS.review(input.reviewId),
+          EVENTS.TASK_UPDATED,
+          {
+            task: {
+              id: task.id,
+              title: task.title,
+              status: task.status,
+              priority: task.priority,
+              assignee: task.assignedTo
+                ? `${task.assignedTo.firstName} ${task.assignedTo.lastName}`
+                : null,
+            },
+            changeType: "created",
+            updatedBy: {
+              id: user.id,
+              name: creatorName,
+            },
+            timestamp: new Date().toISOString(),
+          }
+        );
+      } catch (e) {
+        console.warn("[Pusher] Failed to broadcast task creation:", e);
+      }
+
       return task;
     }),
 
@@ -524,6 +553,34 @@ export const reviewTaskRouter = router({
         );
       }
 
+      // Broadcast via Pusher
+      try {
+        const pusher = getPusherServer();
+        await pusher.trigger(
+          CHANNELS.review(existing.reviewId),
+          EVENTS.TASK_UPDATED,
+          {
+            task: {
+              id: task.id,
+              title: task.title,
+              status: task.status,
+              priority: task.priority,
+              assignee: task.assignedTo
+                ? `${task.assignedTo.firstName} ${task.assignedTo.lastName}`
+                : null,
+            },
+            changeType: "updated",
+            updatedBy: {
+              id: user.id,
+              name: `${user.firstName} ${user.lastName}`,
+            },
+            timestamp: new Date().toISOString(),
+          }
+        );
+      } catch (e) {
+        console.warn("[Pusher] Failed to broadcast task update:", e);
+      }
+
       return task;
     }),
 
@@ -611,6 +668,37 @@ export const reviewTaskRouter = router({
           },
         },
       });
+
+      // Broadcast status change via Pusher
+      try {
+        const changeType =
+          input.status === "COMPLETED" ? "completed" : "updated";
+        const pusher = getPusherServer();
+        await pusher.trigger(
+          CHANNELS.review(existing.reviewId),
+          EVENTS.TASK_UPDATED,
+          {
+            task: {
+              id: task.id,
+              title: task.title,
+              status: task.status,
+              priority: task.priority,
+              assignee: task.assignedTo
+                ? `${task.assignedTo.firstName} ${task.assignedTo.lastName}`
+                : null,
+            },
+            changeType,
+            previousStatus: existing.status,
+            updatedBy: {
+              id: user.id,
+              name: `${user.firstName} ${user.lastName}`,
+            },
+            timestamp: new Date().toISOString(),
+          }
+        );
+      } catch (e) {
+        console.warn("[Pusher] Failed to broadcast task status update:", e);
+      }
 
       return task;
     }),
@@ -702,6 +790,30 @@ export const reviewTaskRouter = router({
       await ctx.db.reviewTask.delete({
         where: { id: input.id },
       });
+
+      // Broadcast via Pusher
+      try {
+        const pusher = getPusherServer();
+        await pusher.trigger(
+          CHANNELS.review(existing.reviewId),
+          EVENTS.TASK_UPDATED,
+          {
+            task: {
+              id: input.id,
+              title: "",
+              status: "CANCELLED",
+            },
+            changeType: "deleted",
+            updatedBy: {
+              id: user.id,
+              name: `${user.firstName} ${user.lastName}`,
+            },
+            timestamp: new Date().toISOString(),
+          }
+        );
+      } catch (e) {
+        console.warn("[Pusher] Failed to broadcast task deletion:", e);
+      }
 
       return { success: true };
     }),

@@ -36,6 +36,8 @@ import { useTranslations, useLocale } from "next-intl";
 import { formatDistanceToNow } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { FocusIndicator } from "@/components/collaboration";
+import type { PresenceMember } from "@/hooks/use-presence";
 
 interface Document {
   id: string;
@@ -54,6 +56,8 @@ interface DocumentListProps {
   reviewId: string;
   onView?: (doc: Document) => void;
   onDelete?: (doc: Document) => void;
+  presenceMembers?: PresenceMember[];
+  currentUserId?: string;
 }
 
 const CATEGORIES = [
@@ -88,6 +92,8 @@ export function DocumentList({
   documents,
   onView,
   onDelete,
+  presenceMembers = [],
+  currentUserId,
 }: DocumentListProps) {
   const t = useTranslations("reviews.detail.documents");
   const locale = useLocale();
@@ -235,6 +241,15 @@ export function DocumentList({
                       </span>
                     </div>
                   </div>
+
+                  {/* Presence Indicator */}
+                  <FocusIndicator
+                    members={presenceMembers}
+                    focusKey={`document:${doc.id}`}
+                    currentUserId={currentUserId}
+                    size="sm"
+                    className="shrink-0"
+                  />
 
                   {/* Actions */}
                   <div className="flex items-center gap-1 shrink-0">

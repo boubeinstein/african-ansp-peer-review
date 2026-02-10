@@ -8,6 +8,7 @@ import type { ReviewHeaderAction } from "./review-header";
 import { ReviewTabs } from "./review-tabs";
 import { KeyboardShortcutsDialog } from "./keyboard-shortcuts-dialog";
 import { useReviewKeyboard } from "../_hooks/use-review-keyboard";
+import { useReviewUpdates } from "@/hooks/use-review-updates";
 import type { ReviewTab } from "../_types";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
@@ -34,6 +35,7 @@ interface ReviewLayoutProps {
     scheduledStartDate: Date | null;
     scheduledEndDate: Date | null;
   };
+  userId?: string;
   children: React.ReactNode;
   counts: {
     discussions: number;
@@ -46,7 +48,7 @@ interface ReviewLayoutProps {
   };
 }
 
-export function ReviewLayout({ review, children, counts }: ReviewLayoutProps) {
+export function ReviewLayout({ review, userId, children, counts }: ReviewLayoutProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const locale = useLocale();
@@ -57,6 +59,13 @@ export function ReviewLayout({ review, children, counts }: ReviewLayoutProps) {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
+
+  // Subscribe to real-time Pusher updates for this review
+  useReviewUpdates({
+    reviewId: review.id,
+    userId,
+    enabled: true,
+  });
 
   const currentTab = (searchParams.get("tab") as ReviewTab) || "overview";
 

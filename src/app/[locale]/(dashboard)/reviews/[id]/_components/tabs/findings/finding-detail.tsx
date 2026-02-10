@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,12 +43,17 @@ import { fr, enUS } from "date-fns/locale";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { FocusIndicator } from "@/components/collaboration";
+import type { PresenceMember } from "@/hooks/use-presence";
 
 interface FindingDetailProps {
   findingId: string;
   reviewId: string;
   onBack: () => void;
   onEdit?: () => void;
+  presenceMembers?: PresenceMember[];
+  currentUserId?: string;
+  updateFocus?: (focus: string) => void;
 }
 
 const STATUSES = [
@@ -83,6 +89,9 @@ export function FindingDetail({
   findingId,
   onBack,
   onEdit,
+  presenceMembers = [],
+  currentUserId,
+  updateFocus,
 }: FindingDetailProps) {
   const t = useTranslations("reviews.detail.findings.detail");
   const tSeverity = useTranslations("reviews.detail.findings.severity");
@@ -96,6 +105,18 @@ export function FindingDetail({
     { id: findingId },
     { enabled: !!findingId }
   );
+
+  // Broadcast focus when viewing this finding
+  useEffect(() => {
+    if (updateFocus && findingId) {
+      updateFocus(`finding:${findingId}`);
+    }
+    return () => {
+      if (updateFocus) {
+        updateFocus("");
+      }
+    };
+  }, [updateFocus, findingId]);
 
   const updateStatusMutation = trpc.finding.updateStatus.useMutation({
     onSuccess: () => {
@@ -184,6 +205,12 @@ export function FindingDetail({
                 <Badge variant="secondary" className={cn(severity?.color)}>
                   {severity?.icon} {tSeverity(finding.severity)}
                 </Badge>
+                <FocusIndicator
+                  members={presenceMembers}
+                  focusKey={`finding:${findingId}`}
+                  currentUserId={currentUserId}
+                  size="md"
+                />
               </div>
               {/* Title */}
               <CardTitle className="text-xl">{title}</CardTitle>

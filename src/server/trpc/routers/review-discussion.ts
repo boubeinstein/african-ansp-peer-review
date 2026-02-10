@@ -9,6 +9,7 @@ import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure } from "@/server/trpc/trpc";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { OVERSIGHT_ROLES } from "@/lib/permissions";
+import { getPusherServer, CHANNELS, EVENTS } from "@/lib/pusher/server";
 
 // =============================================================================
 // INPUT SCHEMAS
@@ -541,6 +542,30 @@ export const reviewDiscussionRouter = router({
         review?.referenceNumber || ""
       );
 
+      // Broadcast via Pusher
+      try {
+        const pusher = getPusherServer();
+        await pusher.trigger(
+          CHANNELS.review(input.reviewId),
+          EVENTS.COMMENT_ADDED,
+          {
+            discussion: {
+              id: discussion.id,
+              subject: discussion.subject,
+              content: discussion.content.substring(0, 100),
+              parentId: discussion.parentId,
+            },
+            author: {
+              id: userId,
+              name: authorName,
+            },
+            timestamp: new Date().toISOString(),
+          }
+        );
+      } catch (e) {
+        console.warn("[Pusher] Failed to broadcast discussion creation:", e);
+      }
+
       return discussion;
     }),
 
@@ -627,6 +652,29 @@ export const reviewDiscussionRouter = router({
         parentDiscussion.reviewId,
         review?.referenceNumber || ""
       );
+
+      // Broadcast reply via Pusher
+      try {
+        const pusher = getPusherServer();
+        await pusher.trigger(
+          CHANNELS.review(parentDiscussion.reviewId),
+          EVENTS.COMMENT_ADDED,
+          {
+            discussion: {
+              id: reply.id,
+              content: reply.content.substring(0, 100),
+              parentId: input.discussionId,
+            },
+            author: {
+              id: userId,
+              name: authorName,
+            },
+            timestamp: new Date().toISOString(),
+          }
+        );
+      } catch (e) {
+        console.warn("[Pusher] Failed to broadcast discussion reply:", e);
+      }
 
       return reply;
     }),
@@ -808,6 +856,28 @@ export const reviewDiscussionRouter = router({
         },
       });
 
+      // Broadcast resolve via Pusher
+      try {
+        const pusher = getPusherServer();
+        await pusher.trigger(
+          CHANNELS.review(existing.reviewId),
+          EVENTS.COMMENT_ADDED,
+          {
+            discussion: {
+              id: discussion.id,
+              action: "resolved",
+            },
+            author: {
+              id: user.id,
+              name: `${user.firstName} ${user.lastName}`,
+            },
+            timestamp: new Date().toISOString(),
+          }
+        );
+      } catch (e) {
+        console.warn("[Pusher] Failed to broadcast discussion resolve:", e);
+      }
+
       return discussion;
     }),
 
@@ -864,6 +934,28 @@ export const reviewDiscussionRouter = router({
           resolvedById: null,
         },
       });
+
+      // Broadcast unresolve via Pusher
+      try {
+        const pusher = getPusherServer();
+        await pusher.trigger(
+          CHANNELS.review(existing.reviewId),
+          EVENTS.COMMENT_ADDED,
+          {
+            discussion: {
+              id: discussion.id,
+              action: "reopened",
+            },
+            author: {
+              id: user.id,
+              name: `${user.firstName} ${user.lastName}`,
+            },
+            timestamp: new Date().toISOString(),
+          }
+        );
+      } catch (e) {
+        console.warn("[Pusher] Failed to broadcast discussion unresolve:", e);
+      }
 
       return discussion;
     }),

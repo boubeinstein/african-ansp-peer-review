@@ -16,6 +16,7 @@ export {
   PresenceAvatar,
   OnlineIndicator,
 } from "./presence-avatars";
+export { FocusIndicator } from "./focus-indicator";
 export { TypingIndicator } from "./typing-indicator";
 export {
   LiveCursors,
@@ -31,6 +32,7 @@ export {
   ActivityToast,
 } from "./activity-feed";
 export type { ActivityItem } from "./activity-feed";
+export { TeamActivityFeed } from "./team-activity-feed";
 
 // Connection & Error handling
 export { ConnectionStatus } from "./connection-status";

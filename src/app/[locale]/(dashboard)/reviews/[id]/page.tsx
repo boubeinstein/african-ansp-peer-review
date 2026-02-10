@@ -51,11 +51,11 @@ export default async function ReviewDetailPage({ params, searchParams }: PagePro
       case "overview":
         return <OverviewTab review={review} counts={counts} />;
       case "workspace":
-        return <WorkspaceTab review={review} />;
+        return <WorkspaceTab review={review} userId={session.user.id} locale={locale} />;
       case "documents":
-        return <DocumentsTab review={review} />;
+        return <DocumentsTab review={review} userId={session.user.id} />;
       case "findings":
-        return <FindingsTab review={review} />;
+        return <FindingsTab review={review} userId={session.user.id} />;
       case "report":
         return <ReportTab review={review} />;
       case "retrospective":
@@ -78,6 +78,7 @@ export default async function ReviewDetailPage({ params, searchParams }: PagePro
         scheduledStartDate: review.plannedStartDate,
         scheduledEndDate: review.plannedEndDate,
       }}
+      userId={session.user.id}
       counts={counts}
     >
       <TabContent tab={currentTab}>

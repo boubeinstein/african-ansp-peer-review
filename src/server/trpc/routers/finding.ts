@@ -22,6 +22,7 @@ import {
   getRecipientsByRole,
 } from "@/server/services/notification-service";
 import { logCreate, logUpdate, logDelete, logStatusChange, logAssignment } from "@/server/services/audit";
+import { getPusherServer, CHANNELS, EVENTS } from "@/lib/pusher/server";
 
 // ============================================================================
 // Role Definitions
@@ -348,6 +349,31 @@ export const findingRouter = router({
         // Don't fail the request if notifications fail
       }
 
+      // Broadcast via Pusher for real-time updates
+      try {
+        const pusher = getPusherServer();
+        await pusher.trigger(
+          CHANNELS.review(input.reviewId),
+          EVENTS.FINDING_CREATED,
+          {
+            finding: {
+              id: finding.id,
+              referenceNumber: finding.referenceNumber,
+              titleEn: finding.titleEn,
+              severity: finding.severity,
+              status: finding.status,
+            },
+            createdBy: {
+              id: user.id,
+              name: `${user.firstName} ${user.lastName}`,
+            },
+            timestamp: new Date().toISOString(),
+          }
+        );
+      } catch (e) {
+        console.warn("[Pusher] Failed to broadcast finding creation:", e);
+      }
+
       return finding;
     }),
 
@@ -640,6 +666,32 @@ export const findingRouter = router({
         newState: { updatedFields: Object.keys(input).filter((k) => k !== "id") },
       }).catch(() => {});
 
+      // Broadcast via Pusher
+      try {
+        const pusher = getPusherServer();
+        await pusher.trigger(
+          CHANNELS.review(updated.review.id),
+          EVENTS.FINDING_UPDATED,
+          {
+            finding: {
+              id: updated.id,
+              referenceNumber: updated.referenceNumber,
+              titleEn: updated.titleEn,
+              severity: updated.severity,
+              status: updated.status,
+            },
+            updatedBy: {
+              id: user.id,
+              name: `${user.firstName} ${user.lastName}`,
+            },
+            changes: Object.keys(input).filter((k) => k !== "id"),
+            timestamp: new Date().toISOString(),
+          }
+        );
+      } catch (e) {
+        console.warn("[Pusher] Failed to broadcast finding update:", e);
+      }
+
       return updated;
     }),
 
@@ -792,6 +844,31 @@ export const findingRouter = router({
         } catch (error) {
           console.error("[Finding.updateStatus] CAP_REQUIRED notification failed:", error);
         }
+      }
+
+      // Broadcast status change via Pusher
+      try {
+        const pusher = getPusherServer();
+        await pusher.trigger(
+          CHANNELS.review(updated.review.id),
+          EVENTS.FINDING_UPDATED,
+          {
+            finding: {
+              id: updated.id,
+              referenceNumber: updated.referenceNumber,
+              status: updated.status,
+            },
+            updatedBy: {
+              id: user.id,
+              name: `${user.firstName} ${user.lastName}`,
+            },
+            changes: ["status"],
+            previousStatus: finding.status,
+            timestamp: new Date().toISOString(),
+          }
+        );
+      } catch (e) {
+        console.warn("[Pusher] Failed to broadcast finding status update:", e);
       }
 
       return updated;
@@ -1140,6 +1217,26 @@ export const findingRouter = router({
         entityId: input.id,
         previousState: { referenceNumber: finding.referenceNumber, status: finding.status },
       }).catch(() => {});
+
+      // Broadcast via Pusher
+      try {
+        const pusher = getPusherServer();
+        await pusher.trigger(
+          CHANNELS.review(finding.reviewId),
+          EVENTS.FINDING_DELETED,
+          {
+            findingId: finding.id,
+            referenceNumber: finding.referenceNumber,
+            deletedBy: {
+              id: ctx.user.id,
+              name: `${ctx.user.firstName} ${ctx.user.lastName}`,
+            },
+            timestamp: new Date().toISOString(),
+          }
+        );
+      } catch (e) {
+        console.warn("[Pusher] Failed to broadcast finding deletion:", e);
+      }
 
       return { success: true };
     }),

@@ -24,6 +24,8 @@ import { useTranslations, useLocale } from "next-intl";
 import { formatDistanceToNow } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { FocusIndicator } from "@/components/collaboration";
+import type { PresenceMember } from "@/hooks/use-presence";
 
 interface Finding {
   id: string;
@@ -43,6 +45,8 @@ interface FindingListProps {
   findings: Finding[];
   reviewId: string;
   onSelect: (finding: Finding) => void;
+  presenceMembers?: PresenceMember[];
+  currentUserId?: string;
 }
 
 const SEVERITIES = ["CRITICAL", "MAJOR", "MINOR", "OBSERVATION"] as const;
@@ -81,6 +85,8 @@ const statusConfig = {
 export function FindingList({
   findings,
   onSelect,
+  presenceMembers = [],
+  currentUserId,
 }: FindingListProps) {
   const t = useTranslations("reviews.detail.findings");
   const locale = useLocale();
@@ -283,6 +289,12 @@ export function FindingList({
                       </div>
                     </div>
 
+                    <FocusIndicator
+                      members={presenceMembers}
+                      focusKey={`finding:${finding.id}`}
+                      currentUserId={currentUserId}
+                      size="sm"
+                    />
                     <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0 mt-1" />
                   </div>
                 </CardContent>

@@ -19,15 +19,21 @@ import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
 import { DocumentList } from "./documents/document-list";
 import { UploadDialog } from "./documents/upload-dialog";
+import { usePresence } from "@/hooks/use-presence";
 import type { ReviewData } from "../../_lib/fetch-review-data";
 
 interface DocumentsTabProps {
   review: ReviewData;
+  userId?: string;
 }
 
-export function DocumentsTab({ review }: DocumentsTabProps) {
+export function DocumentsTab({ review, userId }: DocumentsTabProps) {
   const t = useTranslations("reviews.detail.documents");
   const utils = trpc.useUtils();
+  const { members: presenceMembers } = usePresence({
+    reviewId: review.id,
+    userId,
+  });
 
   const [showUpload, setShowUpload] = useState(false);
   const [deleteDoc, setDeleteDoc] = useState<{
@@ -134,6 +140,8 @@ export function DocumentsTab({ review }: DocumentsTabProps) {
           reviewId={review.id}
           onView={handleView}
           onDelete={handleDelete}
+          presenceMembers={presenceMembers}
+          currentUserId={userId}
         />
       )}
 

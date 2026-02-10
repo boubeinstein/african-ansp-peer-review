@@ -3560,6 +3560,23 @@
         "tasks": "Tâches",
         "newDiscussion": "Nouvelle discussion",
         "newTask": "Nouvelle tâche",
+        "quickActions": {
+          "title": "Actions rapides",
+          "addFinding": "Ajouter une constatation",
+          "uploadDocument": "Télécharger un document",
+          "newDiscussion": "Nouvelle discussion",
+          "createTask": "Créer une tâche"
+        },
+        "activityFeed": {
+          "title": "Activité de l'équipe",
+          "empty": "Aucune activité pour le moment. Les actions effectuées lors de cette évaluation apparaîtront ici.",
+          "types": {
+            "finding": "a mis à jour une constatation",
+            "discussion": "a publié une discussion",
+            "task": "a mis à jour une tâche",
+            "session": "activité de session"
+          }
+        },
         "discussionsList": {
           "empty": {
             "title": "Aucune discussion",

@@ -1,13 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, MessageSquare, CheckSquare } from "lucide-react";
+import {
+  Plus,
+  MessageSquare,
+  CheckSquare,
+  AlertTriangle,
+  Upload,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { ReviewData } from "../../_lib/fetch-review-data";
+import { SessionBanner } from "@/components/collaboration/session-banner";
+import { TeamActivityFeed } from "@/components/collaboration/team-activity-feed";
 import { DiscussionsList } from "./workspace/discussions-list";
 import { TasksBoard } from "./workspace/tasks-board";
 import { NewDiscussionDialog } from "./workspace/new-discussion-dialog";
@@ -15,10 +23,13 @@ import { NewTaskDialog } from "./workspace/new-task-dialog";
 
 interface WorkspaceTabProps {
   review: ReviewData;
+  userId?: string;
+  locale?: string;
 }
 
-export function WorkspaceTab({ review }: WorkspaceTabProps) {
+export function WorkspaceTab({ review, userId, locale = "en" }: WorkspaceTabProps) {
   const t = useTranslations("reviews.detail.workspace");
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   const [showNewDiscussion, setShowNewDiscussion] = useState(
@@ -29,7 +40,6 @@ export function WorkspaceTab({ review }: WorkspaceTabProps) {
   );
 
   // Transform discussions for the list component
-  // The actual data will come from the review object or be fetched separately
   const discussions: Array<{
     id: string;
     title: string;
@@ -63,11 +73,69 @@ export function WorkspaceTab({ review }: WorkspaceTabProps) {
     assignee: null,
   }));
 
-  const openDiscussions = discussions.filter(d => d.status === "OPEN").length;
-  const openTasks = tasks.filter(t => t.status !== "DONE" && t.status !== "CANCELLED").length;
+  const openDiscussions = discussions.filter((d) => d.status === "OPEN").length;
+  const openTasks = tasks.filter(
+    (t) => t.status !== "DONE" && t.status !== "CANCELLED"
+  ).length;
+
+  const navigateToTab = (tab: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tab);
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
 
   return (
-    <div className="p-4 md:p-6">
+    <div className="space-y-4 p-4 md:p-6">
+      {/* Session Banner */}
+      <SessionBanner
+        reviewId={review.id}
+        reviewReference={review.referenceNumber}
+        userId={userId}
+      />
+
+      {/* Quick Actions */}
+      <div className="flex flex-wrap gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => navigateToTab("findings")}
+        >
+          <AlertTriangle className="mr-1.5 h-4 w-4" />
+          {t("quickActions.addFinding")}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => navigateToTab("documents")}
+        >
+          <Upload className="mr-1.5 h-4 w-4" />
+          {t("quickActions.uploadDocument")}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowNewDiscussion(true)}
+        >
+          <MessageSquare className="mr-1.5 h-4 w-4" />
+          {t("quickActions.newDiscussion")}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowNewTask(true)}
+        >
+          <CheckSquare className="mr-1.5 h-4 w-4" />
+          {t("quickActions.createTask")}
+        </Button>
+      </div>
+
+      {/* Team Activity Feed */}
+      <TeamActivityFeed
+        reviewId={review.id}
+        locale={locale}
+      />
+
+      {/* Discussions & Tasks Tabs */}
       <Tabs defaultValue="discussions" className="space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <TabsList>

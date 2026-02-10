@@ -3560,6 +3560,23 @@
         "tasks": "Tasks",
         "newDiscussion": "New Discussion",
         "newTask": "New Task",
+        "quickActions": {
+          "title": "Quick Actions",
+          "addFinding": "Add Finding",
+          "uploadDocument": "Upload Document",
+          "newDiscussion": "New Discussion",
+          "createTask": "Create Task"
+        },
+        "activityFeed": {
+          "title": "Team Activity",
+          "empty": "No activity yet. Actions taken during this review will appear here.",
+          "types": {
+            "finding": "updated a finding",
+            "discussion": "posted a discussion",
+            "task": "updated a task",
+            "session": "session activity"
+          }
+        },
         "discussionsList": {
           "empty": {
             "title": "No discussions yet",

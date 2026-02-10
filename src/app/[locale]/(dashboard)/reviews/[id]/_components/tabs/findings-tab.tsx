@@ -9,10 +9,12 @@ import { trpc } from "@/lib/trpc/client";
 import { FindingList } from "./findings/finding-list";
 import { FindingDetail } from "./findings/finding-detail";
 import { CreateFindingDialog } from "@/components/findings/create-finding-dialog";
+import { usePresence } from "@/hooks/use-presence";
 import type { ReviewData } from "../../_lib/fetch-review-data";
 
 interface FindingsTabProps {
   review: ReviewData;
+  userId?: string;
 }
 
 interface TransformedFinding {
@@ -29,11 +31,15 @@ interface TransformedFinding {
   updatedAt: Date;
 }
 
-export function FindingsTab({ review }: FindingsTabProps) {
+export function FindingsTab({ review, userId }: FindingsTabProps) {
   const t = useTranslations("reviews.detail.findings");
   const locale = useLocale();
 
   const utils = trpc.useUtils();
+  const { members: presenceMembers, updateFocus } = usePresence({
+    reviewId: review.id,
+    userId,
+  });
   const [selectedFindingId, setSelectedFindingId] = useState<string | null>(
     null
   );
@@ -96,6 +102,9 @@ export function FindingsTab({ review }: FindingsTabProps) {
           findingId={selectedFindingId}
           reviewId={review.id}
           onBack={() => setSelectedFindingId(null)}
+          presenceMembers={presenceMembers}
+          currentUserId={userId}
+          updateFocus={updateFocus}
         />
       </div>
     );
@@ -148,6 +157,8 @@ export function FindingsTab({ review }: FindingsTabProps) {
           findings={findings}
           reviewId={review.id}
           onSelect={(finding) => setSelectedFindingId(finding.id)}
+          presenceMembers={presenceMembers}
+          currentUserId={userId}
         />
       )}
 

@@ -928,4 +928,143 @@ export const collaborationRouter = router({
         lastSeenAt: p.lastSeenAt,
       }));
     }),
+
+  // ==========================================================================
+  // UNIFIED ACTIVITY FEED
+  // ==========================================================================
+
+  /**
+   * Get recent activity across all sources for a review
+   * Aggregates findings, discussions, tasks, and session activities
+   */
+  getRecentActivity: protectedProcedure
+    .input(
+      z.object({
+        reviewId: z.string(),
+        limit: z.number().min(1).max(50).default(20),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const [findings, discussions, tasks, sessionActivities] =
+        await Promise.all([
+          ctx.db.finding.findMany({
+            where: { reviewId: input.reviewId },
+            orderBy: { updatedAt: "desc" },
+            take: input.limit,
+            select: {
+              id: true,
+              referenceNumber: true,
+              titleEn: true,
+              titleFr: true,
+              severity: true,
+              status: true,
+              updatedAt: true,
+              createdAt: true,
+              assignedTo: {
+                select: { id: true, firstName: true, lastName: true },
+              },
+            },
+          }),
+          ctx.db.reviewDiscussion.findMany({
+            where: { reviewId: input.reviewId, isDeleted: false },
+            orderBy: { createdAt: "desc" },
+            take: input.limit,
+            select: {
+              id: true,
+              subject: true,
+              content: true,
+              isResolved: true,
+              createdAt: true,
+              author: {
+                select: { id: true, firstName: true, lastName: true },
+              },
+            },
+          }),
+          ctx.db.reviewTask.findMany({
+            where: { reviewId: input.reviewId },
+            orderBy: { updatedAt: "desc" },
+            take: input.limit,
+            select: {
+              id: true,
+              title: true,
+              status: true,
+              priority: true,
+              updatedAt: true,
+              createdAt: true,
+              assignedTo: {
+                select: { id: true, firstName: true, lastName: true },
+              },
+              createdBy: {
+                select: { id: true, firstName: true, lastName: true },
+              },
+            },
+          }),
+          ctx.db.sessionActivity.findMany({
+            where: { session: { reviewId: input.reviewId } },
+            orderBy: { timestamp: "desc" },
+            take: input.limit,
+            select: {
+              id: true,
+              activityType: true,
+              targetType: true,
+              targetId: true,
+              timestamp: true,
+              user: {
+                select: { id: true, firstName: true, lastName: true },
+              },
+            },
+          }),
+        ]);
+
+      // Build unified activity items
+      const merged = [
+        ...findings.map((f) => ({
+          type: "finding" as const,
+          id: `finding-${f.id}`,
+          entityId: f.id,
+          label: f.titleEn || f.referenceNumber,
+          detail: f.severity,
+          status: f.status,
+          user: f.assignedTo ?? { id: "", firstName: "System", lastName: "" },
+          timestamp: f.updatedAt,
+        })),
+        ...discussions.map((d) => ({
+          type: "discussion" as const,
+          id: `discussion-${d.id}`,
+          entityId: d.id,
+          label: d.subject || d.content.slice(0, 60),
+          detail: d.isResolved ? "resolved" : "open",
+          status: null,
+          user: d.author,
+          timestamp: d.createdAt,
+        })),
+        ...tasks.map((t) => ({
+          type: "task" as const,
+          id: `task-${t.id}`,
+          entityId: t.id,
+          label: t.title,
+          detail: t.priority,
+          status: t.status,
+          user: t.createdBy,
+          timestamp: t.updatedAt,
+        })),
+        ...sessionActivities.map((s) => ({
+          type: "session" as const,
+          id: `session-${s.id}`,
+          entityId: s.targetId,
+          label: s.activityType.replace(/_/g, " ").toLowerCase(),
+          detail: s.targetType,
+          status: null,
+          user: s.user,
+          timestamp: s.timestamp,
+        })),
+      ]
+        .sort(
+          (a, b) =>
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        )
+        .slice(0, input.limit);
+
+      return merged;
+    }),
 });

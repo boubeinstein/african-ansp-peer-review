@@ -85,8 +85,8 @@ export function TeamActivityFeed({
         <CardContent>
           <div className="space-y-3">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="flex gap-3">
-                <Skeleton className="h-8 w-8 rounded-full shrink-0" />
+              <div key={i} className="flex gap-2.5">
+                <Skeleton className="h-7 w-7 rounded-full shrink-0" />
                 <div className="flex-1 space-y-1.5">
                   <Skeleton className="h-4 w-3/4" />
                   <Skeleton className="h-3 w-1/3" />
@@ -121,8 +121,8 @@ export function TeamActivityFeed({
             <p className="text-sm text-muted-foreground">{t("empty")}</p>
           </div>
         ) : (
-          <ScrollArea className="h-[360px]">
-            <div className="space-y-0.5 px-4 pb-4">
+          <ScrollArea className="h-[320px]">
+            <div className="space-y-px px-4 pb-3">
               {activities.map((activity) => {
                 const config =
                   activityTypeConfig[activity.type] || activityTypeConfig.session;
@@ -133,19 +133,19 @@ export function TeamActivityFeed({
                   <div
                     key={activity.id}
                     className={cn(
-                      "flex gap-3 rounded-r-lg p-2 pl-3 border-l-2 transition-colors hover:bg-muted/50",
+                      "flex gap-2.5 rounded-r-lg py-1.5 px-2 pl-3 border-l-2 transition-colors hover:bg-muted/50",
                       config.borderColor
                     )}
                   >
                     {hasUser ? (
-                      <Avatar className="h-8 w-8 shrink-0">
+                      <Avatar className="h-7 w-7 shrink-0 mt-0.5">
                         <AvatarFallback className="text-xs">
                           {getInitials(activity.user)}
                         </AvatarFallback>
                       </Avatar>
                     ) : (
-                      <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-full", config.bgColor)}>
-                        <Icon className={cn("h-4 w-4", config.color)} />
+                      <div className={cn("flex h-7 w-7 shrink-0 mt-0.5 items-center justify-center rounded-full", config.bgColor)}>
+                        <Icon className={cn("h-3.5 w-3.5", config.color)} />
                       </div>
                     )}
 

@@ -6,7 +6,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  Plus,
   MessageSquare,
   CheckSquare,
   AlertTriangle,
@@ -121,62 +120,44 @@ export function WorkspaceTab({ review, userId, locale = "en" }: WorkspaceTabProp
         locale={locale}
       />
 
-      {/* Discussions & Tasks Tabs */}
-      <Tabs defaultValue="discussions" className="space-y-4">
-        <div className="flex items-center justify-between flex-wrap gap-2">
+      {/* Discussions & Tasks */}
+      <div className="pt-2">
+        <Tabs defaultValue="discussions" className="space-y-3">
           <TabsList>
-            <TabsTrigger value="discussions" className="gap-2">
-              <MessageSquare className="h-4 w-4" />
+            <TabsTrigger value="discussions" className="gap-1.5">
+              <MessageSquare className="h-3.5 w-3.5" />
               {t("discussions")}
               {openDiscussions > 0 && (
-                <Badge variant="secondary" className="ml-1">
+                <Badge variant="secondary" className="ml-1 h-5 min-w-5 px-1.5 text-xs">
                   {openDiscussions}
                 </Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="tasks" className="gap-2">
-              <CheckSquare className="h-4 w-4" />
+            <TabsTrigger value="tasks" className="gap-1.5">
+              <CheckSquare className="h-3.5 w-3.5" />
               {t("tasks")}
               {openTasks > 0 && (
-                <Badge variant="secondary" className="ml-1">
+                <Badge variant="secondary" className="ml-1 h-5 min-w-5 px-1.5 text-xs">
                   {openTasks}
                 </Badge>
               )}
             </TabsTrigger>
           </TabsList>
 
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setShowNewDiscussion(true)}
-            >
-              <Plus className="h-4 w-4 mr-1" />
-              {t("newDiscussion")}
-            </Button>
-            <Button
-              size="sm"
-              onClick={() => setShowNewTask(true)}
-            >
-              <Plus className="h-4 w-4 mr-1" />
-              {t("newTask")}
-            </Button>
-          </div>
-        </div>
+          <TabsContent value="discussions" className="mt-3">
+            <DiscussionsList
+              reviewId={review.id}
+            />
+          </TabsContent>
 
-        <TabsContent value="discussions" className="mt-4">
-          <DiscussionsList
-            reviewId={review.id}
-          />
-        </TabsContent>
-
-        <TabsContent value="tasks" className="mt-4">
-          <TasksBoard
-            tasks={tasks}
-            reviewId={review.id}
-          />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="tasks" className="mt-3">
+            <TasksBoard
+              tasks={tasks}
+              reviewId={review.id}
+            />
+          </TabsContent>
+        </Tabs>
+      </div>
 
       <NewDiscussionDialog
         open={showNewDiscussion}

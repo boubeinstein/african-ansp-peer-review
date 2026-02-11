@@ -77,22 +77,53 @@ export async function POST(req: NextRequest) {
 }
 
 async function verifyChannelAccess(userId: string, channelName: string): Promise<boolean> {
-  const reviewMatch = channelName.match(/(?:private|presence)-review-(.+)/);
-  
+  const reviewMatch = channelName.match(/^(?:private|presence)-review-(.+)$/);
+
   if (reviewMatch) {
     const reviewId = reviewMatch[1];
+
+    // 1. Check if user is a team member of this review
     const membership = await prisma.reviewTeamMember.findFirst({
       where: { reviewId, userId },
     });
     if (membership) return true;
 
+    // 2. Check if user has an oversight role (can access all reviews)
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { role: true },
+      select: { role: true, organizationId: true },
     });
-    if (user?.role && ["SUPER_ADMIN", "SYSTEM_ADMIN", "PROGRAMME_COORDINATOR"].includes(user.role)) {
+
+    const oversightRoles = [
+      "SUPER_ADMIN",
+      "SYSTEM_ADMIN",
+      "PROGRAMME_COORDINATOR",
+      "STEERING_COMMITTEE",
+    ];
+
+    if (user?.role && oversightRoles.includes(user.role)) {
       return true;
     }
+
+    // 3. Check if user belongs to the host organization of this review
+    if (user?.organizationId) {
+      const review = await prisma.review.findUnique({
+        where: { id: reviewId },
+        select: { hostOrganizationId: true },
+      });
+
+      if (review?.hostOrganizationId === user.organizationId) {
+        return true;
+      }
+    }
+
+    console.warn("[Pusher Auth] Access denied:", {
+      userId,
+      channelName,
+      reviewId,
+      userRole: user?.role,
+    });
+
     return false;
   }
 

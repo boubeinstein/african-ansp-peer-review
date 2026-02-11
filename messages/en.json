@@ -5755,6 +5755,9 @@
     "recommendations": "Recommendations",
     "recommendationsPlaceholderEn": "Enter recommendations in English...",
     "recommendationsPlaceholderFr": "Enter recommendations in French...",
+    "conclusion": "Conclusion",
+    "conclusionPlaceholderEn": "Enter the conclusion in English...",
+    "conclusionPlaceholderFr": "Enter the conclusion in French...",
     "scores": {
       "title": "Assessment Scores",
       "ansTitle": "ANS USOAP CMA - Effective Implementation",
@@ -5770,7 +5773,16 @@
       "total": "total",
       "questions": "questions",
       "noANSAssessment": "No ANS assessment data available for this review.",
-      "noSMSAssessment": "No SMS assessment data available for this review."
+      "noSMSAssessment": "No SMS assessment data available for this review.",
+      "criticalElements": "Critical Elements (CE-1 to CE-8)",
+      "narrative": "Analysis",
+      "eiTarget": "Abuja Target: 85% EI by 2026",
+      "deltaFromPrevious": "vs previous review",
+      "auditArea": "Audit Area",
+      "code": "Code",
+      "pqs": "PQs",
+      "satisfactory": "Satisfactory",
+      "status": "Status"
     },
     "findings": {
       "title": "Findings Summary",

@@ -5755,6 +5755,9 @@
     "recommendations": "Recommandations",
     "recommendationsPlaceholderEn": "Saisissez les recommandations en anglais...",
     "recommendationsPlaceholderFr": "Saisissez les recommandations en français...",
+    "conclusion": "Conclusion",
+    "conclusionPlaceholderEn": "Saisissez la conclusion en anglais...",
+    "conclusionPlaceholderFr": "Saisissez la conclusion en français...",
     "scores": {
       "title": "Scores d'Évaluation",
       "ansTitle": "ANS USOAP CMA - Mise en Œuvre Effective",
@@ -5770,7 +5773,16 @@
       "total": "total",
       "questions": "questions",
       "noANSAssessment": "Aucune donnée d'évaluation ANS disponible pour cette évaluation.",
-      "noSMSAssessment": "Aucune donnée d'évaluation SMS disponible pour cette évaluation."
+      "noSMSAssessment": "Aucune donnée d'évaluation SMS disponible pour cette évaluation.",
+      "criticalElements": "Éléments Critiques (CE-1 à CE-8)",
+      "narrative": "Analyse",
+      "eiTarget": "Objectif Abuja : 85% EI d'ici 2026",
+      "deltaFromPrevious": "vs revue précédente",
+      "auditArea": "Domaine d'Audit",
+      "code": "Code",
+      "pqs": "PQs",
+      "satisfactory": "Satisfaisant",
+      "status": "Statut"
     },
     "findings": {
       "title": "Résumé des Constats",

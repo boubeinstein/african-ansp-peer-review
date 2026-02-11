@@ -41,6 +41,7 @@ import { fr, enUS } from "date-fns/locale";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { ReportViewer } from "@/components/features/report/report-viewer";
 import type { ReviewData } from "../../_lib/fetch-review-data";
 
 interface ReportTabProps {
@@ -58,12 +59,12 @@ export function ReportTab({ review }: ReportTabProps) {
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
 
-  // Fetch full report data via tRPC (returns null if no report exists yet)
+  // Fetch report data with structured content via tRPC
   const {
     data: reportData,
     isLoading: isLoadingReport,
     error: reportError,
-  } = trpc.report.getByReview.useQuery(
+  } = trpc.report.getByReviewId.useQuery(
     { reviewId: review.id },
     {
       enabled: !!review.id,
@@ -79,7 +80,7 @@ export function ReportTab({ review }: ReportTabProps) {
   const generateMutation = trpc.report.generate.useMutation({
     onSuccess: () => {
       toast.success(t("generateSuccess"));
-      utils.report.getByReview.invalidate({ reviewId: review.id });
+      utils.report.getByReviewId.invalidate({ reviewId: review.id });
       setShowGenerateDialog(false);
     },
     onError: (error) => {
@@ -90,7 +91,7 @@ export function ReportTab({ review }: ReportTabProps) {
   const updateStatusMutation = trpc.report.updateStatus.useMutation({
     onSuccess: () => {
       toast.success(t("submitSuccess"));
-      utils.report.getByReview.invalidate({ reviewId: review.id });
+      utils.report.getByReviewId.invalidate({ reviewId: review.id });
       setShowSubmitDialog(false);
     },
     onError: (error) => {
@@ -195,7 +196,7 @@ export function ReportTab({ review }: ReportTabProps) {
   const canGenerate = requiredPrerequisitesMet;
   // Report exists if we have data and no error
   const hasReport = reportData && !reportError;
-  const canSubmit = hasReport && reportData.report.status === "DRAFT";
+  const canSubmit = hasReport && reportData.status === "DRAFT";
 
   const reportStatusConfig: Record<
     string,
@@ -218,7 +219,7 @@ export function ReportTab({ review }: ReportTabProps) {
   const handleSubmit = () => {
     if (hasReport) {
       updateStatusMutation.mutate({
-        reportId: reportData.report.id,
+        reportId: reportData.id,
         status: "UNDER_REVIEW",
       });
     }
@@ -227,11 +228,14 @@ export function ReportTab({ review }: ReportTabProps) {
   // Determine which date to show
   const getReportDate = () => {
     if (!hasReport) return null;
-    // Use finalizedAt if finalized, reviewedAt if under review, else updatedAt
-    if (reportData.report.finalizedAt) return reportData.report.finalizedAt;
-    if (reportData.report.reviewedAt) return reportData.report.reviewedAt;
-    if (reportData.report.draftedAt) return reportData.report.draftedAt;
-    return reportData.report.updatedAt;
+    if (reportData.finalizedAt) return reportData.finalizedAt;
+    if (reportData.reviewedAt) return reportData.reviewedAt;
+    if (reportData.draftedAt) return reportData.draftedAt;
+    return reportData.updatedAt;
+  };
+
+  const handleContentUpdated = () => {
+    utils.report.getByReviewId.invalidate({ reviewId: review.id });
   };
 
   return (
@@ -260,12 +264,12 @@ export function ReportTab({ review }: ReportTabProps) {
               <Badge
                 variant="secondary"
                 className={cn(
-                  reportStatusConfig[reportData.report.status]?.color
+                  reportStatusConfig[reportData.status]?.color
                 )}
               >
-                {reportStatusConfig[reportData.report.status]?.icon}
+                {reportStatusConfig[reportData.status]?.icon}
                 <span className="ml-1">
-                  {t(`status.${reportData.report.status}`)}
+                  {t(`status.${reportData.status}`)}
                 </span>
               </Badge>
             </div>
@@ -285,11 +289,11 @@ export function ReportTab({ review }: ReportTabProps) {
                 )}
               </div>
               <div className="flex gap-2">
-                {reportData.report.pdfUrl && (
+                {reportData.pdfUrl && (
                   <>
                     <Button variant="outline" size="sm" asChild>
                       <a
-                        href={reportData.report.pdfUrl}
+                        href={reportData.pdfUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -298,7 +302,7 @@ export function ReportTab({ review }: ReportTabProps) {
                       </a>
                     </Button>
                     <Button variant="outline" size="sm" asChild>
-                      <a href={reportData.report.pdfUrl} download>
+                      <a href={reportData.pdfUrl} download>
                         <Download className="h-4 w-4 mr-1" />
                         {t("download")}
                       </a>
@@ -353,6 +357,16 @@ export function ReportTab({ review }: ReportTabProps) {
         </Card>
       )}
 
+      {/* Report Viewer (when structured content exists) */}
+      {hasReport && reportData.content && (
+        <ReportViewer
+          content={reportData.content}
+          reviewId={review.id}
+          reportStatus={reportData.status}
+          onContentUpdated={handleContentUpdated}
+        />
+      )}
+
       {/* Prerequisites */}
       <PrerequisitesChecklist
         title={t("prerequisites.title")}
@@ -379,7 +393,12 @@ export function ReportTab({ review }: ReportTabProps) {
           <AlertDialogFooter>
             <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => generateMutation.mutate({ reviewId: review.id })}
+              onClick={() =>
+                generateMutation.mutate({
+                  reviewId: review.id,
+                  locale: locale === "fr" ? "fr" : "en",
+                })
+              }
               disabled={generateMutation.isPending}
             >
               {generateMutation.isPending && (

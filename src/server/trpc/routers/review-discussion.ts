@@ -359,7 +359,10 @@ export const reviewDiscussionRouter = router({
           where,
           skip: (input.page - 1) * input.pageSize,
           take: input.pageSize,
-          orderBy: { createdAt: "desc" },
+          orderBy: [
+            { isPinned: "desc" },
+            { createdAt: "desc" },
+          ],
           include: {
             author: {
               select: {
@@ -1039,6 +1042,150 @@ export const reviewDiscussionRouter = router({
       }
 
       return discussion;
+    }),
+
+  // ===========================================================================
+  // TOGGLE PIN - Pin/unpin a discussion (Lead Reviewer + Coordinator only)
+  // ===========================================================================
+
+  togglePin: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+
+      const existing = await ctx.db.reviewDiscussion.findUnique({
+        where: { id: input.id },
+        select: {
+          reviewId: true,
+          isDeleted: true,
+          isPinned: true,
+          parentId: true,
+        },
+      });
+
+      if (!existing || existing.isDeleted) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Discussion not found",
+        });
+      }
+
+      // Only top-level discussions can be pinned
+      if (existing.parentId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Only top-level discussions can be pinned",
+        });
+      }
+
+      // Only Lead Reviewer, Coordinator, or admins can pin
+      const canPin = [
+        "SUPER_ADMIN",
+        "SYSTEM_ADMIN",
+        "PROGRAMME_COORDINATOR",
+        "LEAD_REVIEWER",
+      ].includes(user.role);
+
+      if (!canPin) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only Lead Reviewers and Coordinators can pin discussions",
+        });
+      }
+
+      // Verify review access
+      const hasAccess = await checkReviewAccess(
+        ctx.db,
+        existing.reviewId,
+        user.id
+      );
+      if (!hasAccess) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have access to this discussion",
+        });
+      }
+
+      const discussion = await ctx.db.reviewDiscussion.update({
+        where: { id: input.id },
+        data: { isPinned: !existing.isPinned },
+      });
+
+      return { isPinned: discussion.isPinned };
+    }),
+
+  // ===========================================================================
+  // SET PRIORITY - Set discussion priority (Lead Reviewer + Coordinator only)
+  // ===========================================================================
+
+  setPriority: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        priority: z.enum(["normal", "important", "urgent"]),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+
+      const existing = await ctx.db.reviewDiscussion.findUnique({
+        where: { id: input.id },
+        select: {
+          reviewId: true,
+          isDeleted: true,
+          parentId: true,
+        },
+      });
+
+      if (!existing || existing.isDeleted) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Discussion not found",
+        });
+      }
+
+      // Only top-level discussions can have priority set
+      if (existing.parentId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Only top-level discussions can have priority",
+        });
+      }
+
+      // Only Lead Reviewer, Coordinator, or admins can set priority
+      const canSetPriority = [
+        "SUPER_ADMIN",
+        "SYSTEM_ADMIN",
+        "PROGRAMME_COORDINATOR",
+        "LEAD_REVIEWER",
+      ].includes(user.role);
+
+      if (!canSetPriority) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only Lead Reviewers and Coordinators can set discussion priority",
+        });
+      }
+
+      // Verify review access
+      const hasAccess = await checkReviewAccess(
+        ctx.db,
+        existing.reviewId,
+        user.id
+      );
+      if (!hasAccess) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have access to this discussion",
+        });
+      }
+
+      const discussion = await ctx.db.reviewDiscussion.update({
+        where: { id: input.id },
+        data: { priority: input.priority },
+      });
+
+      return { priority: discussion.priority };
     }),
 
   // ===========================================================================

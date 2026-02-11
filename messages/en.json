@@ -3612,6 +3612,10 @@
             "CLOSED": "Closed"
           },
           "replies": "replies",
+          "priority": {
+            "important": "Important",
+            "urgent": "Urgent"
+          },
           "search": "Search discussions...",
           "filterStatus": "Filter by status",
           "filterAll": "All statuses",
@@ -3644,6 +3648,14 @@
             "statusUpdated": "Status updated",
             "closedMessage": "This discussion is closed. Reopen it to add replies.",
             "seenBy": "Seen by {names}",
+            "pin": "Pin Discussion",
+            "unpin": "Unpin Discussion",
+            "pinUpdated": "Pin status updated",
+            "setPriority": "Set Priority",
+            "priorityNormal": "Normal",
+            "priorityImportant": "Important",
+            "priorityUrgent": "Urgent",
+            "priorityUpdated": "Priority updated",
             "status": {
               "OPEN": "Open",
               "CLOSED": "Closed"

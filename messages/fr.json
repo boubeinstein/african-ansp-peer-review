@@ -3612,6 +3612,10 @@
             "CLOSED": "Fermée"
           },
           "replies": "réponses",
+          "priority": {
+            "important": "Important",
+            "urgent": "Urgent"
+          },
           "search": "Rechercher des discussions...",
           "filterStatus": "Filtrer par statut",
           "filterAll": "Tous les statuts",
@@ -3644,6 +3648,14 @@
             "statusUpdated": "Statut mis à jour",
             "closedMessage": "Cette discussion est fermée. Rouvrez-la pour ajouter des réponses.",
             "seenBy": "Vu par {names}",
+            "pin": "Épingler la discussion",
+            "unpin": "Désépingler la discussion",
+            "pinUpdated": "Statut d'épingle mis à jour",
+            "setPriority": "Définir la priorité",
+            "priorityNormal": "Normale",
+            "priorityImportant": "Important",
+            "priorityUrgent": "Urgent",
+            "priorityUpdated": "Priorité mise à jour",
             "status": {
               "OPEN": "Ouverte",
               "CLOSED": "Fermée"

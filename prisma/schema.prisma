@@ -1620,6 +1620,8 @@ model ReviewDiscussion {
   content      String
   mentions     String[]           @default([])
   attachments  String[]           @default([])
+  isPinned     Boolean            @default(false) @map("is_pinned")
+  priority     String             @default("normal") // "normal", "important", "urgent"
   isResolved   Boolean            @default(false) @map("is_resolved")
   resolvedAt   DateTime?          @map("resolved_at")
   resolvedById String?            @map("resolved_by_id")

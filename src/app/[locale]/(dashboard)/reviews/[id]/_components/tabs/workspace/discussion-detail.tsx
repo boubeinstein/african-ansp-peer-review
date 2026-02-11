@@ -15,6 +15,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   ArrowLeft,
   MoreHorizontal,
   MessageSquare,
@@ -23,6 +29,11 @@ import {
   Loader2,
   Send,
   Eye,
+  Pin,
+  PinOff,
+  AlertTriangle,
+  AlertCircle,
+  Circle,
 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { formatDistanceToNow, format } from "date-fns";
@@ -50,10 +61,11 @@ interface DiscussionDetailProps {
   reviewId: string;
   userId?: string;
   userName?: string;
+  userRole?: string;
   onBack: () => void;
 }
 
-export function DiscussionDetail({ discussionId, reviewId, userId, userName, onBack }: DiscussionDetailProps) {
+export function DiscussionDetail({ discussionId, reviewId, userId, userName, userRole, onBack }: DiscussionDetailProps) {
   const t = useTranslations("reviews.detail.workspace.discussionsList.detail");
   const locale = useLocale();
   const dateLocale = locale === "fr" ? fr : enUS;
@@ -137,6 +149,29 @@ export function DiscussionDetail({ discussionId, reviewId, userId, userName, onB
       utils.reviewDiscussion.getById.invalidate({ id: discussionId });
     },
   });
+
+  const togglePinMutation = trpc.reviewDiscussion.togglePin.useMutation({
+    onSuccess: () => {
+      toast.success(t("pinUpdated"));
+      utils.reviewDiscussion.getById.invalidate({ id: discussionId });
+      utils.reviewDiscussion.list.invalidate({ reviewId });
+    },
+  });
+
+  const setPriorityMutation = trpc.reviewDiscussion.setPriority.useMutation({
+    onSuccess: () => {
+      toast.success(t("priorityUpdated"));
+      utils.reviewDiscussion.getById.invalidate({ id: discussionId });
+      utils.reviewDiscussion.list.invalidate({ reviewId });
+    },
+  });
+
+  const canManage = [
+    "SUPER_ADMIN",
+    "SYSTEM_ADMIN",
+    "PROGRAMME_COORDINATOR",
+    "LEAD_REVIEWER",
+  ].includes(userRole || "");
 
   // Auto-mark discussion as read when the user opens it
   const hasMarkedRead = useRef(false);
@@ -228,6 +263,59 @@ export function DiscussionDetail({ discussionId, reviewId, userId, userName, onB
                 {t("reopen")}
               </DropdownMenuItem>
             )}
+            {canManage && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => togglePinMutation.mutate({ id: discussionId })}
+                  disabled={togglePinMutation.isPending}
+                >
+                  {discussion.isPinned ? (
+                    <>
+                      <PinOff className="h-4 w-4 mr-2" />
+                      {t("unpin")}
+                    </>
+                  ) : (
+                    <>
+                      <Pin className="h-4 w-4 mr-2" />
+                      {t("pin")}
+                    </>
+                  )}
+                </DropdownMenuItem>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    <AlertCircle className="h-4 w-4 mr-2" />
+                    {t("setPriority")}
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent>
+                    <DropdownMenuItem
+                      onClick={() => setPriorityMutation.mutate({ id: discussionId, priority: "normal" })}
+                      disabled={setPriorityMutation.isPending}
+                    >
+                      <Circle className="h-4 w-4 mr-2 text-muted-foreground" />
+                      {t("priorityNormal")}
+                      {discussion.priority === "normal" && <span className="ml-auto text-xs text-primary">&#10003;</span>}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setPriorityMutation.mutate({ id: discussionId, priority: "important" })}
+                      disabled={setPriorityMutation.isPending}
+                    >
+                      <AlertCircle className="h-4 w-4 mr-2 text-orange-500" />
+                      {t("priorityImportant")}
+                      {discussion.priority === "important" && <span className="ml-auto text-xs text-primary">&#10003;</span>}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setPriorityMutation.mutate({ id: discussionId, priority: "urgent" })}
+                      disabled={setPriorityMutation.isPending}
+                    >
+                      <AlertTriangle className="h-4 w-4 mr-2 text-destructive" />
+                      {t("priorityUrgent")}
+                      {discussion.priority === "urgent" && <span className="ml-auto text-xs text-primary">&#10003;</span>}
+                    </DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -244,7 +332,12 @@ export function DiscussionDetail({ discussionId, reviewId, userId, userName, onB
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h2 className="font-semibold text-lg">{discussion.subject || "Discussion"}</h2>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {discussion.isPinned && (
+                    <Pin className="h-4 w-4 text-primary shrink-0" />
+                  )}
+                  <h2 className="font-semibold text-lg">{discussion.subject || "Discussion"}</h2>
+                </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                   <span>{authorName}</span>
                   <span>•</span>
@@ -255,9 +348,23 @@ export function DiscussionDetail({ discussionId, reviewId, userId, userName, onB
                 </div>
               </div>
             </div>
-            <Badge variant={discussion.isResolved ? "secondary" : "default"}>
-              {t(`status.${discussion.isResolved ? "CLOSED" : "OPEN"}`)}
-            </Badge>
+            <div className="flex items-center gap-2 shrink-0">
+              {discussion.priority === "urgent" && (
+                <Badge variant="destructive" className="gap-1">
+                  <AlertTriangle className="h-3 w-3" />
+                  {t("priorityUrgent")}
+                </Badge>
+              )}
+              {discussion.priority === "important" && (
+                <Badge variant="outline" className="gap-1 border-orange-300 text-orange-700 dark:border-orange-700 dark:text-orange-400">
+                  <AlertCircle className="h-3 w-3" />
+                  {t("priorityImportant")}
+                </Badge>
+              )}
+              <Badge variant={discussion.isResolved ? "secondary" : "default"}>
+                {t(`status.${discussion.isResolved ? "CLOSED" : "OPEN"}`)}
+              </Badge>
+            </div>
           </div>
         </CardHeader>
         <CardContent>

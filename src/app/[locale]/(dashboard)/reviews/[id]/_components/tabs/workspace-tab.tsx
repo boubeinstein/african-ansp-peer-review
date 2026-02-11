@@ -173,6 +173,7 @@ export function WorkspaceTab({ review, userId, userName, userRole, locale = "en"
               reviewId={review.id}
               userId={userId}
               userName={userName}
+              userRole={userRole}
             />
           </TabsContent>
 

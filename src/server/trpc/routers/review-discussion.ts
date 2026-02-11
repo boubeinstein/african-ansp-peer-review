@@ -10,6 +10,7 @@ import { router, protectedProcedure } from "@/server/trpc/trpc";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { OVERSIGHT_ROLES } from "@/lib/permissions";
 import { getPusherServer, CHANNELS, EVENTS } from "@/lib/pusher/server";
+import { extractMentionedUserIds, hasMentionAll } from "@/lib/mentions";
 
 // =============================================================================
 // INPUT SCHEMAS
@@ -91,36 +92,82 @@ async function checkReviewAccess(
 }
 
 /**
- * Send notifications for mentions
+ * Send notifications for @mentions.
+ * Parses mention tokens from content server-side, handles @all by expanding
+ * to all team members, and sends real-time Pusher notifications.
  */
 async function notifyMentions(
   db: PrismaClient | Prisma.TransactionClient,
   discussionId: string,
   authorId: string,
   authorName: string,
-  mentions: string[],
+  content: string,
   reviewId: string,
   reviewReference: string
 ) {
-  if (mentions.length === 0) return;
+  try {
+    const mentionAll = hasMentionAll(content);
+    const mentionedIds = extractMentionedUserIds(content);
 
-  const notifications = mentions
-    .filter((userId) => userId !== authorId)
-    .map((userId) => ({
-      userId,
-      type: "REVIEW_STATUS_CHANGED" as const, // Using existing type
-      titleEn: "You were mentioned in a discussion",
-      titleFr: "Vous avez été mentionné dans une discussion",
-      messageEn: `${authorName} mentioned you in a discussion on review ${reviewReference}.`,
-      messageFr: `${authorName} vous a mentionné dans une discussion sur la revue ${reviewReference}.`,
-      entityType: "ReviewDiscussion",
-      entityId: discussionId,
-      actionUrl: `/reviews/${reviewId}?tab=discussions`,
-      priority: "NORMAL" as const,
-    }));
+    let notifyUserIds: string[];
 
-  if (notifications.length > 0) {
-    await db.notification.createMany({ data: notifications });
+    if (mentionAll) {
+      // @all: get all team members for this review
+      const team = await db.reviewTeamMember.findMany({
+        where: { reviewId },
+        select: { userId: true },
+      });
+      notifyUserIds = team.map((t) => t.userId);
+    } else if (mentionedIds.length > 0) {
+      notifyUserIds = mentionedIds;
+    } else {
+      return; // No mentions
+    }
+
+    // Deduplicate and exclude the author
+    notifyUserIds = [...new Set(notifyUserIds)].filter((id) => id !== authorId);
+    if (notifyUserIds.length === 0) return;
+
+    const titleEn = mentionAll
+      ? `${authorName} mentioned @all in a discussion`
+      : `${authorName} mentioned you in a discussion`;
+    const titleFr = mentionAll
+      ? `${authorName} a mentionné @all dans une discussion`
+      : `${authorName} vous a mentionné dans une discussion`;
+    const messagePreview = content.length > 200
+      ? content.slice(0, 200) + "..."
+      : content;
+
+    await db.notification.createMany({
+      data: notifyUserIds.map((userId) => ({
+        userId,
+        type: "MENTION" as const,
+        titleEn,
+        titleFr,
+        messageEn: `On review ${reviewReference}: "${messagePreview}"`,
+        messageFr: `Sur la revue ${reviewReference} : « ${messagePreview} »`,
+        entityType: "ReviewDiscussion",
+        entityId: discussionId,
+        actionUrl: `/reviews/${reviewId}?tab=workspace`,
+        priority: "NORMAL" as const,
+      })),
+    });
+
+    // Send real-time Pusher notification to each mentioned user
+    try {
+      const pusher = getPusherServer();
+      for (const uid of notifyUserIds) {
+        await pusher.trigger(`private-user-${uid}`, "notification", {
+          type: "MENTION",
+          title: titleEn,
+          reviewId,
+        });
+      }
+    } catch {
+      // Pusher failure shouldn't block the mutation
+    }
+  } catch (err) {
+    console.error("[notifyMentions] Failed to send mention notifications:", err);
   }
 }
 
@@ -426,7 +473,41 @@ export const reviewDiscussionRouter = router({
                   email: true,
                 },
               },
+              reactions: {
+                include: {
+                  user: {
+                    select: {
+                      id: true,
+                      firstName: true,
+                      lastName: true,
+                    },
+                  },
+                },
+              },
             },
+          },
+          reactions: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
+          reads: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+            orderBy: { readAt: "desc" },
           },
         },
       });
@@ -530,14 +611,14 @@ export const reviewDiscussionRouter = router({
         },
       });
 
-      // Send mention notifications
+      // Send mention notifications (parses @mentions from content server-side)
       const authorName = `${discussion.author.firstName} ${discussion.author.lastName}`;
       await notifyMentions(
         ctx.db,
         discussion.id,
         userId,
         authorName,
-        input.mentions,
+        input.content,
         input.reviewId,
         review?.referenceNumber || ""
       );
@@ -641,14 +722,14 @@ export const reviewDiscussionRouter = router({
         },
       });
 
-      // Send mention notifications
+      // Send mention notifications (parses @mentions from content server-side)
       const authorName = `${reply.author.firstName} ${reply.author.lastName}`;
       await notifyMentions(
         ctx.db,
         reply.id,
         userId,
         authorName,
-        input.mentions,
+        input.content,
         parentDiscussion.reviewId,
         review?.referenceNumber || ""
       );
@@ -958,6 +1039,131 @@ export const reviewDiscussionRouter = router({
       }
 
       return discussion;
+    }),
+
+  // ===========================================================================
+  // MARK AS READ - Track that a user has seen a discussion
+  // ===========================================================================
+
+  markAsRead: protectedProcedure
+    .input(z.object({ discussionId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+
+      // Verify the discussion exists and isn't deleted
+      const discussion = await ctx.db.reviewDiscussion.findUnique({
+        where: { id: input.discussionId },
+        select: { reviewId: true, isDeleted: true },
+      });
+
+      if (!discussion || discussion.isDeleted) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Discussion not found",
+        });
+      }
+
+      // Verify access
+      const hasAccess = await checkReviewAccess(
+        ctx.db,
+        discussion.reviewId,
+        userId
+      );
+      if (!hasAccess) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have access to this discussion",
+        });
+      }
+
+      await ctx.db.discussionRead.upsert({
+        where: {
+          discussionId_userId: {
+            discussionId: input.discussionId,
+            userId,
+          },
+        },
+        create: {
+          discussionId: input.discussionId,
+          userId,
+        },
+        update: {
+          readAt: new Date(),
+        },
+      });
+
+      return { success: true };
+    }),
+
+  // ===========================================================================
+  // TOGGLE REACTION - Add or remove an emoji reaction
+  // ===========================================================================
+
+  toggleReaction: protectedProcedure
+    .input(
+      z.object({
+        discussionId: z.string(),
+        emoji: z.enum(["thumbsup", "check", "eyes", "target", "question", "fire"]),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+      const userId = user.id;
+
+      // Verify the discussion exists
+      const discussion = await ctx.db.reviewDiscussion.findUnique({
+        where: { id: input.discussionId },
+        select: { reviewId: true, isDeleted: true },
+      });
+
+      if (!discussion || discussion.isDeleted) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Discussion not found",
+        });
+      }
+
+      // Verify access
+      const hasAccess = await checkReviewAccess(
+        ctx.db,
+        discussion.reviewId,
+        userId
+      );
+      if (!hasAccess) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have access to this discussion",
+        });
+      }
+
+      // Check if reaction already exists (toggle logic)
+      const existing = await ctx.db.discussionReaction.findUnique({
+        where: {
+          discussionId_userId_emoji: {
+            discussionId: input.discussionId,
+            userId,
+            emoji: input.emoji,
+          },
+        },
+      });
+
+      if (existing) {
+        // Remove reaction
+        await ctx.db.discussionReaction.delete({
+          where: { id: existing.id },
+        });
+        return { action: "removed" as const, emoji: input.emoji };
+      } else {
+        // Add reaction
+        await ctx.db.discussionReaction.create({
+          data: {
+            discussionId: input.discussionId,
+            userId,
+            emoji: input.emoji,
+          },
+        });
+        return { action: "added" as const, emoji: input.emoji };
+      }
     }),
 
   // ===========================================================================

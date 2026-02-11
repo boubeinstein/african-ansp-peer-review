@@ -3643,6 +3643,7 @@
             "reopen": "Reopen Discussion",
             "statusUpdated": "Status updated",
             "closedMessage": "This discussion is closed. Reopen it to add replies.",
+            "seenBy": "Seen by {names}",
             "status": {
               "OPEN": "Open",
               "CLOSED": "Closed"
@@ -7312,6 +7313,20 @@
         "CAP_UPDATE": "updated a CAP",
         "STATUS_CHANGE": "changed status"
       }
+    },
+    "mentions": {
+      "hint": "Type @ to mention team members · Shift+Enter for new line",
+      "everyone": "Everyone",
+      "noResults": "No team members matching \"{query}\""
+    },
+    "reactions": {
+      "add": "Add reaction",
+      "thumbsup": "Thumbs up",
+      "check": "Agree",
+      "eyes": "Looking into it",
+      "target": "On target",
+      "question": "Question",
+      "fire": "Great"
     }
   }
 }

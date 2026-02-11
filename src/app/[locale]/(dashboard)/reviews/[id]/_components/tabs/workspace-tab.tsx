@@ -189,6 +189,7 @@ export function WorkspaceTab({ review, userId, userName, userRole, locale = "en"
         open={showNewDiscussion}
         onOpenChange={setShowNewDiscussion}
         reviewId={review.id}
+        userId={userId}
       />
 
       <NewTaskDialog

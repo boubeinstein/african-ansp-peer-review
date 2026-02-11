@@ -638,6 +638,7 @@ export const NotificationType = {
   SYSTEM_ANNOUNCEMENT: "SYSTEM_ANNOUNCEMENT",
   REMINDER: "REMINDER",
   BEST_PRACTICE_PROMOTED: "BEST_PRACTICE_PROMOTED",
+  MENTION: "MENTION",
 } as const;
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType];
 

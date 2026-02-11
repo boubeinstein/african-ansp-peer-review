@@ -1,11 +1,11 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -22,6 +22,7 @@ import {
   CheckCircle,
   Loader2,
   Send,
+  Eye,
 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { formatDistanceToNow, format } from "date-fns";
@@ -30,6 +31,12 @@ import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
 import { useTypingIndicator } from "@/hooks/use-typing-indicator";
 import { TypingIndicator } from "@/components/collaboration/typing-indicator";
+import { MentionTextarea } from "@/components/collaboration/mention-textarea";
+import type { MentionUser } from "@/components/collaboration/mention-textarea";
+import { MentionRenderer } from "@/components/collaboration/mention-renderer";
+import { ReactionBar } from "@/components/collaboration/reaction-bar";
+import type { EmojiKey } from "@/components/collaboration/reaction-bar";
+import { extractMentionedUserIds, hasMentionAll } from "@/lib/mentions";
 import { CHANNELS } from "@/lib/pusher/server";
 
 const replySchema = z.object({
@@ -58,13 +65,32 @@ export function DiscussionDetail({ discussionId, reviewId, userId, userName, onB
   );
 
   const {
-    register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<ReplyFormData>({
     resolver: zodResolver(replySchema),
+    defaultValues: { content: "" },
   });
+
+  const replyContent = watch("content");
+
+  // Fetch team members for @mention autocomplete
+  const { data: rawTeamMembers = [] } =
+    trpc.reviewDiscussion.getTeamMembers.useQuery(
+      { reviewId },
+      { staleTime: 5 * 60 * 1000 }
+    );
+
+  const mentionMembers: MentionUser[] = rawTeamMembers.map(
+    (m: { id: string; firstName: string; lastName: string }) => ({
+      id: m.id,
+      name: `${m.firstName} ${m.lastName}`,
+      initials: `${m.firstName?.[0] || ""}${m.lastName?.[0] || ""}`.toUpperCase(),
+    })
+  );
 
   const replyMutation = trpc.reviewDiscussion.addReply.useMutation({
     onSuccess: () => {
@@ -100,10 +126,44 @@ export function DiscussionDetail({ discussionId, reviewId, userId, userName, onB
     },
   });
 
+  const reactionMutation = trpc.reviewDiscussion.toggleReaction.useMutation({
+    onSuccess: () => {
+      utils.reviewDiscussion.getById.invalidate({ id: discussionId });
+    },
+  });
+
+  const markAsReadMutation = trpc.reviewDiscussion.markAsRead.useMutation({
+    onSuccess: () => {
+      utils.reviewDiscussion.getById.invalidate({ id: discussionId });
+    },
+  });
+
+  // Auto-mark discussion as read when the user opens it
+  const hasMarkedRead = useRef(false);
+  useEffect(() => {
+    if (discussion && userId && !hasMarkedRead.current) {
+      hasMarkedRead.current = true;
+      markAsReadMutation.mutate({ discussionId });
+    }
+  }, [discussion, userId, discussionId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleReaction = (targetId: string, emoji: EmojiKey) => {
+    reactionMutation.mutate({ discussionId: targetId, emoji });
+  };
+
   const onSubmitReply = (data: ReplyFormData) => {
+    // Extract mention IDs from content for the stored mentions array
+    const mentionedIds = extractMentionedUserIds(data.content);
+    const allMentioned = hasMentionAll(data.content);
+    // For @all, pass "__all__" sentinel; server expands to team members
+    const mentions = allMentioned
+      ? ["__all__", ...mentionedIds]
+      : mentionedIds;
+
     replyMutation.mutate({
       discussionId,
       content: data.content,
+      mentions,
     });
   };
 
@@ -202,8 +262,22 @@ export function DiscussionDetail({ discussionId, reviewId, userId, userName, onB
         </CardHeader>
         <CardContent>
           <div className="prose prose-sm max-w-none dark:prose-invert">
-            <p className="whitespace-pre-wrap">{discussion.content}</p>
+            <MentionRenderer
+              content={discussion.content}
+              currentUserId={userId}
+              className="text-sm"
+            />
           </div>
+          {discussion.reactions && (
+            <div className="mt-3 pt-3 border-t">
+              <ReactionBar
+                reactions={discussion.reactions}
+                currentUserId={userId}
+                onToggle={(emoji) => handleReaction(discussion.id, emoji)}
+                disabled={reactionMutation.isPending}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -214,7 +288,7 @@ export function DiscussionDetail({ discussionId, reviewId, userId, userName, onB
             {t("replies", { count: discussion.replies.length })}
           </h3>
 
-          {discussion.replies.map((reply: { id: string; content: string; createdAt: Date | string; author: { firstName: string; lastName: string } }) => {
+          {discussion.replies.map((reply: { id: string; content: string; createdAt: Date | string; author: { firstName: string; lastName: string }; reactions?: { emoji: string; user: { id: string; firstName: string; lastName: string } }[] }) => {
             const replyAuthorName = `${reply.author.firstName} ${reply.author.lastName}`;
             return (
               <Card key={reply.id} className="bg-muted/30">
@@ -236,7 +310,21 @@ export function DiscussionDetail({ discussionId, reviewId, userId, userName, onB
                           })}
                         </span>
                       </div>
-                      <p className="text-sm whitespace-pre-wrap">{reply.content}</p>
+                      <MentionRenderer
+                        content={reply.content}
+                        currentUserId={userId}
+                        className="text-sm"
+                      />
+                      {reply.reactions && (
+                        <div className="mt-2">
+                          <ReactionBar
+                            reactions={reply.reactions}
+                            currentUserId={userId}
+                            onToggle={(emoji) => handleReaction(reply.id, emoji)}
+                            disabled={reactionMutation.isPending}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </CardContent>
@@ -246,15 +334,32 @@ export function DiscussionDetail({ discussionId, reviewId, userId, userName, onB
         </div>
       )}
 
+      {/* Seen by */}
+      {(() => {
+        const otherReaders = (discussion.reads ?? [])
+          .filter((r: { user: { id: string } }) => r.user.id !== userId)
+          .map((r: { user: { firstName: string } }) => r.user.firstName);
+        if (otherReaders.length === 0) return null;
+        return (
+          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground px-1">
+            <Eye className="h-3 w-3 shrink-0" />
+            <span>{t("seenBy", { names: otherReaders.join(", ") })}</span>
+          </div>
+        );
+      })()}
+
       {/* Reply Form */}
       {!discussion.isResolved && (
         <Card>
           <CardContent className="p-4">
             <form onSubmit={handleSubmit(onSubmitReply)} className="space-y-3">
-              <Textarea
+              <MentionTextarea
+                value={replyContent}
+                onChange={(val) => setValue("content", val, { shouldValidate: true })}
+                onSubmit={handleSubmit(onSubmitReply)}
                 placeholder={t("replyPlaceholder")}
-                rows={3}
-                {...register("content")}
+                teamMembers={mentionMembers}
+                currentUserId={userId}
                 disabled={isSubmitting || replyMutation.isPending}
                 onKeyDown={startTyping}
                 onBlur={stopTyping}

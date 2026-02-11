@@ -14,9 +14,10 @@ interface NewDiscussionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   reviewId: string;
+  userId?: string;
 }
 
-export function NewDiscussionDialog({ open, onOpenChange, reviewId }: NewDiscussionDialogProps) {
+export function NewDiscussionDialog({ open, onOpenChange, reviewId, userId }: NewDiscussionDialogProps) {
   const t = useTranslations("reviews.detail.workspace.discussionsList.new");
 
   return (
@@ -28,6 +29,7 @@ export function NewDiscussionDialog({ open, onOpenChange, reviewId }: NewDiscuss
         </DialogHeader>
         <DiscussionForm
           reviewId={reviewId}
+          userId={userId}
           onSuccess={() => onOpenChange(false)}
           onCancel={() => onOpenChange(false)}
         />

@@ -19,6 +19,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import { trpc } from "@/lib/trpc/client";
 import { usePusherConnectionState } from "@/lib/pusher/client";
+import { stripMentions } from "@/lib/mentions";
 import { DiscussionDetail } from "./discussion-detail";
 
 interface DiscussionsListProps {
@@ -149,7 +150,7 @@ export function DiscussionsList({ reviewId, userId, userName }: DiscussionsListP
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <h4 className="font-medium truncate">
-                          {discussion.subject || discussion.content?.slice(0, 60)}
+                          {discussion.subject || stripMentions(discussion.content || "").slice(0, 60)}
                         </h4>
                         <Badge
                           variant={status === "OPEN" ? "default" : "secondary"}

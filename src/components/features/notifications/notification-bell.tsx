@@ -54,6 +54,7 @@ const typeIcons: Partial<Record<NotificationType, string>> = {
   REPORT_DRAFT_READY: "📄",
   SYSTEM_ANNOUNCEMENT: "📢",
   REMINDER: "🔔",
+  MENTION: "💬",
 };
 
 // Helper to get locale-specific field

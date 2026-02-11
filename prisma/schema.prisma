@@ -114,6 +114,8 @@ model User {
   passwordResets           PasswordReset[]
   addedResponseDocuments   ResponseDocument[]          @relation("AddedResponseDocuments")
   reviewApprovals          ReviewApproval[]            @relation("ReviewApprovals")
+  discussionReactions      DiscussionReaction[]        @relation("DiscussionReactions")
+  discussionReads          DiscussionRead[]            @relation("DiscussionReads")
   discussionsAuthored      ReviewDiscussion[]          @relation("DiscussionAuthor")
   discussionsResolved      ReviewDiscussion[]          @relation("ResolvedDiscussions")
   retrospectives           ReviewRetrospective[]       @relation("RetrospectiveSubmitter")
@@ -1634,10 +1636,42 @@ model ReviewDiscussion {
   review       Review             @relation(fields: [reviewId], references: [id], onDelete: Cascade)
   linkedTask   ReviewTask?
 
+  reactions    DiscussionReaction[]
+  reads        DiscussionRead[]
+
   @@index([reviewId, isDeleted])
   @@index([reviewId, parentId])
   @@index([authorId])
   @@map("review_discussions")
+}
+
+model DiscussionReaction {
+  id           String           @id @default(cuid())
+  discussionId String           @map("discussion_id")
+  userId       String           @map("user_id")
+  emoji        String           // "thumbsup", "check", "eyes", "target", "question", "fire"
+  createdAt    DateTime         @default(now()) @map("created_at")
+
+  discussion   ReviewDiscussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  user         User             @relation("DiscussionReactions", fields: [userId], references: [id])
+
+  @@unique([discussionId, userId, emoji])
+  @@index([discussionId])
+  @@map("discussion_reactions")
+}
+
+model DiscussionRead {
+  id           String           @id @default(cuid())
+  discussionId String           @map("discussion_id")
+  userId       String           @map("user_id")
+  readAt       DateTime         @default(now()) @map("read_at")
+
+  discussion   ReviewDiscussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  user         User             @relation("DiscussionReads", fields: [userId], references: [id])
+
+  @@unique([discussionId, userId])
+  @@index([discussionId])
+  @@map("discussion_reads")
 }
 
 model ReviewTask {
@@ -2294,6 +2328,7 @@ enum NotificationType {
   SYSTEM_ANNOUNCEMENT
   REMINDER
   BEST_PRACTICE_PROMOTED
+  MENTION
 }
 
 enum NotificationPriority {

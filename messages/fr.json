@@ -3643,6 +3643,7 @@
             "reopen": "Rouvrir la discussion",
             "statusUpdated": "Statut mis à jour",
             "closedMessage": "Cette discussion est fermée. Rouvrez-la pour ajouter des réponses.",
+            "seenBy": "Vu par {names}",
             "status": {
               "OPEN": "Ouverte",
               "CLOSED": "Fermée"
@@ -7312,6 +7313,20 @@
         "CAP_UPDATE": "a mis à jour un PAC",
         "STATUS_CHANGE": "a changé le statut"
       }
+    },
+    "mentions": {
+      "hint": "Tapez @ pour mentionner des membres · Maj+Entrée pour nouvelle ligne",
+      "everyone": "Tout le monde",
+      "noResults": "Aucun membre correspondant à \"{query}\""
+    },
+    "reactions": {
+      "add": "Ajouter une réaction",
+      "thumbsup": "Pouce en l'air",
+      "check": "D'accord",
+      "eyes": "En cours d'examen",
+      "target": "Dans le mille",
+      "question": "Question",
+      "fire": "Excellent"
     }
   }
 }

@@ -5,12 +5,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
+import { MentionTextarea } from "@/components/collaboration/mention-textarea";
+import type { MentionUser } from "@/components/collaboration/mention-textarea";
+import { extractMentionedUserIds, hasMentionAll } from "@/lib/mentions";
 
 const discussionSchema = z.object({
   subject: z.string().min(3, "Subject must be at least 3 characters").max(200),
@@ -21,17 +23,20 @@ type DiscussionFormData = z.infer<typeof discussionSchema>;
 
 interface DiscussionFormProps {
   reviewId: string;
+  userId?: string;
   onSuccess?: () => void;
   onCancel?: () => void;
 }
 
-export function DiscussionForm({ reviewId, onSuccess, onCancel }: DiscussionFormProps) {
+export function DiscussionForm({ reviewId, userId, onSuccess, onCancel }: DiscussionFormProps) {
   const t = useTranslations("reviews.detail.workspace.discussionsList.form");
   const utils = trpc.useUtils();
 
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<DiscussionFormData>({
@@ -41,6 +46,23 @@ export function DiscussionForm({ reviewId, onSuccess, onCancel }: DiscussionForm
       content: "",
     },
   });
+
+  const contentValue = watch("content");
+
+  // Fetch team members for @mention autocomplete
+  const { data: rawTeamMembers = [] } =
+    trpc.reviewDiscussion.getTeamMembers.useQuery(
+      { reviewId },
+      { staleTime: 5 * 60 * 1000 }
+    );
+
+  const mentionMembers: MentionUser[] = rawTeamMembers.map(
+    (m: { id: string; firstName: string; lastName: string }) => ({
+      id: m.id,
+      name: `${m.firstName} ${m.lastName}`,
+      initials: `${m.firstName?.[0] || ""}${m.lastName?.[0] || ""}`.toUpperCase(),
+    })
+  );
 
   const createMutation = trpc.reviewDiscussion.create.useMutation({
     onSuccess: () => {
@@ -55,10 +77,17 @@ export function DiscussionForm({ reviewId, onSuccess, onCancel }: DiscussionForm
   });
 
   const onSubmit = (data: DiscussionFormData) => {
+    const mentionedIds = extractMentionedUserIds(data.content);
+    const allMentioned = hasMentionAll(data.content);
+    const mentions = allMentioned
+      ? ["__all__", ...mentionedIds]
+      : mentionedIds;
+
     createMutation.mutate({
       reviewId,
       subject: data.subject,
       content: data.content,
+      mentions,
     });
   };
 
@@ -79,12 +108,14 @@ export function DiscussionForm({ reviewId, onSuccess, onCancel }: DiscussionForm
 
       <div className="space-y-2">
         <Label htmlFor="content">{t("content")}</Label>
-        <Textarea
-          id="content"
+        <MentionTextarea
+          value={contentValue}
+          onChange={(val) => setValue("content", val, { shouldValidate: true })}
           placeholder={t("contentPlaceholder")}
-          rows={5}
-          {...register("content")}
+          teamMembers={mentionMembers}
+          currentUserId={userId}
           disabled={isSubmitting}
+          rows={5}
         />
         {errors.content && (
           <p className="text-sm text-destructive">{errors.content.message}</p>

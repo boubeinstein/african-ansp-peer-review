@@ -118,21 +118,27 @@ export function getPusherClient(): PusherClient {
     );
 
     pusherClient.connection.bind("error", (error: unknown) => {
-      const err = error as { type?: string; data?: { code?: number; message?: string } };
-      console.error("[Pusher] Connection error:", {
-        type: err?.type,
-        code: err?.data?.code,
-        message: err?.data?.message,
-        raw: error,
-      });
-      // If rejected by Pusher (4000-4099 range), don't retry
-      if (err?.data?.code && err.data.code >= 4000 && err.data.code < 4100) {
-        console.error(
-          `[Pusher] Fatal error (code ${err.data.code}): ${err.data.message || "App rejected connection"}. Check Pusher dashboard.`
-        );
+      const err = error as Record<string, unknown> | undefined;
+
+      // Extract error details — Pusher sends errors in varying shapes
+      const type = (err?.type as string) || ((err?.error as Record<string, unknown>)?.type as string) || undefined;
+      const data = (err?.data || (err?.error as Record<string, unknown>)?.data || err?.error) as Record<string, unknown> | undefined;
+      const code = (data?.code as number) || undefined;
+      const message = (data?.message as string) || undefined;
+
+      // Only use console.error for fatal errors (4000-4099 range)
+      // Use console.warn for everything else to avoid Next.js error overlay
+      const isFatal = code !== undefined && code >= 4000 && code < 4100;
+      const hasContent = type || code || message;
+
+      if (isFatal) {
+        console.error("[Pusher] Fatal connection error:", { type, code, message });
         connectionState = "failed";
         notifyStateChange();
+      } else if (hasContent) {
+        console.warn("[Pusher] Connection warning:", { type, code, message });
       }
+      // Silently ignore empty error objects (transient reconnection events)
     });
   }
 

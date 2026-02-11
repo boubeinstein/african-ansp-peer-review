@@ -1,6 +1,3 @@
-"use client";
-
-import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
@@ -22,19 +19,24 @@ const sizeMap = {
 } as const;
 
 export function Logo({ size = "md", showText = false, textClassName, className }: LogoProps) {
-  const { resolvedTheme } = useTheme();
   const { px, imgSize } = sizeMap[size];
-
-  const folder = resolvedTheme === "dark" ? "lightblue-on-dark" : "blue-on-white";
 
   return (
     <div className={cn("inline-flex items-center gap-2.5 shrink-0", className)}>
       <Image
-        src={`/images/logos/${folder}/aaprp-logo-${imgSize}.png`}
+        src={`/images/logos/blue-on-white/aaprp-logo-${imgSize}.png`}
         alt="AAPRP"
         width={px}
         height={px}
-        className="shrink-0"
+        className="shrink-0 block dark:hidden"
+        priority
+      />
+      <Image
+        src={`/images/logos/lightblue-on-dark/aaprp-logo-${imgSize}.png`}
+        alt=""
+        width={px}
+        height={px}
+        className="shrink-0 hidden dark:block"
         priority
       />
       {showText && (

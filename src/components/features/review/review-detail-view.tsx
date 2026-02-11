@@ -36,7 +36,6 @@ import { SLAIndicator } from "../workflow/sla-indicator";
 // Collaboration Components
 import {
   SessionBanner,
-  SessionPanel,
   ActivityFeedButton,
   CollaborativeContainer,
   PresenceAvatars,
@@ -207,8 +206,6 @@ export function ReviewDetailView({
     },
   });
 
-  // Check if current user is session host
-  const isHost = activeSession?.startedById === userId;
   const isInSession = activeSession?.participants.some(
     (p: { userId: string }) => p.userId === userId
   );
@@ -335,15 +332,6 @@ export function ReviewDetailView({
             }))}
             unreadCount={unreadActivityCount}
           />
-
-          {/* Session panel (if in session) */}
-          {activeSession && isInSession && (
-            <SessionPanel
-              reviewId={reviewId}
-              sessionId={activeSession.id}
-              isHost={!!isHost}
-            />
-          )}
 
           {/* Workflow Transition Buttons */}
           <WorkflowTransitionButtons

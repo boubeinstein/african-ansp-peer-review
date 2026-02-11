@@ -3792,6 +3792,7 @@
           "description": "Findings will appear here as the review progresses"
         },
         "capLinked": "CAP linked",
+        "beingEditedBy": "Being edited by {name}",
         "severity": {
           "CRITICAL": "Critical",
           "MAJOR": "Major",
@@ -3833,7 +3834,8 @@
           "viewCap": "View CAP",
           "noCapLinked": "No corrective action plan linked",
           "createCap": "Create CAP",
-          "evidenceDocuments": "Evidence Documents"
+          "evidenceDocuments": "Evidence Documents",
+          "lockedBy": "{name} is currently editing this finding"
         }
       },
       "report": {
@@ -7284,6 +7286,32 @@
       "endConfirmDescription": "This will end the collaboration session for all {count} participant(s). All progress is saved.",
       "leftSession": "You left the session",
       "sessionEnded": "Session ended for all participants"
+    },
+    "sessionPanel": {
+      "title": "Collaboration Session",
+      "realtimeActive": "Real-time collaboration active",
+      "realtimeUnavailable": "Viewing session participants (real-time updates unavailable)",
+      "startedBy": "Started by {name}",
+      "duration": "Running for {time}",
+      "membersTab": "Members ({count})",
+      "activityTab": "Activity",
+      "you": "you",
+      "noMembers": "No members in session",
+      "noActivity": "No activity recorded yet",
+      "focusFinding": "Finding ...{id}",
+      "focusDocument": "Doc ...{id}",
+      "focusCap": "CAP ...{id}",
+      "activity": {
+        "SESSION_JOIN": "joined the session",
+        "SESSION_LEAVE": "left the session",
+        "FINDING_CREATE": "created a finding",
+        "FINDING_EDIT": "edited a finding",
+        "COMMENT_ADD": "added a comment",
+        "FOCUS_CHANGE": "changed focus",
+        "DOCUMENT_UPLOAD": "uploaded a document",
+        "CAP_UPDATE": "updated a CAP",
+        "STATUS_CHANGE": "changed status"
+      }
     }
   }
 }

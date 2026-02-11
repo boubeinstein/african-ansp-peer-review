@@ -13,7 +13,6 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
 import {
   AlertDialog,
@@ -33,8 +32,12 @@ import {
   Clock,
   Eye,
   AlertCircle,
+  Radio,
+  User,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { fr, enUS, type Locale } from "date-fns/locale";
+import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
 import { usePresence } from "@/hooks/use-presence";
 import { isPusherAvailable } from "@/lib/pusher/client";
@@ -43,8 +46,10 @@ import { cn } from "@/lib/utils";
 interface SessionPanelProps {
   reviewId: string;
   sessionId: string;
-  userId?: string; // Pass from server component - no need for SessionProvider
+  userId?: string;
   isHost: boolean;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   className?: string;
 }
 
@@ -76,8 +81,15 @@ export function SessionPanel({
   sessionId,
   userId,
   isHost,
-  className,
+  open,
+  onOpenChange,
 }: SessionPanelProps) {
+  const t = useTranslations("collaboration.sessionPanel");
+  const tSession = useTranslations("collaboration.session");
+  const tCommon = useTranslations("common");
+  const locale = useLocale();
+  const dateLocale = locale === "fr" ? fr : enUS;
+
   const [showEndDialog, setShowEndDialog] = useState(false);
   const [activeTab, setActiveTab] = useState<"members" | "activity">("members");
   const pusherAvailable = isPusherAvailable();
@@ -141,20 +153,24 @@ export function SessionPanel({
   // Leave session
   const leaveSession = trpc.collaboration.leaveSession.useMutation({
     onSuccess: () => {
-      toast.info("Left session");
+      toast.info(tSession("leftSession"));
       utils.collaboration.getActiveSession.invalidate({ reviewId });
+      utils.collaboration.getMyActiveSessions.invalidate();
+      onOpenChange(false);
     },
   });
 
   // End session
   const endSession = trpc.collaboration.endSession.useMutation({
     onSuccess: () => {
-      toast.success("Session ended");
+      toast.success(tSession("sessionEnded"));
       utils.collaboration.getActiveSession.invalidate({ reviewId });
+      utils.collaboration.getMyActiveSessions.invalidate();
       setShowEndDialog(false);
+      onOpenChange(false);
     },
     onError: (error: { message: string }) => {
-      toast.error("Failed to end session", { description: error.message });
+      toast.error(error.message);
     },
   });
 
@@ -166,35 +182,67 @@ export function SessionPanel({
     endSession.mutate({ sessionId });
   };
 
+  // Session info
+  const sessionTitle =
+    activeSession?.title ||
+    activeSession?.sessionType?.replace(/_/g, " ") ||
+    t("title");
+  const startedByName = activeSession?.startedBy
+    ? `${activeSession.startedBy.firstName} ${activeSession.startedBy.lastName}`
+    : null;
+  const startedAt = activeSession?.startedAt
+    ? new Date(activeSession.startedAt)
+    : null;
+
   return (
     <>
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button variant="outline" size="sm" className={className}>
-            <Users className="mr-2 h-4 w-4" />
-            Session ({displayMembers.length})
-          </Button>
-        </SheetTrigger>
+      <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent className="w-[400px] sm:w-[540px]">
           <SheetHeader>
             <SheetTitle className="flex items-center gap-2">
-              Collaboration Session
+              {t("title")}
               {!pusherAvailable && (
                 <Badge
                   variant="outline"
                   className="text-yellow-600 border-yellow-300"
                 >
                   <AlertCircle className="h-3 w-3 mr-1" />
-                  Offline
+                  {tSession("offlineMode")}
                 </Badge>
               )}
             </SheetTitle>
             <SheetDescription>
               {pusherAvailable && isConnected
-                ? "Real-time collaboration active"
-                : "Viewing session participants (real-time updates unavailable)"}
+                ? t("realtimeActive")
+                : t("realtimeUnavailable")}
             </SheetDescription>
           </SheetHeader>
+
+          {/* Session Info Card */}
+          <div className="mt-4 rounded-lg border bg-muted/50 p-3 space-y-2">
+            <div className="flex items-center gap-2 text-sm">
+              <Radio className="h-4 w-4 text-green-500" />
+              <span className="font-medium">{sessionTitle}</span>
+            </div>
+            {startedByName && (
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <User className="h-3 w-3" />
+                <span>{t("startedBy", { name: startedByName })}</span>
+              </div>
+            )}
+            {startedAt && (
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Clock className="h-3 w-3" />
+                <span>
+                  {t("duration", {
+                    time: formatDistanceToNow(startedAt, {
+                      locale: dateLocale,
+                    }),
+                  })}
+                </span>
+              </div>
+            )}
+          </div>
 
           {/* Tab buttons */}
           <div className="mt-4 flex gap-2">
@@ -204,7 +252,7 @@ export function SessionPanel({
               onClick={() => setActiveTab("members")}
             >
               <Users className="mr-2 h-4 w-4" />
-              Members ({displayMembers.length})
+              {t("membersTab", { count: displayMembers.length })}
             </Button>
             <Button
               variant={activeTab === "activity" ? "default" : "outline"}
@@ -212,18 +260,27 @@ export function SessionPanel({
               onClick={() => setActiveTab("activity")}
             >
               <Activity className="mr-2 h-4 w-4" />
-              Activity
+              {t("activityTab")}
             </Button>
           </div>
 
           <Separator className="my-4" />
 
           {/* Content */}
-          <ScrollArea className="h-[calc(100vh-280px)]">
+          <ScrollArea className="h-[calc(100vh-380px)]">
             {activeTab === "members" ? (
-              <MembersList members={displayMembers} currentUserId={userId} />
+              <MembersList
+                members={displayMembers}
+                currentUserId={userId}
+                t={t}
+                dateLocale={dateLocale}
+              />
             ) : (
-              <ActivityFeed activities={activitiesData?.activities || []} />
+              <ActivityFeed
+                activities={activitiesData?.activities || []}
+                t={t}
+                dateLocale={dateLocale}
+              />
             )}
           </ScrollArea>
 
@@ -237,7 +294,7 @@ export function SessionPanel({
               disabled={leaveSession.isPending}
             >
               <LogOut className="mr-2 h-4 w-4" />
-              Leave Session
+              {tSession("leave")}
             </Button>
             {isHost && (
               <Button
@@ -245,7 +302,7 @@ export function SessionPanel({
                 onClick={() => setShowEndDialog(true)}
               >
                 <StopCircle className="mr-2 h-4 w-4" />
-                End Session
+                {tSession("endSession")}
               </Button>
             )}
           </div>
@@ -256,20 +313,20 @@ export function SessionPanel({
       <AlertDialog open={showEndDialog} onOpenChange={setShowEndDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>End Collaboration Session?</AlertDialogTitle>
+            <AlertDialogTitle>{tSession("endConfirmTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              This will end the session for all {displayMembers.length}{" "}
-              participants. All activities have been recorded for the audit
-              trail.
+              {tSession("endConfirmDescription", {
+                count: displayMembers.length,
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{tCommon("actions.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleEndSession}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              End Session
+              {tSession("endSession")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -291,12 +348,20 @@ interface DisplayMember {
   lastSeenAt: Date;
 }
 
+interface TranslationFn {
+  (key: string, values?: Record<string, string | number>): string;
+}
+
 function MembersList({
   members,
   currentUserId,
+  t,
+  dateLocale,
 }: {
   members: DisplayMember[];
   currentUserId?: string;
+  t: TranslationFn;
+  dateLocale: Locale;
 }) {
   return (
     <div className="space-y-2">
@@ -321,7 +386,7 @@ function MembersList({
                 {member.name}
                 {member.id === currentUserId && (
                   <span className="ml-2 text-xs text-muted-foreground">
-                    (you)
+                    ({t("you")})
                   </span>
                 )}
               </p>
@@ -334,7 +399,7 @@ function MembersList({
             {member.currentFocus && (
               <Badge variant="outline" className="gap-1">
                 <Eye className="h-3 w-3" />
-                {formatFocus(member.currentFocus)}
+                {formatFocus(member.currentFocus, t)}
               </Badge>
             )}
             {/* Online/Offline indicator */}
@@ -345,7 +410,10 @@ function MembersList({
               </span>
             ) : (
               <span className="text-xs text-muted-foreground">
-                {formatDistanceToNow(member.lastSeenAt, { addSuffix: true })}
+                {formatDistanceToNow(member.lastSeenAt, {
+                  addSuffix: true,
+                  locale: dateLocale,
+                })}
               </span>
             )}
           </div>
@@ -354,7 +422,7 @@ function MembersList({
 
       {members.length === 0 && (
         <div className="py-8 text-center text-muted-foreground">
-          No members in session
+          {t("noMembers")}
         </div>
       )}
     </div>
@@ -364,6 +432,8 @@ function MembersList({
 // Activity Feed Component
 function ActivityFeed({
   activities,
+  t,
+  dateLocale,
 }: {
   activities: Array<{
     id: string;
@@ -372,31 +442,42 @@ function ActivityFeed({
     timestamp: Date;
     user: { id: string; firstName: string; lastName: string };
   }>;
+  t: TranslationFn;
+  dateLocale: Locale;
 }) {
   return (
     <div className="space-y-3">
-      {activities.map((activity: { id: string; activityType: string; targetType?: string | null; timestamp: Date; user: { id: string; firstName: string; lastName: string } }) => (
-        <div key={activity.id} className="flex gap-3 text-sm">
-          <Clock className="h-4 w-4 mt-1 text-muted-foreground" />
-          <div className="flex-1">
-            <p>
-              <span className="font-medium">
-                {activity.user.firstName} {activity.user.lastName}
-              </span>{" "}
-              {formatActivityMessage(activity.activityType)}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {formatDistanceToNow(new Date(activity.timestamp), {
-                addSuffix: true,
-              })}
-            </p>
+      {activities.map(
+        (activity: {
+          id: string;
+          activityType: string;
+          targetType?: string | null;
+          timestamp: Date;
+          user: { id: string; firstName: string; lastName: string };
+        }) => (
+          <div key={activity.id} className="flex gap-3 text-sm">
+            <Clock className="h-4 w-4 mt-1 text-muted-foreground" />
+            <div className="flex-1">
+              <p>
+                <span className="font-medium">
+                  {activity.user.firstName} {activity.user.lastName}
+                </span>{" "}
+                {formatActivityMessage(activity.activityType, t)}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {formatDistanceToNow(new Date(activity.timestamp), {
+                  addSuffix: true,
+                  locale: dateLocale,
+                })}
+              </p>
+            </div>
           </div>
-        </div>
-      ))}
+        )
+      )}
 
       {activities.length === 0 && (
         <div className="py-8 text-center text-muted-foreground">
-          No activity recorded yet
+          {t("noActivity")}
         </div>
       )}
     </div>
@@ -404,30 +485,28 @@ function ActivityFeed({
 }
 
 // Helper functions
-function formatFocus(focus: string): string {
+function formatFocus(focus: string, t: TranslationFn): string {
   const [type, id] = focus.split(":");
   const shortId = id?.slice(-6) || "";
 
   switch (type) {
     case "finding":
-      return `Finding ...${shortId}`;
+      return t("focusFinding", { id: shortId });
     case "document":
-      return `Doc ...${shortId}`;
+      return t("focusDocument", { id: shortId });
     case "cap":
-      return `CAP ...${shortId}`;
+      return t("focusCap", { id: shortId });
     default:
       return focus;
   }
 }
 
-function formatActivityMessage(type: string): string {
-  const messages: Record<string, string> = {
-    SESSION_JOIN: "joined the session",
-    SESSION_LEAVE: "left the session",
-    FINDING_CREATE: "created a finding",
-    FINDING_EDIT: "edited a finding",
-    COMMENT_ADD: "added a comment",
-    FOCUS_CHANGE: "changed focus",
-  };
-  return messages[type] || type.toLowerCase().replace(/_/g, " ");
+function formatActivityMessage(type: string, t: TranslationFn): string {
+  const key = `activity.${type}`;
+  // Use the translation key if it exists, fallback to formatted type
+  try {
+    return t(key);
+  } catch {
+    return type.toLowerCase().replace(/_/g, " ");
+  }
 }

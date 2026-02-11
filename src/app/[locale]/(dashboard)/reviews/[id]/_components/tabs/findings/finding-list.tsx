@@ -19,13 +19,15 @@ import {
   CheckCircle,
   AlertCircle,
   FileText,
+  Lock,
 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { formatDistanceToNow } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { FocusIndicator } from "@/components/collaboration";
-import type { PresenceMember } from "@/hooks/use-presence";
+import type { FocusedUser } from "@/hooks/use-focus-tracker";
+import type { EditLock } from "@/hooks/use-edit-lock";
 
 interface Finding {
   id: string;
@@ -45,8 +47,8 @@ interface FindingListProps {
   findings: Finding[];
   reviewId: string;
   onSelect: (finding: Finding) => void;
-  presenceMembers?: PresenceMember[];
-  currentUserId?: string;
+  getViewers?: (focusKey: string) => FocusedUser[];
+  isLockedByOther?: (entityKey: string) => EditLock | null;
 }
 
 const SEVERITIES = ["CRITICAL", "MAJOR", "MINOR", "OBSERVATION"] as const;
@@ -82,11 +84,16 @@ const statusConfig = {
   VERIFIED: { color: "bg-emerald-100 text-emerald-800", icon: CheckCircle },
 };
 
+const emptyViewers: FocusedUser[] = [];
+const noopGetViewers = () => emptyViewers;
+
+const noopIsLockedByOther = () => null;
+
 export function FindingList({
   findings,
   onSelect,
-  presenceMembers = [],
-  currentUserId,
+  getViewers = noopGetViewers,
+  isLockedByOther = noopIsLockedByOther,
 }: FindingListProps) {
   const t = useTranslations("reviews.detail.findings");
   const locale = useLocale();
@@ -227,6 +234,7 @@ export function FindingList({
             const status =
               statusConfig[finding.status as keyof typeof statusConfig];
             const StatusIcon = status?.icon || AlertCircle;
+            const lock = isLockedByOther(`finding:${finding.id}`);
 
             return (
               <Card
@@ -287,12 +295,18 @@ export function FindingList({
                           })}
                         </span>
                       </div>
+
+                      {/* Edit Lock Indicator */}
+                      {lock && (
+                        <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
+                          <Lock className="h-3 w-3" />
+                          <span>{t("beingEditedBy", { name: lock.userName })}</span>
+                        </div>
+                      )}
                     </div>
 
                     <FocusIndicator
-                      members={presenceMembers}
-                      focusKey={`finding:${finding.id}`}
-                      currentUserId={currentUserId}
+                      viewers={getViewers(`finding:${finding.id}`)}
                       size="sm"
                     />
                     <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0 mt-1" />

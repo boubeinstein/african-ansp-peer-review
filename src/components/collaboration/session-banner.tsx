@@ -35,6 +35,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { StartSessionDialog } from "./start-session-dialog";
+import { SessionPanel } from "./session-panel";
 import { usePresence } from "@/hooks/use-presence";
 import { isPusherAvailable } from "@/lib/pusher/client";
 import { toast } from "sonner";
@@ -90,6 +91,7 @@ export function SessionBanner({
   const [showStartDialog, setShowStartDialog] = useState(false);
   const [showLeaveDialog, setShowLeaveDialog] = useState(false);
   const [showEndDialog, setShowEndDialog] = useState(false);
+  const [showSessionPanel, setShowSessionPanel] = useState(false);
   const pusherAvailable = isPusherAvailable();
   const utils = trpc.useUtils();
 
@@ -270,7 +272,7 @@ export function SessionBanner({
           {/* Session info - clickable title */}
           <button
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-            onClick={() => {/* session panel placeholder */}}
+            onClick={() => setShowSessionPanel(true)}
           >
             <Radio className="h-4 w-4" />
             <span className="hover:underline">
@@ -304,9 +306,12 @@ export function SessionBanner({
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Members from DB or real-time */}
+          {/* Members from DB or real-time — click to open session panel */}
           <TooltipProvider>
-            <div className="flex items-center gap-1">
+            <button
+              className="flex items-center gap-1 rounded-md px-2 py-1 -mx-2 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+              onClick={() => setShowSessionPanel(true)}
+            >
               <Users className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm text-muted-foreground mr-1">
                 {displayMembers.length}
@@ -343,7 +348,7 @@ export function SessionBanner({
                   </Avatar>
                 )}
               </div>
-            </div>
+            </button>
           </TooltipProvider>
 
           {/* Session actions */}
@@ -399,6 +404,16 @@ export function SessionBanner({
           )}
         </div>
       </div>
+
+      {/* Session Panel Side Sheet */}
+      <SessionPanel
+        reviewId={reviewId}
+        sessionId={activeSession.id}
+        userId={userId}
+        isHost={!!canEndSession}
+        open={showSessionPanel}
+        onOpenChange={setShowSessionPanel}
+      />
 
       {/* Leave Session Confirmation */}
       <AlertDialog open={showLeaveDialog} onOpenChange={setShowLeaveDialog}>

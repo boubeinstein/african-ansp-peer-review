@@ -3788,6 +3788,7 @@
         "noResults": "Aucune constatation trouvée",
         "tryDifferent": "Essayez des termes de recherche ou des filtres différents",
         "capLinked": "PAC lié",
+        "beingEditedBy": "En cours de modification par {name}",
         "severity": {
           "CRITICAL": "Critique",
           "MAJOR": "Majeur",
@@ -3829,7 +3830,8 @@
           "viewCap": "Voir le PAC",
           "noCapLinked": "Aucun plan d'action corrective lié",
           "createCap": "Créer un PAC",
-          "evidenceDocuments": "Documents de preuve"
+          "evidenceDocuments": "Documents de preuve",
+          "lockedBy": "{name} est en train de modifier cette constatation"
         },
         "empty": {
           "title": "Aucune constatation",
@@ -7284,6 +7286,32 @@
       "endConfirmDescription": "Cela mettra fin à la session de collaboration pour les {count} participant(s). Toutes les données sont sauvegardées.",
       "leftSession": "Vous avez quitté la session",
       "sessionEnded": "Session terminée pour tous les participants"
+    },
+    "sessionPanel": {
+      "title": "Session de collaboration",
+      "realtimeActive": "Collaboration en temps réel active",
+      "realtimeUnavailable": "Affichage des participants (mises à jour en temps réel indisponibles)",
+      "startedBy": "Démarrée par {name}",
+      "duration": "En cours depuis {time}",
+      "membersTab": "Membres ({count})",
+      "activityTab": "Activité",
+      "you": "vous",
+      "noMembers": "Aucun membre dans la session",
+      "noActivity": "Aucune activité enregistrée",
+      "focusFinding": "Constatation ...{id}",
+      "focusDocument": "Doc ...{id}",
+      "focusCap": "PAC ...{id}",
+      "activity": {
+        "SESSION_JOIN": "a rejoint la session",
+        "SESSION_LEAVE": "a quitté la session",
+        "FINDING_CREATE": "a créé une constatation",
+        "FINDING_EDIT": "a modifié une constatation",
+        "COMMENT_ADD": "a ajouté un commentaire",
+        "FOCUS_CHANGE": "a changé de focus",
+        "DOCUMENT_UPLOAD": "a téléversé un document",
+        "CAP_UPDATE": "a mis à jour un PAC",
+        "STATUS_CHANGE": "a changé le statut"
+      }
     }
   }
 }

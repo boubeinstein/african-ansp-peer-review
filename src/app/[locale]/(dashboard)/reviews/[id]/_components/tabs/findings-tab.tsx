@@ -6,15 +6,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Loader2, AlertTriangle } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { trpc } from "@/lib/trpc/client";
+import { toast } from "sonner";
 import { FindingList } from "./findings/finding-list";
 import { FindingDetail } from "./findings/finding-detail";
 import { CreateFindingDialog } from "@/components/findings/create-finding-dialog";
-import { usePresence } from "@/hooks/use-presence";
+import { EditFindingDialog } from "@/components/findings/edit-finding-dialog";
+import { useFocusTracker } from "@/hooks/use-focus-tracker";
+import { useEditLock } from "@/hooks/use-edit-lock";
 import type { ReviewData } from "../../_lib/fetch-review-data";
 
 interface FindingsTabProps {
   review: ReviewData;
   userId?: string;
+  userName?: string;
 }
 
 interface TransformedFinding {
@@ -31,18 +35,25 @@ interface TransformedFinding {
   updatedAt: Date;
 }
 
-export function FindingsTab({ review, userId }: FindingsTabProps) {
+export function FindingsTab({ review, userId, userName }: FindingsTabProps) {
   const t = useTranslations("reviews.detail.findings");
   const locale = useLocale();
 
   const utils = trpc.useUtils();
-  const { members: presenceMembers, updateFocus } = usePresence({
+  const { getViewers, setFocus, clearFocus } = useFocusTracker({
     reviewId: review.id,
-    userId,
+    userId: userId ?? "",
+    userName: userName ?? "",
+  });
+  const { acquireLock, releaseLock, isLockedByOther } = useEditLock({
+    reviewId: review.id,
+    userId: userId ?? "",
+    userName: userName ?? "",
   });
   const [selectedFindingId, setSelectedFindingId] = useState<string | null>(
     null
   );
+  const [editingFindingId, setEditingFindingId] = useState<string | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   // Fetch full findings data via tRPC
@@ -94,6 +105,39 @@ export function FindingsTab({ review, userId }: FindingsTabProps) {
     ).length,
   };
 
+  // Handle edit with lock guard
+  const handleEditFinding = (findingId: string) => {
+    const lock = isLockedByOther(`finding:${findingId}`);
+    if (lock) {
+      toast.warning(`${lock.userName} is currently editing this finding`);
+      return;
+    }
+    const acquired = acquireLock(`finding:${findingId}`);
+    if (acquired) {
+      setEditingFindingId(findingId);
+    }
+  };
+
+  const handleEditClose = () => {
+    if (editingFindingId) {
+      releaseLock(`finding:${editingFindingId}`);
+    }
+    setEditingFindingId(null);
+  };
+
+  const handleEditSaved = () => {
+    if (editingFindingId) {
+      releaseLock(`finding:${editingFindingId}`);
+    }
+    setEditingFindingId(null);
+    utils.finding.getByReview.invalidate({ reviewId: review.id });
+  };
+
+  // Get the finding data for the edit dialog
+  const editingFinding = editingFindingId
+    ? findingsData?.find((f: { id: string }) => f.id === editingFindingId)
+    : null;
+
   // Show detail view if a finding is selected
   if (selectedFindingId) {
     return (
@@ -102,10 +146,33 @@ export function FindingsTab({ review, userId }: FindingsTabProps) {
           findingId={selectedFindingId}
           reviewId={review.id}
           onBack={() => setSelectedFindingId(null)}
-          presenceMembers={presenceMembers}
-          currentUserId={userId}
-          updateFocus={updateFocus}
+          onEdit={() => handleEditFinding(selectedFindingId)}
+          editLock={isLockedByOther(`finding:${selectedFindingId}`)}
+          getViewers={getViewers}
+          setFocus={setFocus}
+          clearFocus={clearFocus}
         />
+
+        {editingFinding && (
+          <EditFindingDialog
+            open={!!editingFindingId}
+            onOpenChange={(open) => { if (!open) handleEditClose(); }}
+            finding={{
+              id: editingFinding.id,
+              reviewId: review.id,
+              referenceNumber: editingFinding.referenceNumber,
+              titleEn: editingFinding.titleEn || "",
+              titleFr: editingFinding.titleFr,
+              descriptionEn: editingFinding.descriptionEn || "",
+              descriptionFr: editingFinding.descriptionFr,
+              severity: editingFinding.severity,
+              status: editingFinding.status,
+              findingType: editingFinding.findingType,
+              criticalElement: editingFinding.criticalElement,
+            }}
+            onUpdated={handleEditSaved}
+          />
+        )}
       </div>
     );
   }
@@ -157,8 +224,8 @@ export function FindingsTab({ review, userId }: FindingsTabProps) {
           findings={findings}
           reviewId={review.id}
           onSelect={(finding) => setSelectedFindingId(finding.id)}
-          presenceMembers={presenceMembers}
-          currentUserId={userId}
+          getViewers={getViewers}
+          isLockedByOther={isLockedByOther}
         />
       )}
 

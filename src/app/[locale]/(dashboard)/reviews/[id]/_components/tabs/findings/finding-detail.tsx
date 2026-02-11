@@ -35,6 +35,7 @@ import {
   ThumbsUp,
   Search,
   PauseCircle,
+  Lock,
 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -44,16 +45,18 @@ import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { FocusIndicator } from "@/components/collaboration";
-import type { PresenceMember } from "@/hooks/use-presence";
+import type { FocusedUser } from "@/hooks/use-focus-tracker";
+import type { EditLock } from "@/hooks/use-edit-lock";
 
 interface FindingDetailProps {
   findingId: string;
   reviewId: string;
   onBack: () => void;
   onEdit?: () => void;
-  presenceMembers?: PresenceMember[];
-  currentUserId?: string;
-  updateFocus?: (focus: string) => void;
+  editLock?: EditLock | null;
+  getViewers?: (focusKey: string) => FocusedUser[];
+  setFocus?: (focusKey: string) => void;
+  clearFocus?: () => void;
 }
 
 const STATUSES = [
@@ -85,13 +88,17 @@ const statusConfig = {
   DEFERRED: { color: "bg-slate-100 text-slate-800", icon: PauseCircle },
 };
 
+const emptyViewers: FocusedUser[] = [];
+const noopGetViewers = () => emptyViewers;
+
 export function FindingDetail({
   findingId,
   onBack,
   onEdit,
-  presenceMembers = [],
-  currentUserId,
-  updateFocus,
+  editLock,
+  getViewers = noopGetViewers,
+  setFocus,
+  clearFocus,
 }: FindingDetailProps) {
   const t = useTranslations("reviews.detail.findings.detail");
   const tSeverity = useTranslations("reviews.detail.findings.severity");
@@ -108,15 +115,15 @@ export function FindingDetail({
 
   // Broadcast focus when viewing this finding
   useEffect(() => {
-    if (updateFocus && findingId) {
-      updateFocus(`finding:${findingId}`);
+    if (setFocus && findingId) {
+      setFocus(`finding:${findingId}`);
     }
     return () => {
-      if (updateFocus) {
-        updateFocus("");
+      if (clearFocus) {
+        clearFocus();
       }
     };
-  }, [updateFocus, findingId]);
+  }, [setFocus, clearFocus, findingId]);
 
   const updateStatusMutation = trpc.finding.updateStatus.useMutation({
     onSuccess: () => {
@@ -192,6 +199,14 @@ export function FindingDetail({
         </DropdownMenu>
       </div>
 
+      {/* Edit Lock Banner */}
+      {editLock && (
+        <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
+          <Lock className="h-4 w-4 shrink-0" />
+          <span>{t("lockedBy", { name: editLock.userName })}</span>
+        </div>
+      )}
+
       {/* Finding Content */}
       <Card>
         <CardHeader className="pb-3">
@@ -206,9 +221,7 @@ export function FindingDetail({
                   {severity?.icon} {tSeverity(finding.severity)}
                 </Badge>
                 <FocusIndicator
-                  members={presenceMembers}
-                  focusKey={`finding:${findingId}`}
-                  currentUserId={currentUserId}
+                  viewers={getViewers(`finding:${findingId}`)}
                   size="md"
                 />
               </div>

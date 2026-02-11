@@ -42,11 +42,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+
+
 import type { ReportContent, FindingDetail } from "@/types/report";
 
 // =============================================================================
@@ -204,10 +201,10 @@ function FilterBar({
 }) {
   const t = useTranslations("report.findings");
 
-  const types = useMemo(() => [...new Set(findings.map((f) => f.type))].sort(), [findings]);
-  const severities = useMemo(() => [...new Set(findings.map((f) => f.severity))].sort(), [findings]);
-  const statuses = useMemo(() => [...new Set(findings.map((f) => f.status))].sort(), [findings]);
-  const auditAreas = useMemo(() => [...new Set(findings.map((f) => f.auditArea))].sort(), [findings]);
+  const types = useMemo(() => [...new Set(findings.map((f) => f.type))].filter(Boolean).sort(), [findings]);
+  const severities = useMemo(() => [...new Set(findings.map((f) => f.severity))].filter(Boolean).sort(), [findings]);
+  const statuses = useMemo(() => [...new Set(findings.map((f) => f.status))].filter(Boolean).sort(), [findings]);
+  const auditAreas = useMemo(() => [...new Set(findings.map((f) => f.auditArea))].filter(Boolean).sort(), [findings]);
 
   const hasActiveFilters = Object.values(filters).some((v) => v !== "ALL");
 
@@ -333,110 +330,109 @@ function FindingRow({ finding }: { finding: FindingDetail }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <Collapsible open={open} onOpenChange={setOpen} asChild>
-      <>
-        <CollapsibleTrigger asChild>
-          <TableRow className="cursor-pointer hover:bg-muted/50">
-            <TableCell className="font-mono text-sm">
-              {finding.reference}
-            </TableCell>
-            <TableCell className="max-w-[200px]">
-              <span className="truncate block" title={finding.title}>
-                {finding.title}
-              </span>
-            </TableCell>
-            <TableCell>
-              <Badge
-                variant="outline"
-                className={cn("text-xs", TYPE_STYLES[finding.type] || "")}
-              >
-                {finding.type.replace(/_/g, " ")}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <Badge className={cn("text-xs", SEVERITY_STYLES[finding.severity] || "")}>
-                {finding.severity}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <Badge variant="outline" className="font-mono text-xs">
-                {finding.auditArea}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <Badge variant="outline" className="text-xs">
-                {finding.status.replace(/_/g, " ")}
-              </Badge>
-            </TableCell>
-            <TableCell className="text-center">
-              {finding.capReference ? (
-                <Badge
-                  variant="secondary"
-                  className="text-xs"
-                >
-                  {finding.capStatus?.replace(/_/g, " ") || t("required")}
-                </Badge>
-              ) : finding.capRequired ? (
-                <Badge variant="destructive" className="text-xs">
-                  {t("required")}
-                </Badge>
-              ) : (
-                <span className="text-muted-foreground text-xs">—</span>
+    <>
+      <TableRow
+        className="cursor-pointer hover:bg-muted/50"
+        onClick={() => setOpen((o) => !o)}
+      >
+        <TableCell className="font-mono text-sm">
+          {finding.reference}
+        </TableCell>
+        <TableCell className="max-w-[200px]">
+          <span className="truncate block" title={finding.title}>
+            {finding.title}
+          </span>
+        </TableCell>
+        <TableCell>
+          <Badge
+            variant="outline"
+            className={cn("text-xs", TYPE_STYLES[finding.type] || "")}
+          >
+            {finding.type.replace(/_/g, " ")}
+          </Badge>
+        </TableCell>
+        <TableCell>
+          <Badge className={cn("text-xs", SEVERITY_STYLES[finding.severity] || "")}>
+            {finding.severity}
+          </Badge>
+        </TableCell>
+        <TableCell>
+          <Badge variant="outline" className="font-mono text-xs">
+            {finding.auditArea}
+          </Badge>
+        </TableCell>
+        <TableCell>
+          <Badge variant="outline" className="text-xs">
+            {finding.status.replace(/_/g, " ")}
+          </Badge>
+        </TableCell>
+        <TableCell className="text-center">
+          {finding.capReference ? (
+            <Badge
+              variant="secondary"
+              className="text-xs"
+            >
+              {finding.capStatus?.replace(/_/g, " ") || t("required")}
+            </Badge>
+          ) : finding.capRequired ? (
+            <Badge variant="destructive" className="text-xs">
+              {t("required")}
+            </Badge>
+          ) : (
+            <span className="text-muted-foreground text-xs">—</span>
+          )}
+        </TableCell>
+        <TableCell className="w-8">
+          {open ? (
+            <ChevronUp className="h-4 w-4 text-muted-foreground" />
+          ) : (
+            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          )}
+        </TableCell>
+      </TableRow>
+      {open && (
+        <TableRow className="bg-muted/30 hover:bg-muted/30">
+          <TableCell colSpan={8} className="py-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              {finding.description && (
+                <div>
+                  <p className="font-medium text-xs text-muted-foreground mb-1">
+                    {t("description")}
+                  </p>
+                  <p className="whitespace-pre-wrap">{finding.description}</p>
+                </div>
               )}
-            </TableCell>
-            <TableCell className="w-8">
-              {open ? (
-                <ChevronUp className="h-4 w-4 text-muted-foreground" />
-              ) : (
-                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              {finding.evidence && (
+                <div>
+                  <p className="font-medium text-xs text-muted-foreground mb-1">
+                    {t("evidence")}
+                  </p>
+                  <p className="whitespace-pre-wrap">{finding.evidence}</p>
+                </div>
               )}
-            </TableCell>
-          </TableRow>
-        </CollapsibleTrigger>
-        <CollapsibleContent asChild>
-          <TableRow className="bg-muted/30 hover:bg-muted/30">
-            <TableCell colSpan={8} className="py-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                {finding.description && (
-                  <div>
-                    <p className="font-medium text-xs text-muted-foreground mb-1">
-                      {t("description")}
-                    </p>
-                    <p className="whitespace-pre-wrap">{finding.description}</p>
-                  </div>
-                )}
-                {finding.evidence && (
-                  <div>
-                    <p className="font-medium text-xs text-muted-foreground mb-1">
-                      {t("evidence")}
-                    </p>
-                    <p className="whitespace-pre-wrap">{finding.evidence}</p>
-                  </div>
-                )}
-                {finding.icaoReference && (
-                  <div>
-                    <p className="font-medium text-xs text-muted-foreground mb-1">
-                      {t("icaoReference")}
-                    </p>
-                    <p>{finding.icaoReference}</p>
-                  </div>
-                )}
-                {finding.criticalElement && (
-                  <div>
-                    <p className="font-medium text-xs text-muted-foreground mb-1">
-                      {t("criticalElement")}
-                    </p>
-                    <Badge variant="outline" className="font-mono">
-                      {finding.criticalElement}
-                    </Badge>
-                  </div>
-                )}
-              </div>
-            </TableCell>
-          </TableRow>
-        </CollapsibleContent>
-      </>
-    </Collapsible>
+              {finding.icaoReference && (
+                <div>
+                  <p className="font-medium text-xs text-muted-foreground mb-1">
+                    {t("icaoReference")}
+                  </p>
+                  <p>{finding.icaoReference}</p>
+                </div>
+              )}
+              {finding.criticalElement && (
+                <div>
+                  <p className="font-medium text-xs text-muted-foreground mb-1">
+                    {t("criticalElement")}
+                  </p>
+                  <Badge variant="outline" className="font-mono">
+                    {finding.criticalElement}
+                  </Badge>
+                </div>
+              )}
+            </div>
+          </TableCell>
+        </TableRow>
+      )}
+    </>
   );
 }
 

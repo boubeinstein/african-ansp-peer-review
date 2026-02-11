@@ -289,25 +289,30 @@ export function ReportTab({ review }: ReportTabProps) {
                 )}
               </div>
               <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    window.open(
+                      `/api/report/export?reviewId=${review.id}&format=docx&locale=${locale}`,
+                      "_blank"
+                    );
+                  }}
+                >
+                  <Download className="h-4 w-4 mr-1" />
+                  {t("download")}
+                </Button>
                 {reportData.pdfUrl && (
-                  <>
-                    <Button variant="outline" size="sm" asChild>
-                      <a
-                        href={reportData.pdfUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Eye className="h-4 w-4 mr-1" />
-                        {t("preview")}
-                      </a>
-                    </Button>
-                    <Button variant="outline" size="sm" asChild>
-                      <a href={reportData.pdfUrl} download>
-                        <Download className="h-4 w-4 mr-1" />
-                        {t("download")}
-                      </a>
-                    </Button>
-                  </>
+                  <Button variant="outline" size="sm" asChild>
+                    <a
+                      href={reportData.pdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Eye className="h-4 w-4 mr-1" />
+                      {t("preview")}
+                    </a>
+                  </Button>
                 )}
               </div>
             </div>

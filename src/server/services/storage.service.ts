@@ -14,12 +14,16 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-// Validate environment variables
-if (!supabaseUrl) {
-  console.warn("[Storage] NEXT_PUBLIC_SUPABASE_URL is not set");
-}
-if (!supabaseServiceKey) {
-  console.warn("[Storage] SUPABASE_SERVICE_ROLE_KEY is not set");
+// Validate environment variables (log once at startup)
+let _storageWarned = false;
+if (!_storageWarned) {
+  if (!supabaseUrl) {
+    console.warn("[Storage] NEXT_PUBLIC_SUPABASE_URL is not set — file uploads disabled");
+  }
+  if (!supabaseServiceKey) {
+    console.warn("[Storage] SUPABASE_SERVICE_ROLE_KEY is not set — file uploads disabled");
+  }
+  _storageWarned = true;
 }
 
 // Use service role for server-side operations (bypasses RLS)

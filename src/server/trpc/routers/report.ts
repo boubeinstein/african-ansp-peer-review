@@ -9,7 +9,10 @@ import {
   CAPStatus,
   MaturityLevel,
   PrismaClient,
+  Prisma,
 } from "@prisma/client";
+import { aggregateReportData } from "@/lib/report/aggregate-report-data";
+import type { ReportContent, EditableSection } from "@/types/report";
 
 // ============================================================================
 // Role Definitions
@@ -90,6 +93,7 @@ const getByReviewSchema = z.object({
 
 const generateReportSchema = z.object({
   reviewId: z.string().cuid(),
+  locale: z.enum(["en", "fr"]).default("en"),
 });
 
 const updateReportSchema = z.object({
@@ -104,6 +108,25 @@ const updateStatusSchema = z.object({
   reportId: z.string().cuid(),
   status: z.enum(["DRAFT", "UNDER_REVIEW", "FINALIZED"]),
 });
+
+const getByReviewIdSchema = z.object({
+  reviewId: z.string().cuid(),
+});
+
+const updateSectionSchema = z.object({
+  reviewId: z.string().cuid(),
+  sectionKey: z.enum(["executiveSummary", "recommendations", "conclusion"]),
+  contentEn: z.string().max(50000).optional(),
+  contentFr: z.string().max(50000).optional(),
+});
+
+const updateStatusByReviewSchema = z.object({
+  reviewId: z.string().cuid(),
+  status: z.enum(["DRAFT", "UNDER_REVIEW", "FINALIZED"]),
+});
+
+/** Editable section keys in ReportSections */
+const EDITABLE_SECTION_KEYS = ["executiveSummary", "recommendations", "conclusion"] as const;
 
 // ============================================================================
 // Data Aggregation Helper Functions
@@ -504,13 +527,30 @@ async function canEditReport(
 }
 
 // ============================================================================
+// Maturity Level Mapping
+// ============================================================================
+
+/** Convert a single-letter maturity label ("A"-"E") back to the Prisma enum */
+function maturityLabelToEnum(label: string): MaturityLevel | null {
+  const map: Record<string, MaturityLevel> = {
+    A: "LEVEL_A",
+    B: "LEVEL_B",
+    C: "LEVEL_C",
+    D: "LEVEL_D",
+    E: "LEVEL_E",
+  };
+  return map[label] || null;
+}
+
+// ============================================================================
 // Router
 // ============================================================================
 
 export const reportRouter = router({
   /**
-   * Generate or get existing report for a review
-   * Creates a DRAFT report if none exists
+   * Generate or regenerate the structured report for a review.
+   * Calls aggregateReportData to build the full ReportContent JSON,
+   * then upserts the ReviewReport record with scores and content.
    */
   generate: protectedProcedure
     .input(generateReportSchema)
@@ -518,7 +558,7 @@ export const reportRouter = router({
       const userId = ctx.session.user.id;
       const userRole = ctx.session.user.role;
 
-      // Check if user can create/edit reports
+      // 1. Authorization
       const canEdit = await canEditReport(ctx.db, userId, userRole, input.reviewId);
       if (!canEdit) {
         throw new TRPCError({
@@ -527,7 +567,7 @@ export const reportRouter = router({
         });
       }
 
-      // Get review details
+      // 2. Validate review exists and get titles
       const review = await ctx.db.review.findUnique({
         where: { id: input.reviewId },
         include: {
@@ -544,62 +584,111 @@ export const reportRouter = router({
         });
       }
 
-      // Check if report already exists
-      const existingReport = await ctx.db.reviewReport.findUnique({
-        where: { reviewId: input.reviewId },
+      // 3. Get generator identity
+      const generatorUser = await ctx.db.user.findUnique({
+        where: { id: userId },
+        select: { firstName: true, lastName: true },
       });
+      const generatedBy = {
+        id: userId,
+        name: generatorUser
+          ? `${generatorUser.firstName} ${generatorUser.lastName}`
+          : "System",
+        role: userRole,
+      };
 
-      if (existingReport) {
-        return existingReport;
-      }
+      // 4. Call aggregation service
+      const reportContent = await aggregateReportData(
+        ctx.db,
+        input.reviewId,
+        generatedBy,
+        input.locale
+      );
 
-      // Generate title
+      // 5. Extract denormalized scores for quick access
+      const overallEI = reportContent.sections.ansAssessment.overallEIScore;
+      const smsLevel = reportContent.sections.smsAssessment.overallMaturityLevel;
+      const overallMaturity = smsLevel ? maturityLabelToEnum(smsLevel) : null;
+
+      // 6. Generate titles
       const year = new Date().getFullYear();
       const titleEn = `Peer Review Report - ${review.hostOrganization.nameEn} (${review.hostOrganization.organizationCode}) - ${year}`;
       const titleFr = `Rapport de Revue par les Pairs - ${review.hostOrganization.nameFr} (${review.hostOrganization.organizationCode}) - ${year}`;
 
-      // Get assessment scores
-      const ansAssessment = await ctx.db.assessment.findFirst({
-        where: {
-          reviewId: input.reviewId,
-          questionnaire: { type: "ANS_USOAP_CMA" },
-        },
-      });
-
-      const smsAssessment = await ctx.db.assessment.findFirst({
-        where: {
-          reviewId: input.reviewId,
-          questionnaire: { type: "SMS_CANSO_SOE" },
-        },
-      });
-
-      let overallEI: number | null = null;
-      let overallMaturity: MaturityLevel | null = null;
-
-      if (ansAssessment) {
-        const eiData = await calculateEIScore(ctx.db, ansAssessment.id);
-        overallEI = eiData.overall;
-      }
-
-      if (smsAssessment) {
-        const smsData = await calculateSMSMaturity(ctx.db, smsAssessment.id);
-        overallMaturity = smsData.overall;
-      }
-
-      // Create new report
-      const report = await ctx.db.reviewReport.create({
-        data: {
+      // 7. Upsert the report (create if new, update content if regenerating)
+      const report = await ctx.db.reviewReport.upsert({
+        where: { reviewId: input.reviewId },
+        create: {
           reviewId: input.reviewId,
           titleEn,
           titleFr,
+          content: reportContent as unknown as Prisma.InputJsonValue,
           status: "DRAFT",
           draftedAt: new Date(),
+          overallEI,
+          overallMaturity,
+        },
+        update: {
+          content: reportContent as unknown as Prisma.InputJsonValue,
           overallEI,
           overallMaturity,
         },
       });
 
       return report;
+    }),
+
+  /**
+   * Get the stored report with its structured content for a review.
+   * Returns null if no report has been generated yet.
+   */
+  getByReviewId: protectedProcedure
+    .input(getByReviewIdSchema)
+    .query(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+      const userRole = ctx.session.user.role;
+      const userOrgId = ctx.session.user.organizationId ?? null;
+
+      // Authorization
+      const canView = await canViewReport(
+        ctx.db,
+        userId,
+        userRole,
+        userOrgId,
+        input.reviewId
+      );
+
+      if (!canView) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to view this report. / Vous n'avez pas la permission de consulter ce rapport.",
+        });
+      }
+
+      const report = await ctx.db.reviewReport.findUnique({
+        where: { reviewId: input.reviewId },
+      });
+
+      if (!report) {
+        return null;
+      }
+
+      return {
+        id: report.id,
+        reviewId: report.reviewId,
+        titleEn: report.titleEn,
+        titleFr: report.titleFr,
+        status: report.status as ReportStatus,
+        overallEI: report.overallEI,
+        overallMaturity: report.overallMaturity,
+        content: (report.content as unknown as ReportContent) ?? null,
+        draftedAt: report.draftedAt,
+        reviewedAt: report.reviewedAt,
+        finalizedAt: report.finalizedAt,
+        pdfUrl: report.pdfUrl,
+        createdAt: report.createdAt,
+        updatedAt: report.updatedAt,
+      };
     }),
 
   /**
@@ -808,6 +897,205 @@ export const reportRouter = router({
       const { reportId, ...updateData } = input;
       const updatedReport = await ctx.db.reviewReport.update({
         where: { id: reportId },
+        data: updateData,
+      });
+
+      return updatedReport;
+    }),
+
+  /**
+   * Update an editable section (executive summary, recommendations, conclusion)
+   * within the stored report content JSON. Only DRAFT reports can be edited.
+   */
+  updateSection: protectedProcedure
+    .input(updateSectionSchema)
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+      const userRole = ctx.session.user.role;
+
+      // Authorization
+      const canEdit = await canEditReport(ctx.db, userId, userRole, input.reviewId);
+      if (!canEdit) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to edit this report. / Vous n'avez pas la permission de modifier ce rapport.",
+        });
+      }
+
+      // Fetch report
+      const report = await ctx.db.reviewReport.findUnique({
+        where: { reviewId: input.reviewId },
+      });
+
+      if (!report) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Report not found. Generate it first. / Rapport non trouvé. Générez-le d'abord.",
+        });
+      }
+
+      if (report.status === "FINALIZED") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot edit a finalized report. / Impossible de modifier un rapport finalisé.",
+        });
+      }
+
+      const content = report.content as unknown as ReportContent | null;
+      if (!content) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Report has no generated content. Generate the report first. / Le rapport n'a pas de contenu généré. Générez le rapport d'abord.",
+        });
+      }
+
+      // Build the updated section
+      const sectionKey = input.sectionKey as (typeof EDITABLE_SECTION_KEYS)[number];
+      const currentSection = content.sections[sectionKey] as EditableSection;
+
+      const updatedSection: EditableSection = {
+        contentEn: input.contentEn !== undefined ? input.contentEn : currentSection.contentEn,
+        contentFr: input.contentFr !== undefined ? input.contentFr : currentSection.contentFr,
+        lastEditedBy: userId,
+        lastEditedAt: new Date().toISOString(),
+      };
+
+      // Merge into content
+      const updatedContent: ReportContent = {
+        ...content,
+        sections: {
+          ...content.sections,
+          [sectionKey]: updatedSection,
+        },
+      };
+
+      // Also sync the denormalized executive summary fields if applicable
+      const extraData: Record<string, string | null> = {};
+      if (sectionKey === "executiveSummary") {
+        if (input.contentEn !== undefined) extraData.executiveSummaryEn = input.contentEn;
+        if (input.contentFr !== undefined) extraData.executiveSummaryFr = input.contentFr;
+      }
+
+      const updatedReport = await ctx.db.reviewReport.update({
+        where: { reviewId: input.reviewId },
+        data: {
+          content: updatedContent as unknown as Prisma.InputJsonValue,
+          ...extraData,
+        },
+      });
+
+      return {
+        id: updatedReport.id,
+        sectionKey,
+        updatedSection,
+      };
+    }),
+
+  /**
+   * Update report status with workflow validation (by reviewId)
+   */
+  updateReportStatus: protectedProcedure
+    .input(updateStatusByReviewSchema)
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+      const userRole = ctx.session.user.role;
+
+      // Get current report by reviewId
+      const report = await ctx.db.reviewReport.findUnique({
+        where: { reviewId: input.reviewId },
+        select: { id: true, status: true, content: true },
+      });
+
+      if (!report) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Report not found. Generate it first. / Rapport non trouvé. Générez-le d'abord.",
+        });
+      }
+
+      const currentStatus = report.status as ReportStatus;
+      const newStatus = input.status;
+
+      // Validate status transition
+      if (!isValidStatusTransition(currentStatus, newStatus)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Invalid status transition from ${currentStatus} to ${newStatus}. / Transition de statut invalide de ${currentStatus} à ${newStatus}.`,
+        });
+      }
+
+      // For DRAFT → UNDER_REVIEW: check that editable sections have content
+      if (newStatus === "UNDER_REVIEW") {
+        const content = report.content as unknown as ReportContent | null;
+        if (content) {
+          const emptySections: string[] = [];
+          for (const key of EDITABLE_SECTION_KEYS) {
+            const section = content.sections[key] as EditableSection;
+            if (!section.contentEn && !section.contentFr) {
+              emptySections.push(key);
+            }
+          }
+          if (emptySections.length > 0) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: `The following sections must be filled before submitting for review: ${emptySections.join(", ")}. / Les sections suivantes doivent être remplies avant la soumission pour revue : ${emptySections.join(", ")}.`,
+            });
+          }
+        }
+      }
+
+      // Check finalize permission
+      if (newStatus === "FINALIZED") {
+        if (!REPORT_FINALIZE_ROLES.includes(userRole)) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Only Lead Reviewers and Programme Management can finalize reports. / Seuls les Réviseurs Principaux et la Direction du Programme peuvent finaliser les rapports.",
+          });
+        }
+
+        // For LEAD_REVIEWER, check they're the assigned team lead
+        if (userRole === "LEAD_REVIEWER") {
+          const isLead = await ctx.db.reviewTeamMember.findFirst({
+            where: {
+              reviewId: input.reviewId,
+              userId,
+              role: "LEAD_REVIEWER",
+            },
+          });
+
+          if (!isLead) {
+            throw new TRPCError({
+              code: "FORBIDDEN",
+              message: "Only the assigned Lead Reviewer can finalize this report. / Seul le Réviseur Principal assigné peut finaliser ce rapport.",
+            });
+          }
+        }
+      } else {
+        // Check general edit permission for other transitions
+        const canEdit = await canEditReport(ctx.db, userId, userRole, input.reviewId);
+        if (!canEdit) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You do not have permission to change the report status. / Vous n'avez pas la permission de modifier le statut du rapport.",
+          });
+        }
+      }
+
+      // Prepare timestamp updates
+      const updateData: {
+        status: string;
+        reviewedAt?: Date;
+        finalizedAt?: Date;
+      } = { status: newStatus };
+
+      if (newStatus === "UNDER_REVIEW") {
+        updateData.reviewedAt = new Date();
+      } else if (newStatus === "FINALIZED") {
+        updateData.finalizedAt = new Date();
+      }
+
+      const updatedReport = await ctx.db.reviewReport.update({
+        where: { reviewId: input.reviewId },
         data: updateData,
       });
 

@@ -85,6 +85,7 @@ const MATURITY_LEVEL_SCORES: Record<string, number> = {
 };
 
 /** Map maturity level enum to letter label */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const MATURITY_LEVEL_LABELS: Record<string, string> = {
   LEVEL_A: "A",
   LEVEL_B: "B",
@@ -667,10 +668,6 @@ function buildAnnexes(documents: any[]): AnnexesSection {
 }
 
 function buildIntroduction(review: any, locale: "en" | "fr"): IntroductionSection {
-  const orgName = locale === "en"
-    ? review.hostOrganization.nameEn
-    : review.hostOrganization.nameFr;
-
   const backgroundEn = `This report presents the findings of the AAPRP peer review conducted for ${review.hostOrganization.nameEn} (${review.hostOrganization.organizationCode || ""}) in ${review.hostOrganization.country}. The review was carried out under the African ANSP Peer Review Programme in accordance with ICAO standards and CANSO guidelines.`;
   const backgroundFr = `Ce rapport présente les résultats de la revue par les pairs de l'AAPRP menée pour ${review.hostOrganization.nameFr} (${review.hostOrganization.organizationCode || ""}) au/en ${review.hostOrganization.country}. La revue a été réalisée dans le cadre du Programme Africain de Revue par les Pairs des ANSP, conformément aux normes de l'OACI et aux directives de CANSO.`;
 

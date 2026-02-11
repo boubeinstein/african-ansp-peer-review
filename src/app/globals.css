@@ -608,6 +608,140 @@ body {
   }
 }
 
+/* ============================================
+   Report Print Stylesheet
+   Ctrl+P from Report tab produces a clean printout
+   with all sections visible sequentially.
+   ============================================ */
+@media print {
+  /* Reset viewport constraints for print */
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Hide app shell chrome: sidebar, header, mobile nav */
+  .app-container > div:first-child {
+    /* Sidebar */
+    display: none !important;
+  }
+
+  .app-container header,
+  .app-container nav[data-tour="sidebar"] {
+    display: none !important;
+  }
+
+  /* Hide mobile bottom navigation */
+  .app-container > [class*="md:hidden"],
+  .app-container [class*="sticky"][class*="md:hidden"] {
+    display: none !important;
+  }
+
+  /* Hide tab navigation bar — content shown sequentially */
+  [role="tablist"] {
+    display: none !important;
+  }
+
+  /* Show ALL tab panels sequentially */
+  [role="tabpanel"] {
+    display: block !important;
+    opacity: 1 !important;
+    position: static !important;
+    visibility: visible !important;
+    animation: none !important;
+  }
+
+  /* Reset report viewer layout for print */
+  .report-viewer {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Reset main content area */
+  #main-content {
+    overflow: visible !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+
+  .app-container {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .app-container > div:last-of-type {
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  /* Page breaks before major report sections */
+  .report-section {
+    page-break-before: auto;
+    page-break-inside: avoid;
+  }
+
+  [role="tabpanel"] + [role="tabpanel"] {
+    page-break-before: always;
+  }
+
+  /* Prevent tables from splitting across pages */
+  table {
+    page-break-inside: avoid;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  /* Cards should not split */
+  [class*="rounded-lg"][class*="border"] {
+    page-break-inside: avoid;
+  }
+
+  /* Hide interactive elements in print */
+  .report-no-print,
+  button:not(.report-print-keep),
+  [data-state="closed"],
+  .prerequisites-checklist {
+    display: none !important;
+  }
+
+  /* Force light colors for print */
+  * {
+    color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Print margins */
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
+
+  @page :first {
+    margin-top: 2cm;
+  }
+
+  /* Charts — ensure they render */
+  .recharts-wrapper {
+    page-break-inside: avoid;
+  }
+
+  /* Expand truncated text for print */
+  .truncate {
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+  }
+}
+
 /* ===========================================
    Scroll Container Utilities
    =========================================== */

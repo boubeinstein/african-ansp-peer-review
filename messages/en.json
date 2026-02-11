@@ -5899,7 +5899,17 @@
       "assignedAreas": "Assigned Areas",
       "status": "Status",
       "confirmed": "Confirmed",
-      "pending": "Pending"
+      "pending": "Pending",
+      "country": "Country",
+      "technicalExperts": "Technical Experts",
+      "observerOrganizations": "Observer Organizations",
+      "expertiseCoverage": "Expertise Coverage Matrix",
+      "gapsDetected": "Gaps Detected",
+      "areaCode": "Code",
+      "areaName": "Audit Area",
+      "coveredBy": "Covered By",
+      "coverageStatus": "Status",
+      "noExpertAssigned": "No expert assigned"
     },
     "cards": {
       "eiScore": "EI Score",

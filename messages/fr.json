@@ -5899,7 +5899,17 @@
       "assignedAreas": "Domaines Assignés",
       "status": "Statut",
       "confirmed": "Confirmé",
-      "pending": "En Attente"
+      "pending": "En Attente",
+      "country": "Pays",
+      "technicalExperts": "Experts Techniques",
+      "observerOrganizations": "Organisations Observatrices",
+      "expertiseCoverage": "Matrice de Couverture des Compétences",
+      "gapsDetected": "Lacunes Détectées",
+      "areaCode": "Code",
+      "areaName": "Domaine d'Audit",
+      "coveredBy": "Couvert Par",
+      "coverageStatus": "Statut",
+      "noExpertAssigned": "Aucun expert assigné"
     },
     "cards": {
       "eiScore": "Score EI",

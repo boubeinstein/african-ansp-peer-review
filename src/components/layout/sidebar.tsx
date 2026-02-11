@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { UserRole } from "@/types/prisma-enums";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc/client";
+import { usePusherConnectionState } from "@/lib/pusher/client";
 import { getNavigationForRole } from "@/lib/rbac";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -108,6 +109,14 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
     }
   );
 
+  // Fetch live session count for sidebar indicator
+  const pusherState = usePusherConnectionState();
+  const { data: liveSessionCount } =
+    trpc.collaboration.getActiveSessionCount.useQuery(undefined, {
+      refetchInterval: pusherState === "connected" ? false : 60000,
+      staleTime: 15000,
+    });
+
   // Get navigation items based on user role, system feature flags, and user preferences
   const navItems = useMemo(() => {
     const roleNavItems = getNavigationForRole(userRole);
@@ -156,6 +165,11 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
               const Icon = item.icon;
               const dataTourAttr = `nav-${item.name}`;
 
+              const hasLiveSession =
+                item.name === "reviews" &&
+                liveSessionCount != null &&
+                liveSessionCount > 0;
+
               if (collapsed) {
                 return (
                   <Tooltip key={item.name} delayDuration={0}>
@@ -164,13 +178,19 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
                         href={`/${locale}${item.href}`}
                         data-tour={dataTourAttr}
                         className={cn(
-                          "flex h-10 w-10 items-center justify-center rounded-lg transition-colors",
+                          "relative flex h-10 w-10 items-center justify-center rounded-lg transition-colors",
                           isActive
                             ? "bg-primary text-primary-foreground"
                             : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                         )}
                       >
                         <Icon className="h-5 w-5" />
+                        {hasLiveSession && (
+                          <span className="absolute top-1 right-1 flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+                          </span>
+                        )}
                       </Link>
                     </TooltipTrigger>
                     <TooltipContent side="right">{t(item.name)}</TooltipContent>
@@ -192,6 +212,12 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
                 >
                   <Icon className="h-5 w-5" />
                   <span className="text-sm font-medium">{t(item.name)}</span>
+                  {hasLiveSession && (
+                    <span className="ml-auto flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-green-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+                    </span>
+                  )}
                 </Link>
               );
             })}

@@ -21,6 +21,7 @@ import { MyTeamWidget } from "@/components/features/dashboard/my-team-widget";
 import { TeamPerformanceOverview } from "@/components/features/dashboard/team-performance-overview";
 import { RoleQuickActions } from "@/components/features/dashboard/role-quick-actions";
 import { RecentActivityWidget } from "@/components/features/dashboard/RecentActivityWidget";
+import { ActiveSessionsWidget } from "@/components/features/dashboard/active-sessions-widget";
 import type { UserRole } from "@/types/prisma-enums";
 
 // =============================================================================
@@ -248,6 +249,9 @@ export function DashboardContent({
           </Button>
         )}
       </div>
+
+      {/* Active Sessions - 1-click workspace access */}
+      <ActiveSessionsWidget locale={locale} />
 
       {/* Role-Based Stat Cards */}
       <RoleStatCards

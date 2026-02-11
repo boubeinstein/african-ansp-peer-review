@@ -37,7 +37,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { FocusIndicator } from "@/components/collaboration";
-import type { PresenceMember } from "@/hooks/use-presence";
+import type { FocusedUser } from "@/hooks/use-focus-tracker";
 
 interface Document {
   id: string;
@@ -56,8 +56,7 @@ interface DocumentListProps {
   reviewId: string;
   onView?: (doc: Document) => void;
   onDelete?: (doc: Document) => void;
-  presenceMembers?: PresenceMember[];
-  currentUserId?: string;
+  getViewers?: (focusKey: string) => FocusedUser[];
 }
 
 const CATEGORIES = [
@@ -88,12 +87,14 @@ const statusIcons: Record<string, React.ReactNode> = {
   REJECTED: <AlertCircle className="h-4 w-4 text-red-500" />,
 };
 
+const emptyViewers: FocusedUser[] = [];
+const noopGetViewers = () => emptyViewers;
+
 export function DocumentList({
   documents,
   onView,
   onDelete,
-  presenceMembers = [],
-  currentUserId,
+  getViewers = noopGetViewers,
 }: DocumentListProps) {
   const t = useTranslations("reviews.detail.documents");
   const locale = useLocale();
@@ -244,9 +245,7 @@ export function DocumentList({
 
                   {/* Presence Indicator */}
                   <FocusIndicator
-                    members={presenceMembers}
-                    focusKey={`document:${doc.id}`}
-                    currentUserId={currentUserId}
+                    viewers={getViewers(`document:${doc.id}`)}
                     size="sm"
                     className="shrink-0"
                   />

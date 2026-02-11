@@ -19,20 +19,22 @@ import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
 import { DocumentList } from "./documents/document-list";
 import { UploadDialog } from "./documents/upload-dialog";
-import { usePresence } from "@/hooks/use-presence";
+import { useFocusTracker } from "@/hooks/use-focus-tracker";
 import type { ReviewData } from "../../_lib/fetch-review-data";
 
 interface DocumentsTabProps {
   review: ReviewData;
   userId?: string;
+  userName?: string;
 }
 
-export function DocumentsTab({ review, userId }: DocumentsTabProps) {
+export function DocumentsTab({ review, userId, userName }: DocumentsTabProps) {
   const t = useTranslations("reviews.detail.documents");
   const utils = trpc.useUtils();
-  const { members: presenceMembers } = usePresence({
+  const { getViewers } = useFocusTracker({
     reviewId: review.id,
-    userId,
+    userId: userId ?? "",
+    userName: userName ?? "",
   });
 
   const [showUpload, setShowUpload] = useState(false);
@@ -140,8 +142,7 @@ export function DocumentsTab({ review, userId }: DocumentsTabProps) {
           reviewId={review.id}
           onView={handleView}
           onDelete={handleDelete}
-          presenceMembers={presenceMembers}
-          currentUserId={userId}
+          getViewers={getViewers}
         />
       )}
 

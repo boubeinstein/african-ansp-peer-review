@@ -4,59 +4,76 @@ import { getPusherServer } from "@/lib/pusher/server";
 import { prisma } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  try {
+    const session = await auth();
 
-  const body = await req.text();
-  const params = new URLSearchParams(body);
-  const socketId = params.get("socket_id");
-  const channelName = params.get("channel_name");
-
-  console.log("[Pusher Auth] Request:", { userId: session.user.id, channelName });
-
-  if (!socketId || !channelName) {
-    return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
-  }
-
-  const pusher = getPusherServer();
-
-  if (channelName.startsWith("presence-")) {
-    const hasAccess = await verifyChannelAccess(session.user.id, channelName);
-    console.log("[Pusher Auth] Access:", hasAccess);
-    
-    if (!hasAccess) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!session?.user) {
+      console.log("[Pusher Auth] No session - unauthorized");
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const presenceData = {
-      user_id: session.user.id,
-      user_info: {
-        id: session.user.id,
-        name: `${session.user.firstName} ${session.user.lastName}`,
-        email: session.user.email,
-        role: session.user.role,
-        avatar: getInitials(session.user.firstName, session.user.lastName),
-        color: getUserColor(session.user.id),
-      },
-    };
+    const body = await req.text();
+    const params = new URLSearchParams(body);
+    const socketId = params.get("socket_id");
+    const channelName = params.get("channel_name");
 
-    const authResponse = pusher.authorizeChannel(socketId, channelName, presenceData);
-    return NextResponse.json(authResponse);
-  }
+    console.log("[Pusher Auth] Request:", {
+      userId: session.user.id,
+      role: session.user.role,
+      channelName,
+      socketId: socketId?.slice(0, 8) + "...",
+    });
 
-  if (channelName.startsWith("private-")) {
-    const hasAccess = await verifyChannelAccess(session.user.id, channelName);
-    if (!hasAccess) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!socketId || !channelName) {
+      console.log("[Pusher Auth] Missing params:", { socketId: !!socketId, channelName: !!channelName });
+      return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
     }
-    const authResponse = pusher.authorizeChannel(socketId, channelName);
-    return NextResponse.json(authResponse);
-  }
 
-  return NextResponse.json({ error: "Invalid channel" }, { status: 400 });
+    const pusher = getPusherServer();
+
+    if (channelName.startsWith("presence-")) {
+      const hasAccess = await verifyChannelAccess(session.user.id, channelName);
+      console.log("[Pusher Auth] Presence access:", { channelName, hasAccess });
+
+      if (!hasAccess) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+
+      const presenceData = {
+        user_id: session.user.id,
+        user_info: {
+          id: session.user.id,
+          name: `${session.user.firstName} ${session.user.lastName}`,
+          email: session.user.email,
+          role: session.user.role,
+          avatar: getInitials(session.user.firstName, session.user.lastName),
+          color: getUserColor(session.user.id),
+        },
+      };
+
+      const authResponse = pusher.authorizeChannel(socketId, channelName, presenceData);
+      return NextResponse.json(authResponse);
+    }
+
+    if (channelName.startsWith("private-")) {
+      const hasAccess = await verifyChannelAccess(session.user.id, channelName);
+      if (!hasAccess) {
+        console.log("[Pusher Auth] Private access denied:", { channelName, userId: session.user.id });
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+      const authResponse = pusher.authorizeChannel(socketId, channelName);
+      return NextResponse.json(authResponse);
+    }
+
+    console.log("[Pusher Auth] Invalid channel type:", channelName);
+    return NextResponse.json({ error: "Invalid channel" }, { status: 400 });
+  } catch (error) {
+    console.error("[Pusher Auth] Unexpected error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
 }
 
 async function verifyChannelAccess(userId: string, channelName: string): Promise<boolean> {

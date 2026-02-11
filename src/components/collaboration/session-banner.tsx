@@ -37,7 +37,7 @@ import { cn } from "@/lib/utils";
 import { StartSessionDialog } from "./start-session-dialog";
 import { SessionPanel } from "./session-panel";
 import { usePresence } from "@/hooks/use-presence";
-import { isPusherAvailable } from "@/lib/pusher/client";
+import { isPusherAvailable, usePusherConnectionState } from "@/lib/pusher/client";
 import { toast } from "sonner";
 
 interface SessionBannerProps {
@@ -93,6 +93,8 @@ export function SessionBanner({
   const [showEndDialog, setShowEndDialog] = useState(false);
   const [showSessionPanel, setShowSessionPanel] = useState(false);
   const pusherAvailable = isPusherAvailable();
+  const pusherState = usePusherConnectionState();
+  const pusherConnected = pusherState === "connected";
   const utils = trpc.useUtils();
 
   // Get active session from database
@@ -101,7 +103,7 @@ export function SessionBanner({
       { reviewId },
       {
         enabled: !!userId && !!reviewId,
-        refetchInterval: pusherAvailable ? 30000 : 10000,
+        refetchInterval: pusherConnected ? false : 30000,
       }
     );
 

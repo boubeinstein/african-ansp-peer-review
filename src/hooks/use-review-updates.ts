@@ -59,6 +59,20 @@ interface TaskEventData {
   timestamp: string;
 }
 
+interface SessionEventData {
+  session: {
+    id: string;
+    type: string;
+    title?: string | null;
+    startedBy: { id: string; firstName: string; lastName: string };
+  };
+}
+
+interface SessionEndedData {
+  sessionId: string;
+  endedAt: string;
+}
+
 /**
  * Hook that subscribes to Pusher events for a review and auto-invalidates
  * tRPC queries when other team members make changes.
@@ -81,6 +95,12 @@ export function useReviewUpdates({
     channelRef.current = channel;
 
     // --- Finding events ---
+    // Helper to invalidate notification queries (bell updates in real-time)
+    const invalidateNotifications = () => {
+      utils.notification.getRecent.invalidate();
+      utils.notification.getUnreadCount.invalidate();
+    };
+
     channel.bind(EVENTS.FINDING_CREATED, (data: FindingEventData) => {
       if (data.createdBy && data.createdBy.id !== userId) {
         toast.info(
@@ -91,6 +111,7 @@ export function useReviewUpdates({
       utils.finding.getStats.invalidate();
       utils.finding.getByReview.invalidate({ reviewId });
       utils.collaboration.getRecentActivity.invalidate({ reviewId });
+      invalidateNotifications();
     });
 
     channel.bind(EVENTS.FINDING_UPDATED, (data: FindingEventData) => {
@@ -104,6 +125,7 @@ export function useReviewUpdates({
       utils.finding.getStats.invalidate();
       utils.finding.getByReview.invalidate({ reviewId });
       utils.collaboration.getRecentActivity.invalidate({ reviewId });
+      invalidateNotifications();
     });
 
     channel.bind(EVENTS.FINDING_DELETED, (data: FindingDeletedData) => {
@@ -116,6 +138,7 @@ export function useReviewUpdates({
       utils.finding.getStats.invalidate();
       utils.finding.getByReview.invalidate({ reviewId });
       utils.collaboration.getRecentActivity.invalidate({ reviewId });
+      invalidateNotifications();
     });
 
     // --- Discussion events ---
@@ -143,6 +166,7 @@ export function useReviewUpdates({
         });
       }
       utils.collaboration.getRecentActivity.invalidate({ reviewId });
+      invalidateNotifications();
     });
 
     // --- Task events ---
@@ -173,6 +197,31 @@ export function useReviewUpdates({
       if (data.task.id && data.changeType !== "deleted") {
         utils.reviewTask.getById.invalidate({ id: data.task.id });
       }
+      utils.collaboration.getRecentActivity.invalidate({ reviewId });
+      invalidateNotifications();
+    });
+
+    // --- Session events ---
+    channel.bind(EVENTS.SESSION_STARTED, (data: SessionEventData) => {
+      const starter = data.session.startedBy;
+      const starterId = starter.id;
+      if (starterId !== userId) {
+        toast.info(
+          `${starter.firstName} ${starter.lastName} started a collaboration session`
+        );
+      }
+      utils.collaboration.getActiveSession.invalidate({ reviewId });
+      utils.collaboration.getActiveSessionCount.invalidate();
+      utils.collaboration.getMyActiveSessions.invalidate();
+      utils.collaboration.getRecentActivity.invalidate({ reviewId });
+      invalidateNotifications();
+    });
+
+    channel.bind(EVENTS.SESSION_ENDED, (data: SessionEndedData) => {
+      void data;
+      utils.collaboration.getActiveSession.invalidate({ reviewId });
+      utils.collaboration.getActiveSessionCount.invalidate();
+      utils.collaboration.getMyActiveSessions.invalidate();
       utils.collaboration.getRecentActivity.invalidate({ reviewId });
     });
 

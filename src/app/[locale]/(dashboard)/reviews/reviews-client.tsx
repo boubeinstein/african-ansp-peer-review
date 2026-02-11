@@ -7,7 +7,7 @@
  */
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import {
   Card,
@@ -49,6 +49,7 @@ import {
   List,
   UserPlus,
   UserCog,
+  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -116,6 +117,7 @@ export function ReviewsPageClient({
     : false;
   const t = useTranslations("reviews");
   const tCommon = useTranslations("common");
+  const locale = useLocale();
   const router = useRouter();
   const utils = trpc.useUtils();
 
@@ -174,6 +176,11 @@ export function ReviewsPageClient({
     actualEndDate: Date | null;
     teamMemberCount: number;
     findingCount: number;
+    sessions: {
+      id: string;
+      title: string | null;
+      _count: { participants: number };
+    }[];
   };
   const filteredReviews: ReviewItem[] =
     reviewsData?.items.filter((review: ReviewItem) => {
@@ -354,6 +361,7 @@ export function ReviewsPageClient({
               key={review.id}
               review={review}
               viewMode={viewMode}
+              locale={locale}
               onClick={() => router.push(`/reviews/${review.id}`)}
               onAssignTeam={handleAssignTeam}
               canManageTeams={canManageTeams}
@@ -479,8 +487,14 @@ interface ReviewCardProps {
     actualEndDate: Date | null;
     teamMemberCount: number;
     findingCount: number;
+    sessions: {
+      id: string;
+      title: string | null;
+      _count: { participants: number };
+    }[];
   };
   viewMode: "grid" | "list";
+  locale: string;
   onClick: () => void;
   onAssignTeam: (reviewId: string) => void;
   canManageTeams: boolean;
@@ -499,6 +513,7 @@ const ASSIGNABLE_STATUSES: ReviewStatus[] = [
 function ReviewCard({
   review,
   viewMode,
+  locale,
   onClick,
   onAssignTeam,
   canManageTeams,
@@ -506,9 +521,13 @@ function ReviewCard({
   userOrganizationId,
 }: ReviewCardProps) {
   const t = useTranslations("reviews");
+  const router = useRouter();
 
   const startDate = review.actualStartDate || review.plannedStartDate;
   const endDate = review.actualEndDate || review.plannedEndDate;
+
+  const activeSession = review.sessions?.[0];
+  const isLive = !!activeSession;
 
   // Check if assignment is possible based on review status
   const isAssignableStatus = ASSIGNABLE_STATUSES.includes(review.status);
@@ -543,6 +562,15 @@ function ReviewCard({
                     {t("needsTeam")}
                   </Badge>
                 )}
+                {isLive && (
+                  <Badge className="bg-green-500/10 text-green-600 border-green-500/30 hover:bg-green-500/20">
+                    <span className="relative flex h-2 w-2 mr-1.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+                    </span>
+                    {t("live.badge")} &middot; {activeSession._count.participants} {t("live.online")}
+                  </Badge>
+                )}
               </div>
               <h3 className="font-semibold truncate mt-1">
                 {review.hostOrganization.nameEn}
@@ -571,6 +599,22 @@ function ReviewCard({
                 </span>
               </div>
             </div>
+
+            {/* Quick Join Button */}
+            {isLive && (
+              <Button
+                size="sm"
+                variant="ghost"
+                className="shrink-0 text-green-600 hover:text-green-700 hover:bg-green-500/10"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(`/${locale}/reviews/${review.id}?tab=workspace`);
+                }}
+              >
+                <Zap className="h-3.5 w-3.5 mr-1" />
+                {t("live.join")}
+              </Button>
+            )}
 
             {/* Assign/Manage Team Button */}
             {canAssignTeam && (
@@ -636,6 +680,15 @@ function ReviewCard({
               {t("needsTeam")}
             </Badge>
           )}
+          {isLive && (
+            <Badge className="bg-green-500/10 text-green-600 border-green-500/30 hover:bg-green-500/20">
+              <span className="relative flex h-2 w-2 mr-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+              </span>
+              {t("live.badge")} &middot; {activeSession._count.participants} {t("live.online")}
+            </Badge>
+          )}
         </div>
 
         {startDate && endDate && (
@@ -656,6 +709,22 @@ function ReviewCard({
             {t("findings", { count: review.findingCount })}
           </span>
         </div>
+
+        {/* Quick Join Session Button */}
+        {isLive && (
+          <Button
+            size="sm"
+            variant="outline"
+            className="w-full text-green-600 border-green-500/30 hover:text-green-700 hover:bg-green-500/10"
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`/${locale}/reviews/${review.id}?tab=workspace`);
+            }}
+          >
+            <Zap className="h-3.5 w-3.5 mr-1" />
+            {t("live.join")}
+          </Button>
+        )}
 
         {/* Assign/Manage Team Button */}
         {canAssignTeam && (

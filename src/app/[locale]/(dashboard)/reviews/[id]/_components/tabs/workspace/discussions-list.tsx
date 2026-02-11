@@ -18,13 +18,16 @@ import { useTranslations, useLocale } from "next-intl";
 import { formatDistanceToNow } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import { trpc } from "@/lib/trpc/client";
+import { usePusherConnectionState } from "@/lib/pusher/client";
 import { DiscussionDetail } from "./discussion-detail";
 
 interface DiscussionsListProps {
   reviewId: string;
+  userId?: string;
+  userName?: string;
 }
 
-export function DiscussionsList({ reviewId }: DiscussionsListProps) {
+export function DiscussionsList({ reviewId, userId, userName }: DiscussionsListProps) {
   const t = useTranslations("reviews.detail.workspace.discussionsList");
   const locale = useLocale();
   const dateLocale = locale === "fr" ? fr : enUS;
@@ -32,12 +35,13 @@ export function DiscussionsList({ reviewId }: DiscussionsListProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const pusherState = usePusherConnectionState();
 
   const includeResolved = statusFilter === "all" || statusFilter === "CLOSED";
 
   const { data, isLoading } = trpc.reviewDiscussion.list.useQuery(
     { reviewId, includeResolved, pageSize: 50 },
-    { refetchInterval: 15000 }
+    { refetchInterval: pusherState === "connected" ? false : 60000 }
   );
 
   const discussions = data?.discussions ?? [];
@@ -61,6 +65,8 @@ export function DiscussionsList({ reviewId }: DiscussionsListProps) {
       <DiscussionDetail
         discussionId={selectedId}
         reviewId={reviewId}
+        userId={userId}
+        userName={userName}
         onBack={() => setSelectedId(null)}
       />
     );

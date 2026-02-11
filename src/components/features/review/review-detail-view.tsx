@@ -41,6 +41,7 @@ import {
   PresenceAvatars,
 } from "@/components/collaboration";
 import { useLiveSync } from "@/hooks/use-live-sync";
+import { usePusherConnectionState } from "@/lib/pusher/client";
 
 // UI Components
 import { Button } from "@/components/ui/button";
@@ -162,6 +163,8 @@ export function ReviewDetailView({
 }: ReviewDetailViewProps) {
   const t = useTranslations("review.detail");
   const utils = trpc.useUtils();
+  const pusherState = usePusherConnectionState();
+  const pusherConnected = pusherState === "connected";
 
   // Team assignment wizard state
   const [teamWizardOpen, setTeamWizardOpen] = useState(false);
@@ -187,7 +190,7 @@ export function ReviewDetailView({
     { reviewId },
     {
       enabled: !!userId,
-      refetchInterval: 30000,
+      refetchInterval: pusherConnected ? false : 30000,
     }
   );
 

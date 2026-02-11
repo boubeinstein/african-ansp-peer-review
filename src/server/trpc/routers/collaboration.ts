@@ -10,6 +10,59 @@ import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure } from "@/server/trpc/trpc";
 import { getPusherServer, CHANNELS, EVENTS } from "@/lib/pusher/server";
 import { SessionType, Prisma } from "@prisma/client";
+import { prisma } from "@/lib/db";
+import type { NotificationPriority } from "@prisma/client";
+
+// =============================================================================
+// HELPERS
+// =============================================================================
+
+/**
+ * Create in-app notifications for team members of a review.
+ * Excludes the acting user. Fire-and-forget (errors are logged, not thrown).
+ */
+async function notifyReviewTeam(opts: {
+  reviewId: string;
+  excludeUserId: string;
+  type: string;
+  priority?: NotificationPriority;
+  titleEn: string;
+  titleFr: string;
+  messageEn: string;
+  messageFr: string;
+  entityType?: string;
+  entityId?: string;
+  actionUrl?: string;
+}) {
+  try {
+    const members = await prisma.reviewTeamMember.findMany({
+      where: {
+        reviewId: opts.reviewId,
+        userId: { not: opts.excludeUserId },
+      },
+      select: { userId: true },
+    });
+
+    if (members.length === 0) return;
+
+    await prisma.notification.createMany({
+      data: members.map((m) => ({
+        userId: m.userId,
+        type: opts.type as never,
+        priority: opts.priority ?? "NORMAL",
+        titleEn: opts.titleEn,
+        titleFr: opts.titleFr,
+        messageEn: opts.messageEn,
+        messageFr: opts.messageFr,
+        entityType: opts.entityType,
+        entityId: opts.entityId,
+        actionUrl: opts.actionUrl,
+      })),
+    });
+  } catch (err) {
+    console.error("[collaboration] Failed to create team notifications:", err);
+  }
+}
 
 // =============================================================================
 // COLLABORATION ROUTER
@@ -125,6 +178,27 @@ export const collaborationRouter = router({
           },
         }
       );
+
+      // Notify team members (fire-and-forget)
+      const review = await ctx.db.review.findUnique({
+        where: { id: input.reviewId },
+        select: { referenceNumber: true },
+      });
+      const hostName = `${session.startedBy.firstName} ${session.startedBy.lastName}`;
+      const ref = review?.referenceNumber || input.reviewId;
+      notifyReviewTeam({
+        reviewId: input.reviewId,
+        excludeUserId: userId,
+        type: "REVIEW_STARTED",
+        priority: "HIGH",
+        titleEn: "Live session started",
+        titleFr: "Session en direct démarrée",
+        messageEn: `${hostName} started a collaboration session for ${ref}`,
+        messageFr: `${hostName} a démarré une session de collaboration pour ${ref}`,
+        entityType: "ReviewSession",
+        entityId: session.id,
+        actionUrl: `/reviews/${input.reviewId}?tab=workspace`,
+      });
 
       return session;
     }),
@@ -582,6 +656,23 @@ export const collaborationRouter = router({
         }
       );
 
+      // Notify team members (fire-and-forget)
+      const creatorName = `${user?.firstName} ${user?.lastName}`;
+      const severity = input.finding.severity;
+      notifyReviewTeam({
+        reviewId: input.reviewId,
+        excludeUserId: userId,
+        type: "FINDING_CREATED",
+        priority: severity === "CRITICAL" ? "HIGH" : "NORMAL",
+        titleEn: `New finding: ${input.finding.referenceNumber}`,
+        titleFr: `Nouvelle constatation : ${input.finding.referenceNumber}`,
+        messageEn: `${creatorName} created a ${severity} finding: ${input.finding.title}`,
+        messageFr: `${creatorName} a créé une constatation ${severity} : ${input.finding.title}`,
+        entityType: "Finding",
+        entityId: input.finding.id,
+        actionUrl: `/reviews/${input.reviewId}?tab=findings`,
+      });
+
       return { success: true };
     }),
 
@@ -751,6 +842,22 @@ export const collaborationRouter = router({
           timestamp: new Date(),
         }
       );
+
+      // Notify team members (fire-and-forget)
+      const authorName = `${user?.firstName} ${user?.lastName}`;
+      const preview = input.comment.content.slice(0, 60);
+      notifyReviewTeam({
+        reviewId: input.reviewId,
+        excludeUserId: userId,
+        type: "REMINDER",
+        titleEn: "New discussion comment",
+        titleFr: "Nouveau commentaire de discussion",
+        messageEn: `${authorName}: ${preview}${input.comment.content.length > 60 ? "..." : ""}`,
+        messageFr: `${authorName} : ${preview}${input.comment.content.length > 60 ? "..." : ""}`,
+        entityType: "ReviewDiscussion",
+        entityId: input.comment.parentId,
+        actionUrl: `/reviews/${input.reviewId}?tab=workspace`,
+      });
 
       return { success: true };
     }),
@@ -928,6 +1035,102 @@ export const collaborationRouter = router({
         lastSeenAt: p.lastSeenAt,
       }));
     }),
+
+  // ==========================================================================
+  // DASHBOARD: MY ACTIVE SESSIONS
+  // ==========================================================================
+
+  /**
+   * Get all active sessions the current user can access
+   * (either as team member or oversight role)
+   */
+  getMyActiveSessions: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+    const userRole = ctx.session.user.role;
+    const isOversight = [
+      "SUPER_ADMIN",
+      "SYSTEM_ADMIN",
+      "PROGRAMME_COORDINATOR",
+    ].includes(userRole || "");
+
+    // Get reviews where user is a team member
+    const teamReviewIds = await ctx.db.reviewTeamMember.findMany({
+      where: { userId },
+      select: { reviewId: true },
+    });
+    const reviewIds = teamReviewIds.map((r) => r.reviewId);
+
+    // Find active sessions for those reviews (or all if oversight)
+    const sessions = await ctx.db.reviewSession.findMany({
+      where: {
+        status: "ACTIVE",
+        ...(isOversight ? {} : { reviewId: { in: reviewIds } }),
+      },
+      include: {
+        review: {
+          select: {
+            id: true,
+            referenceNumber: true,
+            hostOrganization: {
+              select: { nameEn: true, nameFr: true },
+            },
+          },
+        },
+        startedBy: {
+          select: { firstName: true, lastName: true },
+        },
+        _count: {
+          select: { participants: { where: { isOnline: true } } },
+        },
+      },
+      orderBy: { startedAt: "desc" },
+    });
+
+    return sessions.map((s) => ({
+      id: s.id,
+      reviewId: s.review.id,
+      title: s.title,
+      sessionType: s.sessionType,
+      startedAt: s.startedAt,
+      review: {
+        reference: s.review.referenceNumber,
+        organizationName:
+          s.review.hostOrganization?.nameEn || "Unknown",
+      },
+      startedBy: `${s.startedBy.firstName} ${s.startedBy.lastName}`,
+      participantCount: s._count.participants,
+    }));
+  }),
+
+  /**
+   * Get count of active sessions the current user can access.
+   * Lightweight query for sidebar indicator.
+   */
+  getActiveSessionCount: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+    const userRole = ctx.session.user.role;
+    const isOversight = [
+      "SUPER_ADMIN",
+      "SYSTEM_ADMIN",
+      "PROGRAMME_COORDINATOR",
+    ].includes(userRole || "");
+
+    if (isOversight) {
+      return ctx.db.reviewSession.count({ where: { status: "ACTIVE" } });
+    }
+
+    const teamReviewIds = await ctx.db.reviewTeamMember.findMany({
+      where: { userId },
+      select: { reviewId: true },
+    });
+
+    return ctx.db.reviewSession.count({
+      where: {
+        status: "ACTIVE",
+        reviewId: { in: teamReviewIds.map((r) => r.reviewId) },
+      },
+    });
+  }),
 
   // ==========================================================================
   // UNIFIED ACTIVITY FEED

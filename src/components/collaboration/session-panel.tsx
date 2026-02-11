@@ -40,7 +40,7 @@ import { fr, enUS, type Locale } from "date-fns/locale";
 import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
 import { usePresence } from "@/hooks/use-presence";
-import { isPusherAvailable } from "@/lib/pusher/client";
+import { isPusherAvailable, usePusherConnectionState } from "@/lib/pusher/client";
 import { cn } from "@/lib/utils";
 
 interface SessionPanelProps {
@@ -93,6 +93,8 @@ export function SessionPanel({
   const [showEndDialog, setShowEndDialog] = useState(false);
   const [activeTab, setActiveTab] = useState<"members" | "activity">("members");
   const pusherAvailable = isPusherAvailable();
+  const pusherState = usePusherConnectionState();
+  const pusherConnected = pusherState === "connected";
 
   const utils = trpc.useUtils();
 
@@ -101,7 +103,7 @@ export function SessionPanel({
     { reviewId },
     {
       enabled: !!userId && !!reviewId,
-      refetchInterval: pusherAvailable ? 30000 : 5000,
+      refetchInterval: pusherConnected ? false : 30000,
     }
   );
 
@@ -146,7 +148,7 @@ export function SessionPanel({
       { sessionId, limit: 50 },
       {
         enabled: !!userId && !!sessionId,
-        refetchInterval: 10000,
+        refetchInterval: pusherConnected ? false : 30000,
       }
     );
 

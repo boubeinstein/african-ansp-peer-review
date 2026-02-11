@@ -51,11 +51,11 @@ export default async function ReviewDetailPage({ params, searchParams }: PagePro
       case "overview":
         return <OverviewTab review={review} counts={counts} />;
       case "workspace":
-        return <WorkspaceTab review={review} userId={session.user.id} userRole={session.user.role} locale={locale} />;
+        return <WorkspaceTab review={review} userId={session.user.id} userName={`${session.user.firstName} ${session.user.lastName}`} userRole={session.user.role} locale={locale} />;
       case "documents":
-        return <DocumentsTab review={review} userId={session.user.id} />;
+        return <DocumentsTab review={review} userId={session.user.id} userName={`${session.user.firstName} ${session.user.lastName}`} />;
       case "findings":
-        return <FindingsTab review={review} userId={session.user.id} />;
+        return <FindingsTab review={review} userId={session.user.id} userName={`${session.user.firstName} ${session.user.lastName}`} />;
       case "report":
         return <ReportTab review={review} />;
       case "retrospective":

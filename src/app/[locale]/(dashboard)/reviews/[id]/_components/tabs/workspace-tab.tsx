@@ -12,6 +12,7 @@ import {
   Upload,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { trpc } from "@/lib/trpc/client";
 import type { ReviewData } from "../../_lib/fetch-review-data";
 import { SessionBanner } from "@/components/collaboration/session-banner";
 import { TeamActivityFeed } from "@/components/collaboration/team-activity-feed";
@@ -19,15 +20,17 @@ import { DiscussionsList } from "./workspace/discussions-list";
 import { TasksBoard } from "./workspace/tasks-board";
 import { NewDiscussionDialog } from "./workspace/new-discussion-dialog";
 import { NewTaskDialog } from "./workspace/new-task-dialog";
+import { LiveCursors } from "@/components/collaboration/live-cursors";
 
 interface WorkspaceTabProps {
   review: ReviewData;
   userId?: string;
+  userName?: string;
   userRole?: string;
   locale?: string;
 }
 
-export function WorkspaceTab({ review, userId, userRole, locale = "en" }: WorkspaceTabProps) {
+export function WorkspaceTab({ review, userId, userName, userRole, locale = "en" }: WorkspaceTabProps) {
   const t = useTranslations("reviews.detail.workspace");
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -37,6 +40,15 @@ export function WorkspaceTab({ review, userId, userRole, locale = "en" }: Worksp
   );
   const [showNewTask, setShowNewTask] = useState(
     searchParams.get("action") === "task"
+  );
+
+  // Check for active session to enable live cursors
+  const { data: activeSession } = trpc.collaboration.getActiveSession.useQuery(
+    { reviewId: review.id },
+    { enabled: !!userId }
+  );
+  const isInSession = activeSession?.participants.some(
+    (p: { userId: string }) => p.userId === userId
   );
 
   // Transform tasks for the board component
@@ -68,7 +80,17 @@ export function WorkspaceTab({ review, userId, userRole, locale = "en" }: Worksp
   };
 
   return (
-    <div className="space-y-4 p-4 md:p-6">
+    <div className="relative space-y-4 p-4 md:p-6">
+      {/* Live cursors overlay — only when in an active session */}
+      {activeSession && isInSession && userId && userName && (
+        <LiveCursors
+          reviewId={review.id}
+          userId={userId}
+          userName={userName}
+          enabled={isInSession}
+        />
+      )}
+
       {/* Session Banner */}
       <SessionBanner
         reviewId={review.id}
@@ -149,6 +171,8 @@ export function WorkspaceTab({ review, userId, userRole, locale = "en" }: Worksp
           <TabsContent value="discussions" className="mt-3">
             <DiscussionsList
               reviewId={review.id}
+              userId={userId}
+              userName={userName}
             />
           </TabsContent>
 

@@ -387,6 +387,19 @@ export const reviewRouter = router({
             findings: {
               select: { id: true, status: true },
             },
+            sessions: {
+              where: { status: "ACTIVE" },
+              take: 1,
+              select: {
+                id: true,
+                title: true,
+                _count: {
+                  select: {
+                    participants: { where: { isOnline: true } },
+                  },
+                },
+              },
+            },
           },
           orderBy: { requestedDate: "desc" },
           skip: (page - 1) * pageSize,

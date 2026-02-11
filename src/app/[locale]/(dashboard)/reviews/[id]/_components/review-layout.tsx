@@ -12,7 +12,7 @@ import { useReviewUpdates } from "@/hooks/use-review-updates";
 import type { ReviewTab } from "../_types";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
-import { isPusherAvailable } from "@/lib/pusher/client";
+import { usePusherConnectionState } from "@/lib/pusher/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -69,13 +69,14 @@ export function ReviewLayout({ review, userId, children, counts }: ReviewLayoutP
   });
 
   // Check for active collaboration session
-  const pusherAvailable = isPusherAvailable();
+  const pusherState = usePusherConnectionState();
+  const pusherConnected = pusherState === "connected";
   const { data: activeSession } =
     trpc.collaboration.getActiveSession.useQuery(
       { reviewId: review.id },
       {
         enabled: !!userId,
-        refetchInterval: pusherAvailable ? 30000 : 10000,
+        refetchInterval: pusherConnected ? false : 30000,
       }
     );
   const hasActiveSession = !!activeSession;

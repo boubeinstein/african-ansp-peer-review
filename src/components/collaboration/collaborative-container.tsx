@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useCallback } from "react";
-import { LiveCursors, useCursorTracking } from "./live-cursors";
+import { useCursorTracking } from "./live-cursors";
 import { usePresence } from "@/hooks/use-presence";
 import { cn } from "@/lib/utils";
 
@@ -22,7 +22,7 @@ export function CollaborativeContainer({
 }: CollaborativeContainerProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const { members, updateCursor, updateFocus } = usePresence({
+  const { updateCursor, updateFocus } = usePresence({
     reviewId,
     userId,
   });
@@ -53,9 +53,6 @@ export function CollaborativeContainer({
       onFocusCapture={handleFocusCapture}
     >
       {children}
-      {showCursors && (
-        <LiveCursors members={members} userId={userId} />
-      )}
     </div>
   );
 }

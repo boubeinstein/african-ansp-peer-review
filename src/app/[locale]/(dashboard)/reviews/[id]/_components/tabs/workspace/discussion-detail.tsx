@@ -28,6 +28,9 @@ import { formatDistanceToNow, format } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
+import { useTypingIndicator } from "@/hooks/use-typing-indicator";
+import { TypingIndicator } from "@/components/collaboration/typing-indicator";
+import { CHANNELS } from "@/lib/pusher/server";
 
 const replySchema = z.object({
   content: z.string().min(1, "Reply cannot be empty").max(2000),
@@ -38,10 +41,12 @@ type ReplyFormData = z.infer<typeof replySchema>;
 interface DiscussionDetailProps {
   discussionId: string;
   reviewId: string;
+  userId?: string;
+  userName?: string;
   onBack: () => void;
 }
 
-export function DiscussionDetail({ discussionId, reviewId, onBack }: DiscussionDetailProps) {
+export function DiscussionDetail({ discussionId, reviewId, userId, userName, onBack }: DiscussionDetailProps) {
   const t = useTranslations("reviews.detail.workspace.discussionsList.detail");
   const locale = useLocale();
   const dateLocale = locale === "fr" ? fr : enUS;
@@ -70,6 +75,13 @@ export function DiscussionDetail({ discussionId, reviewId, onBack }: DiscussionD
     onError: (error) => {
       toast.error(error.message || t("replyError"));
     },
+  });
+
+  const { typingUsers, startTyping, stopTyping } = useTypingIndicator({
+    channelName: CHANNELS.review(reviewId),
+    userId: userId ?? "",
+    userName: userName ?? "",
+    contextKey: `discussion:${discussionId}`,
   });
 
   const resolveMutation = trpc.reviewDiscussion.resolve.useMutation({
@@ -244,10 +256,13 @@ export function DiscussionDetail({ discussionId, reviewId, onBack }: DiscussionD
                 rows={3}
                 {...register("content")}
                 disabled={isSubmitting || replyMutation.isPending}
+                onKeyDown={startTyping}
+                onBlur={stopTyping}
               />
               {errors.content && (
                 <p className="text-sm text-destructive">{errors.content.message}</p>
               )}
+              <TypingIndicator users={typingUsers} />
               <div className="flex justify-end">
                 <Button
                   type="submit"

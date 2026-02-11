@@ -6,6 +6,7 @@ import { Home, ClipboardList, Search, Bell, User } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc/client";
+import { usePusherConnectionState } from "@/lib/pusher/client";
 
 interface NavItem {
   href: string;
@@ -18,11 +19,18 @@ export function MobileNav() {
   const t = useTranslations("navigation");
   const locale = useLocale();
   const pathname = usePathname();
+  const pusherState = usePusherConnectionState();
 
   const { data: unreadCount } = trpc.notification.getUnreadCount.useQuery(
     undefined,
     { staleTime: 30000 }
   );
+
+  const { data: liveSessionCount } =
+    trpc.collaboration.getActiveSessionCount.useQuery(undefined, {
+      refetchInterval: pusherState === "connected" ? false : 60000,
+      staleTime: 15000,
+    });
 
   const items: NavItem[] = [
     { href: `/${locale}/dashboard`, icon: Home, labelKey: "dashboard" },
@@ -67,6 +75,14 @@ export function MobileNav() {
                     {item.badge > 9 ? "9+" : item.badge}
                   </span>
                 )}
+                {item.labelKey === "reviews" &&
+                  liveSessionCount != null &&
+                  liveSessionCount > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+                    </span>
+                  )}
               </div>
               <span className="text-xs mt-1">{t(item.labelKey)}</span>
             </Link>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import PusherClient from "pusher-js";
 
 let pusherClient: PusherClient | null = null;
@@ -117,7 +118,21 @@ export function getPusherClient(): PusherClient {
     );
 
     pusherClient.connection.bind("error", (error: unknown) => {
-      console.error("[Pusher] Connection error:", error);
+      const err = error as { type?: string; data?: { code?: number; message?: string } };
+      console.error("[Pusher] Connection error:", {
+        type: err?.type,
+        code: err?.data?.code,
+        message: err?.data?.message,
+        raw: error,
+      });
+      // If rejected by Pusher (4000-4099 range), don't retry
+      if (err?.data?.code && err.data.code >= 4000 && err.data.code < 4100) {
+        console.error(
+          `[Pusher] Fatal error (code ${err.data.code}): ${err.data.message || "App rejected connection"}. Check Pusher dashboard.`
+        );
+        connectionState = "failed";
+        notifyStateChange();
+      }
     });
   }
 
@@ -160,6 +175,14 @@ export function isPusherAvailable(): boolean {
   return isPusherConfigured();
 }
 
+/**
+ * Returns true only when Pusher is actively connected (not just configured).
+ * Use this for polling decisions — disable polling when Pusher is connected.
+ */
+export function isPusherConnected(): boolean {
+  return connectionState === "connected";
+}
+
 export function disconnectPusher(): void {
   if (pusherClient) {
     pusherClient.disconnect();
@@ -181,5 +204,21 @@ export function reconnectPusher(): void {
   } else {
     getPusherClient();
   }
+}
+
+/**
+ * React hook that tracks Pusher connection state in real-time.
+ * Returns the current connection state string.
+ */
+export function usePusherConnectionState(): typeof connectionState {
+  const [state, setState] = useState<typeof connectionState>(connectionState);
+
+  useEffect(() => {
+    return onConnectionStateChange((newState) => {
+      setState(newState);
+    });
+  }, []);
+
+  return state;
 }
 

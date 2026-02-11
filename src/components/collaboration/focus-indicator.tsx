@@ -9,15 +9,11 @@ import {
 } from "@/components/ui/tooltip";
 import { Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { PresenceMember } from "@/hooks/use-presence";
+import type { FocusedUser } from "@/hooks/use-focus-tracker";
 
 interface FocusIndicatorProps {
-  /** All presence members in the review */
-  members: PresenceMember[];
-  /** The focus key to filter by, e.g. "finding:abc123" or "document:xyz" */
-  focusKey: string;
-  /** Current user ID to exclude from display */
-  currentUserId?: string;
+  /** Pre-filtered viewers for this item (from useFocusTracker.getViewers) */
+  viewers: FocusedUser[];
   /** Max avatars to show before +N overflow */
   maxVisible?: number;
   /** Size variant */
@@ -35,18 +31,11 @@ const sizeClasses = {
  * Displays small colored avatar dots with tooltips.
  */
 export function FocusIndicator({
-  members,
-  focusKey,
-  currentUserId,
+  viewers,
   maxVisible = 3,
   size = "sm",
   className,
 }: FocusIndicatorProps) {
-  // Filter members who are focused on this specific item, excluding current user
-  const viewers = members.filter(
-    (m) => m.currentFocus === focusKey && m.id !== currentUserId
-  );
-
   if (viewers.length === 0) return null;
 
   const visible = viewers.slice(0, maxVisible);
@@ -58,12 +47,14 @@ export function FocusIndicator({
         className={cn("flex items-center gap-0.5", className)}
         onClick={(e) => e.stopPropagation()}
       >
-        <Eye className={cn(
-          "text-muted-foreground",
-          size === "sm" ? "h-3 w-3" : "h-3.5 w-3.5"
-        )} />
-        {visible.map((member) => (
-          <Tooltip key={member.id}>
+        <Eye
+          className={cn(
+            "text-muted-foreground",
+            size === "sm" ? "h-3 w-3" : "h-3.5 w-3.5"
+          )}
+        />
+        {visible.map((viewer) => (
+          <Tooltip key={viewer.userId}>
             <TooltipTrigger asChild>
               <Avatar
                 className={cn(
@@ -72,15 +63,15 @@ export function FocusIndicator({
                 )}
               >
                 <AvatarFallback
-                  style={{ backgroundColor: member.color, color: "white" }}
+                  style={{ backgroundColor: viewer.color, color: "white" }}
                   className="text-[10px] leading-none"
                 >
-                  {member.avatar}
+                  {viewer.initials}
                 </AvatarFallback>
               </Avatar>
             </TooltipTrigger>
             <TooltipContent side="top" className="text-xs">
-              {member.name}
+              {viewer.name}
             </TooltipContent>
           </Tooltip>
         ))}
@@ -99,7 +90,10 @@ export function FocusIndicator({
               </Avatar>
             </TooltipTrigger>
             <TooltipContent side="top" className="text-xs">
-              {viewers.slice(maxVisible).map((m) => m.name).join(", ")}
+              {viewers
+                .slice(maxVisible)
+                .map((v) => v.name)
+                .join(", ")}
             </TooltipContent>
           </Tooltip>
         )}

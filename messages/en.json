@@ -7263,5 +7263,27 @@
       "peerReviewer": "Peer Reviewer Tour",
       "coordinator": "Coordinator Tour"
     }
+  },
+  "collaboration": {
+    "session": {
+      "noActiveSession": "No active collaboration session",
+      "startSession": "Start Session",
+      "liveSession": "Live Session",
+      "connected": "Connected",
+      "connecting": "Connecting...",
+      "offlineMode": "Offline Mode",
+      "online": "Online",
+      "offline": "Offline",
+      "joinSession": "Join Session",
+      "inSession": "In Session",
+      "leave": "Leave",
+      "endSession": "End Session",
+      "leaveConfirmTitle": "Leave Session?",
+      "leaveConfirmDescription": "You will be removed from the active session. You can rejoin at any time.",
+      "endConfirmTitle": "End Session for Everyone?",
+      "endConfirmDescription": "This will end the collaboration session for all {count} participant(s). All progress is saved.",
+      "leftSession": "You left the session",
+      "sessionEnded": "Session ended for all participants"
+    }
   }
 }

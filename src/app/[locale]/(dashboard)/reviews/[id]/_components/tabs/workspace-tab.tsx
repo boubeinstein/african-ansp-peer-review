@@ -23,10 +23,11 @@ import { NewTaskDialog } from "./workspace/new-task-dialog";
 interface WorkspaceTabProps {
   review: ReviewData;
   userId?: string;
+  userRole?: string;
   locale?: string;
 }
 
-export function WorkspaceTab({ review, userId, locale = "en" }: WorkspaceTabProps) {
+export function WorkspaceTab({ review, userId, userRole, locale = "en" }: WorkspaceTabProps) {
   const t = useTranslations("reviews.detail.workspace");
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -73,6 +74,7 @@ export function WorkspaceTab({ review, userId, locale = "en" }: WorkspaceTabProp
         reviewId={review.id}
         reviewReference={review.referenceNumber}
         userId={userId}
+        userRole={userRole}
       />
 
       {/* Quick Actions */}

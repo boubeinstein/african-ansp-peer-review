@@ -7263,5 +7263,27 @@
       "peerReviewer": "Visite Évaluateur",
       "coordinator": "Visite Coordinateur"
     }
+  },
+  "collaboration": {
+    "session": {
+      "noActiveSession": "Aucune session de collaboration active",
+      "startSession": "Démarrer une session",
+      "liveSession": "Session en direct",
+      "connected": "Connecté",
+      "connecting": "Connexion...",
+      "offlineMode": "Mode hors ligne",
+      "online": "En ligne",
+      "offline": "Hors ligne",
+      "joinSession": "Rejoindre la session",
+      "inSession": "En session",
+      "leave": "Quitter",
+      "endSession": "Terminer la session",
+      "leaveConfirmTitle": "Quitter la session ?",
+      "leaveConfirmDescription": "Vous serez retiré de la session active. Vous pouvez la rejoindre à tout moment.",
+      "endConfirmTitle": "Terminer la session pour tout le monde ?",
+      "endConfirmDescription": "Cela mettra fin à la session de collaboration pour les {count} participant(s). Toutes les données sont sauvegardées.",
+      "leftSession": "Vous avez quitté la session",
+      "sessionEnded": "Session terminée pour tous les participants"
+    }
   }
 }

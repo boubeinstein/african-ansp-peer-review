@@ -385,6 +385,7 @@ export function ReviewDetailView({
         reviewId={reviewId}
         reviewReference={review.referenceNumber}
         userId={userId}
+        userRole={userRole}
       />
 
       {/* Connection status indicator */}

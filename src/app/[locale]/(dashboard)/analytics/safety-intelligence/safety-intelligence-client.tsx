@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc/client";
+import { OverviewTab } from "@/components/features/safety-intelligence/overview-tab";
 
 // =============================================================================
 // TYPES
@@ -256,15 +257,18 @@ function TabContent({
   selectedTeamId,
   anonymized,
 }: TabContentProps & { activeTab: TabId }) {
-  // Tab components will be added in SI-6 through SI-11.
-  // For now, render a placeholder per tab.
-  return (
-    <Card>
-      <CardContent className="flex items-center justify-center py-24 text-muted-foreground">
-        <p className="text-sm">
-          {activeTab} tab — content coming soon
-        </p>
-      </CardContent>
-    </Card>
-  );
+  switch (activeTab) {
+    case "overview":
+      return <OverviewTab selectedTeamId={selectedTeamId} />;
+    default:
+      return (
+        <Card>
+          <CardContent className="flex items-center justify-center py-24 text-muted-foreground">
+            <p className="text-sm">
+              {activeTab} tab — content coming soon
+            </p>
+          </CardContent>
+        </Card>
+      );
+  }
 }

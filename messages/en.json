@@ -7401,5 +7401,120 @@
       "question": "Question",
       "fire": "Great"
     }
+  },
+  "safetyIntelligence": {
+    "title": "Safety Intelligence",
+    "subtitle": "Cross-ANSP Safety Performance Analytics",
+    "description": "Aggregated safety metrics across all participating ANSPs in the AFI Peer Review Programme",
+    "backToAnalytics": "Back to Analytics",
+    "live": "Live",
+    "export": "Export",
+    "filters": {
+      "allTeams": "All Teams",
+      "team": "Team {number} — {region}",
+      "anonymized": "Anonymized",
+      "showCodes": "Show Codes"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "benchmarking": "Benchmarking",
+      "findings": "Findings Analysis",
+      "smsMaturity": "SMS Maturity",
+      "teams": "Regional Teams",
+      "caps": "CAP Analytics"
+    },
+    "kpi": {
+      "avgEI": "Avg. EI Score",
+      "avgSMS": "Avg. SMS Maturity",
+      "openFindings": "Open Findings",
+      "capClosure": "CAP Closure Rate",
+      "anspsReviewed": "ANSPs Reviewed",
+      "effectiveImplementation": "Effective Implementation",
+      "cansoScale": "CANSO SoE 5-Level Scale",
+      "critical": "critical",
+      "averageAcrossANSPs": "Average across ANSPs",
+      "participating": "Participating in programme",
+      "vsLastQuarter": "vs last quarter"
+    },
+    "overview": {
+      "trendTitle": "Programme Performance Trend",
+      "trendSubtitle": "Quarterly progression across all dimensions",
+      "maturityDistTitle": "SMS Maturity Distribution",
+      "maturityDistSubtitle": "CANSO SoE levels across ANSPs",
+      "radarTitle": "Regional EI Comparison by Audit Area",
+      "radarSubtitle": "Spider chart showing strengths and gaps across regions",
+      "systemicTitle": "Top Systemic Issues",
+      "systemicSubtitle": "Cross-ANSP patterns identified through peer reviews",
+      "affectedANSPs": "{count} ANSPs affected",
+      "improving": "Improving",
+      "stable": "Stable",
+      "worsening": "Worsening"
+    },
+    "benchmarking": {
+      "sortBy": "Sort by",
+      "eiScore": "EI Score",
+      "smsMaturity": "SMS Maturity",
+      "capClosure": "CAP Closure",
+      "rank": "#",
+      "ansp": "ANSP",
+      "team": "Team",
+      "findings": "Findings",
+      "trend": "Trend",
+      "programmeAverage": "Programme Average",
+      "aboveAverage": "Above average"
+    },
+    "findingsAnalysis": {
+      "byAreaTitle": "Findings by Audit Area & Severity",
+      "byAreaSubtitle": "Click an area bar for detailed breakdown",
+      "severityTitle": "Severity Distribution",
+      "areaBreakdown": "{area} Area Breakdown",
+      "detailedSeverity": "Detailed severity analysis",
+      "ofTotal": "{pct}% of total",
+      "totalFindings": "Total Findings",
+      "clearSelection": "Clear selection",
+      "trendTitle": "Finding Trend Over Time",
+      "trendSubtitle": "Quarterly volume shows declining trend — indicator of programme effectiveness"
+    },
+    "smsMaturity": {
+      "componentsTitle": "SMS Component Averages",
+      "spiderTitle": "SMS Components by Regional Team",
+      "spiderSubtitle": "Maturity comparison across 4 CANSO SoE components",
+      "rangesTitle": "Team Maturity Ranges",
+      "rangesSubtitle": "Min, Average, Max SMS maturity per regional team",
+      "referenceTitle": "CANSO Standard of Excellence — SMS Maturity Scale",
+      "level": "Level {code}",
+      "levelA": "Informal",
+      "levelB": "Defined",
+      "levelC": "Managed",
+      "levelD": "Assured",
+      "levelE": "Excellence"
+    },
+    "teams": {
+      "ledBy": "Led by {name}",
+      "members": "{count} ANSPs",
+      "eiByArea": "EI by Audit Area",
+      "memberPerformance": "Member ANSPs Performance",
+      "programmeAvg": "Programme Avg"
+    },
+    "capAnalytics": {
+      "distributionTitle": "CAP Closure Rate Distribution",
+      "distributionSubtitle": "How many ANSPs fall in each performance band",
+      "teamTitle": "CAP Closure by Regional Team",
+      "teamSubtitle": "Team performance comparison",
+      "trendTitle": "CAP Closure Rate Trend",
+      "trendSubtitle": "Programme-wide improvement over time"
+    },
+    "abuja": {
+      "title": "Revised Abuja Safety Targets (April 2024) — Target #15",
+      "toggle": "Abuja Safety Targets",
+      "target15_1": "15.1: All ANSPs to join the Peer Review Programme by 31 Dec 2024",
+      "target15_2": "15.2: 50% of ANSPs at SMS maturity ≥ 50% by 31 Dec 2025; 100% by 31 Dec 2028",
+      "target15_3": "15.3: All ANSPs to attain certification by 31 Dec 2028"
+    },
+    "footer": {
+      "version": "AAPRP Safety Intelligence v1.0",
+      "dataSource": "Data aggregated from {count} participating ANSPs",
+      "frameworks": "ICAO USOAP CMA 2024 & CANSO SoE 2024"
+    }
   }
 }

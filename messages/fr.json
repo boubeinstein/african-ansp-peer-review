@@ -7401,5 +7401,120 @@
       "question": "Question",
       "fire": "Excellent"
     }
+  },
+  "safetyIntelligence": {
+    "title": "Intelligence Sécurité",
+    "subtitle": "Analyses de performance sécurité inter-ANSP",
+    "description": "Métriques de sécurité agrégées pour tous les ANSP participants au Programme d'Examen par les Pairs AFI",
+    "backToAnalytics": "Retour aux Analyses",
+    "live": "En direct",
+    "export": "Exporter",
+    "filters": {
+      "allTeams": "Toutes les Équipes",
+      "team": "Équipe {number} — {region}",
+      "anonymized": "Anonymisé",
+      "showCodes": "Afficher les codes"
+    },
+    "tabs": {
+      "overview": "Vue d'ensemble",
+      "benchmarking": "Étalonnage",
+      "findings": "Analyse des Constats",
+      "smsMaturity": "Maturité SMS",
+      "teams": "Équipes Régionales",
+      "caps": "Analyse des PAC"
+    },
+    "kpi": {
+      "avgEI": "Score EI Moyen",
+      "avgSMS": "Maturité SMS Moyenne",
+      "openFindings": "Constats Ouverts",
+      "capClosure": "Taux de Clôture PAC",
+      "anspsReviewed": "ANSP Évalués",
+      "effectiveImplementation": "Mise en Œuvre Effective",
+      "cansoScale": "Échelle CANSO SoE 5 niveaux",
+      "critical": "critiques",
+      "averageAcrossANSPs": "Moyenne pour tous les ANSP",
+      "participating": "Participants au programme",
+      "vsLastQuarter": "vs trimestre précédent"
+    },
+    "overview": {
+      "trendTitle": "Tendance de Performance du Programme",
+      "trendSubtitle": "Progression trimestrielle sur toutes les dimensions",
+      "maturityDistTitle": "Distribution de la Maturité SMS",
+      "maturityDistSubtitle": "Niveaux CANSO SoE par ANSP",
+      "radarTitle": "Comparaison Régionale EI par Domaine d'Audit",
+      "radarSubtitle": "Diagramme radar montrant forces et lacunes par région",
+      "systemicTitle": "Problèmes Systémiques Principaux",
+      "systemicSubtitle": "Tendances inter-ANSP identifiées par les examens par les pairs",
+      "affectedANSPs": "{count} ANSP concernés",
+      "improving": "En amélioration",
+      "stable": "Stable",
+      "worsening": "En dégradation"
+    },
+    "benchmarking": {
+      "sortBy": "Trier par",
+      "eiScore": "Score EI",
+      "smsMaturity": "Maturité SMS",
+      "capClosure": "Clôture PAC",
+      "rank": "#",
+      "ansp": "ANSP",
+      "team": "Équipe",
+      "findings": "Constats",
+      "trend": "Tendance",
+      "programmeAverage": "Moyenne du Programme",
+      "aboveAverage": "Au-dessus de la moyenne"
+    },
+    "findingsAnalysis": {
+      "byAreaTitle": "Constats par Domaine d'Audit et Sévérité",
+      "byAreaSubtitle": "Cliquez sur une barre pour un détail approfondi",
+      "severityTitle": "Distribution de la Sévérité",
+      "areaBreakdown": "Détail du Domaine {area}",
+      "detailedSeverity": "Analyse détaillée de la sévérité",
+      "ofTotal": "{pct}% du total",
+      "totalFindings": "Total des Constats",
+      "clearSelection": "Effacer la sélection",
+      "trendTitle": "Tendance des Constats dans le Temps",
+      "trendSubtitle": "Le volume trimestriel en baisse — indicateur d'efficacité du programme"
+    },
+    "smsMaturity": {
+      "componentsTitle": "Moyennes des Composantes SMS",
+      "spiderTitle": "Composantes SMS par Équipe Régionale",
+      "spiderSubtitle": "Comparaison de maturité sur les 4 composantes CANSO SoE",
+      "rangesTitle": "Plages de Maturité par Équipe",
+      "rangesSubtitle": "Min, Moyenne, Max de la maturité SMS par équipe régionale",
+      "referenceTitle": "Standard d'Excellence CANSO — Échelle de Maturité SMS",
+      "level": "Niveau {code}",
+      "levelA": "Informel",
+      "levelB": "Défini",
+      "levelC": "Géré",
+      "levelD": "Assuré",
+      "levelE": "Excellence"
+    },
+    "teams": {
+      "ledBy": "Dirigé par {name}",
+      "members": "{count} ANSP",
+      "eiByArea": "EI par Domaine d'Audit",
+      "memberPerformance": "Performance des ANSP Membres",
+      "programmeAvg": "Moy. Programme"
+    },
+    "capAnalytics": {
+      "distributionTitle": "Distribution du Taux de Clôture PAC",
+      "distributionSubtitle": "Répartition des ANSP par bande de performance",
+      "teamTitle": "Clôture PAC par Équipe Régionale",
+      "teamSubtitle": "Comparaison de performance entre équipes",
+      "trendTitle": "Tendance du Taux de Clôture PAC",
+      "trendSubtitle": "Amélioration progressive à l'échelle du programme"
+    },
+    "abuja": {
+      "title": "Objectifs de Sécurité d'Abuja Révisés (Avril 2024) — Objectif #15",
+      "toggle": "Objectifs de Sécurité d'Abuja",
+      "target15_1": "15.1 : Tous les ANSP doivent adhérer au Programme d'Examen par les Pairs avant le 31 déc. 2024",
+      "target15_2": "15.2 : 50% des ANSP à maturité SMS ≥ 50% avant le 31 déc. 2025 ; 100% avant le 31 déc. 2028",
+      "target15_3": "15.3 : Tous les ANSP doivent obtenir la certification avant le 31 déc. 2028"
+    },
+    "footer": {
+      "version": "Intelligence Sécurité AAPRP v1.0",
+      "dataSource": "Données agrégées de {count} ANSP participants",
+      "frameworks": "OACI USOAP CMA 2024 & CANSO SoE 2024"
+    }
   }
 }

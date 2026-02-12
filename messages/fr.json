@@ -4075,6 +4075,80 @@
         "description": "Une fois soumise, la rétrospective ne pourra plus être modifiée. Elle sera examinée par un coordinateur de programme avant publication.",
         "cancel": "Annuler",
         "confirm": "Soumettre"
+      },
+      "extractedLessons": {
+        "title": "Leçons extraites",
+        "description": "Informations autonomes qui seront ajoutées à la base de connaissances du programme",
+        "empty": "Aucune leçon extraite pour le moment. Extrayez des informations clés à partager avec les autres évaluateurs.",
+        "addNew": "Extraire une nouvelle leçon",
+        "category": {
+          "PROCESS_IMPROVEMENT": "Amélioration des processus",
+          "TECHNICAL_FINDING": "Technique/Réglementaire",
+          "LOGISTICS_PLANNING": "Logistique et planification",
+          "CULTURAL_COMMUNICATION": "Culture/Communication",
+          "DOCUMENTATION_REVIEW": "Revue documentaire",
+          "INTERVIEW_TECHNIQUE": "Technique d'entretien",
+          "HOST_ENGAGEMENT": "Engagement de l'hôte",
+          "TOOL_METHODOLOGY": "Outils et méthodologie"
+        },
+        "deleteTitle": "Supprimer la leçon ?",
+        "deleteDescription": "Ce brouillon de leçon sera définitivement supprimé.",
+        "deleteCancel": "Annuler",
+        "deleteConfirm": "Supprimer"
+      },
+      "lessonForm": {
+        "title": "Créer une leçon apprise",
+        "editTitle": "Modifier la leçon",
+        "description": "Extrayez une information réutilisable de cet examen pour la base de connaissances du programme",
+        "titleEn": "Titre (English)",
+        "titleFr": "Titre (Français)",
+        "titleEnPlaceholder": "Titre bref et descriptif pour cette leçon...",
+        "titleFrPlaceholder": "Titre bref et descriptif pour cette leçon...",
+        "contentEn": "Contenu (English)",
+        "contentFr": "Contenu (Français)",
+        "contentEnPlaceholder": "Décrivez la leçon en détail : contexte, ce qui s'est passé, pourquoi c'est important...",
+        "contentFrPlaceholder": "Décrivez la leçon en détail : contexte, ce qui s'est passé, pourquoi c'est important...",
+        "category": "Catégorie",
+        "impactLevel": "Niveau d'impact",
+        "impact": {
+          "LOW": "Faible",
+          "MODERATE": "Modéré",
+          "HIGH": "Élevé",
+          "CRITICAL": "Critique"
+        },
+        "applicability": "Applicabilité",
+        "applicabilityValues": {
+          "SPECIFIC_ANSP": "ANSP spécifique",
+          "REGIONAL": "Régional",
+          "GENERAL": "Général",
+          "MATURITY_LEVEL": "Niveau de maturité"
+        },
+        "reviewPhase": "Phase d'examen",
+        "phases": {
+          "PLANNING": "Planification",
+          "PREPARATION": "Préparation",
+          "ON_SITE": "Sur site",
+          "REPORTING": "Rapport",
+          "FOLLOW_UP": "Suivi"
+        },
+        "auditArea": "Domaine d'audit USOAP",
+        "soeArea": "Domaine SoE CANSO",
+        "optional": "Facultatif",
+        "none": "Aucun",
+        "actionableAdvice": "Conseil pratique",
+        "actionableAdvicePlaceholder": "ex. Prévoir du temps supplémentaire pour l'accès aux installations MET",
+        "estimatedTimeImpact": "Impact estimé sur le temps",
+        "estimatedTimeImpactPlaceholder": "ex. Ajoute 1-2 jours",
+        "tags": "Étiquettes",
+        "tagsPlaceholder": "Tapez et appuyez sur Entrée pour ajouter une étiquette",
+        "anonymize": "Masquer l'identité de l'ANSP hôte dans la leçon publiée",
+        "saveDraft": "Enregistrer comme brouillon",
+        "cancel": "Annuler",
+        "savedSuccessfully": "Leçon enregistrée avec succès",
+        "discardTitle": "Abandonner les modifications ?",
+        "discardDescription": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir les abandonner ?",
+        "keepEditing": "Continuer l'édition",
+        "discard": "Abandonner"
       }
     }
   },

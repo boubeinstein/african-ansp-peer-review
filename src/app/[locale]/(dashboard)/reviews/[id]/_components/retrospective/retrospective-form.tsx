@@ -49,6 +49,8 @@ import {
   Loader2,
   BarChart3,
   Flag,
+  Sparkles,
+  Plus,
 } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
@@ -57,6 +59,8 @@ import {
   SectionProgress,
   type SectionStatus,
 } from "@/components/features/retrospective/section-progress";
+import { LessonFormDialog } from "@/components/features/retrospective/lesson-form-dialog";
+import { LessonCardMini } from "@/components/features/retrospective/lesson-card-mini";
 import type { LessonType } from "@prisma/client";
 
 // =============================================================================
@@ -194,6 +198,7 @@ export function RetrospectiveForm({
   // ---------------------------------------------------------------------------
 
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
+  const [lessonDialogOpen, setLessonDialogOpen] = useState(false);
 
   // ---------------------------------------------------------------------------
   // Mutations
@@ -230,6 +235,20 @@ export function RetrospectiveForm({
       utils.retrospective.getByReview.invalidate({ reviewId });
     },
   });
+
+  // ---------------------------------------------------------------------------
+  // Extracted lessons query
+  // ---------------------------------------------------------------------------
+
+  const lessonsQuery = trpc.lessons.search.useQuery(
+    { retrospectiveId: existingData?.id ?? "", pageSize: 50 },
+    { enabled: !!existingData?.id }
+  );
+
+  const extractedLessons = lessonsQuery.data?.items ?? [];
+  const [editingLesson, setEditingLesson] = useState<
+    (typeof extractedLessons)[number] | null
+  >(null);
 
   // ---------------------------------------------------------------------------
   // Auto-save (debounced 3 seconds)
@@ -323,6 +342,11 @@ export function RetrospectiveForm({
         completed: (keyLearnings?.length ?? 0) >= 10,
       },
       {
+        id: "section-extracted",
+        label: t("extractedLessons.title"),
+        completed: extractedLessons.length > 0,
+      },
+      {
         id: "section-suggestions",
         label: t("programmeSuggestions.title"),
         completed: (programmeSuggestions?.length ?? 0) > 0,
@@ -347,6 +371,7 @@ export function RetrospectiveForm({
       programmeSuggestions,
       reviewDurationDays,
       taggedMap.size,
+      extractedLessons.length,
     ]
   );
 
@@ -638,6 +663,66 @@ export function RetrospectiveForm({
         </Card>
 
         {/* ================================================================= */}
+        {/* Section 4b: Extracted Lessons */}
+        {/* ================================================================= */}
+        <Card id="section-extracted">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2 text-amber-600">
+                  <Sparkles className="h-5 w-5" />
+                  {t("extractedLessons.title")}
+                  {extractedLessons.length > 0 && (
+                    <Badge variant="secondary" className="ml-1">
+                      {extractedLessons.length}
+                    </Badge>
+                  )}
+                </CardTitle>
+                <CardDescription>{t("extractedLessons.description")}</CardDescription>
+              </div>
+              {!isReadOnly && existingData?.id && (
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => {
+                    setEditingLesson(null);
+                    setLessonDialogOpen(true);
+                  }}
+                >
+                  <Plus className="h-4 w-4 mr-1.5" />
+                  {t("extractedLessons.addNew")}
+                </Button>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            {extractedLessons.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-4 text-center">
+                {t("extractedLessons.empty")}
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {extractedLessons.map((lesson) => (
+                  <LessonCardMini
+                    key={lesson.id}
+                    lesson={lesson}
+                    onEdit={() => {
+                      setEditingLesson(lesson);
+                      setLessonDialogOpen(true);
+                    }}
+                    onDelete={() => {
+                      // Delete is handled by update to empty content — not in scope here
+                      // The lesson can be edited and status managed via the form dialog
+                    }}
+                    readOnly={isReadOnly}
+                  />
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* ================================================================= */}
         {/* Section 5: Programme Suggestions */}
         {/* ================================================================= */}
         <Card id="section-suggestions">
@@ -866,6 +951,42 @@ export function RetrospectiveForm({
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        {/* Lesson form dialog */}
+        {existingData?.id && (
+          <LessonFormDialog
+            open={lessonDialogOpen}
+            onOpenChange={setLessonDialogOpen}
+            retrospectiveId={existingData.id}
+            reviewId={reviewId}
+            initialContent={editingLesson ? undefined : keyLearnings}
+            existingLesson={
+              editingLesson
+                ? {
+                    id: editingLesson.id,
+                    titleEn: editingLesson.titleEn,
+                    titleFr: editingLesson.titleFr,
+                    contentEn: editingLesson.contentEn,
+                    contentFr: editingLesson.contentFr,
+                    category: editingLesson.category,
+                    impactLevel: editingLesson.impactLevel,
+                    applicability: editingLesson.applicability,
+                    reviewPhase: editingLesson.reviewPhase,
+                    auditAreaCode: editingLesson.auditAreaCode,
+                    soeAreaCode: editingLesson.soeAreaCode,
+                    actionableAdvice: editingLesson.actionableAdvice,
+                    estimatedTimeImpact: editingLesson.estimatedTimeImpact,
+                    isAnonymized: editingLesson.isAnonymized,
+                    tags: editingLesson.tags,
+                  }
+                : undefined
+            }
+            onSaved={() => {
+              lessonsQuery.refetch();
+              setEditingLesson(null);
+            }}
+          />
+        )}
       </form>
     </div>
   );

@@ -4075,6 +4075,80 @@
         "description": "Once submitted, the retrospective cannot be edited. It will be reviewed by a Programme Coordinator before publication.",
         "cancel": "Cancel",
         "confirm": "Submit"
+      },
+      "extractedLessons": {
+        "title": "Extracted Lessons",
+        "description": "Standalone insights that will be added to the programme knowledge base",
+        "empty": "No lessons extracted yet. Extract key insights to share with other reviewers.",
+        "addNew": "Extract New Lesson",
+        "category": {
+          "PROCESS_IMPROVEMENT": "Process Improvement",
+          "TECHNICAL_FINDING": "Technical/Regulatory",
+          "LOGISTICS_PLANNING": "Logistics & Planning",
+          "CULTURAL_COMMUNICATION": "Cultural/Communication",
+          "DOCUMENTATION_REVIEW": "Documentation Review",
+          "INTERVIEW_TECHNIQUE": "Interview Technique",
+          "HOST_ENGAGEMENT": "Host Engagement",
+          "TOOL_METHODOLOGY": "Tools & Methodology"
+        },
+        "deleteTitle": "Delete Lesson?",
+        "deleteDescription": "This lesson draft will be permanently removed.",
+        "deleteCancel": "Cancel",
+        "deleteConfirm": "Delete"
+      },
+      "lessonForm": {
+        "title": "Create Lesson Learned",
+        "editTitle": "Edit Lesson",
+        "description": "Extract a reusable insight from this review for the programme knowledge base",
+        "titleEn": "Title (English)",
+        "titleFr": "Title (Français)",
+        "titleEnPlaceholder": "Brief, descriptive title for this lesson...",
+        "titleFrPlaceholder": "Titre bref et descriptif pour cette leçon...",
+        "contentEn": "Content (English)",
+        "contentFr": "Content (Français)",
+        "contentEnPlaceholder": "Describe the lesson in detail: context, what happened, why it matters...",
+        "contentFrPlaceholder": "Décrivez la leçon en détail : contexte, ce qui s'est passé, pourquoi c'est important...",
+        "category": "Category",
+        "impactLevel": "Impact Level",
+        "impact": {
+          "LOW": "Low",
+          "MODERATE": "Moderate",
+          "HIGH": "High",
+          "CRITICAL": "Critical"
+        },
+        "applicability": "Applicability",
+        "applicabilityValues": {
+          "SPECIFIC_ANSP": "Specific ANSP",
+          "REGIONAL": "Regional",
+          "GENERAL": "General",
+          "MATURITY_LEVEL": "Maturity Level"
+        },
+        "reviewPhase": "Review Phase",
+        "phases": {
+          "PLANNING": "Planning",
+          "PREPARATION": "Preparation",
+          "ON_SITE": "On-Site",
+          "REPORTING": "Reporting",
+          "FOLLOW_UP": "Follow-Up"
+        },
+        "auditArea": "USOAP Audit Area",
+        "soeArea": "CANSO SoE Area",
+        "optional": "Optional",
+        "none": "None",
+        "actionableAdvice": "Actionable Advice",
+        "actionableAdvicePlaceholder": "e.g., Allow extra time for MET facility access",
+        "estimatedTimeImpact": "Estimated Time Impact",
+        "estimatedTimeImpactPlaceholder": "e.g., Adds 1-2 days",
+        "tags": "Tags",
+        "tagsPlaceholder": "Type and press Enter to add a tag",
+        "anonymize": "Hide host ANSP identity in published lesson",
+        "saveDraft": "Save as Draft",
+        "cancel": "Cancel",
+        "savedSuccessfully": "Lesson saved successfully",
+        "discardTitle": "Discard Changes?",
+        "discardDescription": "You have unsaved changes. Are you sure you want to discard them?",
+        "keepEditing": "Keep Editing",
+        "discard": "Discard"
       }
     }
   },

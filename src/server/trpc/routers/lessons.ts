@@ -26,6 +26,7 @@ import type { Prisma } from "@prisma/client";
 
 const searchSchema = z.object({
   query: z.string().optional(),
+  retrospectiveId: z.string().optional(),
   category: z.nativeEnum(LessonCategory).optional(),
   auditAreaCode: z.string().optional(),
   soeAreaCode: z.string().optional(),
@@ -86,11 +87,13 @@ export const lessonsRouter = router({
   search: protectedProcedure
     .input(searchSchema)
     .query(async ({ ctx, input }) => {
-      const { query, sortBy, page, pageSize, tags, ...filters } = input;
+      const { query, sortBy, page, pageSize, tags, retrospectiveId, ...filters } = input;
 
-      // Build WHERE clause — only published lessons
+      // Build WHERE clause — only published unless scoped to a retrospective
       const where: Prisma.LessonLearnedWhereInput = {
-        status: LessonStatus.PUBLISHED,
+        ...(retrospectiveId
+          ? { retrospectiveId }
+          : { status: LessonStatus.PUBLISHED }),
       };
 
       // Full-text search across bilingual fields

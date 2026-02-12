@@ -7208,6 +7208,45 @@
         "COMPLETED": "Terminé",
         "NOT_APPLICABLE": "N/A"
       }
+    },
+    "findings": {
+      "title": "Constatations provisoires",
+      "titleLabel": "Titre",
+      "titlePlaceholder": "Titre bref de la constatation…",
+      "titleRequired": "Le titre est requis",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Décrivez la constatation en détail…",
+      "descriptionRequired": "La description est requise",
+      "severityLabel": "Sévérité",
+      "areaLabel": "Domaine d'évaluation",
+      "selectArea": "Sélectionner un domaine…",
+      "relatedQuestion": "Question associée",
+      "questionPlaceholder": "Rechercher des questions…",
+      "linkedEvidence": "Preuves associées",
+      "selectEvidence": "Sélectionner les preuves à associer",
+      "noEvidence": "Aucune preuve capturée",
+      "gpsLocation": "Position GPS",
+      "save": "Enregistrer la constatation",
+      "saving": "Enregistrement…",
+      "saved": "Constatation provisoire enregistrée",
+      "saveFailed": "Échec de l'enregistrement",
+      "edit": "Modifier la constatation",
+      "empty": "Aucune constatation documentée",
+      "emptyDescription": "Appuyez sur le bouton ci-dessous pour documenter une constatation lors de votre inspection.",
+      "addNew": "Nouvelle constatation",
+      "deleteTitle": "Supprimer la constatation",
+      "deleteDescription": "Êtes-vous sûr de vouloir supprimer cette constatation provisoire ? Cette action est irréversible.",
+      "deleted": "Constatation supprimée",
+      "deleteFailed": "Échec de la suppression",
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "evidenceLinked": "{count} preuves associées",
+      "severity": {
+        "CRITICAL": "Critique",
+        "MAJOR": "Majeure",
+        "MINOR": "Mineure",
+        "OBSERVATION": "Observation"
+      }
     }
   },
   "onboarding": {

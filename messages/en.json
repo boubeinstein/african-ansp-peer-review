@@ -7208,6 +7208,45 @@
         "COMPLETED": "Completed",
         "NOT_APPLICABLE": "N/A"
       }
+    },
+    "findings": {
+      "title": "Draft Findings",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Brief finding title…",
+      "titleRequired": "Title is required",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Describe the finding in detail…",
+      "descriptionRequired": "Description is required",
+      "severityLabel": "Severity",
+      "areaLabel": "Assessment Area",
+      "selectArea": "Select area…",
+      "relatedQuestion": "Related Question",
+      "questionPlaceholder": "Search questions…",
+      "linkedEvidence": "Linked Evidence",
+      "selectEvidence": "Select evidence to link",
+      "noEvidence": "No evidence captured yet",
+      "gpsLocation": "GPS Location",
+      "save": "Save Finding",
+      "saving": "Saving…",
+      "saved": "Draft finding saved",
+      "saveFailed": "Failed to save finding",
+      "edit": "Edit Finding",
+      "empty": "No findings documented yet",
+      "emptyDescription": "Tap the button below to document a finding during your facility inspection.",
+      "addNew": "New Finding",
+      "deleteTitle": "Delete Finding",
+      "deleteDescription": "Are you sure you want to delete this draft finding? This action cannot be undone.",
+      "deleted": "Finding deleted",
+      "deleteFailed": "Failed to delete finding",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "evidenceLinked": "{count} evidence linked",
+      "severity": {
+        "CRITICAL": "Critical",
+        "MAJOR": "Major",
+        "MINOR": "Minor",
+        "OBSERVATION": "Observation"
+      }
     }
   },
   "onboarding": {

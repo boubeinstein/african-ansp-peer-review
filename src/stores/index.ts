@@ -14,3 +14,8 @@ export {
   type AssessmentSettings,
   type AssessmentSettingsStore,
 } from "./assessment-settings-store";
+
+export {
+  useOfflineFieldworkStore,
+  type OfflineFieldworkStore,
+} from "./offline-fieldwork-store";

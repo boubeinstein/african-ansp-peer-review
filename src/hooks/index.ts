@@ -34,3 +34,5 @@ export {
 export { useLiveSync } from "./use-live-sync";
 
 export { useConnectionStatus } from "./use-connection-status";
+
+export { useOfflineFieldwork } from "./use-offline-fieldwork";

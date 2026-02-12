@@ -54,3 +54,13 @@ export {
   clearReviewCache,
   getCachedReviews,
 } from "./cache-manager";
+
+// Media capture
+export {
+  capturePhoto,
+  selectFromGallery,
+  compressImage,
+  generateThumbnail,
+  getCurrentPosition,
+} from "./media-capture";
+export type { CapturedImage, GeoPosition } from "./media-capture";

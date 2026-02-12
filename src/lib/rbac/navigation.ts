@@ -15,6 +15,7 @@ import {
   Settings,
   UserCog,
   ShieldCheck,
+  Shield,
   ScrollText,
   Lightbulb,
   Monitor,
@@ -45,6 +46,12 @@ const allNavItems: NavItem[] = [
     name: "analytics",
     href: "/analytics",
     icon: BarChart3,
+    feature: "analytics",
+  },
+  {
+    name: "safetyIntelligence",
+    href: "/analytics/safety-intelligence",
+    icon: Shield,
     feature: "analytics",
   },
   {

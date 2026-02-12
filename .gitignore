@@ -35,6 +35,12 @@ Thumbs.db
 coverage
 .nyc_output
 
+# Service Worker (generated from src/app/sw.ts during build)
+public/sw.js
+public/sw.js.map
+public/swe-worker-*.js
+public/swe-worker-*.js.map
+
 # Misc
 *.pem
 *.log

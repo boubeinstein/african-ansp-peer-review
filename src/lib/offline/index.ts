@@ -46,3 +46,11 @@ export {
   onReconnect,
 } from "./connectivity";
 export type { ConnectivityMonitor } from "./connectivity";
+
+// Cache manager
+export {
+  cacheReviewForOffline,
+  isCachedForOffline,
+  clearReviewCache,
+  getCachedReviews,
+} from "./cache-manager";

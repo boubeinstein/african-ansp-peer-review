@@ -8,7 +8,12 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure } from "../trpc";
-import { LessonType, RetrospectiveStatus } from "@prisma/client";
+import { LessonType, RetrospectiveStatus, ReviewPhase } from "@prisma/client";
+import { logStatusChange, logSubmission } from "@/server/services/audit";
+import {
+  sendNotification,
+  getRecipientsByRole,
+} from "@/server/services/notification-service";
 
 // =============================================================================
 // INPUT SCHEMAS
@@ -62,8 +67,87 @@ export const retrospectiveRouter = router({
               finding: { select: { id: true, titleEn: true, titleFr: true, severity: true } },
             },
           },
+          _count: { select: { lessons: true } },
         },
       });
+    }),
+
+  /**
+   * Get team member contributions / participation status for a review's retrospective
+   */
+  getContributions: protectedProcedure
+    .input(z.object({ reviewId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const review = await ctx.db.review.findUnique({
+        where: { id: input.reviewId },
+        include: {
+          teamMembers: {
+            include: {
+              user: {
+                select: { id: true, firstName: true, lastName: true, email: true },
+              },
+            },
+          },
+        },
+      });
+
+      if (!review) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
+      // Get the retrospective if it exists
+      const retrospective = await ctx.db.reviewRetrospective.findUnique({
+        where: { reviewId: input.reviewId },
+        select: {
+          id: true,
+          submittedById: true,
+          status: true,
+          taggedFindings: {
+            select: {
+              id: true,
+              findingId: true,
+              lessonType: true,
+            },
+          },
+          lessons: {
+            select: {
+              id: true,
+              authorId: true,
+              status: true,
+            },
+          },
+        },
+      });
+
+      // Map team members to contribution status
+      const contributions = review.teamMembers.map((member) => {
+        const lessonsAuthored =
+          retrospective?.lessons.filter((l) => l.authorId === member.user.id) ?? [];
+        const isSubmitter = retrospective?.submittedById === member.user.id;
+
+        return {
+          userId: member.user.id,
+          firstName: member.user.firstName,
+          lastName: member.user.lastName,
+          email: member.user.email,
+          role: member.role,
+          isSubmitter,
+          lessonsCount: lessonsAuthored.length,
+          hasContributed: isSubmitter || lessonsAuthored.length > 0,
+        };
+      });
+
+      return {
+        reviewId: input.reviewId,
+        retrospectiveId: retrospective?.id ?? null,
+        retrospectiveStatus: retrospective?.status ?? null,
+        taggedFindingsCount: retrospective?.taggedFindings.length ?? 0,
+        lessonsCount: retrospective?.lessons.length ?? 0,
+        contributions,
+      };
     }),
 
   /**
@@ -85,6 +169,20 @@ export const retrospectiveRouter = router({
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Review not found",
+        });
+      }
+
+      // Validate review phase — retrospectives only allowed in late phases
+      const allowedPhases: ReviewPhase[] = [
+        ReviewPhase.REPORTING,
+        ReviewPhase.FOLLOW_UP,
+        ReviewPhase.CLOSED,
+      ];
+      if (!allowedPhases.includes(review.phase)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Retrospectives can only be created during REPORTING, FOLLOW_UP, or CLOSED phases",
         });
       }
 
@@ -145,13 +243,53 @@ export const retrospectiveRouter = router({
         });
       }
 
-      return ctx.db.reviewRetrospective.update({
+      const updated = await ctx.db.reviewRetrospective.update({
         where: { id: input.retrospectiveId },
         data: {
           status: "SUBMITTED",
           submittedAt: new Date(),
         },
+        include: {
+          review: {
+            select: { id: true, referenceNumber: true },
+          },
+        },
       });
+
+      // Audit logging
+      await logStatusChange({
+        userId: ctx.session.user.id,
+        entityType: "RETROSPECTIVE",
+        entityId: input.retrospectiveId,
+        previousStatus: "DRAFT",
+        newStatus: "SUBMITTED",
+        metadata: { reviewId: retrospective.reviewId },
+      });
+
+      await logSubmission({
+        userId: ctx.session.user.id,
+        entityType: "RETROSPECTIVE",
+        entityId: input.retrospectiveId,
+        metadata: { reviewId: retrospective.reviewId },
+      });
+
+      // Notify Programme Coordinators
+      const coordinators = await getRecipientsByRole(["PROGRAMME_COORDINATOR"]);
+      if (coordinators.length > 0) {
+        const refNumber = updated.review.referenceNumber ?? updated.review.id;
+        await sendNotification(coordinators, {
+          type: "RETROSPECTIVE_SUBMITTED",
+          titleEn: "Retrospective Submitted",
+          titleFr: "Rétrospective soumise",
+          messageEn: `A retrospective for review ${refNumber} has been submitted and is awaiting publication approval.`,
+          messageFr: `Une rétrospective pour la revue ${refNumber} a été soumise et attend l'approbation de publication.`,
+          entityType: "RETROSPECTIVE",
+          entityId: input.retrospectiveId,
+          actionUrl: `/reviews/${retrospective.reviewId}`,
+        });
+      }
+
+      return updated;
     }),
 
   /**
@@ -189,13 +327,30 @@ export const retrospectiveRouter = router({
         });
       }
 
-      return ctx.db.reviewRetrospective.update({
+      const updated = await ctx.db.reviewRetrospective.update({
         where: { id: input.retrospectiveId },
         data: {
           status: "PUBLISHED",
           publishedAt: new Date(),
         },
+        include: {
+          review: {
+            select: { id: true, referenceNumber: true },
+          },
+        },
       });
+
+      // Audit logging
+      await logStatusChange({
+        userId: ctx.session.user.id,
+        entityType: "RETROSPECTIVE",
+        entityId: input.retrospectiveId,
+        previousStatus: "SUBMITTED",
+        newStatus: "PUBLISHED",
+        metadata: { reviewId: retrospective.reviewId },
+      });
+
+      return updated;
     }),
 
   /**
@@ -437,7 +592,7 @@ export const retrospectiveRouter = router({
             },
           },
           submittedBy: { select: { id: true, firstName: true, lastName: true } },
-          _count: { select: { taggedFindings: true } },
+          _count: { select: { taggedFindings: true, lessons: true } },
         },
         orderBy: { createdAt: "desc" },
         take: input.limit + 1,

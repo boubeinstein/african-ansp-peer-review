@@ -28,6 +28,8 @@ import { OverviewTab } from "@/components/features/safety-intelligence/overview-
 import { BenchmarkingTab } from "@/components/features/safety-intelligence/benchmarking-tab";
 import { FindingsAnalysisTab } from "@/components/features/safety-intelligence/findings-analysis-tab";
 import { SMSMaturityTab } from "@/components/features/safety-intelligence/sms-maturity-tab";
+import { RegionalTeamsTab } from "@/components/features/safety-intelligence/regional-teams-tab";
+import { CAPAnalyticsTab } from "@/components/features/safety-intelligence/cap-analytics-tab";
 
 // =============================================================================
 // TYPES
@@ -274,15 +276,11 @@ function TabContent({
       return <FindingsAnalysisTab selectedTeamId={selectedTeamId} />;
     case "smsMaturity":
       return <SMSMaturityTab selectedTeamId={selectedTeamId} />;
+    case "teams":
+      return <RegionalTeamsTab />;
+    case "caps":
+      return <CAPAnalyticsTab selectedTeamId={selectedTeamId} />;
     default:
-      return (
-        <Card>
-          <CardContent className="flex items-center justify-center py-24 text-muted-foreground">
-            <p className="text-sm">
-              {activeTab} tab — content coming soon
-            </p>
-          </CardContent>
-        </Card>
-      );
+      return null;
   }
 }

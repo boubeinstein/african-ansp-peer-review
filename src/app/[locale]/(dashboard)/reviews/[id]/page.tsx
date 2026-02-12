@@ -10,6 +10,7 @@ import {
   WorkspaceTab,
   DocumentsTab,
   FindingsTab,
+  FieldworkTab,
   ReportTab,
   RetrospectiveTab,
   SettingsTab,
@@ -43,7 +44,7 @@ export default async function ReviewDetailPage({ params, searchParams }: PagePro
   const { review, counts } = await fetchReviewWithCounts(id);
 
   // Validate tab parameter
-  const validTabs: ReviewTab[] = ["overview", "workspace", "documents", "findings", "report", "retrospective", "settings"];
+  const validTabs: ReviewTab[] = ["overview", "workspace", "documents", "findings", "fieldwork", "report", "retrospective", "settings"];
   const currentTab = validTabs.includes(tabParam as ReviewTab) ? (tabParam as ReviewTab) : "overview";
 
   const renderTabContent = () => {
@@ -56,6 +57,8 @@ export default async function ReviewDetailPage({ params, searchParams }: PagePro
         return <DocumentsTab review={review} userId={session.user.id} userName={`${session.user.firstName} ${session.user.lastName}`} />;
       case "findings":
         return <FindingsTab review={review} userId={session.user.id} userName={`${session.user.firstName} ${session.user.lastName}`} />;
+      case "fieldwork":
+        return <FieldworkTab review={review} userId={session.user.id} />;
       case "report":
         return <ReportTab review={review} userRole={session.user.role} />;
       case "retrospective":

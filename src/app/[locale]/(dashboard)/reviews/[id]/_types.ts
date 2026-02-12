@@ -1,4 +1,4 @@
-export type ReviewTab = "overview" | "workspace" | "documents" | "findings" | "report" | "retrospective" | "settings";
+export type ReviewTab = "overview" | "workspace" | "documents" | "findings" | "fieldwork" | "report" | "retrospective" | "settings";
 
 export interface ReviewTabConfig {
   id: ReviewTab;
@@ -13,6 +13,7 @@ export const REVIEW_TABS: ReviewTabConfig[] = [
   { id: "workspace", labelKey: "workspace", icon: "MessageSquare" },
   { id: "documents", labelKey: "documents", icon: "FileText" },
   { id: "findings", labelKey: "findings", icon: "AlertTriangle" },
+  { id: "fieldwork", labelKey: "fieldwork", icon: "ClipboardCheck" },
   { id: "report", labelKey: "report", icon: "FileOutput" },
   { id: "retrospective", labelKey: "retrospective", icon: "Lightbulb" },
   { id: "settings", labelKey: "settings", icon: "Settings" },

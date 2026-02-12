@@ -3440,6 +3440,7 @@
         "documents": "Documents",
         "findings": "Findings",
         "report": "Report",
+        "fieldwork": "Fieldwork",
         "retrospective": "Retrospective",
         "settings": "Settings"
       },
@@ -7279,6 +7280,28 @@
         "MINOR": "Minor",
         "OBSERVATION": "Observation"
       }
+    },
+    "mode": {
+      "title": "Fieldwork Mode",
+      "subtitle": "Offline-capable checklist and evidence capture",
+      "enterFieldwork": "Enter Fieldwork Mode",
+      "exitFieldwork": "Exit Fieldwork Mode",
+      "tabChecklist": "Checklist",
+      "tabFindings": "Findings",
+      "tabSync": "Sync",
+      "reviewPhase": "Review Phase",
+      "phaseNotOnSite": "This review is not currently in the on-site phase. Fieldwork mode is most useful during on-site visits.",
+      "continueAnyway": "Continue Anyway",
+      "offlineReady": "Offline Ready",
+      "offlineReadyDescription": "Data has been cached for offline use. You can work without an internet connection.",
+      "cachingData": "Caching data for offline use...",
+      "cacheError": "Failed to cache data for offline use",
+      "itemsCount": "{completed} of {total} items completed",
+      "findingsCount": "{count} draft findings",
+      "pendingSyncCount": "{count} pending sync",
+      "bannerTitle": "Fieldwork Mode Available",
+      "bannerDescription": "Use fieldwork mode for on-site checklist completion, evidence capture, and offline support.",
+      "bannerAction": "Open Fieldwork"
     }
   },
   "onboarding": {

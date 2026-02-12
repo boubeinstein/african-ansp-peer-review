@@ -3440,6 +3440,7 @@
         "documents": "Documents",
         "findings": "Constatations",
         "report": "Rapport",
+        "fieldwork": "Terrain",
         "retrospective": "Rétrospective",
         "settings": "Paramètres"
       },
@@ -7279,6 +7280,28 @@
         "MINOR": "Mineure",
         "OBSERVATION": "Observation"
       }
+    },
+    "mode": {
+      "title": "Mode Terrain",
+      "subtitle": "Liste de contrôle et capture de preuves hors ligne",
+      "enterFieldwork": "Entrer en mode terrain",
+      "exitFieldwork": "Quitter le mode terrain",
+      "tabChecklist": "Liste de contrôle",
+      "tabFindings": "Constatations",
+      "tabSync": "Synchronisation",
+      "reviewPhase": "Phase de revue",
+      "phaseNotOnSite": "Cette revue n'est pas actuellement en phase sur site. Le mode terrain est plus utile lors des visites sur site.",
+      "continueAnyway": "Continuer quand même",
+      "offlineReady": "Prêt hors ligne",
+      "offlineReadyDescription": "Les données ont été mises en cache pour une utilisation hors ligne. Vous pouvez travailler sans connexion internet.",
+      "cachingData": "Mise en cache des données pour une utilisation hors ligne...",
+      "cacheError": "Échec de la mise en cache des données",
+      "itemsCount": "{completed} sur {total} éléments complétés",
+      "findingsCount": "{count} constatations provisoires",
+      "pendingSyncCount": "{count} en attente de synchronisation",
+      "bannerTitle": "Mode Terrain Disponible",
+      "bannerDescription": "Utilisez le mode terrain pour compléter les listes de contrôle sur site, capturer des preuves et travailler hors ligne.",
+      "bannerAction": "Ouvrir le terrain"
     }
   },
   "onboarding": {

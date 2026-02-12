@@ -15,6 +15,7 @@ import {
   MessageSquare,
   FileText,
   AlertTriangle,
+  ClipboardCheck,
   FileOutput,
   Settings,
 } from "lucide-react";
@@ -26,9 +27,10 @@ const TAB_SHORTCUTS: Record<ReviewTab, { number: string; letter: string }> = {
   workspace: { number: "Alt+2", letter: "Alt+W" },
   documents: { number: "Alt+3", letter: "Alt+D" },
   findings: { number: "Alt+4", letter: "Alt+F" },
-  report: { number: "Alt+5", letter: "Alt+R" },
-  retrospective: { number: "Alt+6", letter: "Alt+T" },
-  settings: { number: "Alt+7", letter: "Alt+S" },
+  fieldwork: { number: "Alt+5", letter: "Alt+K" },
+  report: { number: "Alt+6", letter: "Alt+R" },
+  retrospective: { number: "Alt+7", letter: "Alt+T" },
+  settings: { number: "Alt+8", letter: "Alt+S" },
 };
 
 interface ReviewTabsProps {
@@ -52,11 +54,12 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   MessageSquare,
   FileText,
   AlertTriangle,
+  ClipboardCheck,
   FileOutput,
   Settings,
 };
 
-const TAB_ORDER: ReviewTab[] = ["overview", "workspace", "documents", "findings", "report", "retrospective", "settings"];
+const TAB_ORDER: ReviewTab[] = ["overview", "workspace", "documents", "findings", "fieldwork", "report", "retrospective", "settings"];
 
 export function ReviewTabs({ currentTab, onTabChange, counts, hasActiveSession }: ReviewTabsProps) {
   const t = useTranslations("reviews.detail.tabs");

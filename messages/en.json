@@ -7163,12 +7163,44 @@
   },
   "offline": {
     "offline": "Offline",
+    "online": "Online",
     "pending": "pending",
     "offlineTooltip": "You are currently offline. Changes will be saved locally.",
     "pendingTooltip": "{count} changes waiting to sync",
     "syncComplete": "All changes synced",
     "syncFailed": "Some changes failed to sync",
-    "retry": "Retry sync"
+    "retry": "Retry sync",
+    "syncStatus": "Sync Status",
+    "lastSync": "Last sync: {time}",
+    "neverSynced": "Never synced",
+    "pendingItems": "{count} waiting",
+    "syncingItems": "{count} uploading",
+    "syncedItems": "{count} complete",
+    "failedItems": "{count} failed",
+    "syncNow": "Sync Now",
+    "retryFailed": "Retry Failed",
+    "retryingCount": "Retrying {count} items…",
+    "syncingCount": "Syncing {count} items…",
+    "pendingCount": "{count} pending",
+    "entityType": {
+      "checklistItem": "Checklist Item",
+      "fieldEvidence": "Evidence",
+      "draftFinding": "Draft Finding"
+    },
+    "action": {
+      "CREATE": "Upload",
+      "UPDATE": "Update",
+      "DELETE": "Delete"
+    },
+    "conflict": {
+      "title": "Resolve Conflict",
+      "description": "This item was modified on the server while you were offline.",
+      "yourVersion": "Your Version",
+      "serverVersion": "Server Version",
+      "keepMine": "Keep Mine",
+      "keepServer": "Keep Server",
+      "resolved": "Conflict resolved"
+    }
   },
   "fieldwork": {
     "checklist": {

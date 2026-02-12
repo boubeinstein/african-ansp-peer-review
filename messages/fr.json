@@ -7163,12 +7163,44 @@
   },
   "offline": {
     "offline": "Hors ligne",
+    "online": "En ligne",
     "pending": "en attente",
     "offlineTooltip": "Vous êtes hors ligne. Les modifications seront enregistrées localement.",
     "pendingTooltip": "{count} modifications en attente de synchronisation",
     "syncComplete": "Toutes les modifications sont synchronisées",
     "syncFailed": "Certaines modifications n'ont pas pu être synchronisées",
-    "retry": "Réessayer"
+    "retry": "Réessayer",
+    "syncStatus": "État de synchronisation",
+    "lastSync": "Dernière sync : {time}",
+    "neverSynced": "Jamais synchronisé",
+    "pendingItems": "{count} en attente",
+    "syncingItems": "{count} en cours",
+    "syncedItems": "{count} terminés",
+    "failedItems": "{count} échoués",
+    "syncNow": "Synchroniser",
+    "retryFailed": "Réessayer les échecs",
+    "retryingCount": "Nouvelle tentative pour {count} éléments…",
+    "syncingCount": "Synchronisation de {count} éléments…",
+    "pendingCount": "{count} en attente",
+    "entityType": {
+      "checklistItem": "Élément de liste",
+      "fieldEvidence": "Preuve",
+      "draftFinding": "Constatation provisoire"
+    },
+    "action": {
+      "CREATE": "Téléverser",
+      "UPDATE": "Mettre à jour",
+      "DELETE": "Supprimer"
+    },
+    "conflict": {
+      "title": "Résoudre le conflit",
+      "description": "Cet élément a été modifié sur le serveur pendant que vous étiez hors ligne.",
+      "yourVersion": "Votre version",
+      "serverVersion": "Version serveur",
+      "keepMine": "Garder la mienne",
+      "keepServer": "Garder celle du serveur",
+      "resolved": "Conflit résolu"
+    }
   },
   "fieldwork": {
     "checklist": {

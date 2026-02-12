@@ -76,7 +76,6 @@ export function OfflineChecklist({ reviewId }: OfflineChecklistProps) {
     return map;
   }, [checklistItems]);
 
-  const activeItems = itemsByPhase[activePhase];
   const pendingCount = syncStatus.pending + syncStatus.failed;
 
   // ---------------------------------------------------------------------------

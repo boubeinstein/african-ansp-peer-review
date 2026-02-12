@@ -97,6 +97,7 @@
     "findings": "Constatations",
     "caps": "PAC",
     "bestPractices": "Meilleures Pratiques",
+    "lessonsLearned": "Leçons Apprises",
     "organizations": "Organisations",
     "reviewers": "Évaluateurs",
     "teams": "Équipes",
@@ -7145,6 +7146,70 @@
       "success": "Promotion Envoyée !",
       "successDescription": "Notifications envoyées à {count, plural, =0 {aucun utilisateur} =1 {1 utilisateur} other {# utilisateurs}}. Les emails seront livrés sous peu.",
       "error": "Échec de l'envoi de la promotion"
+    }
+  },
+  "lessons": {
+    "meta": {
+      "title": "Base de Connaissances - Leçons Apprises",
+      "description": "Rechercher et explorer les leçons apprises des évaluations par les pairs à travers la communauté africaine des ANSP"
+    },
+    "title": "Leçons Apprises",
+    "description": "Base de connaissances consultable des leçons extraites des rétrospectives d'évaluations par les pairs. Apprenez de l'expérience des ANSP à travers l'Afrique.",
+    "searchPlaceholder": "Rechercher par mot-clé, sujet ou domaine d'audit...",
+    "tabs": {
+      "search": "Recherche",
+      "bookmarks": "Mes Favoris"
+    },
+    "sort": {
+      "recent": "Plus Récents",
+      "helpful": "Plus Utiles",
+      "views": "Plus Consultés"
+    },
+    "filters": {
+      "title": "Filtres",
+      "category": "Catégorie",
+      "allCategories": "Toutes les catégories",
+      "impactLevel": "Niveau d'impact",
+      "allImpact": "Tous les niveaux",
+      "applicability": "Applicabilité",
+      "allApplicability": "Toutes",
+      "popularTags": "Tags populaires",
+      "clearAll": "Effacer les filtres"
+    },
+    "categories": {
+      "PROCESS_IMPROVEMENT": "Amélioration des processus",
+      "TECHNICAL_FINDING": "Constatation technique",
+      "LOGISTICS_PLANNING": "Logistique et planification",
+      "CULTURAL_COMMUNICATION": "Culture et communication",
+      "DOCUMENTATION_REVIEW": "Revue documentaire",
+      "INTERVIEW_TECHNIQUE": "Technique d'entretien",
+      "HOST_ENGAGEMENT": "Engagement de l'hôte",
+      "TOOL_METHODOLOGY": "Outil et méthodologie"
+    },
+    "impact": {
+      "LOW": "Faible",
+      "MODERATE": "Modéré",
+      "HIGH": "Élevé",
+      "CRITICAL": "Critique"
+    },
+    "card": {
+      "anonymous": "Évaluateur anonyme",
+      "helpfulCount": "Votes utiles",
+      "viewCount": "Vues",
+      "markHelpful": "Marquer comme utile",
+      "bookmark": "Ajouter aux favoris"
+    },
+    "showing": "Affichage de {count} sur {total} leçons",
+    "empty": {
+      "title": "Aucune Leçon Trouvée",
+      "description": "Aucune leçon publiée ne correspond à vos critères de recherche. Essayez d'ajuster vos filtres ou termes de recherche.",
+      "bookmarksTitle": "Aucun Favori",
+      "bookmarksDescription": "Ajoutez des leçons à vos favoris pour les consulter plus tard. Vos leçons favorites apparaîtront ici."
+    },
+    "pagination": {
+      "previous": "Précédent",
+      "next": "Suivant",
+      "page": "Page {page} sur {totalPages}"
     }
   },
   "workflow": {

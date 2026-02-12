@@ -52,6 +52,7 @@ export type Feature =
   | "settings.users"
   | "settings.usersOwn"
   | "bestPractices"
+  | "lessons"
   | "admin"
   | "admin.users"
   | "admin.roles"
@@ -68,6 +69,7 @@ const permissions: Record<UserRole, Feature[]> = {
     "dashboard.global",
     "analytics",
     "bestPractices",
+    "lessons",
     "questionnaires",
     "questionnaires.manage",
     "assessments",
@@ -119,6 +121,7 @@ const permissions: Record<UserRole, Feature[]> = {
     "dashboard.global",
     "analytics",
     "bestPractices",
+    "lessons",
     "questionnaires",
     "questionnaires.manage",
     "assessments",
@@ -169,6 +172,7 @@ const permissions: Record<UserRole, Feature[]> = {
     "dashboard.global",
     "analytics",
     "bestPractices",
+    "lessons",
     "questionnaires",
     "questionnaires.manage",
     "assessments",
@@ -215,6 +219,7 @@ const permissions: Record<UserRole, Feature[]> = {
     "dashboard.global",
     "analytics",
     "bestPractices",
+    "lessons",
     "assessments",
     "assessments.all",
     "peerReviews",
@@ -242,6 +247,7 @@ const permissions: Record<UserRole, Feature[]> = {
   LEAD_REVIEWER: [
     "dashboard",
     "bestPractices",
+    "lessons",
     "questionnaires",
     "assessments",
     "assessments.assigned",
@@ -264,6 +270,7 @@ const permissions: Record<UserRole, Feature[]> = {
   PEER_REVIEWER: [
     "dashboard",
     "bestPractices",
+    "lessons",
     "questionnaires",
     "assessments",
     "assessments.assigned",
@@ -284,6 +291,7 @@ const permissions: Record<UserRole, Feature[]> = {
   ANSP_ADMIN: [
     "dashboard",
     "bestPractices",
+    "lessons",
     "questionnaires",
     "assessments",
     "assessments.own",
@@ -309,6 +317,7 @@ const permissions: Record<UserRole, Feature[]> = {
   SAFETY_MANAGER: [
     "dashboard",
     "bestPractices",
+    "lessons",
     "questionnaires",
     "assessments",
     "assessments.own",
@@ -325,6 +334,7 @@ const permissions: Record<UserRole, Feature[]> = {
   QUALITY_MANAGER: [
     "dashboard",
     "bestPractices",
+    "lessons",
     "questionnaires",
     "assessments",
     "assessments.own",
@@ -342,6 +352,7 @@ const permissions: Record<UserRole, Feature[]> = {
     "dashboard",
     "dashboard.global",
     "bestPractices",
+    "lessons",
     "assessments",
     "assessments.all",
     "peerReviews",
@@ -360,6 +371,7 @@ const permissions: Record<UserRole, Feature[]> = {
   STAFF: [
     "dashboard",
     "bestPractices",
+    "lessons",
     "questionnaires",
     "assessments",
     "assessments.own",

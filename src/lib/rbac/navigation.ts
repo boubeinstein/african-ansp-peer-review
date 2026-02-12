@@ -18,6 +18,7 @@ import {
   Shield,
   ScrollText,
   Lightbulb,
+  BookOpen,
   Monitor,
   type LucideIcon,
 } from "lucide-react";
@@ -89,6 +90,12 @@ const allNavItems: NavItem[] = [
     href: "/best-practices",
     icon: Lightbulb,
     feature: "bestPractices",
+  },
+  {
+    name: "lessonsLearned",
+    href: "/lessons",
+    icon: BookOpen,
+    feature: "lessons",
   },
   {
     name: "reviewers",

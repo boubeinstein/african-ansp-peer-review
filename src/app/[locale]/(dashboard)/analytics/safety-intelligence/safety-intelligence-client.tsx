@@ -27,6 +27,7 @@ import { trpc } from "@/lib/trpc/client";
 import { OverviewTab } from "@/components/features/safety-intelligence/overview-tab";
 import { BenchmarkingTab } from "@/components/features/safety-intelligence/benchmarking-tab";
 import { FindingsAnalysisTab } from "@/components/features/safety-intelligence/findings-analysis-tab";
+import { SMSMaturityTab } from "@/components/features/safety-intelligence/sms-maturity-tab";
 
 // =============================================================================
 // TYPES
@@ -271,6 +272,8 @@ function TabContent({
       );
     case "findings":
       return <FindingsAnalysisTab selectedTeamId={selectedTeamId} />;
+    case "smsMaturity":
+      return <SMSMaturityTab selectedTeamId={selectedTeamId} />;
     default:
       return (
         <Card>

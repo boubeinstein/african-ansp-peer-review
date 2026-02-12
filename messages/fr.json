@@ -7230,6 +7230,8 @@
       "cancel": "Annuler",
       "delete": "Supprimer",
       "statusLabel": "Statut",
+      "annotate": "Annoter",
+      "annotated": "Annotée",
       "phase": {
         "PRE_VISIT": "Pré-visite",
         "ON_SITE": "Sur site",
@@ -7302,6 +7304,30 @@
       "bannerTitle": "Mode Terrain Disponible",
       "bannerDescription": "Utilisez le mode terrain pour compléter les listes de contrôle sur site, capturer des preuves et travailler hors ligne.",
       "bannerAction": "Ouvrir le terrain"
+    },
+    "annotator": {
+      "title": "Annoter la photo",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "cancel": "Annuler",
+      "textPlaceholder": "Saisir un libellé…"
+    },
+    "preflight": {
+      "title": "Préparation du terrain",
+      "description": "Vérification du système pour assurer le fonctionnement hors ligne…",
+      "checks": {
+        "indexeddb": "Base de données locale",
+        "camera": "Accès caméra",
+        "microphone": "Accès microphone",
+        "gps": "Localisation GPS",
+        "reviewData": "Cache des données de revue",
+        "storage": "Espace de stockage"
+      },
+      "allPassed": "Toutes les vérifications sont passées ! Entrée en mode terrain…",
+      "hasWarnings": "Certaines fonctionnalités peuvent être limitées. Vous pouvez tout de même continuer.",
+      "hasFailed": "Des vérifications critiques ont échoué. Veuillez résoudre les problèmes avant de continuer.",
+      "proceed": "Continuer quand même",
+      "close": "Fermer"
     }
   },
   "onboarding": {

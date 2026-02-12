@@ -13,6 +13,7 @@ import {
   Mic,
   Play,
   Pause,
+  Pen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,7 +36,9 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useOfflineFieldworkStore } from "@/stores/offline-fieldwork-store";
 import { FieldEvidenceType } from "@/lib/offline/types";
+import { fieldworkDB } from "@/lib/offline/fieldwork-db";
 import type { OfflineFieldEvidence, SyncStatus } from "@/lib/offline/types";
+import { PhotoAnnotator } from "./photo-annotator";
 
 // =============================================================================
 // Props
@@ -62,6 +65,7 @@ export function EvidenceGallery({ checklistItemId }: EvidenceGalleryProps) {
   const [viewItem, setViewItem] = useState<OfflineFieldEvidence | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [annotatingItem, setAnnotatingItem] = useState<OfflineFieldEvidence | null>(null);
 
   if (items.length === 0) return null;
 
@@ -81,6 +85,29 @@ export function EvidenceGallery({ checklistItemId }: EvidenceGalleryProps) {
     } finally {
       setDeleteTarget(null);
       setDeleting(false);
+    }
+  }
+
+  async function handleAnnotationSave(annotatedBlob: Blob) {
+    if (!annotatingItem) return;
+    try {
+      // Update the evidence blob in Dexie (keep original in annotations metadata)
+      await fieldworkDB.fieldEvidence.update(annotatingItem.id, {
+        blob: annotatedBlob,
+        fileSize: annotatedBlob.size,
+        annotations: "annotated",
+        syncStatus: "pending" as SyncStatus,
+      });
+
+      // Refresh the store
+      const state = useOfflineFieldworkStore.getState();
+      await state.initializeForReview(annotatingItem.reviewId);
+
+      toast.success(t("evidenceCaptured"));
+      setAnnotatingItem(null);
+      setViewItem(null);
+    } catch {
+      toast.error(t("evidenceFailed"));
     }
   }
 
@@ -111,6 +138,11 @@ export function EvidenceGallery({ checklistItemId }: EvidenceGalleryProps) {
             <EvidenceDetail
               evidence={viewItem}
               onDelete={() => setDeleteTarget(viewItem.id)}
+              onAnnotate={
+                viewItem.type === FieldEvidenceType.PHOTO
+                  ? () => setAnnotatingItem(viewItem)
+                  : undefined
+              }
             />
           )}
         </DialogContent>
@@ -143,6 +175,15 @@ export function EvidenceGallery({ checklistItemId }: EvidenceGalleryProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Photo annotator */}
+      {annotatingItem && (
+        <PhotoAnnotator
+          imageBlob={annotatingItem.blob}
+          onSave={(blob) => void handleAnnotationSave(blob)}
+          onCancel={() => setAnnotatingItem(null)}
+        />
+      )}
     </>
   );
 }
@@ -204,6 +245,13 @@ function ThumbnailCard({
         </span>
       )}
 
+      {/* Annotation indicator */}
+      {!isVoice && evidence.annotations === "annotated" && (
+        <span className="absolute bottom-6 right-1 flex items-center justify-center h-5 w-5 rounded-full bg-blue-500/80 text-white">
+          <Pen className="h-2.5 w-2.5" />
+        </span>
+      )}
+
       {/* Sync status dot */}
       <span
         className={cn(
@@ -227,9 +275,11 @@ function ThumbnailCard({
 function EvidenceDetail({
   evidence,
   onDelete,
+  onAnnotate,
 }: {
   evidence: OfflineFieldEvidence;
   onDelete: () => void;
+  onAnnotate?: () => void;
 }) {
   const t = useTranslations("fieldwork.checklist");
   const isVoice = evidence.type === FieldEvidenceType.VOICE_NOTE;
@@ -268,23 +318,37 @@ function EvidenceDetail({
           <SyncStatusBadge status={evidence.syncStatus} />
         </div>
 
-        {evidence.annotations && !isVoice && (
-          <p className="text-muted-foreground border-l-2 pl-2 text-xs">
-            {evidence.annotations}
-          </p>
+        {evidence.annotations === "annotated" && !isVoice && (
+          <div className="flex items-center gap-1.5 text-xs text-blue-600">
+            <Pen className="h-3.5 w-3.5" />
+            {t("annotated")}
+          </div>
         )}
       </div>
 
-      {/* Delete button */}
-      <Button
-        variant="destructive"
-        size="sm"
-        className="w-full min-h-[44px]"
-        onClick={onDelete}
-      >
-        <Trash2 className="h-4 w-4 mr-1.5" />
-        {t("delete")}
-      </Button>
+      {/* Action buttons */}
+      <div className="flex gap-2">
+        {onAnnotate && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 min-h-[44px] gap-1.5"
+            onClick={onAnnotate}
+          >
+            <Pen className="h-4 w-4" />
+            {t("annotate")}
+          </Button>
+        )}
+        <Button
+          variant="destructive"
+          size="sm"
+          className={cn("min-h-[44px]", onAnnotate ? "flex-1" : "w-full")}
+          onClick={onDelete}
+        >
+          <Trash2 className="h-4 w-4 mr-1.5" />
+          {t("delete")}
+        </Button>
+      </div>
     </div>
   );
 }

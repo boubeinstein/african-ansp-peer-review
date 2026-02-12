@@ -7230,6 +7230,8 @@
       "cancel": "Cancel",
       "delete": "Delete",
       "statusLabel": "Status",
+      "annotate": "Annotate",
+      "annotated": "Annotated",
       "phase": {
         "PRE_VISIT": "Pre-Visit",
         "ON_SITE": "On-Site",
@@ -7302,6 +7304,30 @@
       "bannerTitle": "Fieldwork Mode Available",
       "bannerDescription": "Use fieldwork mode for on-site checklist completion, evidence capture, and offline support.",
       "bannerAction": "Open Fieldwork"
+    },
+    "annotator": {
+      "title": "Annotate Photo",
+      "save": "Save",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "textPlaceholder": "Type label…"
+    },
+    "preflight": {
+      "title": "Preparing for Fieldwork",
+      "description": "Running system checks to ensure offline readiness…",
+      "checks": {
+        "indexeddb": "Local Database",
+        "camera": "Camera Access",
+        "microphone": "Microphone Access",
+        "gps": "GPS Location",
+        "reviewData": "Review Data Cache",
+        "storage": "Storage Space"
+      },
+      "allPassed": "All checks passed! Entering fieldwork mode…",
+      "hasWarnings": "Some features may have limited functionality. You can still proceed.",
+      "hasFailed": "Critical checks failed. Please resolve the issues before continuing.",
+      "proceed": "Proceed Anyway",
+      "close": "Close"
     }
   },
   "onboarding": {

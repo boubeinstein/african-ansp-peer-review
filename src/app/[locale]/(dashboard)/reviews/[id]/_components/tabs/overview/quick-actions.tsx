@@ -6,22 +6,38 @@ import {
   MessageSquare,
   CheckSquare,
   Upload,
-  AlertTriangle
+  AlertTriangle,
+  BookOpen,
 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 
+const PREP_ELIGIBLE_STATUSES = ["PLANNING", "SCHEDULED", "IN_PROGRESS"];
+
 interface QuickActionsProps {
   reviewId: string;
   canEdit: boolean;
+  reviewStatus?: string;
 }
 
-export function QuickActions({ reviewId, canEdit }: QuickActionsProps) {
+export function QuickActions({ reviewId, canEdit, reviewStatus }: QuickActionsProps) {
   const t = useTranslations("reviews.detail.overview.quickActions");
   const locale = useLocale();
   const router = useRouter();
 
+  const showPrepButton = reviewStatus && PREP_ELIGIBLE_STATUSES.includes(reviewStatus);
+
   const actions = [
+    ...(showPrepButton
+      ? [
+          {
+            icon: BookOpen,
+            label: t("reviewPrep"),
+            href: `/${locale}/reviews/${reviewId}/prep`,
+            variant: "default" as const,
+          },
+        ]
+      : []),
     {
       icon: AlertTriangle,
       label: t("addFinding"),

@@ -3526,6 +3526,7 @@
         },
         "quickActions": {
           "title": "Quick Actions",
+          "reviewPrep": "Review Prep Briefing",
           "addFinding": "Add Finding",
           "uploadDocument": "Upload Document",
           "newDiscussion": "New Discussion",
@@ -7242,6 +7243,24 @@
       "share": "Share",
       "copied": "Copied!",
       "relatedLessons": "Related Lessons"
+    },
+    "prep": {
+      "title": "Pre-Review Briefing",
+      "subtitle": "Lessons from past reviews relevant to your upcoming assignment",
+      "maturity": "Maturity",
+      "lessonsFound": "relevant lessons found",
+      "categoriesLabel": "categories",
+      "takeawaysCount": "key takeaways",
+      "timeInsightsCount": "time insights",
+      "keyTakeaways": "Key Takeaways",
+      "timePlanning": "Time Planning Insights",
+      "byCategory": "Lessons by Category",
+      "noLessonsTitle": "No Relevant Lessons Yet",
+      "noLessons": "No relevant lessons found yet. This briefing will improve as more reviews are completed and retrospectives are submitted.",
+      "bookmarkAll": "Bookmark All Lessons",
+      "bookmarkingAll": "Bookmarking...",
+      "downloadPdf": "Print Briefing",
+      "exploreAll": "Explore All Lessons"
     }
   },
   "workflow": {

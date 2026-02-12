@@ -83,7 +83,7 @@ export function OverviewTab({ review, counts, canEdit = true }: OverviewTabProps
           <ProgressDashboard status={review.status} />
 
           {/* Quick Actions */}
-          <QuickActions reviewId={review.id} canEdit={canEdit} />
+          <QuickActions reviewId={review.id} canEdit={canEdit} reviewStatus={review.status} />
 
           {/* Attention Needed */}
           <AttentionNeeded

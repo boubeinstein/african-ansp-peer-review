@@ -3526,6 +3526,7 @@
         },
         "quickActions": {
           "title": "Actions rapides",
+          "reviewPrep": "Briefing Pré-Évaluation",
           "addFinding": "Ajouter une constatation",
           "uploadDocument": "Téléverser un document",
           "newDiscussion": "Nouvelle discussion",
@@ -7242,6 +7243,24 @@
       "share": "Partager",
       "copied": "Copié !",
       "relatedLessons": "Leçons Associées"
+    },
+    "prep": {
+      "title": "Briefing Pré-Évaluation",
+      "subtitle": "Leçons des évaluations passées pertinentes pour votre prochaine mission",
+      "maturity": "Maturité",
+      "lessonsFound": "leçons pertinentes trouvées",
+      "categoriesLabel": "catégories",
+      "takeawaysCount": "points clés",
+      "timeInsightsCount": "aperçus temporels",
+      "keyTakeaways": "Points Clés à Retenir",
+      "timePlanning": "Aperçus de Planification Temporelle",
+      "byCategory": "Leçons par Catégorie",
+      "noLessonsTitle": "Aucune Leçon Pertinente",
+      "noLessons": "Aucune leçon pertinente trouvée pour le moment. Ce briefing s'améliorera à mesure que davantage d'évaluations seront complétées et que des rétrospectives seront soumises.",
+      "bookmarkAll": "Ajouter Tout aux Favoris",
+      "bookmarkingAll": "Ajout en cours...",
+      "downloadPdf": "Imprimer le Briefing",
+      "exploreAll": "Explorer Toutes les Leçons"
     }
   },
   "workflow": {

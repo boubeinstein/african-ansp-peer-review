@@ -36,6 +36,7 @@ import { workflowRouter } from "./workflow";
 import { documentEnhancedRouter } from "./document-enhanced";
 import { searchRouter } from "./search";
 import { retrospectiveRouter } from "./retrospective";
+import { lessonsRouter } from "./lessons";
 import { onboardingRouter } from "./onboarding";
 import { loginSessionRouter } from "./login-session";
 import { safetyIntelligenceRouter } from "./safety-intelligence";
@@ -82,6 +83,7 @@ export const appRouter = router({
   documentEnhanced: documentEnhancedRouter,
   search: searchRouter,
   retrospective: retrospectiveRouter,
+  lessons: lessonsRouter,
   onboarding: onboardingRouter,
   loginSession: loginSessionRouter,
   safetyIntelligence: safetyIntelligenceRouter,

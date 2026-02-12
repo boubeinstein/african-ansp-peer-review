@@ -19,6 +19,7 @@ export {
 } from "./storage-manager";
 export type {
   SyncStatus,
+  ChecklistItemStatus,
   FieldEvidenceType,
   OfflineChecklistItem,
   OfflineFieldEvidence,

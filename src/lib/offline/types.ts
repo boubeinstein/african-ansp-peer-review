@@ -18,6 +18,16 @@ export enum FieldEvidenceType {
 }
 
 // =============================================================================
+// Checklist item status
+// =============================================================================
+
+export type ChecklistItemStatus =
+  | "NOT_STARTED"
+  | "IN_PROGRESS"
+  | "COMPLETED"
+  | "NOT_APPLICABLE";
+
+// =============================================================================
 // Offline entity interfaces
 // =============================================================================
 
@@ -27,6 +37,10 @@ export interface OfflineChecklistItem {
   reviewId: string;
   itemCode: string;
   phase: "PRE_VISIT" | "ON_SITE" | "POST_VISIT";
+  labelEn: string;
+  labelFr: string;
+  sortOrder: number;
+  status: ChecklistItemStatus;
   isCompleted: boolean;
   completedAt: Date | null;
   completedById: string | null;

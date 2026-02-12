@@ -7173,10 +7173,17 @@
   "fieldwork": {
     "checklist": {
       "progress": "Progression",
+      "progressLabel": "{completed} sur {total} terminés",
       "offlineMode": "Mode hors ligne",
+      "online": "En ligne",
+      "offline": "Hors ligne",
+      "pendingSyncCount": "{count} en attente",
+      "syncing": "Synchronisation…",
+      "allSynced": "Tout synchronisé",
       "itemUpdated": "Élément mis à jour",
       "updateFailed": "Échec de la mise à jour",
       "evidence": "Preuves",
+      "evidenceCount": "{count} preuves",
       "notes": "Notes",
       "capturePhoto": "Capturer",
       "selectPhoto": "Galerie",
@@ -7189,6 +7196,12 @@
       "deleteEvidenceDescription": "Êtes-vous sûr de vouloir supprimer cette preuve ? Cette action est irréversible.",
       "cancel": "Annuler",
       "delete": "Supprimer",
+      "statusLabel": "Statut",
+      "phase": {
+        "PRE_VISIT": "Pré-visite",
+        "ON_SITE": "Sur site",
+        "POST_VISIT": "Post-visite"
+      },
       "status": {
         "NOT_STARTED": "Non commencé",
         "IN_PROGRESS": "En cours",

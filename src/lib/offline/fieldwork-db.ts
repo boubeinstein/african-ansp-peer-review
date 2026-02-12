@@ -24,7 +24,7 @@ export class FieldworkDatabase extends Dexie {
     this.version(1).stores({
       // Indexed properties — Dexie auto-creates a primary key from the first listed field.
       // Remaining entries become secondary indexes.
-      checklistItems: "id, reviewId, syncStatus",
+      checklistItems: "id, reviewId, phase, syncStatus",
       fieldEvidence: "id, checklistItemId, reviewId, syncStatus",
       draftFindings: "id, reviewId, syncStatus",
       syncQueue: "id, entityType, createdAt",

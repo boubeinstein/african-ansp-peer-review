@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { createHash } from "crypto";
 import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure } from "../trpc";
 import {
@@ -12,7 +13,7 @@ import {
   Prisma,
 } from "@prisma/client";
 import { aggregateReportData } from "@/lib/report/aggregate-report-data";
-import type { ReportContent, EditableSection } from "@/types/report";
+import type { ReportContent, EditableSection, ReportVersionEntry } from "@/types/report";
 
 // ============================================================================
 // Role Definitions
@@ -615,25 +616,66 @@ export const reportRouter = router({
       const titleEn = `Peer Review Report - ${review.hostOrganization.nameEn} (${review.hostOrganization.organizationCode}) - ${year}`;
       const titleFr = `Rapport de Revue par les Pairs - ${review.hostOrganization.nameFr} (${review.hostOrganization.organizationCode}) - ${year}`;
 
-      // 7. Upsert the report (create if new, update content if regenerating)
-      const report = await ctx.db.reviewReport.upsert({
+      // 7. Check if a report already exists
+      const existingReport = await ctx.db.reviewReport.findUnique({
         where: { reviewId: input.reviewId },
-        create: {
-          reviewId: input.reviewId,
-          titleEn,
-          titleFr,
-          content: reportContent as unknown as Prisma.InputJsonValue,
-          status: "DRAFT",
-          draftedAt: new Date(),
-          overallEI,
-          overallMaturity,
-        },
-        update: {
-          content: reportContent as unknown as Prisma.InputJsonValue,
-          overallEI,
-          overallMaturity,
-        },
       });
+
+      let report;
+
+      if (existingReport) {
+        // Snapshot the current version into versionHistory
+        const contentHash = createHash("sha256")
+          .update(JSON.stringify(existingReport.content))
+          .digest("hex");
+
+        const snapshotEntry: ReportVersionEntry = {
+          version: existingReport.version,
+          generatedAt: existingReport.updatedAt.toISOString(),
+          generatedBy: (() => {
+            const c = existingReport.content as unknown as ReportContent | null;
+            return c?.metadata?.generatedBy ?? { id: "unknown", name: "Unknown", role: "SYSTEM" };
+          })(),
+          status: existingReport.status,
+          overallEI: existingReport.overallEI,
+          overallMaturity: existingReport.overallMaturity as string | null,
+          contentHash,
+        };
+
+        const previousHistory = (existingReport.versionHistory as unknown as ReportVersionEntry[]) ?? [];
+        const updatedHistory = [...previousHistory, snapshotEntry];
+
+        report = await ctx.db.reviewReport.update({
+          where: { reviewId: input.reviewId },
+          data: {
+            titleEn,
+            titleFr,
+            content: reportContent as unknown as Prisma.InputJsonValue,
+            overallEI,
+            overallMaturity,
+            version: existingReport.version + 1,
+            versionHistory: updatedHistory as unknown as Prisma.InputJsonValue,
+            status: "DRAFT",
+            draftedAt: new Date(),
+            reviewedAt: null,
+            finalizedAt: null,
+          },
+        });
+      } else {
+        report = await ctx.db.reviewReport.create({
+          data: {
+            reviewId: input.reviewId,
+            titleEn,
+            titleFr,
+            content: reportContent as unknown as Prisma.InputJsonValue,
+            status: "DRAFT",
+            draftedAt: new Date(),
+            overallEI,
+            overallMaturity,
+            version: 1,
+          },
+        });
+      }
 
       return report;
     }),
@@ -682,6 +724,8 @@ export const reportRouter = router({
         overallEI: report.overallEI,
         overallMaturity: report.overallMaturity,
         content: (report.content as unknown as ReportContent) ?? null,
+        version: report.version,
+        versionHistory: (report.versionHistory as unknown as ReportVersionEntry[]) ?? [],
         draftedAt: report.draftedAt,
         reviewedAt: report.reviewedAt,
         finalizedAt: report.finalizedAt,

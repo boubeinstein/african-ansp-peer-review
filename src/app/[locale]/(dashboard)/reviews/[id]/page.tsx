@@ -57,7 +57,7 @@ export default async function ReviewDetailPage({ params, searchParams }: PagePro
       case "findings":
         return <FindingsTab review={review} userId={session.user.id} userName={`${session.user.firstName} ${session.user.lastName}`} />;
       case "report":
-        return <ReportTab review={review} />;
+        return <ReportTab review={review} userRole={session.user.role} />;
       case "retrospective":
         return <RetrospectiveTab review={review} />;
       case "settings":

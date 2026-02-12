@@ -8,8 +8,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,30 +24,28 @@ import {
 } from "@/components/ui/prerequisites-checklist";
 import {
   FileText,
-  Download,
-  Eye,
-  RefreshCw,
   Clock,
   Loader2,
   FileOutput,
-  Send,
-  CheckCircle2,
+  RefreshCw,
 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { format } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 import { ReportViewer } from "@/components/features/report/report-viewer";
+import { ReportWorkflowActions } from "@/components/features/report/report-workflow-actions";
+import { VersionHistoryPanel } from "@/components/features/report/version-history-panel";
 import type { ReviewData } from "../../_lib/fetch-review-data";
 
 interface ReportTabProps {
   review: ReviewData;
+  userRole: string;
   locale?: string;
 }
 
-export function ReportTab({ review }: ReportTabProps) {
+export function ReportTab({ review, userRole }: ReportTabProps) {
   const t = useTranslations("reviews.detail.report");
   const tStatus = useTranslations("reviews.status");
   const locale = useLocale();
@@ -58,6 +54,8 @@ export function ReportTab({ review }: ReportTabProps) {
 
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
+  const [showFinalizeDialog, setShowFinalizeDialog] = useState(false);
+  const [showReturnDialog, setShowReturnDialog] = useState(false);
 
   // Fetch report data with structured content via tRPC
   const {
@@ -88,11 +86,13 @@ export function ReportTab({ review }: ReportTabProps) {
     },
   });
 
-  const updateStatusMutation = trpc.report.updateStatus.useMutation({
+  const updateStatusMutation = trpc.report.updateReportStatus.useMutation({
     onSuccess: () => {
-      toast.success(t("submitSuccess"));
+      toast.success(t("workflow.statusUpdateSuccess"));
       utils.report.getByReviewId.invalidate({ reviewId: review.id });
       setShowSubmitDialog(false);
+      setShowFinalizeDialog(false);
+      setShowReturnDialog(false);
     },
     onError: (error) => {
       toast.error(error.message || t("submitError"));
@@ -194,36 +194,7 @@ export function ReportTab({ review }: ReportTabProps) {
     .every((p) => p.status === "complete");
 
   const canGenerate = requiredPrerequisitesMet;
-  // Report exists if we have data and no error
   const hasReport = reportData && !reportError;
-  const canSubmit = hasReport && reportData.status === "DRAFT";
-
-  const reportStatusConfig: Record<
-    string,
-    { color: string; icon: React.ReactNode }
-  > = {
-    DRAFT: {
-      color: "bg-gray-100 text-gray-800",
-      icon: <FileText className="h-4 w-4" />,
-    },
-    UNDER_REVIEW: {
-      color: "bg-blue-100 text-blue-800",
-      icon: <Send className="h-4 w-4" />,
-    },
-    FINALIZED: {
-      color: "bg-green-100 text-green-800",
-      icon: <CheckCircle2 className="h-4 w-4" />,
-    },
-  };
-
-  const handleSubmit = () => {
-    if (hasReport) {
-      updateStatusMutation.mutate({
-        reportId: reportData.id,
-        status: "UNDER_REVIEW",
-      });
-    }
-  };
 
   // Determine which date to show
   const getReportDate = () => {
@@ -236,6 +207,25 @@ export function ReportTab({ review }: ReportTabProps) {
 
   const handleContentUpdated = () => {
     utils.report.getByReviewId.invalidate({ reviewId: review.id });
+  };
+
+  const handleDownload = () => {
+    window.open(
+      `/api/report/export?reviewId=${review.id}&format=docx&locale=${locale}`,
+      "_blank"
+    );
+  };
+
+  const handleSubmitForReview = () => {
+    setShowSubmitDialog(true);
+  };
+
+  const handleFinalize = () => {
+    setShowFinalizeDialog(true);
+  };
+
+  const handleReturnToDraft = () => {
+    setShowReturnDialog(true);
   };
 
   return (
@@ -261,83 +251,44 @@ export function ReportTab({ review }: ReportTabProps) {
                 <FileOutput className="h-5 w-5" />
                 {t("currentReport")}
               </CardTitle>
-              <Badge
-                variant="secondary"
-                className={cn(
-                  reportStatusConfig[reportData.status]?.color
-                )}
-              >
-                {reportStatusConfig[reportData.status]?.icon}
-                <span className="ml-1">
-                  {t(`status.${reportData.status}`)}
-                </span>
-              </Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between text-sm">
-              <div className="space-y-1">
-                {getReportDate() && (
-                  <p className="text-muted-foreground flex items-center gap-1">
-                    <Clock className="h-3.5 w-3.5" />
-                    {t("generatedAt", {
-                      date: format(new Date(getReportDate()!), "PPp", {
-                        locale: dateLocale,
-                      }),
-                    })}
-                  </p>
-                )}
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    window.open(
-                      `/api/report/export?reviewId=${review.id}&format=docx&locale=${locale}`,
-                      "_blank"
-                    );
-                  }}
-                >
-                  <Download className="h-4 w-4 mr-1" />
-                  {t("download")}
-                </Button>
-                {reportData.pdfUrl && (
-                  <Button variant="outline" size="sm" asChild>
-                    <a
-                      href={reportData.pdfUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Eye className="h-4 w-4 mr-1" />
-                      {t("preview")}
-                    </a>
-                  </Button>
-                )}
-              </div>
-            </div>
+            {/* Date info */}
+            {getReportDate() && (
+              <p className="text-sm text-muted-foreground flex items-center gap-1">
+                <Clock className="h-3.5 w-3.5" />
+                {t("generatedAt", {
+                  date: format(new Date(getReportDate()!), "PPp", {
+                    locale: dateLocale,
+                  }),
+                })}
+              </p>
+            )}
 
-            <Separator />
+            {/* Workflow Actions Bar */}
+            <ReportWorkflowActions
+              status={reportData.status}
+              version={reportData.version}
+              userRole={userRole}
+              canRegenerate={canGenerate}
+              isRegenerating={generateMutation.isPending}
+              isUpdatingStatus={updateStatusMutation.isPending}
+              onRegenerate={() => setShowGenerateDialog(true)}
+              onSubmitForReview={handleSubmitForReview}
+              onFinalize={handleFinalize}
+              onReturnToDraft={handleReturnToDraft}
+              onDownload={handleDownload}
+            />
 
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setShowGenerateDialog(true)}
-                disabled={!canGenerate || generateMutation.isPending}
-              >
-                <RefreshCw className="h-4 w-4 mr-1" />
-                {t("regenerate")}
-              </Button>
-              {canSubmit && (
-                <Button
-                  onClick={() => setShowSubmitDialog(true)}
-                  disabled={updateStatusMutation.isPending}
-                >
-                  <Send className="h-4 w-4 mr-1" />
-                  {t("submitForApproval")}
-                </Button>
-              )}
-            </div>
+            {/* Version History */}
+            <VersionHistoryPanel
+              currentVersion={reportData.version}
+              currentStatus={reportData.status}
+              currentUpdatedAt={reportData.updatedAt}
+              currentGeneratedBy={reportData.content?.metadata?.generatedBy ?? null}
+              versionHistory={reportData.versionHistory}
+            />
           </CardContent>
         </Card>
       ) : (
@@ -370,6 +321,29 @@ export function ReportTab({ review }: ReportTabProps) {
           reportStatus={reportData.status}
           onContentUpdated={handleContentUpdated}
         />
+      )}
+
+      {/* Regeneration prompt for pre-existing reports without structured content */}
+      {hasReport && !reportData.content && (
+        <Card>
+          <CardContent className="py-8 text-center">
+            <RefreshCw className="h-10 w-10 mx-auto text-muted-foreground/50 mb-4" />
+            <h3 className="font-medium mb-1">{t("contentUpgradeNeeded")}</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              {t("contentUpgradeDescription")}
+            </p>
+            <Button
+              onClick={() => setShowGenerateDialog(true)}
+              disabled={generateMutation.isPending}
+            >
+              {generateMutation.isPending && (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              )}
+              <RefreshCw className="h-4 w-4 mr-2" />
+              {t("regenerate")}
+            </Button>
+          </CardContent>
+        </Card>
       )}
 
       {/* Prerequisites */}
@@ -415,7 +389,7 @@ export function ReportTab({ review }: ReportTabProps) {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Submit Confirmation Dialog */}
+      {/* Submit for Review Confirmation Dialog */}
       <AlertDialog open={showSubmitDialog} onOpenChange={setShowSubmitDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -427,13 +401,76 @@ export function ReportTab({ review }: ReportTabProps) {
           <AlertDialogFooter>
             <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleSubmit}
+              onClick={() =>
+                updateStatusMutation.mutate({
+                  reviewId: review.id,
+                  status: "UNDER_REVIEW",
+                })
+              }
               disabled={updateStatusMutation.isPending}
             >
               {updateStatusMutation.isPending && (
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               )}
               {t("submit")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Finalize Confirmation Dialog */}
+      <AlertDialog open={showFinalizeDialog} onOpenChange={setShowFinalizeDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("workflow.finalizeConfirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("workflow.finalizeConfirmDescription")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() =>
+                updateStatusMutation.mutate({
+                  reviewId: review.id,
+                  status: "FINALIZED",
+                })
+              }
+              disabled={updateStatusMutation.isPending}
+            >
+              {updateStatusMutation.isPending && (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              )}
+              {t("workflow.finalize")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Return to Draft Confirmation Dialog */}
+      <AlertDialog open={showReturnDialog} onOpenChange={setShowReturnDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("workflow.returnToDraftConfirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("workflow.returnToDraftConfirmDescription")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() =>
+                updateStatusMutation.mutate({
+                  reviewId: review.id,
+                  status: "DRAFT",
+                })
+              }
+              disabled={updateStatusMutation.isPending}
+            >
+              {updateStatusMutation.isPending && (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              )}
+              {t("workflow.returnToDraft")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

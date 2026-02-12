@@ -240,3 +240,14 @@ export interface AnnexesSection {
   glossary: boolean;
   pqMatrix: boolean;                  // Full PQ compliance matrix
 }
+
+/** Version history entry stored in ReviewReport.versionHistory JSON array */
+export interface ReportVersionEntry {
+  version: number;
+  generatedAt: string;
+  generatedBy: { id: string; name: string; role: string };
+  status: string;
+  overallEI: number | null;
+  overallMaturity: string | null;
+  contentHash: string;
+}

@@ -734,6 +734,8 @@ model ReviewReport {
   overallMaturity    MaturityLevel? @map("overall_maturity")
   overallEI          Float?         @map("overall_ei")
   status             String         @default("DRAFT")
+  version            Int            @default(1)
+  versionHistory     Json?          @map("version_history")
   draftedAt          DateTime?      @map("drafted_at")
   reviewedAt         DateTime?      @map("reviewed_at")
   finalizedAt        DateTime?      @map("finalized_at")

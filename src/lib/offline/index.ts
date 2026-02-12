@@ -64,3 +64,11 @@ export {
   getCurrentPosition,
 } from "./media-capture";
 export type { CapturedImage, GeoPosition } from "./media-capture";
+
+// Audio recorder
+export {
+  AudioRecorder,
+  createAudioRecorder,
+  formatDuration,
+} from "./audio-recorder";
+export type { AudioRecorderResult } from "./audio-recorder";

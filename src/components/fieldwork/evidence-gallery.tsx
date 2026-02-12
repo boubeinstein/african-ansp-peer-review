@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
   MapPin,
@@ -10,6 +10,9 @@ import {
   Loader2,
   Clock,
   X,
+  Mic,
+  Play,
+  Pause,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +34,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useOfflineFieldworkStore } from "@/stores/offline-fieldwork-store";
+import { FieldEvidenceType } from "@/lib/offline/types";
 import type { OfflineFieldEvidence, SyncStatus } from "@/lib/offline/types";
 
 // =============================================================================
@@ -71,7 +75,6 @@ export function EvidenceGallery({ checklistItemId }: EvidenceGalleryProps) {
     try {
       await removeEvidence(deleteTarget);
       toast.success(t("evidenceDeleted"));
-      // Close detail view if we just deleted the viewed item
       if (viewItem?.id === deleteTarget) setViewItem(null);
     } catch {
       toast.error(t("deleteFailed"));
@@ -145,7 +148,7 @@ export function EvidenceGallery({ checklistItemId }: EvidenceGalleryProps) {
 }
 
 // =============================================================================
-// Thumbnail card
+// Thumbnail card — differentiates PHOTO vs VOICE_NOTE
 // =============================================================================
 
 function ThumbnailCard({
@@ -155,27 +158,43 @@ function ThumbnailCard({
   evidence: OfflineFieldEvidence;
   onClick: () => void;
 }) {
+  const isVoice = evidence.type === FieldEvidenceType.VOICE_NOTE;
   const [url, setUrl] = useState<string | null>(null);
 
   useEffect(() => {
+    if (isVoice) return; // No image URL needed for voice notes
     const blob = evidence.thumbnailBlob ?? evidence.blob;
     const objectUrl = URL.createObjectURL(blob);
     setUrl(objectUrl);
     return () => URL.revokeObjectURL(objectUrl);
-  }, [evidence.thumbnailBlob, evidence.blob]);
+  }, [evidence.thumbnailBlob, evidence.blob, isVoice]);
 
   return (
     <button
       onClick={onClick}
-      className="relative aspect-square rounded-lg overflow-hidden border bg-muted focus:outline-none focus:ring-2 focus:ring-ring min-h-[44px]"
+      className={cn(
+        "relative aspect-square rounded-lg overflow-hidden border focus:outline-none focus:ring-2 focus:ring-ring min-h-[44px]",
+        isVoice ? "bg-violet-50 dark:bg-violet-950/30" : "bg-muted"
+      )}
     >
-      {url && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={url}
-          alt="Evidence thumbnail"
-          className="h-full w-full object-cover"
-        />
+      {isVoice ? (
+        // Voice note thumbnail
+        <div className="flex flex-col items-center justify-center h-full gap-1">
+          <Mic className="h-6 w-6 text-violet-500" />
+          <span className="text-[10px] font-mono text-violet-600 dark:text-violet-400">
+            {evidence.annotations || "—"}
+          </span>
+        </div>
+      ) : (
+        // Photo thumbnail
+        url && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={url}
+            alt="Evidence thumbnail"
+            className="h-full w-full object-cover"
+          />
+        )
       )}
 
       {/* GPS badge */}
@@ -202,7 +221,7 @@ function ThumbnailCard({
 }
 
 // =============================================================================
-// Full evidence detail
+// Full evidence detail — PHOTO or VOICE_NOTE
 // =============================================================================
 
 function EvidenceDetail({
@@ -213,24 +232,15 @@ function EvidenceDetail({
   onDelete: () => void;
 }) {
   const t = useTranslations("fieldwork.checklist");
-  const [url, setUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    const objectUrl = URL.createObjectURL(evidence.blob);
-    setUrl(objectUrl);
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [evidence.blob]);
+  const isVoice = evidence.type === FieldEvidenceType.VOICE_NOTE;
 
   return (
     <div className="space-y-4">
-      {/* Full image */}
-      {url && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={url}
-          alt="Evidence full size"
-          className="w-full rounded-lg object-contain max-h-[400px]"
-        />
+      {/* Media content */}
+      {isVoice ? (
+        <AudioPlayer blob={evidence.blob} />
+      ) : (
+        <ImagePreview blob={evidence.blob} />
       )}
 
       {/* Metadata */}
@@ -258,7 +268,7 @@ function EvidenceDetail({
           <SyncStatusBadge status={evidence.syncStatus} />
         </div>
 
-        {evidence.annotations && (
+        {evidence.annotations && !isVoice && (
           <p className="text-muted-foreground border-l-2 pl-2 text-xs">
             {evidence.annotations}
           </p>
@@ -275,6 +285,127 @@ function EvidenceDetail({
         <Trash2 className="h-4 w-4 mr-1.5" />
         {t("delete")}
       </Button>
+    </div>
+  );
+}
+
+// =============================================================================
+// ImagePreview — full-size photo with object URL management
+// =============================================================================
+
+function ImagePreview({ blob }: { blob: Blob }) {
+  const [url, setUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const objectUrl = URL.createObjectURL(blob);
+    setUrl(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [blob]);
+
+  if (!url) return null;
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={url}
+      alt="Evidence full size"
+      className="w-full rounded-lg object-contain max-h-[400px]"
+    />
+  );
+}
+
+// =============================================================================
+// AudioPlayer — plays voice note blob with progress bar
+// =============================================================================
+
+function AudioPlayer({ blob }: { blob: Blob }) {
+  const [url, setUrl] = useState<string | null>(null);
+  const [playing, setPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [audioDuration, setAudioDuration] = useState(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const rafRef = useRef<number>(0);
+
+  useEffect(() => {
+    const objectUrl = URL.createObjectURL(blob);
+    setUrl(objectUrl);
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      cancelAnimationFrame(rafRef.current);
+    };
+  }, [blob]);
+
+  function togglePlay() {
+    if (!url) return;
+
+    if (playing && audioRef.current) {
+      audioRef.current.pause();
+      cancelAnimationFrame(rafRef.current);
+      setPlaying(false);
+      return;
+    }
+
+    const audio = audioRef.current ?? new Audio(url);
+    audioRef.current = audio;
+
+    audio.onloadedmetadata = () => {
+      if (isFinite(audio.duration)) {
+        setAudioDuration(audio.duration);
+      }
+    };
+
+    audio.onended = () => {
+      setPlaying(false);
+      setProgress(0);
+      cancelAnimationFrame(rafRef.current);
+    };
+
+    function tick() {
+      if (audioRef.current && audioDuration > 0) {
+        setProgress(audioRef.current.currentTime / audioDuration);
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    }
+
+    audio.play();
+    setPlaying(true);
+    rafRef.current = requestAnimationFrame(tick);
+  }
+
+  return (
+    <div className="flex items-center gap-3 rounded-lg border bg-violet-50/50 dark:bg-violet-950/20 p-4">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-12 w-12 rounded-full shrink-0 bg-violet-100 hover:bg-violet-200 dark:bg-violet-900 dark:hover:bg-violet-800"
+        onClick={togglePlay}
+      >
+        {playing ? (
+          <Pause className="h-5 w-5 text-violet-700 dark:text-violet-300" />
+        ) : (
+          <Play className="h-5 w-5 text-violet-700 dark:text-violet-300" />
+        )}
+      </Button>
+
+      <div className="flex-1 space-y-1">
+        {/* Progress bar */}
+        <div className="h-2 rounded-full bg-violet-200 dark:bg-violet-800 overflow-hidden">
+          <div
+            className="h-full rounded-full bg-violet-500 transition-all duration-100"
+            style={{ width: `${progress * 100}%` }}
+          />
+        </div>
+        <div className="flex justify-between text-[10px] text-muted-foreground font-mono">
+          <span>{formatMMSS(playing && audioRef.current ? audioRef.current.currentTime : 0)}</span>
+          <span>{audioDuration > 0 ? formatMMSS(audioDuration) : "—"}</span>
+        </div>
+      </div>
+
+      <Mic className="h-5 w-5 text-violet-400 shrink-0" />
     </div>
   );
 }
@@ -343,4 +474,10 @@ function formatDateTime(date: Date): string {
     dateStyle: "medium",
     timeStyle: "short",
   });
+}
+
+function formatMMSS(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }

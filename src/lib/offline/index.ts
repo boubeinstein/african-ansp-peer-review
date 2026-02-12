@@ -27,3 +27,22 @@ export type {
   OfflineSession,
   OfflineDataSummary,
 } from "./types";
+
+// Fieldwork sync engine
+export {
+  SyncEngine,
+  SyncConflictError,
+  SyncRetryableError,
+  syncEngine,
+} from "./sync-engine";
+export type { SyncEngineStatus, SyncHandler } from "./sync-engine";
+export {
+  syncChecklistItem,
+  syncFieldEvidence,
+  syncDraftFinding,
+} from "./sync-handlers";
+export {
+  createConnectivityMonitor,
+  onReconnect,
+} from "./connectivity";
+export type { ConnectivityMonitor } from "./connectivity";

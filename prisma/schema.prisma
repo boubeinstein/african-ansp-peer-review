@@ -138,6 +138,9 @@ model User {
   promotedBestPractices    BestPracticePromotion[]     @relation("PromotedBestPractices")
   systemSettingsUpdates    SystemSettings[]            @relation("SystemSettingsUpdatedBy")
   loginSessions            LoginSession[]              @relation("UserLoginSessions")
+  lessonsCreated           LessonLearned[]             @relation("LessonsCreated")
+  lessonVotes              LessonVote[]                @relation("LessonVotes")
+  lessonBookmarks          LessonBookmark[]            @relation("LessonBookmarks")
 
   @@map("users")
 }
@@ -1571,6 +1574,7 @@ model ReviewRetrospective {
   createdAt              DateTime               @default(now()) @map("created_at")
   updatedAt              DateTime               @updatedAt @map("updated_at")
   taggedFindings         RetrospectiveFinding[]
+  lessons                LessonLearned[]
   review                 Review                 @relation(fields: [reviewId], references: [id], onDelete: Cascade)
   submittedBy            User                   @relation("RetrospectiveSubmitter", fields: [submittedById], references: [id])
 
@@ -2574,4 +2578,132 @@ model SystemSettings {
   updatedBy             User?    @relation("SystemSettingsUpdatedBy", fields: [updatedById], references: [id])
 
   @@map("system_settings")
+}
+
+// =============================================================================
+// LESSONS LEARNED KNOWLEDGE BASE
+// =============================================================================
+
+/// Individual structured lesson extracted from a retrospective
+model LessonLearned {
+  id                  String              @id @default(cuid())
+  retrospectiveId     String              @map("retrospective_id")
+  authorId            String              @map("author_id")
+
+  // Content (bilingual)
+  titleEn             String              @map("title_en")
+  titleFr             String              @map("title_fr")
+  contentEn           String              @map("content_en")
+  contentFr           String              @map("content_fr")
+
+  // Classification
+  category            LessonCategory
+  impactLevel         ImpactLevel         @default(MODERATE) @map("impact_level")
+  applicability       LessonApplicability @default(GENERAL)
+
+  // Context from the review
+  reviewPhase         ReviewPhase?        @map("review_phase")
+  auditAreaCode       String?             @map("audit_area_code")
+  soeAreaCode         String?             @map("soe_area_code")
+  hostRegion          AfricanRegion?      @map("host_region")
+  hostMaturityLevel   MaturityLevel?      @map("host_maturity_level")
+
+  // Practical advice
+  actionableAdvice    String?             @map("actionable_advice")
+  estimatedTimeImpact String?             @map("estimated_time_impact")
+
+  // Status & visibility
+  status              LessonStatus        @default(DRAFT)
+  isAnonymized        Boolean             @default(false) @map("is_anonymized")
+  publishedAt         DateTime?           @map("published_at")
+
+  // Engagement metrics
+  viewCount           Int                 @default(0) @map("view_count")
+  helpfulCount        Int                 @default(0) @map("helpful_count")
+
+  createdAt           DateTime            @default(now()) @map("created_at")
+  updatedAt           DateTime            @updatedAt @map("updated_at")
+
+  retrospective       ReviewRetrospective @relation(fields: [retrospectiveId], references: [id], onDelete: Cascade)
+  author              User                @relation("LessonsCreated", fields: [authorId], references: [id])
+  tags                LessonTag[]
+  votes               LessonVote[]
+  bookmarks           LessonBookmark[]
+
+  @@index([retrospectiveId])
+  @@index([authorId])
+  @@index([category, status])
+  @@index([auditAreaCode, status])
+  @@index([hostRegion, status])
+  @@index([hostMaturityLevel, status])
+  @@index([status, publishedAt])
+  @@map("lessons_learned")
+}
+
+/// Free-form tags for lessons (normalised, bilingual)
+model LessonTag {
+  id       String        @id @default(cuid())
+  lessonId String        @map("lesson_id")
+  tag      String
+  tagFr    String?       @map("tag_fr")
+  lesson   LessonLearned @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([lessonId, tag])
+  @@index([tag])
+  @@map("lesson_tags")
+}
+
+/// Upvotes / "this was helpful" tracking
+model LessonVote {
+  id        String        @id @default(cuid())
+  lessonId  String        @map("lesson_id")
+  userId    String        @map("user_id")
+  isHelpful Boolean       @default(true) @map("is_helpful")
+  createdAt DateTime      @default(now()) @map("created_at")
+  lesson    LessonLearned @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user      User          @relation("LessonVotes", fields: [userId], references: [id])
+
+  @@unique([lessonId, userId])
+  @@index([lessonId])
+  @@map("lesson_votes")
+}
+
+/// Bookmarks for reviewers to save useful lessons
+model LessonBookmark {
+  id        String        @id @default(cuid())
+  lessonId  String        @map("lesson_id")
+  userId    String        @map("user_id")
+  notes     String?
+  createdAt DateTime      @default(now()) @map("created_at")
+  lesson    LessonLearned @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user      User          @relation("LessonBookmarks", fields: [userId], references: [id])
+
+  @@unique([lessonId, userId])
+  @@index([userId])
+  @@map("lesson_bookmarks")
+}
+
+enum LessonCategory {
+  PROCESS_IMPROVEMENT
+  TECHNICAL_FINDING
+  LOGISTICS_PLANNING
+  CULTURAL_COMMUNICATION
+  DOCUMENTATION_REVIEW
+  INTERVIEW_TECHNIQUE
+  HOST_ENGAGEMENT
+  TOOL_METHODOLOGY
+}
+
+enum ImpactLevel {
+  LOW
+  MODERATE
+  HIGH
+  CRITICAL
+}
+
+enum LessonApplicability {
+  SPECIFIC_ANSP
+  REGIONAL
+  GENERAL
+  MATURITY_LEVEL
 }

@@ -4049,12 +4049,33 @@
         "resourcesAdequate": "Les ressources étaient adéquates",
         "communicationEffective": "La communication était efficace"
       },
+      "notableFindings": {
+        "title": "Constatations notables",
+        "description": "Marquez les constatations de cet examen qui représentent des leçons ou des tendances importantes",
+        "noFindings": "Aucune constatation n'a encore été enregistrée pour cet examen.",
+        "lessonType": "Type de leçon",
+        "types": {
+          "BEST_PRACTICE_IDENTIFIED": "Bonne pratique identifiée",
+          "SYSTEMIC_ISSUE": "Problème systémique",
+          "PROCESS_IMPROVEMENT": "Amélioration du processus",
+          "TRAINING_GAP": "Lacune en formation",
+          "RESOURCE_CONSTRAINT": "Contrainte de ressources"
+        }
+      },
       "saveDraft": "Enregistrer le brouillon",
       "submit": "Soumettre la rétrospective",
       "savedSuccessfully": "Rétrospective enregistrée avec succès",
       "submittedSuccessfully": "Rétrospective soumise pour examen",
+      "autoSaving": "Enregistrement...",
+      "autoSaved": "Toutes les modifications enregistrées",
       "statusSubmitted": "Cette rétrospective a été soumise et est en attente d'examen.",
-      "statusPublished": "Cette rétrospective a été publiée et est disponible dans les informations du programme."
+      "statusPublished": "Cette rétrospective a été publiée et est disponible dans les informations du programme.",
+      "submitConfirm": {
+        "title": "Soumettre la rétrospective ?",
+        "description": "Une fois soumise, la rétrospective ne pourra plus être modifiée. Elle sera examinée par un coordinateur de programme avant publication.",
+        "cancel": "Annuler",
+        "confirm": "Soumettre"
+      }
     }
   },
   "finding": {

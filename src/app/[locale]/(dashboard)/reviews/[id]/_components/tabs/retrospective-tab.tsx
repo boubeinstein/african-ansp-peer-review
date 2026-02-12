@@ -7,24 +7,46 @@ import { Badge } from "@/components/ui/badge";
 import { Lightbulb } from "lucide-react";
 import { RetrospectiveForm } from "../retrospective/retrospective-form";
 
+// =============================================================================
+// Props
+// =============================================================================
+
 interface RetrospectiveTabProps {
   review: {
     id: string;
     status: string;
+    phase: string;
+    findings: Array<{ id: string; severity: string; status: string }>;
   };
 }
+
+// Phases where retrospective is allowed
+const RETROSPECTIVE_PHASES = ["REPORTING", "FOLLOW_UP", "CLOSED"];
+
+// Legacy status fallback
+const RETROSPECTIVE_STATUSES = ["POST_REVIEW", "COMPLETED", "REPORT_REVIEW"];
+
+// =============================================================================
+// Component
+// =============================================================================
 
 export function RetrospectiveTab({ review }: RetrospectiveTabProps) {
   const tTab = useTranslations("reviews.detail.retrospectiveTab");
 
-  const { data: retrospective, isLoading } = trpc.retrospective.getByReview.useQuery({
-    reviewId: review.id,
-  });
+  // Fetch retrospective data with tagged findings
+  const { data: retrospective, isLoading } =
+    trpc.retrospective.getByReview.useQuery({ reviewId: review.id });
 
-  // Only show retrospective tab for completed or post-review phase
-  const canShowRetrospective = ["POST_REVIEW", "COMPLETED", "REPORT_REVIEW"].includes(
-    review.status
+  // Fetch full findings for tagging
+  const { data: findingsData } = trpc.finding.getByReview.useQuery(
+    { reviewId: review.id },
+    { enabled: !!review.id }
   );
+
+  // Phase gate
+  const canShowRetrospective =
+    RETROSPECTIVE_PHASES.includes(review.phase) ||
+    RETROSPECTIVE_STATUSES.includes(review.status);
 
   if (!canShowRetrospective) {
     return (
@@ -32,7 +54,9 @@ export function RetrospectiveTab({ review }: RetrospectiveTabProps) {
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center py-12">
             <Lightbulb className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">{tTab("notAvailable.title")}</h3>
+            <h3 className="text-lg font-medium mb-2">
+              {tTab("notAvailable.title")}
+            </h3>
             <p className="text-muted-foreground text-center max-w-md">
               {tTab("notAvailable.description")}
             </p>
@@ -58,6 +82,15 @@ export function RetrospectiveTab({ review }: RetrospectiveTabProps) {
     );
   }
 
+  // Build findings list for the form
+  const reviewFindings = (findingsData ?? []).map((f: Record<string, unknown>) => ({
+    id: f.id as string,
+    titleEn: (f.titleEn as string | null) ?? null,
+    titleFr: (f.titleFr as string | null) ?? null,
+    severity: f.severity as string,
+    status: f.status as string,
+  }));
+
   return (
     <div className="p-4 md:p-6 space-y-6">
       {/* Header */}
@@ -75,33 +108,26 @@ export function RetrospectiveTab({ review }: RetrospectiveTabProps) {
               retrospective.status === "PUBLISHED"
                 ? "default"
                 : retrospective.status === "SUBMITTED"
-                ? "secondary"
-                : "outline"
+                  ? "secondary"
+                  : "outline"
             }
           >
             {retrospective.status === "PUBLISHED"
               ? tTab("status.published")
               : retrospective.status === "SUBMITTED"
-              ? tTab("status.submitted")
-              : tTab("status.draft")}
+                ? tTab("status.submitted")
+                : tTab("status.draft")}
           </Badge>
         )}
       </div>
 
-      {/* Empty State */}
+      {/* Empty state or form */}
       {!retrospective ? (
-        <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center py-12">
-            <Lightbulb className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">{tTab("emptyState.title")}</h3>
-            <p className="text-muted-foreground text-center mb-6 max-w-md">
-              {tTab("emptyState.description")}
-            </p>
-            <RetrospectiveForm reviewId={review.id} />
-          </CardContent>
-        </Card>
+        <RetrospectiveForm
+          reviewId={review.id}
+          reviewFindings={reviewFindings}
+        />
       ) : (
-        /* Retrospective Form */
         <RetrospectiveForm
           reviewId={review.id}
           existingData={{
@@ -118,8 +144,11 @@ export function RetrospectiveTab({ review }: RetrospectiveTabProps) {
             reviewDurationDays: retrospective.reviewDurationDays ?? undefined,
             teamSizeAdequate: retrospective.teamSizeAdequate ?? undefined,
             resourcesAdequate: retrospective.resourcesAdequate ?? undefined,
-            communicationEffective: retrospective.communicationEffective ?? undefined,
+            communicationEffective:
+              retrospective.communicationEffective ?? undefined,
+            taggedFindings: retrospective.taggedFindings,
           }}
+          reviewFindings={reviewFindings}
         />
       )}
     </div>

@@ -4049,12 +4049,33 @@
         "resourcesAdequate": "Resources were adequate",
         "communicationEffective": "Communication was effective"
       },
+      "notableFindings": {
+        "title": "Notable Findings",
+        "description": "Tag findings from this review that represent important lessons or patterns",
+        "noFindings": "No findings have been recorded for this review yet.",
+        "lessonType": "Lesson Type",
+        "types": {
+          "BEST_PRACTICE_IDENTIFIED": "Best Practice Identified",
+          "SYSTEMIC_ISSUE": "Systemic Issue",
+          "PROCESS_IMPROVEMENT": "Process Improvement",
+          "TRAINING_GAP": "Training Gap",
+          "RESOURCE_CONSTRAINT": "Resource Constraint"
+        }
+      },
       "saveDraft": "Save Draft",
       "submit": "Submit Retrospective",
       "savedSuccessfully": "Retrospective saved successfully",
       "submittedSuccessfully": "Retrospective submitted for review",
+      "autoSaving": "Saving...",
+      "autoSaved": "All changes saved",
       "statusSubmitted": "This retrospective has been submitted and is awaiting review.",
-      "statusPublished": "This retrospective has been published and is available in programme insights."
+      "statusPublished": "This retrospective has been published and is available in programme insights.",
+      "submitConfirm": {
+        "title": "Submit Retrospective?",
+        "description": "Once submitted, the retrospective cannot be edited. It will be reviewed by a Programme Coordinator before publication.",
+        "cancel": "Cancel",
+        "confirm": "Submit"
+      }
     }
   },
   "finding": {

@@ -26,6 +26,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc/client";
 import { OverviewTab } from "@/components/features/safety-intelligence/overview-tab";
 import { BenchmarkingTab } from "@/components/features/safety-intelligence/benchmarking-tab";
+import { FindingsAnalysisTab } from "@/components/features/safety-intelligence/findings-analysis-tab";
 
 // =============================================================================
 // TYPES
@@ -268,6 +269,8 @@ function TabContent({
           anonymized={anonymized}
         />
       );
+    case "findings":
+      return <FindingsAnalysisTab selectedTeamId={selectedTeamId} />;
     default:
       return (
         <Card>

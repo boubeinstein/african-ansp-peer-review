@@ -1024,7 +1024,7 @@
     "ans": {
       "title": "Questionnaire ANS",
       "fullTitle": "Questions de Protocole USOAP CMA 2024",
-      "description": "851 Questions de Protocole dans 9 domaines d'audit alignées sur les normes OACI pour la surveillance des Services de Navigation Aérienne",
+      "description": "Questions de Protocole dans 7 domaines d'évaluation ANS (ATS, FPD, AIS, MAP, MET, CNS, SAR) basées sur le Questionnaire ANS de l'Évaluation par les Pairs des ANSP AFI",
       "effectiveDate": "En vigueur : 1er juillet 2025",
       "auditAreas": "Domaines d'Audit",
       "criticalElements": "Éléments Critiques",
@@ -1104,6 +1104,56 @@
       "name": "Programme de sécurité de l'État",
       "fullName": "Programme de sécurité de l'État",
       "description": "Mise en œuvre d'un Programme de sécurité de l'État incluant la politique de sécurité, la gestion des risques, l'assurance et la promotion"
+    }
+  },
+  "reviewAreas": {
+    "ATS": {
+      "code": "ATS",
+      "name": "Services de la circulation aérienne",
+      "fullName": "Services de la circulation aérienne",
+      "description": "Contrôle de la circulation aérienne, gestion des flux et de l'espace aérien"
+    },
+    "FPD": {
+      "code": "FPD",
+      "name": "Conception des procédures de vol",
+      "fullName": "Conception des procédures de vol",
+      "description": "Conception et maintenance des procédures de vol aux instruments"
+    },
+    "AIS": {
+      "code": "AIS",
+      "name": "Service d'information aéronautique",
+      "fullName": "Service d'information aéronautique",
+      "description": "Gestion de l'information aéronautique, NOTAM et publications AIP"
+    },
+    "MAP": {
+      "code": "MAP",
+      "name": "Cartes aéronautiques",
+      "fullName": "Cartes aéronautiques",
+      "description": "Production et maintenance des cartes aéronautiques"
+    },
+    "MET": {
+      "code": "MET",
+      "name": "Service météorologique",
+      "fullName": "Service météorologique aéronautique",
+      "description": "Observation, prévision et briefing météorologiques pour l'aviation"
+    },
+    "CNS": {
+      "code": "CNS",
+      "name": "Communications, Navigation, Surveillance",
+      "fullName": "Communications, Navigation et Surveillance",
+      "description": "Systèmes techniques de communications, aides à la navigation et surveillance"
+    },
+    "SAR": {
+      "code": "SAR",
+      "name": "Recherche et sauvetage",
+      "fullName": "Recherche et sauvetage",
+      "description": "Coordination, planification et opérations de recherche et sauvetage"
+    },
+    "SMS": {
+      "code": "SMS",
+      "name": "Système de gestion de la sécurité",
+      "fullName": "Système de gestion de la sécurité",
+      "description": "Politique de sécurité, gestion des risques, assurance et promotion (CANSO SoE)"
     }
   },
   "criticalElements": {
@@ -1830,7 +1880,7 @@
       "ans": {
         "title": "ANS USOAP CMA",
         "subtitle": "Programme universel d'audit de supervision de la sécurité de l'OACI",
-        "description": "Évaluez la conformité aux normes de l'OACI dans 9 domaines d'audit en utilisant les questions du protocole de l'approche de surveillance continue.",
+        "description": "Évaluez la conformité aux normes ANS de l'OACI dans 7 domaines d'évaluation en utilisant le Questionnaire de Protocole de l'Évaluation par les Pairs des ANSP AFI.",
         "feature1": "Questions du protocole",
         "feature2": "Domaines d'audit",
         "feature3": "Éléments critiques",
@@ -5523,7 +5573,7 @@
         "typeLabel": "Type d'évaluation",
         "types": {
           "ansOnly": "Évaluation ANS uniquement",
-          "ansOnlyDesc": "Concentrez-vous sur les services de navigation aérienne basés sur le cadre USOAP CMA 2024 de l'OACI. Couvre les domaines ATS, AIM, MET, CNS et SAR.",
+          "ansOnlyDesc": "Concentrez-vous sur les services de navigation aérienne basés sur le Questionnaire ANS de l'Évaluation par les Pairs des ANSP AFI. Couvre les domaines ATS, FPD, AIS, MAP, MET, CNS et SAR.",
           "smsOnly": "Évaluation SGS uniquement",
           "smsOnlyDesc": "Concentrez-vous sur le système de gestion de la sécurité basé sur le Standard d'Excellence CANSO. Couvre la politique, la gestion des risques, l'assurance et la promotion.",
           "comprehensive": "Évaluation complète",
@@ -5533,14 +5583,13 @@
         "focusAreasDescription": "Sélectionnez les domaines spécifiques sur lesquels vous souhaitez que l'équipe d'évaluation se concentre. Laissez vide pour une évaluation complète.",
         "focusAreas": {
           "ATS": "Services de la circulation aérienne",
-          "AIM": "Gestion de l'information aéronautique",
-          "MET": "Services météorologiques",
-          "CNS": "Communication, navigation, surveillance",
+          "FPD": "Conception des procédures de vol",
+          "AIS": "Service d'information aéronautique",
+          "MAP": "Cartes aéronautiques",
+          "MET": "Service météorologique",
+          "CNS": "Communications, Navigation, Surveillance",
           "SAR": "Recherche et sauvetage",
-          "SMS_POLICY": "Politique et objectifs de sécurité",
-          "SMS_RISK": "Gestion des risques de sécurité",
-          "SMS_ASSURANCE": "Assurance de la sécurité",
-          "SMS_PROMOTION": "Promotion de la sécurité"
+          "SMS": "Système de gestion de la sécurité"
         }
       },
       "schedule": {

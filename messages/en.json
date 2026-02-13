@@ -1024,7 +1024,7 @@
     "ans": {
       "title": "ANS Questionnaire",
       "fullTitle": "USOAP CMA 2024 Protocol Questions",
-      "description": "851 Protocol Questions across 9 audit areas aligned with ICAO standards for Air Navigation Services oversight",
+      "description": "Protocol Questions across 7 ANS review areas (ATS, FPD, AIS, MAP, MET, CNS, SAR) based on the AFI ANSP Peer Review ANS Questionnaire",
       "effectiveDate": "Effective: July 1, 2025",
       "auditAreas": "Audit Areas",
       "criticalElements": "Critical Elements",
@@ -1104,6 +1104,56 @@
       "name": "State Safety Programme",
       "fullName": "State Safety Programme",
       "description": "Implementation of a State Safety Programme including safety policy, risk management, assurance, and promotion"
+    }
+  },
+  "reviewAreas": {
+    "ATS": {
+      "code": "ATS",
+      "name": "Air Traffic Services",
+      "fullName": "Air Traffic Services",
+      "description": "Air traffic control, flow management, and airspace management"
+    },
+    "FPD": {
+      "code": "FPD",
+      "name": "Flight Procedures Design",
+      "fullName": "Flight Procedures Design",
+      "description": "Design and maintenance of instrument flight procedures"
+    },
+    "AIS": {
+      "code": "AIS",
+      "name": "Aeronautical Information Service",
+      "fullName": "Aeronautical Information Service",
+      "description": "Aeronautical information management, NOTAMs, and AIP publications"
+    },
+    "MAP": {
+      "code": "MAP",
+      "name": "Aeronautical Charts",
+      "fullName": "Aeronautical Charts",
+      "description": "Production and maintenance of aeronautical charts"
+    },
+    "MET": {
+      "code": "MET",
+      "name": "Meteorological Service",
+      "fullName": "Aeronautical Meteorological Service",
+      "description": "Aviation weather observation, forecasting, and briefing"
+    },
+    "CNS": {
+      "code": "CNS",
+      "name": "Communications, Navigation, Surveillance",
+      "fullName": "Communications, Navigation and Surveillance",
+      "description": "Technical communications, navigation aids, and surveillance systems"
+    },
+    "SAR": {
+      "code": "SAR",
+      "name": "Search and Rescue",
+      "fullName": "Search and Rescue",
+      "description": "Search and rescue coordination, planning, and operations"
+    },
+    "SMS": {
+      "code": "SMS",
+      "name": "Safety Management System",
+      "fullName": "Safety Management System",
+      "description": "Safety policy, risk management, assurance, and promotion (CANSO SoE)"
     }
   },
   "criticalElements": {
@@ -1830,7 +1880,7 @@
       "ans": {
         "title": "ANS USOAP CMA",
         "subtitle": "ICAO Universal Safety Oversight Audit Programme",
-        "description": "Evaluate compliance with ICAO standards across 9 audit areas using the Continuous Monitoring Approach protocol questions.",
+        "description": "Evaluate compliance with ICAO ANS standards across 7 review areas using the AFI ANSP Peer Review Protocol Questionnaire.",
         "feature1": "Protocol Questions",
         "feature2": "Audit Areas",
         "feature3": "Critical Elements",
@@ -5523,7 +5573,7 @@
         "typeLabel": "Review Type",
         "types": {
           "ansOnly": "ANS Review Only",
-          "ansOnlyDesc": "Focus on Air Navigation Services based on the ICAO USOAP CMA 2024 framework. Covers ATS, AIM, MET, CNS, and SAR areas.",
+          "ansOnlyDesc": "Focus on Air Navigation Services based on the AFI ANSP Peer Review ANS Questionnaire. Covers ATS, FPD, AIS, MAP, MET, CNS, and SAR areas.",
           "smsOnly": "SMS Review Only",
           "smsOnlyDesc": "Focus on Safety Management System based on the CANSO Standard of Excellence. Covers policy, risk management, assurance, and promotion.",
           "comprehensive": "Comprehensive Review",
@@ -5533,14 +5583,13 @@
         "focusAreasDescription": "Select specific areas you would like the review team to focus on. Leave empty for a complete review.",
         "focusAreas": {
           "ATS": "Air Traffic Services",
-          "AIM": "Aeronautical Information Management",
-          "MET": "Meteorological Services",
-          "CNS": "Communication, Navigation, Surveillance",
+          "FPD": "Flight Procedures Design",
+          "AIS": "Aeronautical Information Service",
+          "MAP": "Aeronautical Charts",
+          "MET": "Meteorological Service",
+          "CNS": "Communications, Navigation, Surveillance",
           "SAR": "Search and Rescue",
-          "SMS_POLICY": "Safety Policy & Objectives",
-          "SMS_RISK": "Safety Risk Management",
-          "SMS_ASSURANCE": "Safety Assurance",
-          "SMS_PROMOTION": "Safety Promotion"
+          "SMS": "Safety Management System"
         }
       },
       "schedule": {

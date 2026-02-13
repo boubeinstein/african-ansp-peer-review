@@ -66,16 +66,18 @@ export function LessonsAnalytics({ locale }: LessonsAnalyticsProps) {
   const t = useTranslations("lessons.analytics");
   const currentLocale = useLocale();
 
+  const queryOpts = { retry: 1 } as const;
+
   const overviewQuery =
-    trpc.retrospectiveAnalytics.getOverview.useQuery();
+    trpc.retrospectiveAnalytics.getOverview.useQuery(undefined, queryOpts);
   const trendsQuery =
-    trpc.retrospectiveAnalytics.getProcessRatingTrends.useQuery();
+    trpc.retrospectiveAnalytics.getProcessRatingTrends.useQuery(undefined, queryOpts);
   const themesQuery =
-    trpc.retrospectiveAnalytics.getCommonThemes.useQuery();
+    trpc.retrospectiveAnalytics.getCommonThemes.useQuery(undefined, queryOpts);
   const regionalQuery =
-    trpc.retrospectiveAnalytics.getRegionalInsights.useQuery();
+    trpc.retrospectiveAnalytics.getRegionalInsights.useQuery(undefined, queryOpts);
   const improvementQuery =
-    trpc.retrospectiveAnalytics.getImprovementTracking.useQuery();
+    trpc.retrospectiveAnalytics.getImprovementTracking.useQuery(undefined, queryOpts);
 
   const overview = overviewQuery.data;
   const trends = trendsQuery.data;
@@ -90,6 +92,13 @@ export function LessonsAnalytics({ locale }: LessonsAnalyticsProps) {
     regionalQuery.isLoading ||
     improvementQuery.isLoading;
 
+  const hasError =
+    overviewQuery.isError ||
+    trendsQuery.isError ||
+    themesQuery.isError ||
+    regionalQuery.isError ||
+    improvementQuery.isError;
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -102,6 +111,14 @@ export function LessonsAnalytics({ locale }: LessonsAnalyticsProps) {
           ))}
         </div>
         <div className="h-64 bg-muted rounded animate-pulse" />
+      </div>
+    );
+  }
+
+  if (hasError) {
+    return (
+      <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-6 text-center">
+        <p className="text-sm text-destructive">{t("error")}</p>
       </div>
     );
   }

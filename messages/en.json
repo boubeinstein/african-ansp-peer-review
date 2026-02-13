@@ -94,7 +94,7 @@
     "peerReviews": "Peer Reviews",
     "knowledgeBase": "Knowledge Base",
     "reviewerPool": "Reviewer Pool",
-    "training": "Training",
+    "training": "Training & Resources",
     "settings": "Settings",
     "programmeAdministration": "Programme Administration",
     "organizationsMembership": "Organizations & Membership",
@@ -6720,11 +6720,12 @@
     },
     "navigation": {
       "dashboard": "Dashboard",
+      "programmeIntelligence": "Programme Intelligence",
+      "questionnairesAssessments": "Questionnaires & Assessments",
       "reviews": "Peer Reviews",
-      "findings": "Findings",
-      "caps": "Corrective Actions",
-      "assessments": "Assessments",
-      "bestPractices": "Best Practices",
+      "knowledgeBase": "Knowledge Base",
+      "reviewerPool": "Reviewer Pool",
+      "training": "Training & Resources",
       "settings": "Settings"
     },
     "sidebar": {
@@ -6757,13 +6758,18 @@
     },
     "navigation": {
       "dashboard": "Go to Dashboard",
+      "programmeIntelligence": "Go to Programme Intelligence",
+      "questionnairesAssessments": "Go to Questionnaires & Assessments",
       "reviews": "Go to Peer Reviews",
+      "knowledgeBase": "Go to Knowledge Base",
+      "reviewerPool": "Go to Reviewer Pool",
+      "training": "Go to Training & Resources",
+      "settings": "Go to Settings",
       "findings": "Go to Findings",
       "caps": "Go to CAPs",
       "assessments": "Go to Assessments",
       "reviewers": "Go to Reviewers",
-      "organizations": "Go to Organizations",
-      "settings": "Go to Settings"
+      "organizations": "Go to Organizations"
     },
     "actions": {
       "newReview": "Create New Review",
@@ -6777,27 +6783,37 @@
     },
     "commands": {
       "dashboard": "Go to Dashboard",
-      "reviews": "Go to Reviews",
+      "programmeIntelligence": "Go to Programme Intelligence",
+      "questionnairesAssessments": "Go to Questionnaires & Assessments",
+      "reviews": "Go to Peer Reviews",
+      "knowledgeBase": "Go to Knowledge Base",
+      "reviewerPool": "Go to Reviewer Pool",
+      "training": "Go to Training & Resources",
+      "settings": "Go to Settings",
+      "newReview": "Create New Review",
+      "showShortcuts": "Show Keyboard Shortcuts",
       "findings": "Go to Findings",
       "caps": "Go to CAPs",
       "organizations": "Go to Organizations",
       "reviewers": "Go to Reviewers",
-      "analytics": "Go to Analytics",
-      "settings": "Go to Settings",
-      "newReview": "Create New Review",
-      "showShortcuts": "Show Keyboard Shortcuts"
+      "analytics": "Go to Analytics"
     },
     "descriptions": {
       "dashboard": "View your dashboard overview",
-      "reviews": "Manage peer reviews",
+      "programmeIntelligence": "View trends, benchmarks, and safety performance",
+      "questionnairesAssessments": "Browse questionnaires and manage assessments",
+      "reviews": "Manage peer reviews, findings, and CAPs",
+      "knowledgeBase": "Discover best practices and lessons learned",
+      "reviewerPool": "Browse reviewer profiles and regional teams",
+      "training": "Access training modules and resources",
+      "settings": "Manage your settings",
+      "newReview": "Start a new peer review",
+      "showShortcuts": "View all keyboard shortcuts",
       "findings": "View and manage findings",
       "caps": "View corrective action plans",
       "organizations": "Browse organizations",
       "reviewers": "Browse reviewer profiles",
-      "analytics": "View analytics and reports",
-      "settings": "Manage your settings",
-      "newReview": "Start a new peer review",
-      "showShortcuts": "View all keyboard shortcuts"
+      "analytics": "View analytics and reports"
     },
     "footer": {
       "navigate": "to navigate",
@@ -7636,6 +7652,26 @@
       "title": "Dashboard",
       "description": "Your command center showing key metrics, pending actions, and programme overview at a glance."
     },
+    "programmeIntelligence": {
+      "title": "Programme Intelligence",
+      "description": "View trends, benchmarks, cross-ANSP safety performance analysis, and Abuja Target #15 tracking across the entire programme."
+    },
+    "questionnairesAssessments": {
+      "title": "Questionnaires & Assessments",
+      "description": "Browse ICAO USOAP CMA Protocol Questions and CANSO SoE frameworks, and manage your self-assessments."
+    },
+    "peerReviews": {
+      "title": "Peer Reviews",
+      "description": "Manage peer reviews including findings, corrective action plans, documents, and reports — all within the review context."
+    },
+    "knowledgeBase": {
+      "title": "Knowledge Base",
+      "description": "Discover best practices and lessons learned shared by ANSPs across Africa for continuous safety improvement."
+    },
+    "reviewerPool": {
+      "title": "Reviewer Pool",
+      "description": "Find qualified peer reviewers by expertise, view regional teams, and check availability for upcoming reviews."
+    },
     "analytics": {
       "title": "Analytics",
       "description": "View trends, benchmarks, and performance indicators across the entire programme."
@@ -7643,10 +7679,6 @@
     "assessments": {
       "title": "Self-Assessments",
       "description": "Create and manage assessments against ICAO USOAP and CANSO SoE frameworks for your organization."
-    },
-    "peerReviews": {
-      "title": "Peer Reviews",
-      "description": "View reviews you're participating in. Access workspace, documents, findings, and reports."
     },
     "findings": {
       "title": "Findings",

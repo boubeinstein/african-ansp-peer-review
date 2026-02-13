@@ -102,57 +102,57 @@ export function KeyboardShortcutsProvider({
     },
   ]);
 
-  // Sequence shortcuts
+  // Sequence shortcuts — aligned with restructured sidebar
   const sequenceShortcuts: SequenceShortcut[] = [
     // Navigation (g prefix)
     {
       id: "nav-dashboard",
-      keys: "g d",
+      keys: "g h",
       description: "Go to Dashboard",
       category: "navigation",
       action: () => navigate("/dashboard"),
     },
     {
+      id: "nav-programme-intelligence",
+      keys: "g i",
+      description: "Go to Programme Intelligence",
+      category: "navigation",
+      action: () => navigate("/analytics"),
+    },
+    {
+      id: "nav-questionnaires-assessments",
+      keys: "g a",
+      description: "Go to Questionnaires & Assessments",
+      category: "navigation",
+      action: () => navigate("/assessments"),
+    },
+    {
       id: "nav-reviews",
       keys: "g r",
-      description: "Go to Reviews",
+      description: "Go to Peer Reviews",
       category: "navigation",
       action: () => navigate("/reviews"),
     },
     {
-      id: "nav-findings",
-      keys: "g f",
-      description: "Go to Findings",
+      id: "nav-knowledge-base",
+      keys: "g k",
+      description: "Go to Knowledge Base",
       category: "navigation",
-      action: () => navigate("/findings"),
+      action: () => navigate("/knowledge"),
     },
     {
-      id: "nav-caps",
-      keys: "g c",
-      description: "Go to CAPs",
-      category: "navigation",
-      action: () => navigate("/caps"),
-    },
-    {
-      id: "nav-organizations",
-      keys: "g o",
-      description: "Go to Organizations",
-      category: "navigation",
-      action: () => navigate("/organizations"),
-    },
-    {
-      id: "nav-reviewers",
-      keys: "g e",
-      description: "Go to Reviewers",
+      id: "nav-reviewer-pool",
+      keys: "g v",
+      description: "Go to Reviewer Pool",
       category: "navigation",
       action: () => navigate("/reviewers"),
     },
     {
-      id: "nav-analytics",
-      keys: "g a",
-      description: "Go to Analytics",
+      id: "nav-training",
+      keys: "g t",
+      description: "Go to Training & Resources",
       category: "navigation",
-      action: () => navigate("/analytics"),
+      action: () => navigate("/training"),
     },
     {
       id: "nav-settings",
@@ -161,36 +161,20 @@ export function KeyboardShortcutsProvider({
       category: "navigation",
       action: () => navigate("/settings"),
     },
-    // Reviews (r prefix)
+    // Quick actions (n prefix)
     {
-      id: "reviews-new",
-      keys: "r n",
+      id: "action-new-review",
+      keys: "n r",
       description: "New review request",
-      category: "reviews",
+      category: "actions",
       action: () => navigate("/reviews/new"),
     },
     {
-      id: "reviews-list",
-      keys: "r l",
-      description: "Reviews list",
-      category: "reviews",
-      action: () => navigate("/reviews"),
-    },
-    // Findings (f prefix)
-    {
-      id: "findings-list",
-      keys: "f l",
-      description: "Findings list",
-      category: "findings",
-      action: () => navigate("/findings"),
-    },
-    // CAPs (c prefix)
-    {
-      id: "caps-list",
-      keys: "c l",
-      description: "CAPs list",
-      category: "caps",
-      action: () => navigate("/caps"),
+      id: "action-new-assessment",
+      keys: "n a",
+      description: "New assessment",
+      category: "actions",
+      action: () => navigate("/assessments/new"),
     },
   ];
 

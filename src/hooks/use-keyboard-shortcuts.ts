@@ -52,9 +52,8 @@ export function useKeyboardShortcuts({
 
       if (pendingKey === "G") {
         const navMap: Record<string, string> = {
-          h: "/dashboard", r: "/reviews", f: "/findings", c: "/caps",
-          a: "/assessments", v: "/reviewers", o: "/organizations", s: "/settings",
-          b: "/best-practices",
+          h: "/dashboard", i: "/analytics", a: "/assessments", r: "/reviews",
+          k: "/knowledge", v: "/reviewers", t: "/training", s: "/settings",
         };
         if (navMap[key]) navigate(navMap[key]);
       }

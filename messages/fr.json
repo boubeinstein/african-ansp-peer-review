@@ -89,12 +89,12 @@
   },
   "navigation": {
     "dashboard": "Tableau de bord",
-    "programmeIntelligence": "Intelligence du Programme",
+    "programmeIntelligence": "Intelligence Programme",
     "questionnairesAssessments": "Questionnaires & Évaluations",
-    "peerReviews": "Évaluations par les pairs",
+    "peerReviews": "Évaluations par les Pairs",
     "knowledgeBase": "Base de Connaissances",
-    "reviewerPool": "Vivier d'Évaluateurs",
-    "training": "Formation",
+    "reviewerPool": "Bassin d'Évaluateurs",
+    "training": "Formation & Ressources",
     "settings": "Paramètres",
     "programmeAdministration": "Administration du Programme",
     "organizationsMembership": "Organisations & Adhésion",
@@ -6720,11 +6720,12 @@
     },
     "navigation": {
       "dashboard": "Tableau de bord",
-      "reviews": "Évaluations",
-      "findings": "Constatations",
-      "caps": "Actions correctives",
-      "assessments": "Évaluations",
-      "bestPractices": "Meilleures pratiques",
+      "programmeIntelligence": "Intelligence Programme",
+      "questionnairesAssessments": "Questionnaires & Évaluations",
+      "reviews": "Évaluations par les Pairs",
+      "knowledgeBase": "Base de Connaissances",
+      "reviewerPool": "Bassin d'Évaluateurs",
+      "training": "Formation & Ressources",
       "settings": "Paramètres"
     },
     "sidebar": {
@@ -6757,16 +6758,21 @@
     },
     "navigation": {
       "dashboard": "Aller au tableau de bord",
-      "reviews": "Aller aux évaluations",
+      "programmeIntelligence": "Aller à l'Intelligence Programme",
+      "questionnairesAssessments": "Aller aux Questionnaires & Évaluations",
+      "reviews": "Aller aux Évaluations par les Pairs",
+      "knowledgeBase": "Aller à la Base de Connaissances",
+      "reviewerPool": "Aller au Bassin d'Évaluateurs",
+      "training": "Aller à la Formation",
+      "settings": "Aller aux Paramètres",
       "findings": "Aller aux constatations",
       "caps": "Aller aux PAC",
       "assessments": "Aller aux évaluations",
       "reviewers": "Aller aux évaluateurs",
-      "organizations": "Aller aux organisations",
-      "settings": "Aller aux paramètres"
+      "organizations": "Aller aux organisations"
     },
     "actions": {
-      "newReview": "Créer un nouvelle évaluation",
+      "newReview": "Créer une nouvelle évaluation",
       "newFinding": "Créer une constatation",
       "newAssessment": "Démarrer une évaluation"
     },
@@ -6777,27 +6783,37 @@
     },
     "commands": {
       "dashboard": "Aller au tableau de bord",
-      "reviews": "Aller aux évaluations",
+      "programmeIntelligence": "Aller à l'Intelligence Programme",
+      "questionnairesAssessments": "Aller aux Questionnaires & Évaluations",
+      "reviews": "Aller aux Évaluations par les Pairs",
+      "knowledgeBase": "Aller à la Base de Connaissances",
+      "reviewerPool": "Aller au Bassin d'Évaluateurs",
+      "training": "Aller à la Formation",
+      "settings": "Aller aux Paramètres",
+      "newReview": "Créer une nouvelle évaluation",
+      "showShortcuts": "Afficher les raccourcis clavier",
       "findings": "Aller aux constatations",
       "caps": "Aller aux PAC",
       "organizations": "Aller aux organisations",
       "reviewers": "Aller aux évaluateurs",
-      "analytics": "Aller aux analyses",
-      "settings": "Aller aux paramètres",
-      "newReview": "Créer un nouvelle évaluation",
-      "showShortcuts": "Afficher les raccourcis clavier"
+      "analytics": "Aller aux analyses"
     },
     "descriptions": {
       "dashboard": "Voir l'aperçu de votre tableau de bord",
-      "reviews": "Gérer les évaluations par les pairs",
+      "programmeIntelligence": "Voir les tendances, benchmarks et performances sécurité",
+      "questionnairesAssessments": "Parcourir les questionnaires et gérer les évaluations",
+      "reviews": "Gérer les évaluations par les pairs, constats et PAC",
+      "knowledgeBase": "Découvrir les bonnes pratiques et leçons apprises",
+      "reviewerPool": "Parcourir les profils d'évaluateurs et équipes régionales",
+      "training": "Accéder aux modules de formation et ressources",
+      "settings": "Gérer vos paramètres",
+      "newReview": "Démarrer une nouvelle évaluation",
+      "showShortcuts": "Voir tous les raccourcis clavier",
       "findings": "Voir et gérer les constatations",
       "caps": "Voir les plans d'action corrective",
       "organizations": "Parcourir les organisations",
       "reviewers": "Parcourir les profils d'évaluateurs",
-      "analytics": "Voir les analyses et rapports",
-      "settings": "Gérer vos paramètres",
-      "newReview": "Démarrer un nouvelle évaluation",
-      "showShortcuts": "Voir tous les raccourcis clavier"
+      "analytics": "Voir les analyses et rapports"
     },
     "footer": {
       "navigate": "pour naviguer",
@@ -7636,6 +7652,26 @@
       "title": "Tableau de Bord",
       "description": "Votre centre de commande affichant les métriques clés, les actions en attente et l'aperçu du programme."
     },
+    "programmeIntelligence": {
+      "title": "Intelligence Programme",
+      "description": "Visualisez les tendances, benchmarks, analyses de performance sécurité inter-ANSP et suivi de l'Objectif d'Abuja #15 à travers le programme."
+    },
+    "questionnairesAssessments": {
+      "title": "Questionnaires & Évaluations",
+      "description": "Parcourez les Questions de Protocole OACI USOAP CMA et les cadres CANSO SoE, et gérez vos auto-évaluations."
+    },
+    "peerReviews": {
+      "title": "Évaluations par les Pairs",
+      "description": "Gérez les évaluations par les pairs incluant constats, plans d'actions correctives, documents et rapports — le tout dans le contexte de la revue."
+    },
+    "knowledgeBase": {
+      "title": "Base de Connaissances",
+      "description": "Découvrez les bonnes pratiques et leçons apprises partagées par les ANSP à travers l'Afrique pour l'amélioration continue de la sécurité."
+    },
+    "reviewerPool": {
+      "title": "Bassin d'Évaluateurs",
+      "description": "Trouvez des évaluateurs qualifiés par expertise, consultez les équipes régionales et vérifiez la disponibilité pour les revues à venir."
+    },
     "analytics": {
       "title": "Analytique",
       "description": "Visualisez les tendances, les benchmarks et les indicateurs de performance à travers le programme."
@@ -7643,10 +7679,6 @@
     "assessments": {
       "title": "Auto-évaluations",
       "description": "Créez et gérez les évaluations selon les cadres OACI USOAP et CANSO SoE pour votre organisation."
-    },
-    "peerReviews": {
-      "title": "Revues par les Pairs",
-      "description": "Consultez les revues auxquelles vous participez. Accédez à l'espace de travail, documents, constats et rapports."
     },
     "findings": {
       "title": "Constats",

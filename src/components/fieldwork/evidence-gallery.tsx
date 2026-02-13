@@ -206,6 +206,7 @@ function ThumbnailCard({
     if (isVoice) return; // No image URL needed for voice notes
     const blob = evidence.thumbnailBlob ?? evidence.blob;
     const objectUrl = URL.createObjectURL(blob);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing external object URL with React state
     setUrl(objectUrl);
     return () => URL.revokeObjectURL(objectUrl);
   }, [evidence.thumbnailBlob, evidence.blob, isVoice]);
@@ -362,6 +363,7 @@ function ImagePreview({ blob }: { blob: Blob }) {
 
   useEffect(() => {
     const objectUrl = URL.createObjectURL(blob);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing external object URL with React state
     setUrl(objectUrl);
     return () => URL.revokeObjectURL(objectUrl);
   }, [blob]);
@@ -414,8 +416,8 @@ function AudioPlayer({ blob }: { blob: Blob }) {
     }
 
     const audio = audioRef.current ?? new Audio(url);
-    audioRef.current = audio;
 
+    /* eslint-disable react-hooks/immutability -- event handler: configuring audio element is safe here */
     audio.onloadedmetadata = () => {
       if (isFinite(audio.duration)) {
         setAudioDuration(audio.duration);
@@ -427,6 +429,9 @@ function AudioPlayer({ blob }: { blob: Blob }) {
       setProgress(0);
       cancelAnimationFrame(rafRef.current);
     };
+
+    audioRef.current = audio;
+    /* eslint-enable react-hooks/immutability */
 
     function tick() {
       if (audioRef.current && audioDuration > 0) {

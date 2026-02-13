@@ -498,7 +498,7 @@ const TEAM5_REVIEWERS: SeedUser[] = [
 ];
 
 // Combined reviewer list
-const ALL_REVIEWERS: SeedUser[] = [
+const _ALL_REVIEWERS: SeedUser[] = [
   ...TEAM1_REVIEWERS,
   ...TEAM2_REVIEWERS,
   ...TEAM3_REVIEWERS,
@@ -754,7 +754,7 @@ async function main() {
 
   console.log("━━━ Section A: Programme-Level Users ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   for (const user of PROGRAMME_USERS) {
-    const { created, hasProfile } = await createUser(user, orgMap, passwordHash);
+    const { created } = await createUser(user, orgMap, passwordHash);
     if (created) {
       counts.programmeUsers++;
       const tag = user.role.padEnd(24);

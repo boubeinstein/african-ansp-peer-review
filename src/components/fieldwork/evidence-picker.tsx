@@ -93,6 +93,7 @@ function PickerThumbnail({
     if (isVoice) return;
     const blob = evidence.thumbnailBlob ?? evidence.blob;
     const objectUrl = URL.createObjectURL(blob);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing external object URL with React state
     setUrl(objectUrl);
     return () => URL.revokeObjectURL(objectUrl);
   }, [evidence.thumbnailBlob, evidence.blob, isVoice]);

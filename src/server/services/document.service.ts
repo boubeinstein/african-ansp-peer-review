@@ -450,7 +450,7 @@ class DocumentService {
   async updateDocument(
     documentId: string,
     input: UpdateDocumentInput,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     _userId: string
   ): Promise<Document> {
     // Verify document exists
@@ -482,7 +482,7 @@ class DocumentService {
   /**
    * Soft delete a document
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   async deleteDocument(documentId: string, _userId: string): Promise<void> {
     // Verify document exists
     const document = await prisma.document.findFirst({

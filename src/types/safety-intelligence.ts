@@ -2,7 +2,7 @@
 // CROSS-ANSP SAFETY INTELLIGENCE DASHBOARD — TYPE DEFINITIONS
 // =============================================================================
 
-import type { USOAPAuditArea, FindingSeverity, FindingStatus, CAPStatus, MaturityLevel } from "@prisma/client";
+import type { FindingSeverity, MaturityLevel } from "@prisma/client";
 
 /** KPI summary for the programme overview */
 export interface ProgrammeKPIs {

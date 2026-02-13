@@ -5,7 +5,7 @@ import type { SyncQueueEntry, SyncStatus } from "./types";
 // Constants
 // =============================================================================
 
-const MAX_RETRIES = 3;
+const _MAX_RETRIES = 3;
 /** Exponential backoff base — delays: 5 s, 15 s, 45 s */
 const BACKOFF_BASE_MS = 5_000;
 const BACKOFF_MULTIPLIER = 3;

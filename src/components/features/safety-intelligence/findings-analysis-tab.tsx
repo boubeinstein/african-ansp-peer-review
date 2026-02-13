@@ -13,7 +13,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc/client";
-import { cn } from "@/lib/utils";
 import {
   BarChart,
   Bar,
@@ -287,9 +286,7 @@ interface SeverityPieChartProps {
   total: number;
 }
 
-function SeverityPieChart({ data, total }: SeverityPieChartProps) {
-  const t = useTranslations("safetyIntelligence");
-
+function SeverityPieChart({ data, total: _total }: SeverityPieChartProps) {
   return (
     <div className="flex flex-col items-center">
       <ResponsiveContainer width="100%" height={260}>

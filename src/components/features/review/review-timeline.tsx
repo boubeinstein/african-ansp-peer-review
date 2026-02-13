@@ -58,7 +58,7 @@ interface ReviewTimelineProps {
 export function ReviewTimeline({
   review,
   defaultOpen = true,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   showDurations: _showDurations,
 }: ReviewTimelineProps) {
   const t = useTranslations("reviews.timeline");

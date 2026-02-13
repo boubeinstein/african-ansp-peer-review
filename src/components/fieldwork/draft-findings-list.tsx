@@ -10,8 +10,6 @@ import {
   Plus,
   Camera,
   Loader2,
-  Check,
-  X,
   Trash2,
   ClipboardList,
 } from "lucide-react";
@@ -178,7 +176,6 @@ function FindingCard({
   onTap: () => void;
   onDelete: () => void;
 }) {
-  const t = useTranslations("fieldwork.findings");
   const cardRef = useRef<HTMLDivElement>(null);
   const [offsetX, setOffsetX] = useState(0);
   const [swiping, setSwiping] = useState(false);

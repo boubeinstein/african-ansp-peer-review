@@ -87,6 +87,7 @@ export function DiscussionDetail({ discussionId, reviewId, userId, userName, use
     defaultValues: { content: "" },
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- React Hook Form's watch() is intentionally non-memoizable
   const replyContent = watch("content");
 
   // Fetch team members for @mention autocomplete

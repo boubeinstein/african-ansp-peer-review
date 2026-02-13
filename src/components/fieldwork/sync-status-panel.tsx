@@ -11,7 +11,6 @@ import {
   Loader2,
   CheckSquare,
   Camera,
-  Mic,
   ClipboardList,
   Clock,
 } from "lucide-react";
@@ -338,7 +337,7 @@ function SummaryCard({
 
 function QueueItem({
   entry,
-  onRetry,
+  onRetry: _onRetry,
   onResolveConflict,
 }: {
   entry: SyncQueueEntry;

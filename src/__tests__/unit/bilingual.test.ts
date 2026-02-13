@@ -49,7 +49,7 @@ function hasBothLanguages(label: BilingualLabel): boolean {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 function _hasValidBilingualProperty(obj: unknown, propertyNames: string[]): boolean {
   if (typeof obj !== "object" || obj === null) return false;
   const record = obj as Record<string, unknown>;

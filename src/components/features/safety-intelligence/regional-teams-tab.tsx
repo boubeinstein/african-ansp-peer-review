@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronDown, ChevronUp, Users } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -50,8 +50,6 @@ function eiBarColor(score: number): string {
 // =============================================================================
 
 export function RegionalTeamsTab() {
-  const t = useTranslations("safetyIntelligence");
-
   const { data: teams, isLoading: teamsLoading } =
     trpc.safetyIntelligence.getTeamSummaries.useQuery();
 

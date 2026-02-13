@@ -21,7 +21,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Globe, LogOut, Settings, Search, Keyboard, Moon, Sun } from "lucide-react";
+import { Globe, LogOut, Settings, Search, Keyboard } from "lucide-react";
 import Link from "next/link";
 import { NotificationBell } from "@/components/features/notifications/notification-bell";
 import { CommandPalette } from "@/components/features/command-palette";

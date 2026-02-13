@@ -73,8 +73,8 @@ const TAB_IDS: TabId[] = [
 // =============================================================================
 
 export function SafetyIntelligenceClient({
-  userId,
-  userRole,
+  userId: _userId,
+  userRole: _userRole,
   embedded = false,
 }: SafetyIntelligenceClientProps) {
   const locale = useLocale();

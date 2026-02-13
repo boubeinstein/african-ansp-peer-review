@@ -44,7 +44,7 @@ const ORANGE = "EA580C";
 const AMBER = "D97706";
 const GREEN = "16A34A";
 const GREY = "6B7280";
-const WHITE = "FFFFFF";
+const _WHITE = "FFFFFF";
 
 type DocChild = Paragraph | Table | TableOfContents;
 

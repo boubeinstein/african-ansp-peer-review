@@ -215,7 +215,7 @@ export async function getProgrammeKPIs(
   // Quarter-over-quarter trends
   const currentQStart = quarterStart(0);
   const prevQStart = quarterStart(1);
-  const prevPrevQStart = quarterStart(2);
+  const _prevPrevQStart = quarterStart(2);
 
   const currentQEI: number[] = [];
   const prevQEI: number[] = [];
@@ -424,7 +424,7 @@ export async function getRegionalTeamSummaries(
 
   // Get performance data for all orgs at once
   const allPerformance = await getANSPPerformance(db);
-  const perfByOrg = new Map(allPerformance.map((p) => [p.organizationId, p]));
+  const _perfByOrg = new Map(allPerformance.map((p) => [p.organizationId, p]));
 
   return teams.map((team) => {
     const memberIds = new Set(team.memberOrganizations.map((m) => m.id));

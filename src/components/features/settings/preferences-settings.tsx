@@ -59,7 +59,6 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 // Define types locally to avoid importing @prisma/client in client component
-type Locale = "EN" | "FR";
 type Theme = "LIGHT" | "DARK" | "SYSTEM";
 import { useOnboardingOptional } from "@/components/onboarding";
 

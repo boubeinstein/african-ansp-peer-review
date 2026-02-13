@@ -277,9 +277,11 @@ export const analyticsRouter = router({
         })
       );
 
-      // Get findings by audit area (from review areasInScope)
+      // Get findings by review area (prefer finding.reviewArea, fall back to review.areasInScope)
       const findingsWithReview = await db.finding.findMany({
-        include: {
+        select: {
+          reviewArea: true,
+          severity: true,
           review: {
             select: { areasInScope: true },
           },
@@ -288,8 +290,7 @@ export const analyticsRouter = router({
 
       const areaMap = new Map<string, FindingsByArea>();
       findingsWithReview.forEach((f) => {
-        // Use first area in scope as the primary area
-        const area = f.review.areasInScope[0] || "General";
+        const area = f.reviewArea || f.review.areasInScope[0] || "General";
         if (!areaMap.has(area)) {
           areaMap.set(area, {
             area,

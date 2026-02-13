@@ -22,6 +22,7 @@ import { format } from "date-fns";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import type { ANSReviewArea } from "@prisma/client";
 
 // UI Components
 import { Button } from "@/components/ui/button";
@@ -1354,7 +1355,7 @@ export function ReviewRequestWizard(props: ReviewRequestWizardProps) {
       hostOrganizationId: userOrganizationId,
       assessmentIds: data.assessmentIds,
       reviewType: data.reviewType,
-      focusAreas: data.focusAreas,
+      focusAreas: data.focusAreas as ANSReviewArea[],
       requestedStartDate: data.requestedStartDate,
       requestedEndDate: data.requestedEndDate,
       locationType: data.locationType,

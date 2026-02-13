@@ -76,6 +76,7 @@ import {
 // Permissions
 import { isOversightRole } from "@/lib/permissions";
 import { UserRole } from "@/types/prisma-enums";
+import type { ANSReviewArea } from "@prisma/client";
 
 // =============================================================================
 // TYPES
@@ -214,6 +215,7 @@ export function NewReviewClient({
   const onSubmit = (values: NewReviewFormValues) => {
     createReview.mutate({
       ...values,
+      focusAreas: values.focusAreas as ANSReviewArea[] | undefined,
       requestedStartDate: values.requestedStartDate,
       requestedEndDate: values.requestedEndDate,
     });

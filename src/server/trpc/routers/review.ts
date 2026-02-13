@@ -25,6 +25,7 @@ import {
   ReviewLocationType,
   LanguagePreference,
   ApprovalStatus,
+  ANSReviewArea,
   Prisma,
 } from "@prisma/client";
 
@@ -173,7 +174,7 @@ const reviewRequestSchema = z.object({
   hostOrganizationId: z.string().optional(),
   assessmentIds: z.array(z.string()).min(1, "At least one assessment must be selected"),
   reviewType: z.nativeEnum(ReviewType),
-  focusAreas: z.array(z.string()).optional(),
+  focusAreas: z.array(z.nativeEnum(ANSReviewArea)).optional(),
   requestedStartDate: z.date().or(z.string().transform((s) => new Date(s))).optional(),
   requestedEndDate: z.date().or(z.string().transform((s) => new Date(s))).optional(),
   locationType: z.nativeEnum(ReviewLocationType).default("ON_SITE"),
@@ -199,7 +200,7 @@ const reviewUpdateSchema = z.object({
   actualEndDate: z.date().or(z.string().transform((s) => new Date(s))).optional().nullable(),
   objectives: z.string().optional().nullable(),
   specialRequirements: z.string().optional().nullable(),
-  areasInScope: z.array(z.string()).optional(),
+  areasInScope: z.array(z.nativeEnum(ANSReviewArea)).optional(),
   questionnairesInScope: z.array(z.string()).optional(),
   // Logistics fields
   accommodationProvided: z.boolean().optional(),
@@ -216,7 +217,7 @@ const teamMemberAssignmentSchema = z.object({
   userId: z.string(),
   reviewerProfileId: z.string().optional(),
   role: z.nativeEnum(TeamRole),
-  assignedAreas: z.array(z.string()).optional(),
+  assignedAreas: z.array(z.nativeEnum(ANSReviewArea)).optional(),
 });
 
 const findingCreateSchema = z.object({
@@ -1936,7 +1937,7 @@ export const reviewRouter = router({
       z.object({
         id: z.string(),
         role: z.nativeEnum(TeamRole).optional(),
-        assignedAreas: z.array(z.string()).optional(),
+        assignedAreas: z.array(z.nativeEnum(ANSReviewArea)).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -1982,7 +1983,7 @@ export const reviewRouter = router({
             userId: z.string().cuid(),
             reviewerProfileId: z.string().cuid(),
             role: z.nativeEnum(TeamRole),
-            assignedAreas: z.array(z.string()).optional(),
+            assignedAreas: z.array(z.nativeEnum(ANSReviewArea)).optional(),
           })
         ).min(1, "At least one team member is required"),
         replaceExisting: z.boolean().default(false),
@@ -2275,7 +2276,7 @@ export const reviewRouter = router({
             userId: z.string(),
             reviewerProfileId: z.string().optional(),
             role: z.nativeEnum(TeamRole),
-            assignedAreas: z.array(z.string()).default([]),
+            assignedAreas: z.array(z.nativeEnum(ANSReviewArea)).default([]),
           })
         ),
       })
@@ -2486,7 +2487,7 @@ export const reviewRouter = router({
         userId: z.string(),
         reviewerProfileId: z.string().optional(),
         role: z.nativeEnum(TeamRole).default("REVIEWER"),
-        assignedAreas: z.array(z.string()).default([]),
+        assignedAreas: z.array(z.nativeEnum(ANSReviewArea)).default([]),
         crossTeamJustification: z.string().optional(),
       })
     )
@@ -2704,7 +2705,7 @@ export const reviewRouter = router({
         reviewId: z.string(),
         userId: z.string(),
         role: z.nativeEnum(TeamRole),
-        assignedAreas: z.array(z.string()).optional(),
+        assignedAreas: z.array(z.nativeEnum(ANSReviewArea)).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {

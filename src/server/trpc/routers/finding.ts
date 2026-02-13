@@ -11,6 +11,7 @@ import {
   FindingSeverity,
   FindingStatus,
   CriticalElement,
+  ANSReviewArea,
   UserRole,
   PrismaClient,
 } from "@prisma/client";
@@ -72,6 +73,7 @@ const createFindingSchema = z.object({
   evidenceFr: z.string().optional(),
   icaoReference: z.string().optional(),
   criticalElement: z.nativeEnum(CriticalElement).optional(),
+  reviewArea: z.nativeEnum(ANSReviewArea).optional(),
   capRequired: z.boolean().default(true),
   targetCloseDate: z.coerce.date().optional(),
 });
@@ -102,6 +104,7 @@ const updateFindingSchema = z.object({
   evidenceFr: z.string().optional().nullable(),
   icaoReference: z.string().optional().nullable(),
   criticalElement: z.nativeEnum(CriticalElement).optional().nullable(),
+  reviewArea: z.nativeEnum(ANSReviewArea).optional().nullable(),
   capRequired: z.boolean().optional(),
   targetCloseDate: z.coerce.date().optional().nullable(),
 });
@@ -112,6 +115,7 @@ const listFindingsSchema = z.object({
   status: z.nativeEnum(FindingStatus).optional(),
   findingType: z.nativeEnum(FindingType).optional(),
   severity: z.nativeEnum(FindingSeverity).optional(),
+  reviewArea: z.nativeEnum(ANSReviewArea).optional(),
   assignedToId: z.string().cuid().optional(),
   search: z.string().optional(),
   page: z.number().int().min(1).default(1),
@@ -480,6 +484,7 @@ export const findingRouter = router({
         status,
         findingType,
         severity,
+        reviewArea,
         assignedToId,
         search,
         page,
@@ -508,6 +513,7 @@ export const findingRouter = router({
       if (status) where.status = status;
       if (findingType) where.findingType = findingType;
       if (severity) where.severity = severity;
+      if (reviewArea) where.reviewArea = reviewArea;
       if (assignedToId) where.assignedToId = assignedToId;
 
       // Search in title and description
@@ -1122,6 +1128,13 @@ export const findingRouter = router({
         _count: true,
       });
 
+      // Get counts by review area
+      const byReviewArea = await ctx.db.finding.groupBy({
+        by: ["reviewArea"],
+        where: { ...where, reviewArea: { not: null } },
+        _count: true,
+      });
+
       // Get total and open counts
       const [total, open, closed, overdue] = await Promise.all([
         ctx.db.finding.count({ where }),
@@ -1174,6 +1187,12 @@ export const findingRouter = router({
             [item.severity]: item._count,
           }),
           {} as Record<FindingSeverity, number>
+        ),
+        byReviewArea: byReviewArea.map(
+          (item: { reviewArea: ANSReviewArea | null; _count: number }) => ({
+            reviewArea: item.reviewArea,
+            count: item._count,
+          })
         ),
       };
     }),

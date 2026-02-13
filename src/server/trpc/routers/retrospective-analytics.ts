@@ -278,7 +278,7 @@ export const retrospectiveAnalyticsRouter = router({
 
     return {
       tags: tagCounts.map((t) => ({ tag: t.tag, count: t._count.tag })),
-      auditAreas: areaCounts.map((a) => ({
+      reviewAreas: areaCounts.map((a) => ({
         code: a.reviewArea!,
         count: a._count.id,
       })),

@@ -472,6 +472,14 @@ export function RetrospectiveForm({
         onSubmit={form.handleSubmit(onSave)}
         className="flex-1 min-w-0 space-y-6"
       >
+        {/* ICAO/CANSO alignment notice */}
+        <Alert className="border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/30">
+          <Info className="h-4 w-4 text-blue-600" />
+          <AlertDescription className="text-xs text-blue-800 dark:text-blue-300">
+            {t("alignmentNotice")}
+          </AlertDescription>
+        </Alert>
+
         {/* Status badge bar */}
         {existingData && (
           <div className="flex items-center gap-3">

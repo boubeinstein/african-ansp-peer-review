@@ -13,6 +13,7 @@ import { logStatusChange, logSubmission } from "@/server/services/audit";
 import {
   sendNotification,
   getRecipientsByRole,
+  getReviewTeamRecipients,
 } from "@/server/services/notification-service";
 
 // =============================================================================
@@ -349,6 +350,22 @@ export const retrospectiveRouter = router({
         newStatus: "PUBLISHED",
         metadata: { reviewId: retrospective.reviewId },
       });
+
+      // Notify all review team members
+      const teamRecipients = await getReviewTeamRecipients(retrospective.reviewId);
+      if (teamRecipients.length > 0) {
+        const refNumber = updated.review.referenceNumber ?? updated.review.id;
+        await sendNotification(teamRecipients, {
+          type: "RETROSPECTIVE_PUBLISHED",
+          titleEn: "Retrospective Published",
+          titleFr: "Rétrospective publiée",
+          messageEn: `The retrospective for review ${refNumber} has been published.`,
+          messageFr: `La rétrospective de la revue ${refNumber} a été publiée.`,
+          entityType: "RETROSPECTIVE",
+          entityId: input.retrospectiveId,
+          actionUrl: `/reviews/${retrospective.reviewId}`,
+        });
+      }
 
       return updated;
     }),

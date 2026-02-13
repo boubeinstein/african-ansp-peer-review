@@ -122,7 +122,7 @@ export function LessonDetailClient({
   // ---- Loading ----
   if (isLoading) {
     return (
-      <div className="container mx-auto py-6 space-y-6 max-w-5xl">
+      <div className="space-y-6 max-w-5xl">
         <div className="h-6 w-40 bg-muted rounded animate-pulse" />
         <div className="h-10 w-3/4 bg-muted rounded animate-pulse" />
         <div className="h-4 w-1/2 bg-muted rounded animate-pulse" />
@@ -134,7 +134,7 @@ export function LessonDetailClient({
   // ---- Error ----
   if (error || !lesson) {
     return (
-      <div className="container mx-auto py-6 max-w-5xl">
+      <div className="max-w-5xl">
         <Link
           href={`/${locale}/lessons`}
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-6"

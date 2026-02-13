@@ -7159,8 +7159,26 @@
     "searchPlaceholder": "Search lessons by keyword, topic, or audit area...",
     "tabs": {
       "search": "Search",
+      "knowledgeBase": "Knowledge Base",
       "bookmarks": "My Bookmarks",
       "analytics": "Analytics"
+    },
+    "bookmarks": {
+      "metaTitle": "My Saved Lessons",
+      "metaDescription": "Your bookmarked lessons from the knowledge base",
+      "count": "{count} saved lessons",
+      "sortBookmarked": "Date Bookmarked",
+      "sortCreated": "Date Created",
+      "emptyTitle": "No Saved Lessons Yet",
+      "emptyDescription": "You haven't saved any lessons yet. Browse the knowledge base to find insights for your next review.",
+      "browseKnowledgeBase": "Browse Knowledge Base",
+      "bookmarkedOn": "Bookmarked {date}",
+      "noNotes": "No personal notes",
+      "editNotes": "Edit",
+      "notesPlaceholder": "Why is this lesson relevant to you?",
+      "save": "Save",
+      "removed": "Bookmark removed",
+      "notesSaved": "Notes saved"
     },
     "sort": {
       "recent": "Most Recent",

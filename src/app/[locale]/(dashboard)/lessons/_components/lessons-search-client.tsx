@@ -28,17 +28,13 @@ import {
   SlidersHorizontal,
   ChevronLeft,
   ChevronRight,
-  BookOpen,
-  Bookmark,
   Lightbulb,
-  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   LessonCard,
   type LessonCardItem,
 } from "@/components/features/lessons/lesson-card";
-import { LessonsAnalytics } from "./lessons-analytics";
 import type {
   LessonCategory,
   ImpactLevel,
@@ -61,14 +57,8 @@ interface LessonsSearchClientProps {
     applicability?: string;
     tag?: string;
     sortBy?: string;
-    tab?: string;
   };
-  userRole?: string;
 }
-
-const ANALYTICS_ROLES = ["SUPER_ADMIN", "PROGRAMME_COORDINATOR"];
-
-type TabValue = "search" | "bookmarks" | "analytics";
 
 // =============================================================================
 // Category labels
@@ -162,7 +152,6 @@ const APPLICABILITY_OPTIONS: Array<{
 export function LessonsSearchClient({
   locale,
   searchParams,
-  userRole,
 }: LessonsSearchClientProps) {
   const t = useTranslations("lessons");
   const router = useRouter();
@@ -170,13 +159,6 @@ export function LessonsSearchClient({
   const [, startTransition] = useTransition();
 
   // Parse URL state
-  const showAnalytics = userRole && ANALYTICS_ROLES.includes(userRole);
-  const activeTab: TabValue =
-    searchParams.tab === "analytics" && showAnalytics
-      ? "analytics"
-      : searchParams.tab === "bookmarks"
-        ? "bookmarks"
-        : "search";
   const page = parseInt(searchParams.page || "1", 10);
   const search = searchParams.search || "";
   const category = searchParams.category as LessonCategory | undefined;
@@ -198,25 +180,17 @@ export function LessonsSearchClient({
   const [bookmarkingId, setBookmarkingId] = useState<string | null>(null);
 
   // ---- tRPC queries ----
-  const searchQuery = trpc.lessons.search.useQuery(
-    {
-      query: search || undefined,
-      category,
-      auditAreaCode: auditArea,
-      soeAreaCode: soeArea,
-      applicability,
-      tags: tagFilter ? [tagFilter] : undefined,
-      sortBy,
-      page,
-      pageSize: 12,
-    },
-    { enabled: activeTab === "search" }
-  );
-
-  const bookmarksQuery = trpc.lessons.getMyBookmarks.useQuery(
-    { page, pageSize: 12 },
-    { enabled: activeTab === "bookmarks" }
-  );
+  const searchQuery = trpc.lessons.search.useQuery({
+    query: search || undefined,
+    category,
+    auditAreaCode: auditArea,
+    soeAreaCode: soeArea,
+    applicability,
+    tags: tagFilter ? [tagFilter] : undefined,
+    sortBy,
+    page,
+    pageSize: 12,
+  });
 
   const popularTagsQuery = trpc.lessons.getPopularTags.useQuery(undefined, {
     staleTime: 5 * 60 * 1000,
@@ -230,7 +204,6 @@ export function LessonsSearchClient({
     onSettled: () => setVotingId(null),
     onSuccess: () => {
       void utils.lessons.search.invalidate();
-      void utils.lessons.getMyBookmarks.invalidate();
     },
   });
 
@@ -239,7 +212,6 @@ export function LessonsSearchClient({
     onSettled: () => setBookmarkingId(null),
     onSuccess: () => {
       void utils.lessons.search.invalidate();
-      void utils.lessons.getMyBookmarks.invalidate();
     },
   });
 
@@ -248,7 +220,6 @@ export function LessonsSearchClient({
     (updates: Record<string, string | undefined>) => {
       const params = new URLSearchParams();
 
-      // Preserve existing params
       const currentParams: Record<string, string | undefined> = {
         search: search || undefined,
         category,
@@ -258,7 +229,6 @@ export function LessonsSearchClient({
         applicability,
         tag: tagFilter,
         sortBy: sortBy !== "recent" ? sortBy : undefined,
-        tab: activeTab !== "search" ? activeTab : undefined,
       };
 
       Object.entries(currentParams).forEach(([key, val]) => {
@@ -273,7 +243,6 @@ export function LessonsSearchClient({
         }
       });
 
-      // Reset to page 1 when filters change (unless explicitly setting page)
       if (!("page" in updates)) params.delete("page");
 
       startTransition(() => {
@@ -292,7 +261,6 @@ export function LessonsSearchClient({
       applicability,
       tagFilter,
       sortBy,
-      activeTab,
     ]
   );
 
@@ -308,24 +276,12 @@ export function LessonsSearchClient({
   const clearFilters = () => {
     setSearchValue("");
     startTransition(() => {
-      const params = new URLSearchParams();
-      if (activeTab !== "search") params.set("tab", activeTab);
-      const qs = params.toString();
-      router.push(qs ? `${pathname}?${qs}` : pathname);
+      router.push(pathname);
     });
   };
 
   const goToPage = (newPage: number) => {
     updateFilters({ page: newPage.toString() });
-  };
-
-  const switchTab = (tab: TabValue) => {
-    setSearchValue("");
-    startTransition(() => {
-      const params = new URLSearchParams();
-      if (tab !== "search") params.set("tab", tab);
-      router.push(params.toString() ? `${pathname}?${params}` : pathname);
-    });
   };
 
   const hasFilters =
@@ -482,198 +438,102 @@ export function LessonsSearchClient({
     </div>
   );
 
-  // ---- Data for current tab ----
-  const isLoading =
-    activeTab === "search" ? searchQuery.isLoading : bookmarksQuery.isLoading;
-  const error =
-    activeTab === "search" ? searchQuery.error : bookmarksQuery.error;
-
+  // ---- Data ----
   const items: LessonCardItem[] =
-    activeTab === "search"
-      ? ((searchQuery.data?.items ?? []) as unknown as LessonCardItem[])
-      : ((bookmarksQuery.data?.items?.map((b) => ({
-          ...b.lesson,
-          isBookmarked: true,
-          currentUserVote: null,
-          _count: { votes: 0, bookmarks: 0 },
-          helpfulCount: 0,
-          viewCount: 0,
-          publishedAt: null,
-          isAnonymized: false,
-          contentEn: "",
-          contentFr: "",
-          actionableAdvice: null,
-          auditAreaCode: null,
-          soeAreaCode: null,
-          impactLevel: "MODERATE" as ImpactLevel,
-          category: "PROCESS_IMPROVEMENT" as LessonCategory,
-        })) ?? []) as LessonCardItem[]);
-
-  const totalPages =
-    activeTab === "search"
-      ? searchQuery.data?.totalPages ?? 1
-      : bookmarksQuery.data?.totalPages ?? 1;
-  const totalCount =
-    activeTab === "search"
-      ? searchQuery.data?.totalCount ?? 0
-      : bookmarksQuery.data?.totalCount ?? 0;
+    (searchQuery.data?.items ?? []) as unknown as LessonCardItem[];
+  const totalPages = searchQuery.data?.totalPages ?? 1;
+  const totalCount = searchQuery.data?.totalCount ?? 0;
 
   return (
     <>
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            <BookOpen className="h-6 w-6 text-primary" />
-            {t("title")}
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            {t("description")}
-          </p>
+      {/* Search bar + sort */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="relative flex-1 max-w-lg">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder={t("searchPlaceholder")}
+            value={searchValue}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            className="pl-9"
+          />
         </div>
+
+        <Select
+          value={sortBy}
+          onValueChange={(v) =>
+            updateFilters({ sortBy: v === "recent" ? undefined : v })
+          }
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="recent">{t("sort.recent")}</SelectItem>
+            <SelectItem value="helpful">{t("sort.helpful")}</SelectItem>
+            <SelectItem value="views">{t("sort.views")}</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* Mobile filter trigger */}
+        <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
+          <SheetTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="lg:hidden"
+            >
+              <SlidersHorizontal className="h-4 w-4 mr-1.5" />
+              {t("filters.title")}
+              {activeFilterCount > 0 && (
+                <Badge
+                  variant="secondary"
+                  className="ml-1.5 h-5 w-5 p-0 flex items-center justify-center text-[10px]"
+                >
+                  {activeFilterCount}
+                </Badge>
+              )}
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-80">
+            <SheetHeader>
+              <SheetTitle>{t("filters.title")}</SheetTitle>
+            </SheetHeader>
+            <div className="mt-6">{filterContent}</div>
+          </SheetContent>
+        </Sheet>
       </div>
 
-      {/* Tabs */}
-      <div className="flex items-center gap-1 border-b">
-        <button
-          className={cn(
-            "px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px",
-            activeTab === "search"
-              ? "border-primary text-primary"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          )}
-          onClick={() => switchTab("search")}
-        >
-          <Search className="h-4 w-4 inline-block mr-1.5 -mt-0.5" />
-          {t("tabs.search")}
-        </button>
-        <button
-          className={cn(
-            "px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px",
-            activeTab === "bookmarks"
-              ? "border-primary text-primary"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          )}
-          onClick={() => switchTab("bookmarks")}
-        >
-          <Bookmark className="h-4 w-4 inline-block mr-1.5 -mt-0.5" />
-          {t("tabs.bookmarks")}
-        </button>
-        {showAnalytics && (
-          <button
-            className={cn(
-              "px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px",
-              activeTab === "analytics"
-                ? "border-primary text-primary"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            )}
-            onClick={() => switchTab("analytics")}
-          >
-            <BarChart3 className="h-4 w-4 inline-block mr-1.5 -mt-0.5" />
-            {t("tabs.analytics")}
-          </button>
-        )}
-      </div>
-
-      {/* Analytics tab */}
-      {activeTab === "analytics" && showAnalytics && (
-        <LessonsAnalytics locale={locale} />
-      )}
-
-      {/* Search bar + sort (search tab only) */}
-      {activeTab === "search" && (
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          {/* Search input */}
-          <div className="relative flex-1 max-w-lg">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder={t("searchPlaceholder")}
-              value={searchValue}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              className="pl-9"
-            />
+      {/* Main layout: sidebar + results */}
+      <div className="flex gap-6">
+        {/* Desktop sidebar */}
+        <aside className="hidden lg:block w-64 shrink-0">
+          <div className="sticky top-24 space-y-2">
+            <h3 className="text-sm font-semibold mb-3">
+              {t("filters.title")}
+              {activeFilterCount > 0 && (
+                <Badge
+                  variant="secondary"
+                  className="ml-2 text-[10px]"
+                >
+                  {activeFilterCount}
+                </Badge>
+              )}
+            </h3>
+            {filterContent}
           </div>
-
-          {/* Sort */}
-          <Select
-            value={sortBy}
-            onValueChange={(v) =>
-              updateFilters({ sortBy: v === "recent" ? undefined : v })
-            }
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="recent">{t("sort.recent")}</SelectItem>
-              <SelectItem value="helpful">{t("sort.helpful")}</SelectItem>
-              <SelectItem value="views">{t("sort.views")}</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Mobile filter trigger */}
-          <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
-            <SheetTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="lg:hidden"
-              >
-                <SlidersHorizontal className="h-4 w-4 mr-1.5" />
-                {t("filters.title")}
-                {activeFilterCount > 0 && (
-                  <Badge
-                    variant="secondary"
-                    className="ml-1.5 h-5 w-5 p-0 flex items-center justify-center text-[10px]"
-                  >
-                    {activeFilterCount}
-                  </Badge>
-                )}
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-80">
-              <SheetHeader>
-                <SheetTitle>{t("filters.title")}</SheetTitle>
-              </SheetHeader>
-              <div className="mt-6">{filterContent}</div>
-            </SheetContent>
-          </Sheet>
-        </div>
-      )}
-
-      {/* Main layout: sidebar + results (search/bookmarks only) */}
-      {activeTab !== "analytics" && <div className="flex gap-6">
-        {/* Desktop sidebar (search tab only) */}
-        {activeTab === "search" && (
-          <aside className="hidden lg:block w-64 shrink-0">
-            <div className="sticky top-24 space-y-2">
-              <h3 className="text-sm font-semibold mb-3">
-                {t("filters.title")}
-                {activeFilterCount > 0 && (
-                  <Badge
-                    variant="secondary"
-                    className="ml-2 text-[10px]"
-                  >
-                    {activeFilterCount}
-                  </Badge>
-                )}
-              </h3>
-              {filterContent}
-            </div>
-          </aside>
-        )}
+        </aside>
 
         {/* Results area */}
         <div className="flex-1 min-w-0">
           {/* Error */}
-          {error && (
+          {searchQuery.error && (
             <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 mb-4">
-              <p className="text-sm text-destructive">{error.message}</p>
+              <p className="text-sm text-destructive">{searchQuery.error.message}</p>
             </div>
           )}
 
           {/* Loading */}
-          {isLoading && (
+          {searchQuery.isLoading && (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div
@@ -693,26 +553,22 @@ export function LessonsSearchClient({
           )}
 
           {/* Empty state */}
-          {!isLoading && items.length === 0 && (
+          {!searchQuery.isLoading && items.length === 0 && (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <div className="rounded-full bg-muted p-4 mb-4">
                 <Lightbulb className="h-8 w-8 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-semibold mb-2">
-                {activeTab === "bookmarks"
-                  ? t("empty.bookmarksTitle")
-                  : t("empty.title")}
+                {t("empty.title")}
               </h3>
               <p className="text-muted-foreground max-w-md">
-                {activeTab === "bookmarks"
-                  ? t("empty.bookmarksDescription")
-                  : t("empty.description")}
+                {t("empty.description")}
               </p>
             </div>
           )}
 
           {/* Results */}
-          {!isLoading && items.length > 0 && (
+          {!searchQuery.isLoading && items.length > 0 && (
             <>
               <p className="text-sm text-muted-foreground mb-4">
                 {t("showing", { count: items.length, total: totalCount })}
@@ -761,7 +617,7 @@ export function LessonsSearchClient({
             </>
           )}
         </div>
-      </div>}
+      </div>
     </>
   );
 }

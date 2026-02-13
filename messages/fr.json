@@ -7159,8 +7159,26 @@
     "searchPlaceholder": "Rechercher par mot-clé, sujet ou domaine d'audit...",
     "tabs": {
       "search": "Recherche",
+      "knowledgeBase": "Base de Connaissances",
       "bookmarks": "Mes Favoris",
       "analytics": "Analytique"
+    },
+    "bookmarks": {
+      "metaTitle": "Mes Leçons Enregistrées",
+      "metaDescription": "Vos leçons enregistrées de la base de connaissances",
+      "count": "{count} leçons enregistrées",
+      "sortBookmarked": "Date d'enregistrement",
+      "sortCreated": "Date de création",
+      "emptyTitle": "Aucune Leçon Enregistrée",
+      "emptyDescription": "Vous n'avez pas encore enregistré de leçons. Parcourez la base de connaissances pour trouver des informations utiles pour votre prochaine évaluation.",
+      "browseKnowledgeBase": "Parcourir la Base de Connaissances",
+      "bookmarkedOn": "Enregistré le {date}",
+      "noNotes": "Aucune note personnelle",
+      "editNotes": "Modifier",
+      "notesPlaceholder": "Pourquoi cette leçon est-elle pertinente pour vous ?",
+      "save": "Enregistrer",
+      "removed": "Favori supprimé",
+      "notesSaved": "Notes enregistrées"
     },
     "sort": {
       "recent": "Plus Récents",

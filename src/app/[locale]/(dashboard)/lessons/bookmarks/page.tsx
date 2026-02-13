@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
-import { LessonsSearchClient } from "./_components/lessons-search-client";
+import { BookmarksClient } from "./_components/bookmarks-client";
 
 export async function generateMetadata({
   params,
@@ -8,10 +8,10 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "lessons" });
+  const t = await getTranslations({ locale, namespace: "lessons.bookmarks" });
   return {
-    title: t("meta.title"),
-    description: t("meta.description"),
+    title: t("metaTitle"),
+    description: t("metaDescription"),
   };
 }
 
@@ -19,18 +19,11 @@ interface PageProps {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{
     page?: string;
-    search?: string;
-    category?: string;
-    impact?: string;
-    auditArea?: string;
-    soeArea?: string;
-    applicability?: string;
-    tag?: string;
     sortBy?: string;
   }>;
 }
 
-export default async function LessonsPage({
+export default async function BookmarksPage({
   params,
   searchParams,
 }: PageProps) {
@@ -45,7 +38,7 @@ export default async function LessonsPage({
         </div>
       }
     >
-      <LessonsSearchClient
+      <BookmarksClient
         locale={locale}
         searchParams={resolvedSearchParams}
       />

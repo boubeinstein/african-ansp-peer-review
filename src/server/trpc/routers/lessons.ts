@@ -19,6 +19,9 @@ import {
   ReviewPhase,
 } from "@prisma/client";
 import type { Prisma } from "@prisma/client";
+import {
+  sendNotification,
+} from "@/server/services/notification-service";
 
 // =============================================================================
 // INPUT SCHEMAS
@@ -719,6 +722,34 @@ export const lessonsRouter = router({
     }),
 
   /**
+   * Update personal notes on a bookmark
+   */
+  updateBookmarkNotes: protectedProcedure
+    .input(
+      z.object({
+        bookmarkId: z.string(),
+        notes: z.string().nullable(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const bookmark = await ctx.db.lessonBookmark.findUnique({
+        where: { id: input.bookmarkId },
+      });
+
+      if (!bookmark || bookmark.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Bookmark not found",
+        });
+      }
+
+      return ctx.db.lessonBookmark.update({
+        where: { id: input.bookmarkId },
+        data: { notes: input.notes },
+      });
+    }),
+
+  /**
    * Publish a draft lesson (admin/coordinator only)
    */
   publish: protectedProcedure
@@ -750,7 +781,7 @@ export const lessonsRouter = router({
         });
       }
 
-      return ctx.db.lessonLearned.update({
+      const published = await ctx.db.lessonLearned.update({
         where: { id: input.id },
         data: {
           status: LessonStatus.PUBLISHED,
@@ -760,5 +791,39 @@ export const lessonsRouter = router({
           tags: { select: { id: true, tag: true, tagFr: true } },
         },
       });
+
+      // Notify the lesson author
+      if (lesson.authorId !== ctx.session.user.id) {
+        const author = await ctx.db.user.findUnique({
+          where: { id: lesson.authorId },
+          include: {
+            preferences: { select: { emailNotifications: true } },
+          },
+        });
+        if (author) {
+          await sendNotification(
+            [{
+              userId: author.id,
+              email: author.email,
+              locale: author.locale,
+              emailNotifications: author.preferences?.emailNotifications ?? true,
+              firstName: author.firstName,
+              lastName: author.lastName,
+            }],
+            {
+              type: "SYSTEM_ANNOUNCEMENT",
+              titleEn: "Lesson Published",
+              titleFr: "Leçon publiée",
+              messageEn: `Your lesson "${lesson.titleEn}" has been published to the knowledge base.`,
+              messageFr: `Votre leçon « ${lesson.titleFr} » a été publiée dans la base de connaissances.`,
+              entityType: "LESSON",
+              entityId: lesson.id,
+              actionUrl: `/lessons/${lesson.id}`,
+            }
+          );
+        }
+      }
+
+      return published;
     }),
 });

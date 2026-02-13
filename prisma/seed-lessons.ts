@@ -7,9 +7,14 @@
  * Usage: npm run db:seed:lessons
  */
 
+import "dotenv/config";
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 const LESSONS = [
   {
@@ -23,7 +28,7 @@ const LESSONS = [
     impactLevel: "HIGH" as const,
     applicability: "REGIONAL" as const,
     hostRegion: "ESAF" as const,
-    hostMaturityLevel: "B" as const,
+    hostMaturityLevel: "LEVEL_B" as const,
     actionableAdvice: "Contact host ANSP security focal point at least 14 days before arrival. Request a preliminary facility access schedule.",
     estimatedTimeImpact: "+0.5 days",
     tags: [
@@ -42,7 +47,7 @@ const LESSONS = [
     category: "DOCUMENTATION_REVIEW" as const,
     impactLevel: "MODERATE" as const,
     applicability: "GENERAL" as const,
-    hostMaturityLevel: "B" as const,
+    hostMaturityLevel: "LEVEL_B" as const,
     actionableAdvice: "Request all SMS documentation at least 2 weeks before the review. Send a structured document checklist organized by USOAP audit areas.",
     estimatedTimeImpact: "+2 days",
     tags: [
@@ -79,7 +84,7 @@ const LESSONS = [
     impactLevel: "MODERATE" as const,
     applicability: "REGIONAL" as const,
     hostRegion: "ESAF" as const,
-    hostMaturityLevel: "B" as const,
+    hostMaturityLevel: "LEVEL_B" as const,
     actionableAdvice: "Send the document request list at least 3 weeks before the planned visit. Follow up 1 week before to confirm readiness.",
     estimatedTimeImpact: "+1 week preparation",
     tags: [
@@ -189,7 +194,7 @@ const LESSONS = [
     impactLevel: "MODERATE" as const,
     applicability: "REGIONAL" as const,
     hostRegion: "NORTHERN" as const,
-    hostMaturityLevel: "C" as const,
+    hostMaturityLevel: "LEVEL_C" as const,
     reviewPhase: "ON_SITE" as const,
     actionableAdvice: "For Northern African reviews, shift time allocation: reduce document review by 1 day and add 1 day of on-site process observation.",
     estimatedTimeImpact: "Rebalance: -1 day docs, +1 day observation",
@@ -243,22 +248,21 @@ async function main() {
   console.log("🌱 Seeding lessons learned knowledge base...\n");
 
   // Find the first retrospective and a user to attach lessons to
-  const retrospective = await prisma.reviewRetrospective.findFirst({
+  let retrospective = await prisma.reviewRetrospective.findFirst({
     where: { status: "SUBMITTED" },
     select: { id: true, submittedById: true, reviewId: true },
   });
 
   if (!retrospective) {
     // Fallback: find any retrospective
-    const anyRetro = await prisma.reviewRetrospective.findFirst({
+    retrospective = await prisma.reviewRetrospective.findFirst({
       select: { id: true, submittedById: true, reviewId: true },
     });
-    if (!anyRetro) {
+    if (!retrospective) {
       console.log("⚠️  No retrospectives found. Please seed demo data first.");
       console.log("   Run: npm run db:seed:demo");
       process.exit(1);
     }
-    Object.assign(retrospective!, anyRetro);
   }
 
   // Find a programme coordinator or admin as fallback author
@@ -326,4 +330,5 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
+    await pool.end();
   });

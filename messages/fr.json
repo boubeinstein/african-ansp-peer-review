@@ -353,6 +353,18 @@
       "stalled": "Bloqué",
       "viewAll": "Voir tout"
     },
+    "actionItems": {
+      "title": "Mes Actions à Traiter",
+      "subtitle": "Constatations et actions correctives nécessitant votre attention",
+      "viewInReview": "Voir dans l'évaluation",
+      "noItems": "Aucune action en attente",
+      "overdue": "En retard",
+      "dueSoon": "Échéance proche",
+      "findingsCount": "{count} constatations en attente",
+      "capsCount": "{count} PAC en attente",
+      "viewAllFindings": "Voir toutes les constatations",
+      "viewAllCAPs": "Voir tous les PAC"
+    },
     "quickActions": {
       "title": "Actions rapides",
       "description": "Commencez avec les tâches courantes",

@@ -353,6 +353,18 @@
       "stalled": "Stalled",
       "viewAll": "View All"
     },
+    "actionItems": {
+      "title": "My Action Items",
+      "subtitle": "Findings and corrective actions requiring your attention",
+      "viewInReview": "View in Review",
+      "noItems": "No pending action items",
+      "overdue": "Overdue",
+      "dueSoon": "Due soon",
+      "findingsCount": "{count} findings pending",
+      "capsCount": "{count} CAPs pending",
+      "viewAllFindings": "View all findings",
+      "viewAllCAPs": "View all CAPs"
+    },
     "quickActions": {
       "title": "Quick Actions",
       "description": "Get started with common tasks",

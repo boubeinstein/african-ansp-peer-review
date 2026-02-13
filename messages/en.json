@@ -6836,6 +6836,13 @@
   "assessments": {
     "title": "Self-Assessments",
     "description": "Manage and track organization self-assessments",
+    "combinedTitle": "Questionnaires & Assessments",
+    "combinedSubtitle": "Browse ICAO USOAP CMA and CANSO SoE frameworks, manage self-assessments.",
+    "tabs": {
+      "myAssessments": "My Assessments",
+      "usoap": "USOAP CMA Questions",
+      "cansoSoe": "CANSO SoE Framework"
+    },
     "createAssessment": "Create Assessment",
     "filters": {
       "selectOrganization": "Filter by organization",

@@ -6836,6 +6836,13 @@
   "assessments": {
     "title": "Auto-Évaluations",
     "description": "Gérer et suivre les auto-évaluations des organisations",
+    "combinedTitle": "Questionnaires & Évaluations",
+    "combinedSubtitle": "Parcourez les cadres OACI USOAP CMA et CANSO SoE, gérez les auto-évaluations.",
+    "tabs": {
+      "myAssessments": "Mes Évaluations",
+      "usoap": "Questions USOAP CMA",
+      "cansoSoe": "Cadre CANSO SoE"
+    },
     "createAssessment": "Créer une Évaluation",
     "filters": {
       "selectOrganization": "Filtrer par organisation",

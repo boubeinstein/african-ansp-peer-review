@@ -2817,6 +2817,14 @@
       }
     }
   },
+  "reviewerPool": {
+    "title": "Bassin d'Évaluateurs",
+    "subtitle": "Évaluateurs pairs qualifiés et affectations des équipes régionales pour le Programme africain d'évaluation par les pairs des ANSP.",
+    "tabs": {
+      "directory": "Répertoire des Évaluateurs",
+      "teams": "Équipes Régionales"
+    }
+  },
   "reviewers": {
     "title": "Évaluateurs Pairs",
     "description": "Gérer les profils et les affectations des évaluateurs pairs",

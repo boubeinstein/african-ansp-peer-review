@@ -2817,6 +2817,14 @@
       }
     }
   },
+  "reviewerPool": {
+    "title": "Reviewer Pool",
+    "subtitle": "Qualified peer reviewers and regional team assignments for the AFI ANSP Peer Review Programme.",
+    "tabs": {
+      "directory": "Reviewer Directory",
+      "teams": "Regional Teams"
+    }
+  },
   "reviewers": {
     "title": "Peer Reviewers",
     "description": "Manage peer reviewer profiles and assignments",

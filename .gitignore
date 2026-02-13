@@ -53,3 +53,7 @@ tsconfig.tsbuildinfo
 tsconfig.tsbuildinfo
 .vercel
 .env*.local
+
+# TypeScript build info
+tsconfig.tsbuildinfo
+tsconfig.sw.tsbuildinfo

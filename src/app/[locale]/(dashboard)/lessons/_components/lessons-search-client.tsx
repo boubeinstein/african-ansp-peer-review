@@ -58,6 +58,8 @@ interface LessonsSearchClientProps {
     tag?: string;
     sortBy?: string;
   };
+  /** When true, lesson detail links use absolute /lessons/[id] paths */
+  embedded?: boolean;
 }
 
 // =============================================================================
@@ -152,6 +154,7 @@ const APPLICABILITY_OPTIONS: Array<{
 export function LessonsSearchClient({
   locale,
   searchParams,
+  embedded = false,
 }: LessonsSearchClientProps) {
   const t = useTranslations("lessons");
   const router = useRouter();
@@ -306,7 +309,11 @@ export function LessonsSearchClient({
   };
 
   const handleCardClick = (lessonId: string) => {
-    router.push(`${pathname}/${lessonId}`);
+    router.push(
+      embedded
+        ? `/${locale}/lessons/${lessonId}`
+        : `${pathname}/${lessonId}`
+    );
   };
 
   // ---- Render filter sidebar content ----

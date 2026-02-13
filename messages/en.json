@@ -6916,6 +6916,16 @@
       }
     }
   },
+  "knowledge": {
+    "title": "Knowledge Base",
+    "subtitle": "Discover best practices and lessons learned shared by ANSPs across Africa. Aligned with CANSO SoE continuous improvement principles.",
+    "submitBestPractice": "Submit Best Practice",
+    "tabs": {
+      "bestPractices": "Best Practices",
+      "lessonsLearned": "Lessons Learned",
+      "myBookmarks": "My Bookmarks"
+    }
+  },
   "bestPractices": {
     "meta": {
       "title": "Best Practices Library",

@@ -6916,6 +6916,16 @@
       }
     }
   },
+  "knowledge": {
+    "title": "Base de Connaissances",
+    "subtitle": "Découvrez les meilleures pratiques et les leçons apprises partagées par les ANSP à travers l'Afrique. Aligné avec les principes d'amélioration continue CANSO SoE.",
+    "submitBestPractice": "Soumettre une Pratique",
+    "tabs": {
+      "bestPractices": "Meilleures Pratiques",
+      "lessonsLearned": "Leçons Apprises",
+      "myBookmarks": "Mes Favoris"
+    }
+  },
   "bestPractices": {
     "meta": {
       "title": "Bibliothèque des meilleures pratiques",

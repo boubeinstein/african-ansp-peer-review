@@ -38,6 +38,8 @@ interface BookmarksClientProps {
     page?: string;
     sortBy?: string;
   };
+  /** When true, lesson detail links use absolute /lessons/[id] paths */
+  embedded?: boolean;
 }
 
 // =============================================================================
@@ -47,6 +49,7 @@ interface BookmarksClientProps {
 export function BookmarksClient({
   locale,
   searchParams,
+  embedded = false,
 }: BookmarksClientProps) {
   const t = useTranslations("lessons.bookmarks");
   const tCommon = useTranslations("lessons");
@@ -128,7 +131,9 @@ export function BookmarksClient({
   const totalPages = bookmarksQuery.data?.totalPages ?? 1;
   const totalCount = bookmarksQuery.data?.totalCount ?? 0;
 
-  const baseLessonsPath = pathname.replace("/bookmarks", "");
+  const baseLessonsPath = embedded
+    ? `/${locale}/lessons`
+    : pathname.replace("/bookmarks", "");
 
   return (
     <>

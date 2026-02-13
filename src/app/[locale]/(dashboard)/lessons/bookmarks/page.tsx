@@ -1,47 +1,17 @@
-import { Suspense } from "react";
-import { getTranslations } from "next-intl/server";
-import { BookmarksClient } from "./_components/bookmarks-client";
+import { redirect } from "next/navigation";
 
-export async function generateMetadata({
-  params,
-}: {
+interface BookmarksPageProps {
   params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "lessons.bookmarks" });
-  return {
-    title: t("metaTitle"),
-    description: t("metaDescription"),
-  };
 }
 
-interface PageProps {
-  params: Promise<{ locale: string }>;
-  searchParams: Promise<{
-    page?: string;
-    sortBy?: string;
-  }>;
-}
-
-export default async function BookmarksPage({
+/**
+ * Redirect: /lessons/bookmarks → /knowledge?tab=bookmarks
+ *
+ * Bookmarks are now a tab in the unified Knowledge Base page.
+ */
+export default async function BookmarksRedirect({
   params,
-  searchParams,
-}: PageProps) {
+}: BookmarksPageProps) {
   const { locale } = await params;
-  const resolvedSearchParams = await searchParams;
-
-  return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center py-16">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-        </div>
-      }
-    >
-      <BookmarksClient
-        locale={locale}
-        searchParams={resolvedSearchParams}
-      />
-    </Suspense>
-  );
+  redirect(`/${locale}/knowledge?tab=bookmarks`);
 }

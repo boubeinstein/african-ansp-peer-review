@@ -1,54 +1,19 @@
-import { Suspense } from "react";
-import { getTranslations } from "next-intl/server";
-import { LessonsSearchClient } from "./_components/lessons-search-client";
+import { redirect } from "next/navigation";
 
-export async function generateMetadata({
-  params,
-}: {
+interface LessonsPageProps {
   params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "lessons" });
-  return {
-    title: t("meta.title"),
-    description: t("meta.description"),
-  };
 }
 
-interface PageProps {
-  params: Promise<{ locale: string }>;
-  searchParams: Promise<{
-    page?: string;
-    search?: string;
-    category?: string;
-    impact?: string;
-    auditArea?: string;
-    soeArea?: string;
-    applicability?: string;
-    tag?: string;
-    sortBy?: string;
-  }>;
-}
-
-export default async function LessonsPage({
+/**
+ * Redirect: /lessons → /knowledge?tab=lessons
+ *
+ * Lessons search is now a tab in the unified Knowledge Base page.
+ * Sub-routes (/lessons/[id], /lessons/analytics) continue to work
+ * as before.
+ */
+export default async function LessonsRedirect({
   params,
-  searchParams,
-}: PageProps) {
+}: LessonsPageProps) {
   const { locale } = await params;
-  const resolvedSearchParams = await searchParams;
-
-  return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center py-16">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-        </div>
-      }
-    >
-      <LessonsSearchClient
-        locale={locale}
-        searchParams={resolvedSearchParams}
-      />
-    </Suspense>
-  );
+  redirect(`/${locale}/knowledge?tab=lessons`);
 }

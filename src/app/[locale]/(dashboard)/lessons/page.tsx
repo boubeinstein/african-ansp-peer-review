@@ -57,6 +57,7 @@ export default async function LessonsPage({
         <LessonsSearchClient
           locale={locale}
           searchParams={resolvedSearchParams}
+          userRole={session.user.role}
         />
       </Suspense>
     </div>

@@ -31,12 +31,14 @@ import {
   BookOpen,
   Bookmark,
   Lightbulb,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   LessonCard,
   type LessonCardItem,
 } from "@/components/features/lessons/lesson-card";
+import { LessonsAnalytics } from "./lessons-analytics";
 import type {
   LessonCategory,
   ImpactLevel,
@@ -61,9 +63,12 @@ interface LessonsSearchClientProps {
     sortBy?: string;
     tab?: string;
   };
+  userRole?: string;
 }
 
-type TabValue = "search" | "bookmarks";
+const ANALYTICS_ROLES = ["SUPER_ADMIN", "PROGRAMME_COORDINATOR"];
+
+type TabValue = "search" | "bookmarks" | "analytics";
 
 // =============================================================================
 // Category labels
@@ -157,6 +162,7 @@ const APPLICABILITY_OPTIONS: Array<{
 export function LessonsSearchClient({
   locale,
   searchParams,
+  userRole,
 }: LessonsSearchClientProps) {
   const t = useTranslations("lessons");
   const router = useRouter();
@@ -164,8 +170,13 @@ export function LessonsSearchClient({
   const [, startTransition] = useTransition();
 
   // Parse URL state
+  const showAnalytics = userRole && ANALYTICS_ROLES.includes(userRole);
   const activeTab: TabValue =
-    searchParams.tab === "bookmarks" ? "bookmarks" : "search";
+    searchParams.tab === "analytics" && showAnalytics
+      ? "analytics"
+      : searchParams.tab === "bookmarks"
+        ? "bookmarks"
+        : "search";
   const page = parseInt(searchParams.page || "1", 10);
   const search = searchParams.search || "";
   const category = searchParams.category as LessonCategory | undefined;
@@ -548,7 +559,26 @@ export function LessonsSearchClient({
           <Bookmark className="h-4 w-4 inline-block mr-1.5 -mt-0.5" />
           {t("tabs.bookmarks")}
         </button>
+        {showAnalytics && (
+          <button
+            className={cn(
+              "px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px",
+              activeTab === "analytics"
+                ? "border-primary text-primary"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            )}
+            onClick={() => switchTab("analytics")}
+          >
+            <BarChart3 className="h-4 w-4 inline-block mr-1.5 -mt-0.5" />
+            {t("tabs.analytics")}
+          </button>
+        )}
       </div>
+
+      {/* Analytics tab */}
+      {activeTab === "analytics" && showAnalytics && (
+        <LessonsAnalytics locale={locale} />
+      )}
 
       {/* Search bar + sort (search tab only) */}
       {activeTab === "search" && (
@@ -611,8 +641,8 @@ export function LessonsSearchClient({
         </div>
       )}
 
-      {/* Main layout: sidebar + results */}
-      <div className="flex gap-6">
+      {/* Main layout: sidebar + results (search/bookmarks only) */}
+      {activeTab !== "analytics" && <div className="flex gap-6">
         {/* Desktop sidebar (search tab only) */}
         {activeTab === "search" && (
           <aside className="hidden lg:block w-64 shrink-0">
@@ -731,7 +761,7 @@ export function LessonsSearchClient({
             </>
           )}
         </div>
-      </div>
+      </div>}
     </>
   );
 }

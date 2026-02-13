@@ -41,6 +41,7 @@ import { onboardingRouter } from "./onboarding";
 import { loginSessionRouter } from "./login-session";
 import { safetyIntelligenceRouter } from "./safety-intelligence";
 import { fieldworkSyncRouter } from "./fieldwork-sync";
+import { retrospectiveAnalyticsRouter } from "./retrospective-analytics";
 
 /**
  * Main app router combining all sub-routers
@@ -88,6 +89,7 @@ export const appRouter = router({
   loginSession: loginSessionRouter,
   safetyIntelligence: safetyIntelligenceRouter,
   fieldworkSync: fieldworkSyncRouter,
+  retrospectiveAnalytics: retrospectiveAnalyticsRouter,
 });
 
 /**

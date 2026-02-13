@@ -7159,7 +7159,8 @@
     "searchPlaceholder": "Search lessons by keyword, topic, or audit area...",
     "tabs": {
       "search": "Search",
-      "bookmarks": "My Bookmarks"
+      "bookmarks": "My Bookmarks",
+      "analytics": "Analytics"
     },
     "sort": {
       "recent": "Most Recent",
@@ -7261,6 +7262,38 @@
       "bookmarkingAll": "Bookmarking...",
       "downloadPdf": "Print Briefing",
       "exploreAll": "Explore All Lessons"
+    },
+    "analytics": {
+      "title": "Retrospective Analytics",
+      "subtitle": "Aggregate insights from retrospectives and lessons learned across all peer reviews",
+      "totalRetrospectives": "Retrospectives Submitted",
+      "submissionRate": "submission rate",
+      "avgRating": "Avg Process Rating",
+      "completionRate": "section completion",
+      "totalLessons": "Total Lessons",
+      "published": "published",
+      "topContributors": "Top Contributors",
+      "processEffectivenessTrend": "Process Effectiveness Trend",
+      "chartRating": "Rating",
+      "chartAvgRating": "Avg Rating",
+      "chartPrep": "Preparation %",
+      "chartOnsite": "On-Site %",
+      "chartReporting": "Reporting %",
+      "topLessons": "Top Lessons",
+      "colTitle": "Lesson",
+      "colHelpful": "Helpful",
+      "colViews": "Views",
+      "themeCloud": "Common Themes",
+      "topTags": "Top Tags",
+      "regionalInsights": "Regional Insights",
+      "chartReviews": "Reviews",
+      "chartLessons": "Lessons",
+      "reviews": "reviews",
+      "lessonsLabel": "lessons",
+      "improvementTracking": "Improvement Tracking",
+      "colOrganization": "Organization",
+      "colReviews": "Reviews",
+      "colChange": "Change"
     }
   },
   "workflow": {

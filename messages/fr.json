@@ -7159,7 +7159,8 @@
     "searchPlaceholder": "Rechercher par mot-clé, sujet ou domaine d'audit...",
     "tabs": {
       "search": "Recherche",
-      "bookmarks": "Mes Favoris"
+      "bookmarks": "Mes Favoris",
+      "analytics": "Analytique"
     },
     "sort": {
       "recent": "Plus Récents",
@@ -7261,6 +7262,38 @@
       "bookmarkingAll": "Ajout en cours...",
       "downloadPdf": "Imprimer le Briefing",
       "exploreAll": "Explorer Toutes les Leçons"
+    },
+    "analytics": {
+      "title": "Analytique des Rétrospectives",
+      "subtitle": "Aperçus agrégés des rétrospectives et leçons apprises de toutes les évaluations par les pairs",
+      "totalRetrospectives": "Rétrospectives Soumises",
+      "submissionRate": "taux de soumission",
+      "avgRating": "Note Moyenne du Processus",
+      "completionRate": "complétion des sections",
+      "totalLessons": "Total des Leçons",
+      "published": "publiées",
+      "topContributors": "Meilleurs Contributeurs",
+      "processEffectivenessTrend": "Tendance de l'Efficacité du Processus",
+      "chartRating": "Note",
+      "chartAvgRating": "Note Moyenne",
+      "chartPrep": "Préparation %",
+      "chartOnsite": "Sur Site %",
+      "chartReporting": "Rapport %",
+      "topLessons": "Meilleures Leçons",
+      "colTitle": "Leçon",
+      "colHelpful": "Utiles",
+      "colViews": "Vues",
+      "themeCloud": "Thèmes Communs",
+      "topTags": "Tags Principaux",
+      "regionalInsights": "Aperçus Régionaux",
+      "chartReviews": "Évaluations",
+      "chartLessons": "Leçons",
+      "reviews": "évaluations",
+      "lessonsLabel": "leçons",
+      "improvementTracking": "Suivi des Améliorations",
+      "colOrganization": "Organisation",
+      "colReviews": "Évaluations",
+      "colChange": "Évolution"
     }
   },
   "workflow": {

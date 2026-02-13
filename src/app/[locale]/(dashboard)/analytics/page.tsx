@@ -1,7 +1,8 @@
+import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { AnalyticsDashboard } from "./analytics-dashboard";
+import { ProgrammeIntelligenceClient } from "./programme-intelligence-client";
 
 interface AnalyticsPageProps {
   params: Promise<{ locale: string }>;
@@ -10,10 +11,10 @@ interface AnalyticsPageProps {
 export async function generateMetadata({ params }: AnalyticsPageProps) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "analytics" });
-  return { title: t("title") };
+  return { title: t("programmeIntelligence.title") };
 }
 
-// Admin roles that can access analytics
+// Admin roles that can access Programme Intelligence
 const ANALYTICS_ROLES = [
   "SUPER_ADMIN",
   "SYSTEM_ADMIN",
@@ -31,10 +32,17 @@ export default async function AnalyticsPage({ params }: AnalyticsPageProps) {
     redirect(`/${locale}/login`);
   }
 
-  // Check if user has permission to view analytics
   if (!ANALYTICS_ROLES.includes(session.user.role)) {
     redirect(`/${locale}/dashboard`);
   }
 
-  return <AnalyticsDashboard locale={locale} />;
+  return (
+    <Suspense>
+      <ProgrammeIntelligenceClient
+        locale={locale}
+        userId={session.user.id}
+        userRole={session.user.role}
+      />
+    </Suspense>
+  );
 }

@@ -6562,6 +6562,18 @@
   "analytics": {
     "title": "Analyses du Programme",
     "subtitle": "Métriques et informations complètes pour la supervision du programme",
+    "programmeIntelligence": {
+      "title": "Intelligence Programme",
+      "subtitle": "Suivi des performances de sécurité, analyse comparative inter-ANSP et suivi de l'amélioration continue alignés avec l'OACI USOAP CMA et CANSO SoE.",
+      "tabs": {
+        "overview": "Vue d'ensemble",
+        "benchmarking": "Comparaison Inter-ANSP",
+        "findingsTrends": "Tendances Constatations & PAC",
+        "abujaTargets": "Objectif d'Abuja #15"
+      },
+      "findingsTrendsPlaceholder": "L'analyse des tendances des constatations inter-revues, les constatations courantes par domaine d'audit, les taux de clôture des PAC et la distribution par gravité apparaîtront ici.",
+      "abujaTargetsPlaceholder": "Le suivi des KPI de l'Objectif de Sécurité d'Abuja #15 — taux de participation des ANSP, progrès des jalons de maturité SMS et suivi de la conformité régionale apparaîtront ici."
+    },
     "refresh": "Actualiser",
     "totalReviews": "Total des Évaluations",
     "activeReviews": "{count} actives",

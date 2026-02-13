@@ -59,6 +59,8 @@ import {
 
 interface AnalyticsDashboardProps {
   locale: string;
+  /** Hide standalone header when rendered inside Programme Intelligence tabs */
+  embedded?: boolean;
 }
 
 // =============================================================================
@@ -245,7 +247,7 @@ function OverdueItemsTable({
 // MAIN DASHBOARD COMPONENT
 // =============================================================================
 
-export function AnalyticsDashboard({ locale }: AnalyticsDashboardProps) {
+export function AnalyticsDashboard({ locale, embedded = false }: AnalyticsDashboardProps) {
   const t = useTranslations("analytics");
   const [activeTab, setActiveTab] = useState("overview");
 
@@ -286,22 +288,24 @@ export function AnalyticsDashboard({ locale }: AnalyticsDashboardProps) {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
-          <p className="text-muted-foreground">{t("subtitle")}</p>
+      {/* Header — hidden when embedded in Programme Intelligence */}
+      {!embedded && (
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
+            <p className="text-muted-foreground">{t("subtitle")}</p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetchSummary()}
+            disabled={isLoading}
+          >
+            <RefreshCw className={cn("h-4 w-4 mr-2", isLoading && "animate-spin")} />
+            {t("refresh")}
+          </Button>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => refetchSummary()}
-          disabled={isLoading}
-        >
-          <RefreshCw className={cn("h-4 w-4 mr-2", isLoading && "animate-spin")} />
-          {t("refresh")}
-        </Button>
-      </div>
+      )}
 
       {/* Summary Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

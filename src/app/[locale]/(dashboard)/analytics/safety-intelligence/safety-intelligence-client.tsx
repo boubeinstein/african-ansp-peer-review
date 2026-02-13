@@ -38,6 +38,8 @@ import { CAPAnalyticsTab } from "@/components/features/safety-intelligence/cap-a
 interface SafetyIntelligenceClientProps {
   userId: string;
   userRole: string;
+  /** Hide standalone header when rendered inside Programme Intelligence tabs */
+  embedded?: boolean;
 }
 
 export type TabId =
@@ -73,6 +75,7 @@ const TAB_IDS: TabId[] = [
 export function SafetyIntelligenceClient({
   userId,
   userRole,
+  embedded = false,
 }: SafetyIntelligenceClientProps) {
   const locale = useLocale();
   const t = useTranslations("safetyIntelligence");
@@ -89,35 +92,87 @@ export function SafetyIntelligenceClient({
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-4">
-          <Link href={`/${locale}/analytics`}>
-            <Button variant="ghost" size="icon" className="shrink-0">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          </Link>
-          <div>
-            <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-primary" />
-              <h1 className="text-2xl font-bold tracking-tight">
-                {t("title")}
-              </h1>
-              <Badge
-                variant="outline"
-                className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800"
-              >
-                <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-green-500 inline-block animate-pulse" />
-                {t("live")}
-              </Badge>
+      {/* Header — hidden when embedded in Programme Intelligence */}
+      {!embedded ? (
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-4">
+            <Link href={`/${locale}/analytics`}>
+              <Button variant="ghost" size="icon" className="shrink-0">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            </Link>
+            <div>
+              <div className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-primary" />
+                <h1 className="text-2xl font-bold tracking-tight">
+                  {t("title")}
+                </h1>
+                <Badge
+                  variant="outline"
+                  className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800"
+                >
+                  <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-green-500 inline-block animate-pulse" />
+                  {t("live")}
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
             </div>
-            <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
+          </div>
+
+          {/* Controls */}
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Abuja toggle */}
+            <Button
+              variant={showAbuja ? "default" : "outline"}
+              size="sm"
+              onClick={() => setShowAbuja(!showAbuja)}
+            >
+              <Target className="h-4 w-4 mr-1.5" />
+              {t("abuja.toggle")}
+            </Button>
+
+            {/* Team selector */}
+            <Select
+              value={selectedTeamId ?? "all"}
+              onValueChange={(val) =>
+                setSelectedTeamId(val === "all" ? null : val)
+              }
+            >
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder={t("filters.allTeams")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t("filters.allTeams")}</SelectItem>
+                {teams?.map((team) => (
+                  <SelectItem key={team.teamId} value={team.teamId}>
+                    {t("filters.team", {
+                      number: team.teamNumber,
+                      region: team.teamCode,
+                    })}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Anonymize toggle */}
+            <Button
+              variant={anonymized ? "default" : "outline"}
+              size="sm"
+              onClick={() => setAnonymized(!anonymized)}
+            >
+              {anonymized ? t("filters.showCodes") : t("filters.anonymized")}
+            </Button>
+
+            {/* Export */}
+            <Button variant="outline" size="sm">
+              <Download className="h-4 w-4 mr-1.5" />
+              {t("export")}
+            </Button>
           </div>
         </div>
-
-        {/* Controls */}
+      ) : (
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Abuja toggle */}
+          {/* Compact controls for embedded mode */}
           <Button
             variant={showAbuja ? "default" : "outline"}
             size="sm"
@@ -127,7 +182,6 @@ export function SafetyIntelligenceClient({
             {t("abuja.toggle")}
           </Button>
 
-          {/* Team selector */}
           <Select
             value={selectedTeamId ?? "all"}
             onValueChange={(val) =>
@@ -150,7 +204,6 @@ export function SafetyIntelligenceClient({
             </SelectContent>
           </Select>
 
-          {/* Anonymize toggle */}
           <Button
             variant={anonymized ? "default" : "outline"}
             size="sm"
@@ -159,13 +212,12 @@ export function SafetyIntelligenceClient({
             {anonymized ? t("filters.showCodes") : t("filters.anonymized")}
           </Button>
 
-          {/* Export */}
           <Button variant="outline" size="sm">
             <Download className="h-4 w-4 mr-1.5" />
             {t("export")}
           </Button>
         </div>
-      </div>
+      )}
 
       {/* Abuja Safety Targets Banner */}
       {showAbuja && (
@@ -239,16 +291,18 @@ export function SafetyIntelligenceClient({
         </div>
       </Tabs>
 
-      {/* Footer */}
-      <footer className="border-t pt-4 text-xs text-muted-foreground flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-        <span>{t("footer.version")}</span>
-        <span>
-          {t("footer.dataSource", {
-            count: teams?.reduce((sum, team) => sum + team.memberCount, 0) ?? 0,
-          })}
-        </span>
-        <span>{t("footer.frameworks")}</span>
-      </footer>
+      {/* Footer — hidden when embedded */}
+      {!embedded && (
+        <footer className="border-t pt-4 text-xs text-muted-foreground flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <span>{t("footer.version")}</span>
+          <span>
+            {t("footer.dataSource", {
+              count: teams?.reduce((sum, team) => sum + team.memberCount, 0) ?? 0,
+            })}
+          </span>
+          <span>{t("footer.frameworks")}</span>
+        </footer>
+      )}
     </div>
   );
 }

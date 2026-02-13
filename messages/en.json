@@ -6562,6 +6562,18 @@
   "analytics": {
     "title": "Programme Analytics",
     "subtitle": "Comprehensive metrics and insights for programme oversight",
+    "programmeIntelligence": {
+      "title": "Programme Intelligence",
+      "subtitle": "Safety performance monitoring, cross-ANSP benchmarking, and continuous improvement tracking aligned with ICAO USOAP CMA and CANSO SoE.",
+      "tabs": {
+        "overview": "Overview",
+        "benchmarking": "Cross-ANSP Benchmarking",
+        "findingsTrends": "Findings & CAP Trends",
+        "abujaTargets": "Abuja Target #15"
+      },
+      "findingsTrendsPlaceholder": "Cross-review findings pattern analysis, common findings by audit area, CAP closure rates, and severity distribution will appear here.",
+      "abujaTargetsPlaceholder": "Abuja Safety Target #15 KPI tracker — ANSP participation rate, SMS maturity milestone progress, and regional compliance tracking will appear here."
+    },
     "refresh": "Refresh",
     "totalReviews": "Total Reviews",
     "activeReviews": "{count} active",

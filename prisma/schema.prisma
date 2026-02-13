@@ -217,6 +217,7 @@ model QuestionnaireCategory {
   descriptionEn   String?          @map("description_en")
   descriptionFr   String?          @map("description_fr")
   auditArea       USOAPAuditArea?  @map("audit_area")
+  reviewArea      ANSReviewArea?   @map("review_area")
   criticalElement CriticalElement? @map("critical_element")
   smsComponent    SMSComponent?    @map("sms_component")
   studyArea       CANSOStudyArea?  @map("study_area")
@@ -236,6 +237,7 @@ model Question {
   categoryId       String                @map("category_id")
   pqNumber         String?               @map("pq_number")
   auditArea        USOAPAuditArea?       @map("audit_area")
+  reviewArea       ANSReviewArea?        @map("review_area")
   criticalElement  CriticalElement?      @map("critical_element")
   isPriorityPQ     Boolean               @default(false) @map("is_priority_pq")
   requiresOnSite   Boolean               @default(false) @map("requires_on_site")
@@ -264,6 +266,7 @@ model Question {
 
   @@unique([questionnaireId, pqNumber])
   @@index([auditArea, criticalElement])
+  @@index([reviewArea])
   @@index([smsComponent, studyArea])
   @@map("questions")
 }
@@ -529,8 +532,9 @@ model Assessment {
   createdAt          DateTime             @default(now()) @map("created_at")
   updatedAt          DateTime             @updatedAt @map("updated_at")
   referenceNumber    String?              @unique @map("reference_number")
-  selectedAuditAreas USOAPAuditArea[]     @default([]) @map("selected_audit_areas")
-  events             AssessmentEvent[]
+  selectedAuditAreas   USOAPAuditArea[]     @default([]) @map("selected_audit_areas")
+  selectedReviewAreas  ANSReviewArea[]      @default([]) @map("selected_review_areas")
+  events               AssessmentEvent[]
   responses          AssessmentResponse[]
   organization       Organization         @relation(fields: [organizationId], references: [id])
   questionnaire      Questionnaire        @relation(fields: [questionnaireId], references: [id])
@@ -767,6 +771,7 @@ model Finding {
   evidenceFr           String?                @map("evidence_fr")
   icaoReference        String?                @map("icao_reference")
   criticalElement      CriticalElement?       @map("critical_element")
+  reviewArea           ANSReviewArea?         @map("review_area")
   status               FindingStatus          @default(OPEN)
   assignedToId         String?                @map("assigned_to_id")
   capRequired          Boolean                @default(true) @map("cap_required")
@@ -786,6 +791,7 @@ model Finding {
   retrospectiveLinks   RetrospectiveFinding[]
 
   @@index([reviewId, status])
+  @@index([reviewId, reviewArea])
   @@index([organizationId, status])
   @@map("findings")
 }
@@ -1400,6 +1406,7 @@ model BestPractice {
   benefitsFr         String                      @map("benefits_fr")
   category           BestPracticeCategory
   auditArea          String?                     @map("audit_area")
+  reviewArea         ANSReviewArea?              @map("review_area")
   tags               String[]                    @default([])
   imageUrl           String?                     @map("image_url")
   attachments        String[]                    @default([])
@@ -1426,6 +1433,7 @@ model BestPractice {
   @@index([category])
   @@index([status])
   @@index([auditArea])
+  @@index([reviewArea])
   @@index([publishedAt(sort: Desc)])
   @@map("best_practices")
 }
@@ -1887,6 +1895,17 @@ enum USOAPAuditArea {
   ANS
   AGA
   SSP
+}
+
+enum ANSReviewArea {
+  ATS // Air Traffic Services (ATM PQs)
+  FPD // Flight Procedures Design (PANS-OPS / IFPD PQs)
+  AIS // Aeronautical Information Service (AIS PQs)
+  MAP // Aeronautical Charts (Chart PQs)
+  MET // Meteorological Service (MET PQs)
+  CNS // Communications, Navigation, Surveillance (CNS PQs)
+  SAR // Search and Rescue (SAR PQs)
+  SMS // Safety Management System (CANSO SoE)
 }
 
 enum CriticalElement {
@@ -2605,7 +2624,7 @@ model LessonLearned {
 
   // Context from the review
   reviewPhase         ReviewPhase?        @map("review_phase")
-  auditAreaCode       String?             @map("audit_area_code")
+  reviewArea          ANSReviewArea?      @map("review_area")
   soeAreaCode         String?             @map("soe_area_code")
   hostRegion          AfricanRegion?      @map("host_region")
   hostMaturityLevel   MaturityLevel?      @map("host_maturity_level")
@@ -2635,7 +2654,7 @@ model LessonLearned {
   @@index([retrospectiveId])
   @@index([authorId])
   @@index([category, status])
-  @@index([auditAreaCode, status])
+  @@index([reviewArea, status])
   @@index([hostRegion, status])
   @@index([hostMaturityLevel, status])
   @@index([status, publishedAt])

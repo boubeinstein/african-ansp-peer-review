@@ -980,7 +980,7 @@ export function RetrospectiveForm({
                     impactLevel: editingLesson.impactLevel,
                     applicability: editingLesson.applicability,
                     reviewPhase: editingLesson.reviewPhase,
-                    auditAreaCode: editingLesson.auditAreaCode,
+                    reviewArea: editingLesson.reviewArea,
                     soeAreaCode: editingLesson.soeAreaCode,
                     actionableAdvice: editingLesson.actionableAdvice,
                     estimatedTimeImpact: editingLesson.estimatedTimeImpact,

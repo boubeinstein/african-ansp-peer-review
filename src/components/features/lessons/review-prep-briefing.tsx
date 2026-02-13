@@ -404,12 +404,12 @@ export function ReviewPrepBriefing({
                                         </div>
                                       )}
                                       <div className="flex items-center gap-2 mt-2">
-                                        {lesson.auditAreaCode && (
+                                        {lesson.reviewArea && (
                                           <Badge
                                             variant="secondary"
                                             className="text-[10px] px-1.5 py-0"
                                           >
-                                            {lesson.auditAreaCode}
+                                            {lesson.reviewArea}
                                           </Badge>
                                         )}
                                         <span className="text-[10px] text-muted-foreground">

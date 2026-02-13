@@ -36,6 +36,7 @@ import {
   type LessonCardItem,
 } from "@/components/features/lessons/lesson-card";
 import type {
+  ANSReviewArea,
   LessonCategory,
   ImpactLevel,
   LessonApplicability,
@@ -186,7 +187,7 @@ export function LessonsSearchClient({
   const searchQuery = trpc.lessons.search.useQuery({
     query: search || undefined,
     category,
-    auditAreaCode: auditArea,
+    reviewArea: auditArea as ANSReviewArea | undefined,
     soeAreaCode: soeArea,
     applicability,
     tags: tagFilter ? [tagFilter] : undefined,

@@ -11,6 +11,7 @@ import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure } from "../trpc";
 import {
   AfricanRegion,
+  ANSReviewArea,
   ImpactLevel,
   LessonApplicability,
   LessonCategory,
@@ -31,7 +32,7 @@ const searchSchema = z.object({
   query: z.string().optional(),
   retrospectiveId: z.string().optional(),
   category: z.nativeEnum(LessonCategory).optional(),
-  auditAreaCode: z.string().optional(),
+  reviewArea: z.nativeEnum(ANSReviewArea).optional(),
   soeAreaCode: z.string().optional(),
   hostRegion: z.nativeEnum(AfricanRegion).optional(),
   hostMaturityLevel: z.nativeEnum(MaturityLevel).optional(),
@@ -53,7 +54,7 @@ const createLessonSchema = z.object({
   impactLevel: z.nativeEnum(ImpactLevel).default("MODERATE"),
   applicability: z.nativeEnum(LessonApplicability).default("GENERAL"),
   reviewPhase: z.nativeEnum(ReviewPhase).optional(),
-  auditAreaCode: z.string().optional(),
+  reviewArea: z.nativeEnum(ANSReviewArea).optional(),
   soeAreaCode: z.string().optional(),
   actionableAdvice: z.string().optional(),
   estimatedTimeImpact: z.string().optional(),
@@ -71,7 +72,7 @@ const updateLessonSchema = z.object({
   impactLevel: z.nativeEnum(ImpactLevel).optional(),
   applicability: z.nativeEnum(LessonApplicability).optional(),
   reviewPhase: z.nativeEnum(ReviewPhase).optional(),
-  auditAreaCode: z.string().optional(),
+  reviewArea: z.nativeEnum(ANSReviewArea).optional(),
   soeAreaCode: z.string().optional(),
   actionableAdvice: z.string().optional(),
   estimatedTimeImpact: z.string().optional(),
@@ -113,7 +114,7 @@ export const lessonsRouter = router({
 
       // Classification filters
       if (filters.category) where.category = filters.category;
-      if (filters.auditAreaCode) where.auditAreaCode = filters.auditAreaCode;
+      if (filters.reviewArea) where.reviewArea = filters.reviewArea;
       if (filters.soeAreaCode) where.soeAreaCode = filters.soeAreaCode;
       if (filters.hostRegion) where.hostRegion = filters.hostRegion;
       if (filters.hostMaturityLevel) where.hostMaturityLevel = filters.hostMaturityLevel;
@@ -248,13 +249,13 @@ export const lessonsRouter = router({
         });
       }
 
-      // Related lessons: same audit area code or same host region, limit 5
+      // Related lessons: same review area or same host region, limit 5
       const relatedWhere: Prisma.LessonLearnedWhereInput = {
         id: { not: input.id },
         status: LessonStatus.PUBLISHED,
         OR: [
-          ...(lesson.auditAreaCode
-            ? [{ auditAreaCode: lesson.auditAreaCode }]
+          ...(lesson.reviewArea
+            ? [{ reviewArea: lesson.reviewArea }]
             : []),
           ...(lesson.hostRegion ? [{ hostRegion: lesson.hostRegion }] : []),
         ],
@@ -271,7 +272,7 @@ export const lessonsRouter = router({
                 category: true,
                 helpfulCount: true,
                 hostRegion: true,
-                auditAreaCode: true,
+                reviewArea: true,
               },
               orderBy: { helpfulCount: "desc" },
               take: 5,
@@ -386,7 +387,7 @@ export const lessonsRouter = router({
       z.object({
         hostRegion: z.nativeEnum(AfricanRegion),
         hostMaturityLevel: z.nativeEnum(MaturityLevel).optional(),
-        auditAreaCodes: z.array(z.string()).optional(),
+        reviewAreas: z.array(z.nativeEnum(ANSReviewArea)).optional(),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -401,8 +402,8 @@ export const lessonsRouter = router({
                 { applicability: LessonApplicability.MATURITY_LEVEL },
               ]
             : []),
-          ...(input.auditAreaCodes && input.auditAreaCodes.length > 0
-            ? [{ auditAreaCode: { in: input.auditAreaCodes } }]
+          ...(input.reviewAreas && input.reviewAreas.length > 0
+            ? [{ reviewArea: { in: input.reviewAreas } }]
             : []),
         ],
       };
@@ -507,7 +508,7 @@ export const lessonsRouter = router({
             impactLevel: data.impactLevel,
             applicability: data.applicability,
             reviewPhase: data.reviewPhase,
-            auditAreaCode: data.auditAreaCode,
+            reviewArea: data.reviewArea,
             soeAreaCode: data.soeAreaCode,
             actionableAdvice: data.actionableAdvice,
             estimatedTimeImpact: data.estimatedTimeImpact,

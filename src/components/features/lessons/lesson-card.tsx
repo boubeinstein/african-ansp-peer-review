@@ -50,7 +50,7 @@ export interface LessonCardItem {
   contentFr: string;
   category: LessonCategory;
   impactLevel: ImpactLevel;
-  auditAreaCode: string | null;
+  reviewArea: string | null;
   soeAreaCode: string | null;
   actionableAdvice: string | null;
   helpfulCount: number;
@@ -149,12 +149,12 @@ export function LessonCard({
           >
             {t(`impact.${lesson.impactLevel}`)}
           </Badge>
-          {lesson.auditAreaCode && (
+          {lesson.reviewArea && (
             <Badge
               variant="secondary"
               className="text-[10px] px-1.5 py-0"
             >
-              {lesson.auditAreaCode}
+              {lesson.reviewArea}
             </Badge>
           )}
           {lesson.soeAreaCode && (

@@ -235,9 +235,9 @@ export const retrospectiveAnalyticsRouter = router({
         }),
         // Most frequent audit area codes
         ctx.db.lessonLearned.groupBy({
-          by: ["auditAreaCode"],
+          by: ["reviewArea"],
           where: {
-            auditAreaCode: { not: null },
+            reviewArea: { not: null },
             status: LessonStatus.PUBLISHED,
           },
           _count: { id: true },
@@ -279,7 +279,7 @@ export const retrospectiveAnalyticsRouter = router({
     return {
       tags: tagCounts.map((t) => ({ tag: t.tag, count: t._count.tag })),
       auditAreas: areaCounts.map((a) => ({
-        code: a.auditAreaCode!,
+        code: a.reviewArea!,
         count: a._count.id,
       })),
       categories: categoryCounts.map((c) => ({

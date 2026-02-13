@@ -42,6 +42,7 @@ import {
   getStudyAreasArray,
 } from "@/lib/questionnaire/constants";
 import type {
+  ANSReviewArea,
   LessonCategory,
   ImpactLevel,
   LessonApplicability,
@@ -105,7 +106,7 @@ interface LessonFormDialogProps {
     impactLevel: ImpactLevel;
     applicability: LessonApplicability;
     reviewPhase?: ReviewPhase | null;
-    auditAreaCode?: string | null;
+    reviewArea?: string | null;
     soeAreaCode?: string | null;
     actionableAdvice?: string | null;
     estimatedTimeImpact?: string | null;
@@ -154,8 +155,8 @@ export function LessonFormDialog(props: LessonFormDialogProps) {
   const [reviewPhase, setReviewPhase] = useState<ReviewPhase | "">(
     existingLesson?.reviewPhase ?? ""
   );
-  const [auditAreaCode, setAuditAreaCode] = useState(
-    existingLesson?.auditAreaCode ?? ""
+  const [reviewArea, setReviewArea] = useState(
+    existingLesson?.reviewArea ?? ""
   );
   const [soeAreaCode, setSoeAreaCode] = useState(
     existingLesson?.soeAreaCode ?? ""
@@ -233,7 +234,7 @@ export function LessonFormDialog(props: LessonFormDialogProps) {
       impactLevel,
       applicability,
       reviewPhase: reviewPhase || undefined,
-      auditAreaCode: auditAreaCode || undefined,
+      reviewArea: (reviewArea || undefined) as ANSReviewArea | undefined,
       soeAreaCode: soeAreaCode || undefined,
       actionableAdvice: actionableAdvice || undefined,
       estimatedTimeImpact: estimatedTimeImpact || undefined,
@@ -248,7 +249,7 @@ export function LessonFormDialog(props: LessonFormDialogProps) {
     }
   }, [
     titleEn, titleFr, contentEn, contentFr, category, impactLevel,
-    applicability, reviewPhase, auditAreaCode, soeAreaCode,
+    applicability, reviewPhase, reviewArea, soeAreaCode,
     actionableAdvice, estimatedTimeImpact, isAnonymized, tags,
     isEditing, existingLesson, retrospectiveId, createMutation, updateMutation,
   ]);
@@ -512,8 +513,8 @@ export function LessonFormDialog(props: LessonFormDialogProps) {
               <div>
                 <Label className="mb-1 block">{t("auditArea")}</Label>
                 <Select
-                  value={auditAreaCode}
-                  onValueChange={setAuditAreaCode}
+                  value={reviewArea}
+                  onValueChange={setReviewArea}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder={t("optional")} />

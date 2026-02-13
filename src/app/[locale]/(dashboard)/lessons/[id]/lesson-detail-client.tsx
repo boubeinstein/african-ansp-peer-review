@@ -410,12 +410,12 @@ export function LessonDetailClient({
                             >
                               {t(`categories.${related.category}`)}
                             </Badge>
-                            {related.auditAreaCode && (
+                            {related.reviewArea && (
                               <Badge
                                 variant="secondary"
                                 className="text-[10px] px-1.5 py-0"
                               >
-                                {related.auditAreaCode}
+                                {related.reviewArea}
                               </Badge>
                             )}
                           </div>
@@ -444,12 +444,12 @@ export function LessonDetailClient({
               </CardHeader>
               <CardContent className="space-y-3">
                 {/* Audit Area */}
-                {lesson.auditAreaCode && (
+                {lesson.reviewArea && (
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">
                       {t("detail.auditArea")}
                     </p>
-                    <Badge variant="secondary">{lesson.auditAreaCode}</Badge>
+                    <Badge variant="secondary">{lesson.reviewArea}</Badge>
                   </div>
                 )}
 

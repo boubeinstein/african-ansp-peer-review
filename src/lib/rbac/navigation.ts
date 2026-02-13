@@ -2,24 +2,15 @@ import { UserRole } from "@/types/prisma-enums";
 import {
   LayoutDashboard,
   BarChart3,
-  ClipboardList,
-  FileCheck,
+  ClipboardCheck,
   Users,
-  UsersRound,
   Search,
-  AlertTriangle,
-  CheckSquare,
   Building2,
-  UserPlus,
   GraduationCap,
   Settings,
   UserCog,
-  ShieldCheck,
-  Shield,
-  ScrollText,
   Lightbulb,
-  BookOpen,
-  Monitor,
+  Server,
   type LucideIcon,
 } from "lucide-react";
 import { hasPermission, type Feature } from "./permissions";
@@ -31,12 +22,18 @@ export interface NavItem {
   feature: Feature;
   badge?: number;
   section?: "main" | "admin";
+  /** Custom active-state matcher for merged navigation items */
+  isActive?: (pathname: string) => boolean;
 }
 
 /**
- * All possible navigation items
+ * All possible navigation items — 8 main + 3 admin
+ *
+ * Merged from the previous 17-item list to align with
+ * the ICAO USOAP CMA audit lifecycle.
  */
 const allNavItems: NavItem[] = [
+  // ── Main section ──────────────────────────────────────
   {
     name: "dashboard",
     href: "/dashboard",
@@ -44,82 +41,48 @@ const allNavItems: NavItem[] = [
     feature: "dashboard",
   },
   {
-    name: "analytics",
+    name: "programmeIntelligence",
     href: "/analytics",
     icon: BarChart3,
     feature: "analytics",
+    isActive: (path) =>
+      path.includes("/analytics") || path.includes("/safety-intelligence"),
   },
   {
-    name: "safetyIntelligence",
-    href: "/analytics/safety-intelligence",
-    icon: Shield,
-    feature: "analytics",
-  },
-  {
-    name: "questionnaires",
-    href: "/questionnaires",
-    icon: ClipboardList,
-    feature: "questionnaires",
-  },
-  {
-    name: "assessments",
+    name: "questionnairesAssessments",
     href: "/assessments",
-    icon: FileCheck,
+    icon: ClipboardCheck,
     feature: "assessments",
+    isActive: (path) =>
+      path.includes("/assessments") || path.includes("/questionnaires"),
   },
   {
-    name: "reviews",
+    name: "peerReviews",
     href: "/reviews",
     icon: Search,
     feature: "peerReviews",
+    isActive: (path) =>
+      path.includes("/reviews") ||
+      path.includes("/findings") ||
+      path.includes("/caps"),
   },
   {
-    name: "findings",
-    href: "/findings",
-    icon: AlertTriangle,
-    feature: "findings",
-  },
-  {
-    name: "caps",
-    href: "/caps",
-    icon: CheckSquare,
-    feature: "caps",
-  },
-  {
-    name: "bestPractices",
-    href: "/best-practices",
+    name: "knowledgeBase",
+    href: "/knowledge",
     icon: Lightbulb,
     feature: "bestPractices",
+    isActive: (path) =>
+      path.includes("/knowledge") ||
+      path.includes("/best-practices") ||
+      path.includes("/lessons"),
   },
   {
-    name: "lessonsLearned",
-    href: "/lessons",
-    icon: BookOpen,
-    feature: "lessons",
-  },
-  {
-    name: "reviewers",
+    name: "reviewerPool",
     href: "/reviewers",
     icon: Users,
     feature: "reviewers",
-  },
-  {
-    name: "teams",
-    href: "/teams",
-    icon: UsersRound,
-    feature: "teams",
-  },
-  {
-    name: "organizations",
-    href: "/organizations",
-    icon: Building2,
-    feature: "organizations",
-  },
-  {
-    name: "joinRequests",
-    href: "/join-requests",
-    icon: UserPlus,
-    feature: "joinRequests",
+    isActive: (path) =>
+      path.includes("/reviewers") || path.includes("/teams"),
   },
   {
     name: "training",
@@ -133,34 +96,34 @@ const allNavItems: NavItem[] = [
     icon: Settings,
     feature: "settings",
   },
-  // Admin section - only visible to system administrators
+
+  // ── Administration section ────────────────────────────
   {
-    name: "adminUsers",
+    name: "organizationsMembership",
+    href: "/organizations",
+    icon: Building2,
+    feature: "organizations",
+    section: "admin",
+    isActive: (path) =>
+      path.includes("/organizations") || path.includes("/join-requests"),
+  },
+  {
+    name: "userManagement",
     href: "/admin/users",
     icon: UserCog,
     feature: "admin.users",
     section: "admin",
+    isActive: (path) =>
+      path.includes("/admin/users") || path.includes("/admin/roles"),
   },
   {
-    name: "adminRoles",
-    href: "/admin/roles",
-    icon: ShieldCheck,
-    feature: "admin.roles",
-    section: "admin",
-  },
-  {
-    name: "adminSessions",
+    name: "systemAdmin",
     href: "/admin/sessions",
-    icon: Monitor,
+    icon: Server,
     feature: "admin.sessions",
     section: "admin",
-  },
-  {
-    name: "auditLogs",
-    href: "/audit-logs",
-    icon: ScrollText,
-    feature: "admin.logs",
-    section: "admin",
+    isActive: (path) =>
+      path.includes("/admin/sessions") || path.includes("/audit-logs"),
   },
 ];
 

@@ -161,12 +161,14 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
           {navItems
             .filter((item) => item.section !== "admin")
             .map((item) => {
-              const isActive = pathname.startsWith(`/${locale}${item.href}`);
+              const isActive = item.isActive
+                ? item.isActive(pathname)
+                : pathname.startsWith(`/${locale}${item.href}`);
               const Icon = item.icon;
               const dataTourAttr = `nav-${item.name}`;
 
               const hasLiveSession =
-                item.name === "reviews" &&
+                item.name === "peerReviews" &&
                 liveSessionCount != null &&
                 liveSessionCount > 0;
 
@@ -227,13 +229,15 @@ export function Sidebar({ locale, userRole }: SidebarProps) {
               <div className="my-2 border-t" />
               {!collapsed && (
                 <span className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  {t("admin")}
+                  {t("programmeAdministration")}
                 </span>
               )}
               {navItems
                 .filter((item) => item.section === "admin")
                 .map((item) => {
-                  const isActive = pathname.startsWith(`/${locale}${item.href}`);
+                  const isActive = item.isActive
+                    ? item.isActive(pathname)
+                    : pathname.startsWith(`/${locale}${item.href}`);
                   const Icon = item.icon;
 
                   const adminDataTourAttr = `nav-${item.name}`;

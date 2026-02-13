@@ -2,6 +2,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { router, adminProcedure } from "../../trpc";
 import { prisma } from "@/lib/db";
+import type { ANSReviewArea } from "@prisma/client";
 import {
   QuestionnaireImportSchema,
   CategoryImportSchema,
@@ -459,6 +460,7 @@ export const adminQuestionnaireRouter = router({
             sortOrder: q.sortOrder,
             // ANS-specific fields
             auditArea: "auditArea" in q ? q.auditArea : null,
+            reviewArea: "reviewArea" in q ? (q as Record<string, unknown>).reviewArea as ANSReviewArea | null : null,
             criticalElement: "criticalElement" in q ? q.criticalElement : null,
             isPriorityPQ: "isPriorityPQ" in q ? q.isPriorityPQ : false,
             requiresOnSite: "requiresOnSite" in q ? q.requiresOnSite : false,
@@ -665,6 +667,7 @@ export const adminQuestionnaireRouter = router({
             maxScore: q.maxScore || (input.type === "ANS_USOAP_CMA" ? 1.0 : 5.0),
             sortOrder: q.sortOrder,
             auditArea: "auditArea" in q ? q.auditArea : null,
+            reviewArea: "reviewArea" in q ? (q as Record<string, unknown>).reviewArea as ANSReviewArea | null : null,
             criticalElement: "criticalElement" in q ? q.criticalElement : null,
             isPriorityPQ: "isPriorityPQ" in q ? q.isPriorityPQ : false,
             requiresOnSite: "requiresOnSite" in q ? q.requiresOnSite : false,

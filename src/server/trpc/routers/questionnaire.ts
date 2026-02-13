@@ -24,6 +24,9 @@ const getQuestionsInputSchema = z.object({
   auditArea: z
     .enum(["LEG", "ORG", "PEL", "OPS", "AIR", "AIG", "ANS", "AGA", "SSP"])
     .optional(),
+  reviewArea: z
+    .enum(["ATS", "FPD", "AIS", "MAP", "MET", "CNS", "SAR", "SMS"])
+    .optional(),
   criticalElement: z
     .enum(["CE_1", "CE_2", "CE_3", "CE_4", "CE_5", "CE_6", "CE_7", "CE_8"])
     .optional(),
@@ -176,6 +179,7 @@ export const questionnaireRouter = router({
         questionnaireId,
         categoryId,
         auditArea,
+        reviewArea,
         criticalElement,
         smsComponent,
         studyArea,
@@ -197,7 +201,9 @@ export const questionnaireRouter = router({
         where.categoryId = categoryId;
       }
 
-      if (auditArea) {
+      if (reviewArea) {
+        where.reviewArea = reviewArea;
+      } else if (auditArea) {
         where.auditArea = auditArea;
       }
 
@@ -280,6 +286,7 @@ export const questionnaireRouter = router({
               nameEn: true,
               nameFr: true,
               auditArea: true,
+              reviewArea: true,
               criticalElement: true,
               smsComponent: true,
               studyArea: true,
@@ -375,6 +382,17 @@ export const questionnaireRouter = router({
         _count: { id: true },
       });
 
+      // Get breakdown by AAPRP review area
+      const byReviewArea = await ctx.db.question.groupBy({
+        by: ["reviewArea"],
+        where: {
+          questionnaireId: input.questionnaireId,
+          isActive: true,
+          reviewArea: { not: null },
+        },
+        _count: { id: true },
+      });
+
       // Get breakdown by critical element (for USOAP)
       const byCriticalElement = await ctx.db.question.groupBy({
         by: ["criticalElement"],
@@ -431,6 +449,10 @@ export const questionnaireRouter = router({
         categoriesCount,
         byAuditArea: byAuditArea.map((item) => ({
           auditArea: item.auditArea,
+          count: item._count.id,
+        })),
+        byReviewArea: byReviewArea.map((item) => ({
+          reviewArea: item.reviewArea,
           count: item._count.id,
         })),
         byCriticalElement: byCriticalElement.map((item) => ({

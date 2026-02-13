@@ -21,6 +21,7 @@ import {
   UserRole,
   QuestionnaireType,
   USOAPAuditArea,
+  ANSReviewArea,
   SMSComponent,
   CriticalElement,
   CANSOStudyArea,
@@ -102,19 +103,26 @@ const MATURITY_LEVEL_REVERSE: Record<MaturityLevel, string> = {
 };
 
 /**
- * Build a Prisma where clause for questions filtered by selected audit areas
+ * Build a Prisma where clause for questions filtered by selected areas.
+ * Prefers reviewArea (ANSReviewArea) when selectedReviewAreas is populated;
+ * falls back to auditArea (USOAPAuditArea) for backward compatibility.
  */
 function getQuestionsWhereClause(
   questionnaireId: string,
-  selectedAuditAreas: USOAPAuditArea[] | null
+  selectedAuditAreas: USOAPAuditArea[] | null,
+  selectedReviewAreas?: ANSReviewArea[] | null
 ): Prisma.QuestionWhereInput {
   const whereClause: Prisma.QuestionWhereInput = {
     questionnaireId,
     isActive: true,
   };
 
-  // Only filter by audit area if specific areas were selected
-  if (selectedAuditAreas && selectedAuditAreas.length > 0) {
+  // Prefer reviewArea filtering when selectedReviewAreas is populated
+  if (selectedReviewAreas && selectedReviewAreas.length > 0) {
+    whereClause.reviewArea = {
+      in: selectedReviewAreas,
+    };
+  } else if (selectedAuditAreas && selectedAuditAreas.length > 0) {
     whereClause.auditArea = {
       in: selectedAuditAreas,
     };
@@ -318,6 +326,8 @@ const CreateAssessmentInput = z.object({
   dueDate: z.date().optional(),
   // Selected audit areas for ANS assessments (when empty, all areas are included)
   selectedAuditAreas: z.array(z.nativeEnum(USOAPAuditArea)).default([]),
+  // Selected review areas (AAPRP-specific: ATS, FPD, AIS, MAP, MET, CNS, SAR, SMS)
+  selectedReviewAreas: z.array(z.nativeEnum(ANSReviewArea)).default([]),
 }).refine(
   (data) => data.questionnaireId || data.questionnaireType,
   { message: "Either questionnaireId or questionnaireType must be provided" }
@@ -363,6 +373,7 @@ const GetResponsesInput = z.object({
   assessmentId: z.string().cuid(),
   categoryId: z.string().optional(),
   auditArea: z.string().optional(),
+  reviewArea: z.nativeEnum(ANSReviewArea).optional(),
   criticalElement: z.string().optional(),
   smsComponent: z.string().optional(),
   studyArea: z.string().optional(),
@@ -607,15 +618,16 @@ export const assessmentRouter = router({
         });
       }
 
-      // Build question filter based on selectedAuditAreas
+      // Build question filter based on selectedReviewAreas (preferred) or selectedAuditAreas
       const questionFilter: Prisma.QuestionWhereInput = {
         questionnaireId: questionnaire.id,
       };
-      if (input.selectedAuditAreas && input.selectedAuditAreas.length > 0) {
-        if (questionnaire.type === "ANS_USOAP_CMA") {
+      if (questionnaire.type === "ANS_USOAP_CMA") {
+        if (input.selectedReviewAreas && input.selectedReviewAreas.length > 0) {
+          questionFilter.reviewArea = { in: input.selectedReviewAreas };
+        } else if (input.selectedAuditAreas && input.selectedAuditAreas.length > 0) {
           questionFilter.auditArea = { in: input.selectedAuditAreas };
         }
-        // Note: For SMS assessments, selectedAuditAreas is not applicable
       }
 
       // Determine assessment type code
@@ -635,10 +647,14 @@ export const assessmentRouter = router({
       // Use extended timeout for bulk response creation (150+ responses possible)
       const assessment = await prisma.$transaction(
         async (tx) => {
-          // Store selectedAuditAreas from input (only applicable for ANS assessments)
+          // Store selected areas from input (only applicable for ANS assessments)
           const selectedAuditAreas =
             questionnaire.type === "ANS_USOAP_CMA"
               ? input.selectedAuditAreas
+              : [];
+          const selectedReviewAreas =
+            questionnaire.type === "ANS_USOAP_CMA"
+              ? input.selectedReviewAreas
               : [];
 
           const newAssessment = await tx.assessment.create({
@@ -653,6 +669,7 @@ export const assessmentRouter = router({
               status: "DRAFT",
               progress: 0,
               selectedAuditAreas,
+              selectedReviewAreas,
             },
             include: {
               questionnaire: true,
@@ -664,6 +681,7 @@ export const assessmentRouter = router({
             id: newAssessment.id,
             title: newAssessment.title,
             selectedAuditAreas: newAssessment.selectedAuditAreas,
+            selectedReviewAreas: newAssessment.selectedReviewAreas,
           });
 
           // Get questions for this questionnaire (filtered by scope if provided)
@@ -704,6 +722,7 @@ export const assessmentRouter = router({
         questionnaireType: questionnaire.type,
         organizationId: user.organizationId,
         selectedAuditAreas: input.selectedAuditAreas,
+        selectedReviewAreas: input.selectedReviewAreas,
       });
 
       console.log(
@@ -778,10 +797,11 @@ export const assessmentRouter = router({
         });
       }
 
-      // Get filtered question counts based on selected audit areas
+      // Get filtered question counts based on selected areas
       const questionsWhere = getQuestionsWhereClause(
         fullAssessment.questionnaireId,
-        fullAssessment.selectedAuditAreas
+        fullAssessment.selectedAuditAreas,
+        fullAssessment.selectedReviewAreas
       );
 
       const totalQuestions = await prisma.question.count({
@@ -842,7 +862,8 @@ export const assessmentRouter = router({
       // Build question filter using helper function
       const questionsWhere = getQuestionsWhereClause(
         assessment.questionnaireId,
-        assessment.selectedAuditAreas
+        assessment.selectedAuditAreas,
+        assessment.selectedReviewAreas
       );
 
       // Get questions filtered by selectedAuditAreas
@@ -980,12 +1001,14 @@ export const assessmentRouter = router({
       const assessmentsWithProgress = await Promise.all(
         assessments.map(async (assessment) => {
           const selectedAuditAreas = assessment.selectedAuditAreas as USOAPAuditArea[] | null;
+          const selectedReviewAreas = assessment.selectedReviewAreas as ANSReviewArea[] | null;
           const questionnaireType = assessment.questionnaire.type;
 
-          // Build question filter respecting selectedAuditAreas
+          // Build question filter respecting selectedReviewAreas / selectedAuditAreas
           const questionsWhere = getQuestionsWhereClause(
             assessment.questionnaireId,
-            selectedAuditAreas
+            selectedAuditAreas,
+            selectedReviewAreas
           );
 
           // Get total questions for this assessment's scope
@@ -1382,16 +1405,17 @@ export const assessmentRouter = router({
         });
       }
 
-      // Get the assessment with selectedAuditAreas
+      // Get the assessment with selected areas
       const fullAssessment = await prisma.assessment.findUnique({
         where: { id: input.id },
-        select: { selectedAuditAreas: true },
+        select: { selectedAuditAreas: true, selectedReviewAreas: true },
       });
 
-      // Build where clause filtered by selected audit areas using helper function
+      // Build where clause filtered by selected areas using helper function
       const questionsWhere = getQuestionsWhereClause(
         assessment.questionnaireId,
-        fullAssessment?.selectedAuditAreas ?? null
+        fullAssessment?.selectedAuditAreas ?? null,
+        fullAssessment?.selectedReviewAreas ?? null
       );
 
       // Count total questions for selected audit areas only
@@ -1448,6 +1472,7 @@ export const assessmentRouter = router({
       // Log for debugging
       console.log(`[Assessment Submit] Assessment ${input.id}:`, {
         selectedAuditAreas: fullAssessment?.selectedAuditAreas || [],
+        selectedReviewAreas: fullAssessment?.selectedReviewAreas || [],
         totalQuestions,
         answeredCount: answeredQuestions,
         unansweredCount,
@@ -1850,16 +1875,17 @@ export const assessmentRouter = router({
         savedValue: response.responseValue,
       });
 
-      // Get assessment's selectedAuditAreas for progress calculation
+      // Get assessment's selected areas for progress calculation
       const assessmentWithAreas = await prisma.assessment.findUnique({
         where: { id: input.assessmentId },
-        select: { selectedAuditAreas: true },
+        select: { selectedAuditAreas: true, selectedReviewAreas: true },
       });
 
-      // Calculate progress based on selected audit areas
+      // Calculate progress based on selected areas
       const questionsWhere = getQuestionsWhereClause(
         assessment.questionnaireId,
-        assessmentWithAreas?.selectedAuditAreas ?? null
+        assessmentWithAreas?.selectedAuditAreas ?? null,
+        assessmentWithAreas?.selectedReviewAreas ?? null
       );
 
       const totalQuestions = await prisma.question.count({
@@ -1903,7 +1929,9 @@ export const assessmentRouter = router({
         totalQuestions,
         answeredQuestions,
         progress,
-        selectedAreas: assessmentWithAreas?.selectedAuditAreas || [],
+        selectedAreas: assessmentWithAreas?.selectedReviewAreas?.length
+          ? assessmentWithAreas.selectedReviewAreas
+          : assessmentWithAreas?.selectedAuditAreas || [],
       });
 
       return {
@@ -1997,16 +2025,17 @@ export const assessmentRouter = router({
         return updatedResponses;
       });
 
-      // Get assessment's selectedAuditAreas for progress calculation
+      // Get assessment's selected areas for progress calculation
       const assessmentWithAreas = await prisma.assessment.findUnique({
         where: { id: input.assessmentId },
-        select: { selectedAuditAreas: true },
+        select: { selectedAuditAreas: true, selectedReviewAreas: true },
       });
 
-      // Calculate progress based on selected audit areas
+      // Calculate progress based on selected areas
       const questionsWhere = getQuestionsWhereClause(
         assessment.questionnaireId,
-        assessmentWithAreas?.selectedAuditAreas ?? null
+        assessmentWithAreas?.selectedAuditAreas ?? null,
+        assessmentWithAreas?.selectedReviewAreas ?? null
       );
 
       const totalQuestions = await prisma.question.count({
@@ -2078,10 +2107,10 @@ export const assessmentRouter = router({
         });
       }
 
-      // Get assessment's selectedAuditAreas
+      // Get assessment's selected areas
       const assessmentWithAreas = await prisma.assessment.findUnique({
         where: { id: input.assessmentId },
-        select: { selectedAuditAreas: true },
+        select: { selectedAuditAreas: true, selectedReviewAreas: true },
       });
 
       // Build filter
@@ -2098,16 +2127,16 @@ export const assessmentRouter = router({
         questionWhere.categoryId = input.categoryId;
       }
 
-      // Apply selected audit areas filter
-      const selectedAreas = assessmentWithAreas?.selectedAuditAreas;
-      if (selectedAreas && selectedAreas.length > 0) {
-        if (input.auditArea) {
-          // Specific area requested - check if it's in selected areas
-          const requestedArea = input.auditArea as USOAPAuditArea;
-          if (selectedAreas.includes(requestedArea)) {
-            questionWhere.auditArea = requestedArea;
+      // Apply reviewArea filter (preferred) or auditArea filter
+      const selectedReviewAreas = assessmentWithAreas?.selectedReviewAreas;
+      const selectedAuditAreas = assessmentWithAreas?.selectedAuditAreas;
+
+      if (input.reviewArea) {
+        // Specific review area requested
+        if (selectedReviewAreas && selectedReviewAreas.length > 0) {
+          if (selectedReviewAreas.includes(input.reviewArea)) {
+            questionWhere.reviewArea = input.reviewArea;
           } else {
-            // Requested area not in selected areas - return empty
             return {
               responses: [],
               total: 0,
@@ -2117,11 +2146,31 @@ export const assessmentRouter = router({
             };
           }
         } else {
-          // No specific area - use all selected areas
-          questionWhere.auditArea = { in: selectedAreas };
+          questionWhere.reviewArea = input.reviewArea;
+        }
+      } else if (selectedReviewAreas && selectedReviewAreas.length > 0) {
+        // No specific area — scope to all selected review areas
+        questionWhere.reviewArea = { in: selectedReviewAreas };
+      } else if (selectedAuditAreas && selectedAuditAreas.length > 0) {
+        // Fall back to legacy audit area scoping
+        if (input.auditArea) {
+          const requestedArea = input.auditArea as USOAPAuditArea;
+          if (selectedAuditAreas.includes(requestedArea)) {
+            questionWhere.auditArea = requestedArea;
+          } else {
+            return {
+              responses: [],
+              total: 0,
+              page: input.page,
+              limit: input.limit,
+              totalPages: 0,
+            };
+          }
+        } else {
+          questionWhere.auditArea = { in: selectedAuditAreas };
         }
       } else if (input.auditArea) {
-        // No areas selected (means all), specific area requested
+        // No areas selected (means all), specific audit area requested
         questionWhere.auditArea = input.auditArea as USOAPAuditArea;
       }
 

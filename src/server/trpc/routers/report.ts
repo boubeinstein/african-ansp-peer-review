@@ -143,44 +143,64 @@ async function calculateEIScore(
 ): Promise<{
   overall: number;
   byAuditArea: Record<string, { score: number; total: number; satisfactory: number }>;
+  byReviewArea: Record<string, { score: number; total: number; satisfactory: number }>;
 }> {
   const responses = await db.assessmentResponse.findMany({
     where: { assessmentId },
     include: {
       question: {
-        select: { auditArea: true },
+        select: { auditArea: true, reviewArea: true },
       },
     },
   });
 
   const byAuditArea: Record<string, { satisfactory: number; notSatisfactory: number; notApplicable: number }> = {};
+  const byReviewArea: Record<string, { satisfactory: number; notSatisfactory: number; notApplicable: number }> = {};
   let totalSatisfactory = 0;
   let totalApplicable = 0;
 
   for (const response of responses) {
-    const area = response.question.auditArea || "UNKNOWN";
+    const auditArea = response.question.auditArea || "UNKNOWN";
+    const reviewArea = response.question.reviewArea || null;
 
-    if (!byAuditArea[area]) {
-      byAuditArea[area] = { satisfactory: 0, notSatisfactory: 0, notApplicable: 0 };
+    if (!byAuditArea[auditArea]) {
+      byAuditArea[auditArea] = { satisfactory: 0, notSatisfactory: 0, notApplicable: 0 };
+    }
+    if (reviewArea && !byReviewArea[reviewArea]) {
+      byReviewArea[reviewArea] = { satisfactory: 0, notSatisfactory: 0, notApplicable: 0 };
     }
 
     if (response.responseValue === "SATISFACTORY") {
-      byAuditArea[area].satisfactory++;
+      byAuditArea[auditArea].satisfactory++;
+      if (reviewArea) byReviewArea[reviewArea].satisfactory++;
       totalSatisfactory++;
       totalApplicable++;
     } else if (response.responseValue === "NOT_SATISFACTORY") {
-      byAuditArea[area].notSatisfactory++;
+      byAuditArea[auditArea].notSatisfactory++;
+      if (reviewArea) byReviewArea[reviewArea].notSatisfactory++;
       totalApplicable++;
     } else if (response.responseValue === "NOT_APPLICABLE") {
-      byAuditArea[area].notApplicable++;
+      byAuditArea[auditArea].notApplicable++;
+      if (reviewArea) byReviewArea[reviewArea].notApplicable++;
     }
   }
 
   // Calculate scores per audit area
-  const areaScores: Record<string, { score: number; total: number; satisfactory: number }> = {};
+  const auditAreaScores: Record<string, { score: number; total: number; satisfactory: number }> = {};
   for (const [area, counts] of Object.entries(byAuditArea)) {
     const applicable = counts.satisfactory + counts.notSatisfactory;
-    areaScores[area] = {
+    auditAreaScores[area] = {
+      score: applicable > 0 ? Math.round((counts.satisfactory / applicable) * 100 * 100) / 100 : 0,
+      total: applicable,
+      satisfactory: counts.satisfactory,
+    };
+  }
+
+  // Calculate scores per review area
+  const reviewAreaScores: Record<string, { score: number; total: number; satisfactory: number }> = {};
+  for (const [area, counts] of Object.entries(byReviewArea)) {
+    const applicable = counts.satisfactory + counts.notSatisfactory;
+    reviewAreaScores[area] = {
       score: applicable > 0 ? Math.round((counts.satisfactory / applicable) * 100 * 100) / 100 : 0,
       total: applicable,
       satisfactory: counts.satisfactory,
@@ -194,7 +214,8 @@ async function calculateEIScore(
 
   return {
     overall: overallScore,
-    byAuditArea: areaScores,
+    byAuditArea: auditAreaScores,
+    byReviewArea: reviewAreaScores,
   };
 }
 
@@ -883,6 +904,7 @@ export const reportRouter = router({
             ? {
                 overallEI: ansScores.overall,
                 byAuditArea: ansScores.byAuditArea,
+                byReviewArea: ansScores.byReviewArea,
               }
             : null,
           sms: smsScores

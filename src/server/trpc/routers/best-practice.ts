@@ -9,6 +9,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure, publicProcedure } from "../trpc";
 import {
+  ANSReviewArea,
   BestPracticeCategory,
   BestPracticeStatus,
   LessonStatus,
@@ -35,6 +36,7 @@ const createBestPracticeSchema = z.object({
   benefitsFr: z.string().min(20),
   category: z.nativeEnum(BestPracticeCategory),
   auditArea: z.string().optional(),
+  reviewArea: z.nativeEnum(ANSReviewArea).optional(),
   tags: z.array(z.string()).default([]),
   imageUrl: z.string().url().optional().nullable(),
   attachments: z.array(z.string()).default([]),
@@ -55,6 +57,7 @@ const updateBestPracticeSchema = z.object({
   benefitsFr: z.string().min(20).optional(),
   category: z.nativeEnum(BestPracticeCategory).optional(),
   auditArea: z.string().optional().nullable(),
+  reviewArea: z.nativeEnum(ANSReviewArea).optional().nullable(),
   tags: z.array(z.string()).optional(),
   imageUrl: z.string().url().optional().nullable(),
   attachments: z.array(z.string()).optional(),
@@ -66,6 +69,7 @@ const listBestPracticesSchema = z.object({
   search: z.string().optional(),
   category: z.nativeEnum(BestPracticeCategory).optional(),
   auditArea: z.string().optional(),
+  reviewArea: z.nativeEnum(ANSReviewArea).optional(),
   status: z.nativeEnum(BestPracticeStatus).optional(),
   organizationId: z.string().optional(),
   sortBy: z.enum(["newest", "popular", "mostAdopted"]).default("newest"),
@@ -145,6 +149,7 @@ export const bestPracticeRouter = router({
         search,
         category,
         auditArea,
+        reviewArea,
         status,
         organizationId,
         sortBy,
@@ -182,7 +187,9 @@ export const bestPracticeRouter = router({
         where.category = category;
       }
 
-      if (auditArea) {
+      if (reviewArea) {
+        where.reviewArea = reviewArea;
+      } else if (auditArea) {
         where.auditArea = auditArea;
       }
 
@@ -433,6 +440,7 @@ export const bestPracticeRouter = router({
           benefitsFr: input.benefitsFr,
           category: input.category,
           auditArea: input.auditArea,
+          reviewArea: input.reviewArea,
           tags: input.tags,
           imageUrl: input.imageUrl,
           attachments: input.attachments,
@@ -974,6 +982,19 @@ export const bestPracticeRouter = router({
     });
 
     return areas.map((a) => a.auditArea).filter(Boolean) as string[];
+  }),
+
+  getReviewAreas: publicProcedure.query(async ({ ctx }) => {
+    const areas = await ctx.db.bestPractice.findMany({
+      where: {
+        status: BestPracticeStatus.PUBLISHED,
+        reviewArea: { not: null },
+      },
+      select: { reviewArea: true },
+      distinct: ["reviewArea"],
+    });
+
+    return areas.map((a) => a.reviewArea).filter(Boolean) as string[];
   }),
 
   // ===========================================================================

@@ -427,7 +427,7 @@ function getAssessmentConfigsForStatus(reviewStatus: ReviewStatus): AssessmentCo
       return [
         {
           questionnaireType: "ANS_USOAP_CMA" as QuestionnaireType,
-          selectedAuditAreas: ["AGA" as USOAPAuditArea],
+          selectedAuditAreas: ["ANS" as USOAPAuditArea],
           selectedReviewAreas: ["ATS", "FPD", "AIS", "MAP", "MET", "CNS", "SAR"] as ANSReviewArea[],
           status: "COMPLETED" as AssessmentStatus,
           createAllResponses: true,
@@ -444,7 +444,7 @@ function getAssessmentConfigsForStatus(reviewStatus: ReviewStatus): AssessmentCo
       return [
         {
           questionnaireType: "ANS_USOAP_CMA" as QuestionnaireType,
-          selectedAuditAreas: ["AGA" as USOAPAuditArea, "ANS" as USOAPAuditArea],
+          selectedAuditAreas: ["ANS" as USOAPAuditArea],
           selectedReviewAreas: ["ATS", "FPD", "AIS", "MAP", "MET", "CNS", "SAR"] as ANSReviewArea[],
           status: "UNDER_REVIEW" as AssessmentStatus,
           createAllResponses: false,
@@ -454,7 +454,7 @@ function getAssessmentConfigsForStatus(reviewStatus: ReviewStatus): AssessmentCo
       return [
         {
           questionnaireType: "ANS_USOAP_CMA" as QuestionnaireType,
-          selectedAuditAreas: ["AGA" as USOAPAuditArea],
+          selectedAuditAreas: ["ANS" as USOAPAuditArea],
           selectedReviewAreas: ["ATS", "AIS", "CNS"] as ANSReviewArea[],
           status: "DRAFT" as AssessmentStatus,
           createAllResponses: false,
@@ -913,25 +913,20 @@ async function createANSResponsesDynamic(
   assessmentId: string,
   config: AssessmentConfig
 ): Promise<void> {
+  // Query ANS questions — filter by review areas if specified
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const whereClause: any = {
     questionnaire: { type: "ANS_USOAP_CMA" },
   };
 
-  if (config.selectedAuditAreas.length > 0) {
-    whereClause.OR = [
-      { auditArea: { in: config.selectedAuditAreas } },
-      ...config.selectedAuditAreas.map((area) => {
-        const prefix = area === "AGA" ? "8." : area === "ANS" ? "3." : "";
-        return prefix ? { pqNumber: { startsWith: prefix } } : {};
-      }).filter((obj) => Object.keys(obj).length > 0),
-    ];
+  if (config.selectedReviewAreas.length > 0) {
+    whereClause.reviewArea = { in: config.selectedReviewAreas };
   }
 
   const questions = await prisma.question.findMany({
     where: whereClause,
     select: { id: true, pqNumber: true, auditArea: true },
-    orderBy: { pqNumber: "asc" },
+    orderBy: { sortOrder: "asc" },
   });
 
   console.log(`      Creating ${questions.length} ANS responses`);

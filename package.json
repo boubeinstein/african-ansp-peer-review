@@ -54,7 +54,8 @@
     "db:seed:all": "npx tsx prisma/seed.ts && npx tsx prisma/seed-dev-users.ts && npx tsx prisma/seed-training.ts",
     "db:seed:workflows": "npx tsx prisma/seeds/seed-workflows.ts",
     "db:seed:lessons": "npx tsx prisma/seed-lessons.ts",
-    "db:migrate:review-areas": "npx tsx scripts/migrate-review-areas.ts"
+    "db:migrate:review-areas": "npx tsx scripts/migrate-review-areas.ts",
+    "db:reseed:ans": "npx tsx scripts/seed-ans-questionnaire.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",

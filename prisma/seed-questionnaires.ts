@@ -21,13 +21,13 @@ async function seedQuestionnaires() {
 
   const questionnaires = [
     {
-      code: "ANS-USOAP-2024",
+      code: "AAPRP-ANS-2024",
       type: "ANS_USOAP_CMA" as const,
-      version: "2024.1",
-      titleEn: "ICAO USOAP CMA Protocol Questions - ANS",
-      titleFr: "Questions du protocole OACI USOAP CMA - ANS",
-      descriptionEn: "Air Navigation Services protocol questions based on ICAO USOAP Continuous Monitoring Approach 2024 Edition",
-      descriptionFr: "Questions du protocole des services de navigation aérienne basées sur l'approche de surveillance continue USOAP de l'OACI édition 2024",
+      version: "2024.2",
+      titleEn: "AAPRP ANS Protocol Questionnaire",
+      titleFr: "Questionnaire du protocole ANS de l'AAPRP",
+      descriptionEn: "African ANSP Peer Review Programme Protocol Questions organized by ANS review areas (ATM, IFPD, AIS, CHART, CNS, MET, SAR). Derived from ICAO USOAP CMA 2024 Edition.",
+      descriptionFr: "Questions du protocole du Programme africain d'examen par les pairs des ANSP organisées par domaines d'examen ANS (ATM, IFPD, AIS, CHART, CNS, MET, SAR). Dérivées de l'édition 2024 de l'USOAP CMA de l'OACI.",
       effectiveDate: new Date("2024-01-01"),
     },
     {
@@ -74,7 +74,7 @@ async function seedCategories() {
   console.log("\n📂 Creating questionnaire categories...\n");
 
   // Get questionnaires
-  const ansQ = await prisma.questionnaire.findUnique({ where: { code: "ANS-USOAP-2024" } });
+  const ansQ = await prisma.questionnaire.findUnique({ where: { code: "AAPRP-ANS-2024" } });
   const smsQ = await prisma.questionnaire.findUnique({ where: { code: "SMS-CANSO-2024" } });
 
   if (!ansQ || !smsQ) {
@@ -82,16 +82,15 @@ async function seedCategories() {
     return;
   }
 
-  // ANS Categories (USOAP Audit Areas)
+  // ANS Categories (AAPRP Review Areas)
   const ansCategories = [
-    { code: "ANS-CE1", sortOrder: 1, nameEn: "Primary Aviation Legislation", nameFr: "Législation aéronautique primaire", auditArea: "ANS" as const },
-    { code: "ANS-CE2", sortOrder: 2, nameEn: "Specific Operating Regulations", nameFr: "Réglementations opérationnelles spécifiques", auditArea: "ANS" as const },
-    { code: "ANS-CE3", sortOrder: 3, nameEn: "State Civil Aviation System", nameFr: "Système d'aviation civile de l'État", auditArea: "ANS" as const },
-    { code: "ANS-CE4", sortOrder: 4, nameEn: "Technical Personnel Qualification", nameFr: "Qualification du personnel technique", auditArea: "ANS" as const },
-    { code: "ANS-CE5", sortOrder: 5, nameEn: "Technical Guidance and Tools", nameFr: "Orientation et outils techniques", auditArea: "ANS" as const },
-    { code: "ANS-CE6", sortOrder: 6, nameEn: "Licensing and Certification", nameFr: "Licences et certification", auditArea: "ANS" as const },
-    { code: "ANS-CE7", sortOrder: 7, nameEn: "Surveillance Obligations", nameFr: "Obligations de surveillance", auditArea: "ANS" as const },
-    { code: "ANS-CE8", sortOrder: 8, nameEn: "Resolution of Safety Issues", nameFr: "Résolution des problèmes de sécurité", auditArea: "ANS" as const },
+    { code: "ATM", sortOrder: 1, nameEn: "Air Traffic Management", nameFr: "Gestion du trafic aérien", auditArea: "ANS" as const, reviewArea: "ATS" as const },
+    { code: "IFPD", sortOrder: 2, nameEn: "Instrument Flight Procedure Design", nameFr: "Conception des procédures de vol aux instruments", auditArea: "ANS" as const, reviewArea: "FPD" as const },
+    { code: "AIS", sortOrder: 3, nameEn: "Aeronautical Information Services", nameFr: "Services d'information aéronautique", auditArea: "ANS" as const, reviewArea: "AIS" as const },
+    { code: "CHART", sortOrder: 4, nameEn: "Aeronautical Charts", nameFr: "Cartes aéronautiques", auditArea: "ANS" as const, reviewArea: "MAP" as const },
+    { code: "CNS", sortOrder: 5, nameEn: "Communications, Navigation and Surveillance", nameFr: "Communications, navigation et surveillance", auditArea: "ANS" as const, reviewArea: "CNS" as const },
+    { code: "MET", sortOrder: 6, nameEn: "Aeronautical Meteorology", nameFr: "Météorologie aéronautique", auditArea: "ANS" as const, reviewArea: "MET" as const },
+    { code: "SAR", sortOrder: 7, nameEn: "Search and Rescue", nameFr: "Recherche et sauvetage", auditArea: "ANS" as const, reviewArea: "SAR" as const },
   ];
 
   for (const cat of ansCategories) {
@@ -112,10 +111,11 @@ async function seedCategories() {
         nameEn: cat.nameEn,
         nameFr: cat.nameFr,
         auditArea: cat.auditArea,
+        reviewArea: cat.reviewArea,
       },
     });
 
-    console.log(`   ✅ Created ANS category: ${cat.code}`);
+    console.log(`   ✅ Created ANS category: ${cat.code} (${cat.reviewArea})`);
   }
 
   // SMS Categories (CANSO Study Areas)
@@ -155,8 +155,8 @@ async function seedCategories() {
 async function seedSampleQuestions() {
   console.log("\n❓ Creating sample questions...\n");
 
-  const ansQ = await prisma.questionnaire.findUnique({ 
-    where: { code: "ANS-USOAP-2024" },
+  const ansQ = await prisma.questionnaire.findUnique({
+    where: { code: "AAPRP-ANS-2024" },
     include: { categories: true },
   });
 
@@ -189,6 +189,7 @@ async function seedSampleQuestions() {
           categoryId: category.id,
           pqNumber,
           auditArea: "ANS",
+          reviewArea: category.reviewArea,
           questionTextEn: `Sample ANS protocol question ${i} for ${category.nameEn}. Does the State have adequate provisions?`,
           questionTextFr: `Exemple de question de protocole ANS ${i} pour ${category.nameFr}. L'État dispose-t-il de dispositions adéquates?`,
           guidanceEn: `Review relevant documentation and verify compliance with ICAO standards.`,

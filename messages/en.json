@@ -194,11 +194,11 @@
           "title": "Dual Assessment Framework",
           "subtitle": "Comprehensive safety evaluation combining ICAO oversight protocols with CANSO SMS maturity assessment.",
           "usoap": {
-            "title": "USOAP CMA 2024",
-            "description": "ICAO Protocol Questions",
-            "detail1": "9 Audit Areas",
-            "detail2": "8 Critical Elements",
-            "tags": "ANS · AGA · SSP"
+            "title": "AAPRP ANS Protocol",
+            "description": "ANS Review Protocol Questions",
+            "detail1": "7 Review Areas",
+            "detail2": "132 Protocol Questions",
+            "tags": "ATS · FPD · AIS · MAP · CNS · MET · SAR"
           },
           "canso": {
             "title": "CANSO SoE 2024",
@@ -371,7 +371,7 @@
       "newAssessment": "Start Self-Assessment",
       "newAssessmentDesc": "Begin a new ANS or SMS assessment",
       "questionnaires": "Browse Questionnaires",
-      "questionnairesDesc": "Explore USOAP CMA and CANSO SoE frameworks",
+      "questionnairesDesc": "Explore ANS Protocol Questions and CANSO SoE frameworks",
       "training": "Training",
       "trainingDesc": "Access peer reviewer training materials",
       "manageOrganizations": "Manage Organizations",
@@ -633,7 +633,7 @@
     "subtitle": "Evaluate your organization against ICAO and CANSO standards",
     "referenceNumber": "Reference",
     "typeLabel": {
-      "ans": "ANS Assessment (USOAP CMA)",
+      "ans": "ANS Assessment (Protocol Questions)",
       "sms": "SMS Assessment (CANSO SoE)"
     },
     "list": {
@@ -702,7 +702,7 @@
         "showHelp": "Show this help dialog"
       },
       "guide": {
-        "ansTitle": "ANS USOAP CMA Response Guide",
+        "ansTitle": "ANS Protocol Questions Response Guide",
         "satisfactory": "Satisfactory",
         "satisfactoryDesc": "Evidence confirms compliance with the protocol question requirements. Documentation is complete and current.",
         "notSatisfactory": "Not Satisfactory",
@@ -1011,23 +1011,23 @@
       "eiDescription": "Percentage of satisfactory responses among applicable questions",
       "maturityLevel": "SMS Maturity Level",
       "maturityDescription": "Overall maturity based on CANSO Standard of Excellence",
-      "byAuditArea": "Score by Audit Area",
-      "byCriticalElement": "Score by Critical Element",
+      "byAuditArea": "Score by Review Area",
+      "byCriticalElement": "Score by ANS Sub-area",
       "byComponent": "Score by SMS Component",
       "byStudyArea": "Score by Study Area"
     }
   },
   "questionnaire": {
     "title": "Questionnaires",
-    "subtitle": "Browse USOAP CMA Protocol Questions and CANSO SoE assessments",
+    "subtitle": "Browse ANS Protocol Questions and CANSO SoE assessments",
     "selectType": "Select questionnaire type",
     "ans": {
       "title": "ANS Questionnaire",
-      "fullTitle": "USOAP CMA 2024 Protocol Questions",
+      "fullTitle": "AFI ANSP Peer Review ANS Questionnaire",
       "description": "Protocol Questions across 7 ANS review areas (ATS, FPD, AIS, MAP, MET, CNS, SAR) based on the AFI ANSP Peer Review ANS Questionnaire",
       "effectiveDate": "Effective: July 1, 2025",
-      "auditAreas": "Audit Areas",
-      "criticalElements": "Critical Elements",
+      "auditAreas": "Review Areas",
+      "criticalElements": "Protocol Questions",
       "browse": "Browse Questions"
     },
     "sms": {
@@ -1046,7 +1046,7 @@
     },
     "info": {
       "title": "About the Questionnaires",
-      "ansDescription": "The ANS questionnaire is based on ICAO's Universal Safety Oversight Audit Programme (USOAP) Continuous Monitoring Approach. It evaluates State compliance with international standards across 8 Critical Elements.",
+      "ansDescription": "The ANS questionnaire is based on the African ANSP Peer Review Programme (AAPRP) Protocol Questionnaire, adapted from ICAO USOAP CMA standards. It evaluates ANSP compliance across 7 ANS review areas: Air Traffic Management, Flight Procedure Design, Aeronautical Information, Charts, Communications/Navigation/Surveillance, Meteorology, and Search & Rescue.",
       "smsDescription": "The SMS questionnaire follows CANSO's Standard of Excellence framework to assess Safety Management System maturity. Organizations are rated from Level A (Informal) to Level E (Excellence)."
     }
   },
@@ -1366,16 +1366,16 @@
   },
   "ansBrowser": {
     "title": "ANS Protocol Questions",
-    "subtitle": "USOAP CMA 2024 - 851 Protocol Questions across 9 Audit Areas",
+    "subtitle": "AAPRP ANS Protocol Questions across 7 Review Areas",
     "breadcrumb": {
       "questionnaires": "Questionnaires",
-      "ans": "ANS USOAP CMA"
+      "ans": "ANS Protocol Questions"
     },
     "filters": {
       "title": "Filters",
       "search": "Search",
       "searchPlaceholder": "Search by PQ number or text...",
-      "auditArea": "Audit Area",
+      "auditArea": "Review Area",
       "criticalElement": "Critical Element",
       "additional": "Additional Filters",
       "priorityPQ": "Priority PQ",
@@ -1456,7 +1456,7 @@
     "icaoReferences": "ICAO References",
     "noReferences": "No ICAO references available",
     "relatedQuestions": "Related Questions",
-    "auditArea": "Audit Area",
+    "auditArea": "Review Area",
     "criticalElement": "Critical Element",
     "smsComponent": "SMS Component",
     "studyArea": "Study Area",
@@ -1542,8 +1542,8 @@
         "name": "Select Type",
         "title": "Select Questionnaire Type",
         "description": "Choose the type of questionnaire you want to import",
-        "ansTitle": "ANS USOAP CMA",
-        "ansDescription": "ICAO Universal Safety Oversight Audit Programme - Protocol Questions for Air Navigation Services",
+        "ansTitle": "ANS Protocol Questions",
+        "ansDescription": "AAPRP Protocol Questionnaire - Protocol Questions for Air Navigation Services review",
         "smsTitle": "SMS CANSO SoE",
         "smsDescription": "CANSO Standard of Excellence - Safety Management System maturity assessment"
       },
@@ -1579,7 +1579,7 @@
       "page": "Page {current} of {total}",
       "status": "Status",
       "pqNumber": "PQ Number",
-      "auditArea": "Audit Area",
+      "auditArea": "Review Area",
       "ce": "CE",
       "component": "Component",
       "studyArea": "Study Area",
@@ -1876,14 +1876,14 @@
     "questionnaireType": {
       "title": "Select Questionnaire Type",
       "description": "Choose the framework for your assessment",
-      "helpText": "Not sure which to choose? ANS USOAP CMA is recommended for most organizations.",
+      "helpText": "Not sure which to choose? The ANS Protocol Questionnaire is recommended for most organizations.",
       "ans": {
-        "title": "ANS USOAP CMA",
-        "subtitle": "ICAO Universal Safety Oversight Audit Programme",
-        "description": "Evaluate compliance with ICAO ANS standards across 7 review areas using the AFI ANSP Peer Review Protocol Questionnaire.",
+        "title": "ANS Protocol Questions",
+        "subtitle": "AFI ANSP Peer Review Programme",
+        "description": "Evaluate ANSP compliance across 7 review areas using the AAPRP Protocol Questions adapted from ICAO standards.",
         "feature1": "Protocol Questions",
-        "feature2": "Audit Areas",
-        "feature3": "Critical Elements",
+        "feature2": "Review Areas",
+        "feature3": "ANS Sub-areas",
         "keyDifference": "Best for: Compliance assessment against international aviation safety standards"
       },
       "sms": {
@@ -1939,8 +1939,8 @@
       "dueDateLabel": "Target Completion Date (Optional)",
       "dueDateHint": "Set a target date to help track progress",
       "scope": {
-        "ansTitle": "Audit Areas",
-        "ansDescription": "Select which ICAO audit areas to include in this assessment",
+        "ansTitle": "Review Areas",
+        "ansDescription": "Select which ANS review areas to include in this assessment",
         "smsTitle": "SMS Components",
         "smsDescription": "Select which SMS components to assess",
         "selectAll": "Select All",
@@ -1956,7 +1956,7 @@
       "summaryTitle": "Assessment Summary",
       "assessmentTitle": "Title",
       "descriptionLabel": "Description",
-      "auditAreas": "Audit Areas",
+      "auditAreas": "Review Areas",
       "smsComponents": "SMS Components",
       "estimatedQuestions": "Est. Questions",
       "estimatedTime": "Est. Time",
@@ -2148,8 +2148,8 @@
     "calculating": "Calculating scores...",
     "complete": "Complete",
     "incomplete": "Incomplete",
-    "byAuditArea": "Score by Audit Area",
-    "byCriticalElement": "Score by Critical Element",
+    "byAuditArea": "Score by Review Area",
+    "byCriticalElement": "Score by ANS Sub-area",
     "byComponent": "Score by SMS Component",
     "byStudyArea": "Score by Study Area",
     "componentOverview": "Component Overview",
@@ -4214,7 +4214,7 @@
           "REPORTING": "Reporting",
           "FOLLOW_UP": "Follow-Up"
         },
-        "auditArea": "USOAP Audit Area",
+        "auditArea": "Review Area",
         "soeArea": "CANSO SoE Area",
         "optional": "Optional",
         "none": "None",
@@ -4412,7 +4412,7 @@
         "classification": {
           "title": "Classification",
           "description": "Type & Severity",
-          "instructions": "Classify the finding by type, severity, and related audit area"
+          "instructions": "Classify the finding by type, severity, and related review area"
         },
         "description": {
           "title": "Description",
@@ -4436,8 +4436,8 @@
         }
       },
       "fields": {
-        "auditArea": "Audit Area",
-        "selectAuditArea": "Select audit area",
+        "auditArea": "Review Area",
+        "selectAuditArea": "Select review area",
         "searchIcaoReference": "Search ICAO reference...",
         "searchIcaoPlaceholder": "Type to search annexes, docs...",
         "noIcaoFound": "No ICAO references found",
@@ -5650,7 +5650,7 @@
         "transportationIncluded": "Transportation",
         "bothLanguages": "Both (Bilingual)",
         "types": {
-          "ansOnly": "ANS Review (USOAP CMA Focus)",
+          "ansOnly": "ANS Review (Protocol Questions)",
           "smsOnly": "SMS Review (CANSO SoE Focus)",
           "comprehensive": "Comprehensive Review (ANS + SMS)"
         },
@@ -5964,13 +5964,13 @@
     "conclusionPlaceholderFr": "Enter the conclusion in French...",
     "scores": {
       "title": "Assessment Scores",
-      "ansTitle": "ANS USOAP CMA - Effective Implementation",
+      "ansTitle": "ANS Protocol - Effective Implementation",
       "smsTitle": "SMS CANSO SoE - Maturity Assessment",
       "overallEI": "Overall EI Score",
       "overallMaturity": "Overall Maturity Level",
       "eiScore": "EI Score",
       "maturityScore": "Maturity Score",
-      "byAuditArea": "By Audit Area",
+      "byAuditArea": "By Review Area",
       "byComponent": "By SMS Component",
       "detailedBreakdown": "Detailed Breakdown",
       "componentBreakdown": "Component Breakdown",
@@ -5978,11 +5978,11 @@
       "questions": "questions",
       "noANSAssessment": "No ANS assessment data available for this review.",
       "noSMSAssessment": "No SMS assessment data available for this review.",
-      "criticalElements": "Critical Elements (CE-1 to CE-8)",
+      "criticalElements": "Review Areas (ATS, FPD, AIS, MAP, CNS, MET, SAR)",
       "narrative": "Analysis",
       "eiTarget": "Abuja Target: 85% EI by 2026",
       "deltaFromPrevious": "vs previous review",
-      "auditArea": "Audit Area",
+      "auditArea": "Review Area",
       "code": "Code",
       "pqs": "PQs",
       "satisfactory": "Satisfactory",
@@ -6021,8 +6021,8 @@
       "titleColumn": "Finding",
       "cap": "CAP",
       "required": "Required",
-      "byAuditArea": "By Audit Area",
-      "auditArea": "Audit Area",
+      "byAuditArea": "By Review Area",
+      "auditArea": "Review Area",
       "allAuditAreas": "All Areas",
       "description": "Description",
       "evidence": "Evidence",
@@ -6110,14 +6110,14 @@
       "expertiseCoverage": "Expertise Coverage Matrix",
       "gapsDetected": "Gaps Detected",
       "areaCode": "Code",
-      "areaName": "Audit Area",
+      "areaName": "Review Area",
       "coveredBy": "Covered By",
       "coverageStatus": "Status",
       "noExpertAssigned": "No expert assigned"
     },
     "cards": {
       "eiScore": "EI Score",
-      "eiScoreDescription": "Effective Implementation score based on ANS USOAP CMA assessment",
+      "eiScoreDescription": "Effective Implementation score based on ANS Protocol assessment",
       "smsMaturity": "SMS Maturity",
       "smsMaturityDescription": "Safety Management System maturity level based on CANSO SoE assessment",
       "totalFindings": "Total Findings",
@@ -6635,14 +6635,14 @@
     "subtitle": "Comprehensive metrics and insights for programme oversight",
     "programmeIntelligence": {
       "title": "Programme Intelligence",
-      "subtitle": "Safety performance monitoring, cross-ANSP benchmarking, and continuous improvement tracking aligned with ICAO USOAP CMA and CANSO SoE.",
+      "subtitle": "Safety performance monitoring, cross-ANSP benchmarking, and continuous improvement tracking aligned with AAPRP review areas and CANSO SoE.",
       "tabs": {
         "overview": "Overview",
         "benchmarking": "Cross-ANSP Benchmarking",
         "findingsTrends": "Findings & CAP Trends",
         "abujaTargets": "Abuja Target #15"
       },
-      "findingsTrendsPlaceholder": "Cross-review findings pattern analysis, common findings by audit area, CAP closure rates, and severity distribution will appear here.",
+      "findingsTrendsPlaceholder": "Cross-review findings pattern analysis, common findings by review area, CAP closure rates, and severity distribution will appear here.",
       "abujaTargetsPlaceholder": "Abuja Safety Target #15 KPI tracker — ANSP participation rate, SMS maturity milestone progress, and regional compliance tracking will appear here."
     },
     "refresh": "Refresh",
@@ -6686,7 +6686,7 @@
     "openFindingsLabel": "Open Findings",
     "closedFindings": "Closed Findings",
     "avgResolutionTime": "Avg Resolution Time",
-    "findingsByArea": "Findings by Audit Area",
+    "findingsByArea": "Findings by Review Area",
     "capsByStatus": "CAPs by Status",
     "totalCAPsCount": "Total: {count} CAPs",
     "capMetrics": "CAP Metrics",
@@ -6908,10 +6908,10 @@
     "title": "Self-Assessments",
     "description": "Manage and track organization self-assessments",
     "combinedTitle": "Questionnaires & Assessments",
-    "combinedSubtitle": "Browse ICAO USOAP CMA and CANSO SoE frameworks, manage self-assessments.",
+    "combinedSubtitle": "Browse AAPRP ANS Protocol Questions and CANSO SoE frameworks, manage self-assessments.",
     "tabs": {
       "myAssessments": "My Assessments",
-      "usoap": "USOAP CMA Questions",
+      "usoap": "ANS Protocol Questions",
       "cansoSoe": "CANSO SoE Framework"
     },
     "createAssessment": "Create Assessment",
@@ -6926,7 +6926,7 @@
       "completed": "Completed",
       "selectType": "Filter by type",
       "allTypes": "All Questionnaire Types",
-      "ansUsoap": "ANS (USOAP CMA)",
+      "ansUsoap": "ANS (Protocol Questions)",
       "smsCanso": "SMS (CANSO SoE)",
       "clearFilters": "Clear Filters"
     },
@@ -6968,7 +6968,7 @@
       "selectOrganization": "Organization",
       "selectOrganizationPlaceholder": "Select an organization...",
       "organizationSelected": "Assessment will be created for {name}",
-      "questionnaireDescANS": "Based on ICAO USOAP CMA 2024 Protocol Questions for Air Navigation Services",
+      "questionnaireDescANS": "Based on AAPRP ANS Protocol Questions organized by review area",
       "questionnaireDescSMS": "Based on CANSO Standard of Excellence in Safety Management Systems 2024",
       "assessmentTitle": "Assessment Title",
       "titleHint": "A descriptive title helps identify this assessment later",
@@ -7016,7 +7016,7 @@
     "filters": {
       "searchPlaceholder": "Search best practices...",
       "allCategories": "All Categories",
-      "allAreas": "All Audit Areas",
+      "allAreas": "All Review Areas",
       "sortNewest": "Newest First",
       "sortPopular": "Most Viewed",
       "sortMostAdopted": "Most Adopted",
@@ -7219,8 +7219,8 @@
         "summaryFr": "Summary (French)",
         "summaryHelp": "A brief overview that will appear in search results (max 500 characters)",
         "category": "Category",
-        "auditArea": "Audit Area (Optional)",
-        "noAuditArea": "Not specific to an audit area",
+        "auditArea": "Review Area (Optional)",
+        "noAuditArea": "Not specific to a review area",
         "tags": "Tags",
         "descriptionEn": "Description (English)",
         "descriptionFr": "Description (French)",
@@ -7236,7 +7236,7 @@
         "summaryEn": "Briefly describe what this practice achieves...",
         "summaryFr": "Décrivez brièvement ce que cette pratique accomplit...",
         "category": "Select a category",
-        "auditArea": "Select an audit area",
+        "auditArea": "Select a review area",
         "tags": "Type a tag and press Enter",
         "descriptionEn": "Provide a detailed description of the practice...",
         "descriptionFr": "Fournissez une description détaillée de la pratique...",
@@ -7281,7 +7281,7 @@
     },
     "title": "Lessons Learned",
     "description": "Searchable knowledge base of lessons extracted from peer review retrospectives. Learn from the experiences of ANSPs across Africa.",
-    "searchPlaceholder": "Search lessons by keyword, topic, or audit area...",
+    "searchPlaceholder": "Search lessons by keyword, topic, or review area...",
     "tabs": {
       "search": "Search",
       "knowledgeBase": "Knowledge Base",
@@ -7364,7 +7364,7 @@
       "reviewContext": "Review Context",
       "reviewRef": "From Review",
       "classification": "Classification",
-      "auditArea": "Audit Area",
+      "auditArea": "Review Area",
       "soeArea": "SoE Study Area",
       "reviewPhase": "Review Phase",
       "hostRegion": "Host Region",
@@ -7758,7 +7758,7 @@
     },
     "questionnairesAssessments": {
       "title": "Questionnaires & Assessments",
-      "description": "Browse ICAO USOAP CMA Protocol Questions and CANSO SoE frameworks, and manage your self-assessments."
+      "description": "Browse AAPRP ANS Protocol Questions and CANSO SoE frameworks, and manage your self-assessments."
     },
     "peerReviews": {
       "title": "Peer Reviews",
@@ -7778,7 +7778,7 @@
     },
     "assessments": {
       "title": "Self-Assessments",
-      "description": "Create and manage assessments against ICAO USOAP and CANSO SoE frameworks for your organization."
+      "description": "Create and manage assessments against AAPRP ANS Protocol and CANSO SoE frameworks for your organization."
     },
     "findings": {
       "title": "Findings",
@@ -7806,7 +7806,7 @@
     },
     "training": {
       "title": "Training Modules",
-      "description": "Access training materials covering ICAO USOAP methodology, CANSO SoE, and review best practices."
+      "description": "Access training materials covering AAPRP review methodology, CANSO SoE, and review best practices."
     },
     "shortcuts": {
       "title": "Keyboard Shortcuts",
@@ -7857,7 +7857,7 @@
     },
     "questionnaires": {
       "title": "Questionnaires",
-      "description": "Access ICAO USOAP CMA and CANSO SoE questionnaires used for self-assessments and peer reviews."
+      "description": "Access AAPRP ANS Protocol and CANSO SoE questionnaires used for self-assessments and peer reviews."
     },
     "settings": {
       "title": "Settings",
@@ -7978,7 +7978,7 @@
       "trendSubtitle": "Quarterly progression across all dimensions",
       "maturityDistTitle": "SMS Maturity Distribution",
       "maturityDistSubtitle": "CANSO SoE levels across ANSPs",
-      "radarTitle": "Regional EI Comparison by Audit Area",
+      "radarTitle": "Regional EI Comparison by Review Area",
       "radarSubtitle": "Spider chart showing strengths and gaps across regions",
       "systemicTitle": "Top Systemic Issues",
       "systemicSubtitle": "Cross-ANSP patterns identified through peer reviews",
@@ -8001,7 +8001,7 @@
       "aboveAverage": "Above average"
     },
     "findingsAnalysis": {
-      "byAreaTitle": "Findings by Audit Area & Severity",
+      "byAreaTitle": "Findings by Review Area & Severity",
       "byAreaSubtitle": "Click an area bar for detailed breakdown",
       "severityTitle": "Severity Distribution",
       "areaBreakdown": "{area} Area Breakdown",
@@ -8029,7 +8029,7 @@
     "teams": {
       "ledBy": "Led by {name}",
       "members": "{count} ANSPs",
-      "eiByArea": "EI by Audit Area",
+      "eiByArea": "EI by Review Area",
       "memberPerformance": "Member ANSPs Performance",
       "programmeAvg": "Programme Avg"
     },
@@ -8051,7 +8051,7 @@
     "footer": {
       "version": "AAPRP Safety Intelligence v1.0",
       "dataSource": "Data aggregated from {count} participating ANSPs",
-      "frameworks": "ICAO USOAP CMA 2024 & CANSO SoE 2024"
+      "frameworks": "AAPRP ANS Protocol 2024 & CANSO SoE 2024"
     }
   }
 }

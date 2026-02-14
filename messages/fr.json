@@ -194,11 +194,11 @@
           "title": "Double Cadre d'Évaluation",
           "subtitle": "Évaluation complète de la sécurité combinant les protocoles de supervision de l'OACI avec l'évaluation de maturité SMS de CANSO.",
           "usoap": {
-            "title": "USOAP CMA 2024",
-            "description": "Questions de Protocole OACI",
-            "detail1": "9 Domaines d'Audit",
-            "detail2": "8 Éléments Critiques",
-            "tags": "ANS · AGA · SSP"
+            "title": "Protocole ANS AAPRP",
+            "description": "Questions de Protocole ANS",
+            "detail1": "7 Domaines d'Examen",
+            "detail2": "132 Questions de Protocole",
+            "tags": "ATS · FPD · AIS · MAP · CNS · MET · SAR"
           },
           "canso": {
             "title": "CANSO SoE 2024",
@@ -371,7 +371,7 @@
       "newAssessment": "Commencer une auto-évaluation",
       "newAssessmentDesc": "Démarrer une nouvelle évaluation ANS ou SMS",
       "questionnaires": "Parcourir les questionnaires",
-      "questionnairesDesc": "Explorer les cadres USOAP CMA et CANSO SoE",
+      "questionnairesDesc": "Explorer les cadres Protocole ANS et CANSO SoE",
       "training": "Formation",
       "trainingDesc": "Accéder aux matériels de formation des évaluateurs",
       "manageOrganizations": "Gérer les organisations",
@@ -633,7 +633,7 @@
     "subtitle": "Évaluez votre organisation selon les normes OACI et CANSO",
     "referenceNumber": "Référence",
     "typeLabel": {
-      "ans": "Évaluation ANS (USOAP CMA)",
+      "ans": "Évaluation ANS (Protocole AAPRP)",
       "sms": "Évaluation SMS (CANSO SoE)"
     },
     "list": {
@@ -702,7 +702,7 @@
         "showHelp": "Afficher cette aide"
       },
       "guide": {
-        "ansTitle": "Guide des réponses ANS USOAP CMA",
+        "ansTitle": "Guide des réponses Protocole ANS",
         "satisfactory": "Satisfaisant",
         "satisfactoryDesc": "Les preuves confirment la conformité aux exigences du protocole. La documentation est complète et à jour.",
         "notSatisfactory": "Non satisfaisant",
@@ -1011,23 +1011,23 @@
       "eiDescription": "Pourcentage de réponses satisfaisantes parmi les questions applicables",
       "maturityLevel": "Niveau de Maturité SGS",
       "maturityDescription": "Maturité globale basée sur la Norme d'Excellence CANSO",
-      "byAuditArea": "Score par Domaine d'Audit",
-      "byCriticalElement": "Score par Élément Critique",
+      "byAuditArea": "Score par Domaine d'Examen",
+      "byCriticalElement": "Score par Sous-domaine ANS",
       "byComponent": "Score par Composante SGS",
       "byStudyArea": "Score par Domaine d'Étude"
     }
   },
   "questionnaire": {
     "title": "Questionnaires",
-    "subtitle": "Parcourir les Questions de Protocole USOAP CMA et les évaluations CANSO SoE",
+    "subtitle": "Parcourir les Questions de Protocole ANS et les évaluations CANSO SoE",
     "selectType": "Sélectionner le type de questionnaire",
     "ans": {
       "title": "Questionnaire ANS",
-      "fullTitle": "Questions de Protocole USOAP CMA 2024",
+      "fullTitle": "Questionnaire de Protocole ANS AAPRP",
       "description": "Questions de Protocole dans 7 domaines d'évaluation ANS (ATS, FPD, AIS, MAP, MET, CNS, SAR) basées sur le Questionnaire ANS de l'Évaluation par les Pairs des ANSP AFI",
       "effectiveDate": "En vigueur : 1er juillet 2025",
-      "auditAreas": "Domaines d'Audit",
-      "criticalElements": "Éléments Critiques",
+      "auditAreas": "Domaines d'Examen",
+      "criticalElements": "Questions de Protocole",
       "browse": "Parcourir les Questions"
     },
     "sms": {
@@ -1046,7 +1046,7 @@
     },
     "info": {
       "title": "À propos des Questionnaires",
-      "ansDescription": "Le questionnaire ANS est basé sur le Programme Universel d'Audit de Surveillance de la Sécurité (USOAP) de l'OACI - Approche de Surveillance Continue. Il évalue la conformité des États aux normes internationales à travers 8 Éléments Critiques.",
+      "ansDescription": "Le questionnaire ANS est basé sur le Questionnaire de Protocole du Programme africain d'examen par les pairs des ANSP (AAPRP), adapté des normes USOAP CMA de l'OACI. Il évalue la conformité des ANSP à travers 7 domaines d'examen ANS : ATS, FPD, AIS, MAP, CNS, MET et SAR.",
       "smsDescription": "Le questionnaire SGS suit le cadre de la Norme d'Excellence CANSO pour évaluer la maturité du Système de Gestion de la Sécurité. Les organisations sont notées du Niveau A (Informel) au Niveau E (Excellence)."
     }
   },
@@ -1366,16 +1366,16 @@
   },
   "ansBrowser": {
     "title": "Questions de Protocole ANS",
-    "subtitle": "USOAP CMA 2024 - 851 Questions de Protocole dans 9 Domaines d'Audit",
+    "subtitle": "Protocole ANS AAPRP - 132 Questions de Protocole dans 7 Domaines d'Examen",
     "breadcrumb": {
       "questionnaires": "Questionnaires",
-      "ans": "ANS USOAP CMA"
+      "ans": "Protocole ANS AAPRP"
     },
     "filters": {
       "title": "Filtres",
       "search": "Rechercher",
       "searchPlaceholder": "Rechercher par numéro QP ou texte...",
-      "auditArea": "Domaine d'Audit",
+      "auditArea": "Domaine d'Examen",
       "criticalElement": "Élément Critique",
       "additional": "Filtres Additionnels",
       "priorityPQ": "QP Prioritaire",
@@ -1456,7 +1456,7 @@
     "icaoReferences": "Références OACI",
     "noReferences": "Aucune référence OACI disponible",
     "relatedQuestions": "Questions Connexes",
-    "auditArea": "Domaine d'Audit",
+    "auditArea": "Domaine d'Examen",
     "criticalElement": "Élément Critique",
     "smsComponent": "Composante SGS",
     "studyArea": "Domaine d'Étude",
@@ -1542,8 +1542,8 @@
         "name": "Type",
         "title": "Sélectionner le Type de Questionnaire",
         "description": "Choisissez le type de questionnaire que vous souhaitez importer",
-        "ansTitle": "ANS USOAP CMA",
-        "ansDescription": "Programme Universel d'Audit de Surveillance de la Sécurité de l'OACI - Questions de Protocole pour les Services de Navigation Aérienne",
+        "ansTitle": "Protocole ANS AAPRP",
+        "ansDescription": "Questions de Protocole du Programme africain d'examen par les pairs des ANSP pour les Services de Navigation Aérienne",
         "smsTitle": "SGS CANSO SoE",
         "smsDescription": "Norme d'Excellence CANSO - Évaluation de la maturité du Système de Gestion de la Sécurité"
       },
@@ -1579,7 +1579,7 @@
       "page": "Page {current} sur {total}",
       "status": "Statut",
       "pqNumber": "Numéro QP",
-      "auditArea": "Domaine d'Audit",
+      "auditArea": "Domaine d'Examen",
       "ce": "EC",
       "component": "Composante",
       "studyArea": "Domaine d'Étude",
@@ -1876,14 +1876,14 @@
     "questionnaireType": {
       "title": "Sélectionner le type de questionnaire",
       "description": "Choisissez le cadre de référence pour votre évaluation",
-      "helpText": "Vous ne savez pas lequel choisir ? ANS USOAP CMA est recommandé pour la plupart des organisations.",
+      "helpText": "Vous ne savez pas lequel choisir ? Protocole ANS est recommandé pour la plupart des organisations.",
       "ans": {
-        "title": "ANS USOAP CMA",
-        "subtitle": "Programme universel d'audit de supervision de la sécurité de l'OACI",
+        "title": "Protocole ANS AAPRP",
+        "subtitle": "Questionnaire de Protocole de l'Évaluation par les Pairs des ANSP AFI",
         "description": "Évaluez la conformité aux normes ANS de l'OACI dans 7 domaines d'évaluation en utilisant le Questionnaire de Protocole de l'Évaluation par les Pairs des ANSP AFI.",
         "feature1": "Questions du protocole",
-        "feature2": "Domaines d'audit",
-        "feature3": "Éléments critiques",
+        "feature2": "Domaines d'examen",
+        "feature3": "Questions de protocole",
         "keyDifference": "Idéal pour : Évaluation de conformité aux normes internationales de sécurité aérienne"
       },
       "sms": {
@@ -1939,8 +1939,8 @@
       "dueDateLabel": "Date cible d'achèvement (Optionnel)",
       "dueDateHint": "Définissez une date cible pour aider à suivre les progrès",
       "scope": {
-        "ansTitle": "Domaines d'audit",
-        "ansDescription": "Sélectionnez les domaines d'audit OACI à inclure dans cette évaluation",
+        "ansTitle": "Domaines d'examen",
+        "ansDescription": "Sélectionnez les domaines d'examen à inclure dans cette évaluation",
         "smsTitle": "Composantes SMS",
         "smsDescription": "Sélectionnez les composantes SMS à évaluer",
         "selectAll": "Tout sélectionner",
@@ -1956,7 +1956,7 @@
       "summaryTitle": "Résumé de l'évaluation",
       "assessmentTitle": "Titre",
       "descriptionLabel": "Description",
-      "auditAreas": "Domaines d'audit",
+      "auditAreas": "Domaines d'examen",
       "smsComponents": "Composantes SMS",
       "estimatedQuestions": "Questions estimées",
       "estimatedTime": "Temps estimé",
@@ -2148,8 +2148,8 @@
     "calculating": "Calcul des scores...",
     "complete": "Complet",
     "incomplete": "Incomplet",
-    "byAuditArea": "Score par Domaine d'Audit",
-    "byCriticalElement": "Score par Élément Critique",
+    "byAuditArea": "Score par Domaine d'Examen",
+    "byCriticalElement": "Score par Sous-domaine ANS",
     "byComponent": "Score par Composante SGS",
     "byStudyArea": "Score par Domaine d'Étude",
     "componentOverview": "Aperçu des Composantes",
@@ -4214,7 +4214,7 @@
           "REPORTING": "Rapport",
           "FOLLOW_UP": "Suivi"
         },
-        "auditArea": "Domaine d'audit USOAP",
+        "auditArea": "Domaine d'examen",
         "soeArea": "Domaine SoE CANSO",
         "optional": "Facultatif",
         "none": "Aucun",
@@ -4412,7 +4412,7 @@
         "classification": {
           "title": "Classification",
           "description": "Type et Sévérité",
-          "instructions": "Classifiez la constatation par type, sévérité et domaine d'audit associé"
+          "instructions": "Classifiez la constatation par type, sévérité et domaine d'examen associé"
         },
         "description": {
           "title": "Description",
@@ -4436,8 +4436,8 @@
         }
       },
       "fields": {
-        "auditArea": "Domaine d'Audit",
-        "selectAuditArea": "Sélectionner le domaine d'audit",
+        "auditArea": "Domaine d'Examen",
+        "selectAuditArea": "Sélectionner le domaine d'examen",
         "searchIcaoReference": "Rechercher une référence OACI...",
         "searchIcaoPlaceholder": "Tapez pour rechercher les annexes, docs...",
         "noIcaoFound": "Aucune référence OACI trouvée",
@@ -5650,7 +5650,7 @@
         "transportationIncluded": "Transport",
         "bothLanguages": "Les deux (Bilingue)",
         "types": {
-          "ansOnly": "Évaluation ANS (Focus USOAP CMA)",
+          "ansOnly": "Évaluation ANS (Questions de Protocole)",
           "smsOnly": "Évaluation SMS (Focus CANSO SoE)",
           "comprehensive": "Évaluation complète (ANS + SMS)"
         },
@@ -5964,13 +5964,13 @@
     "conclusionPlaceholderFr": "Saisissez la conclusion en français...",
     "scores": {
       "title": "Scores d'Évaluation",
-      "ansTitle": "ANS USOAP CMA - Mise en Œuvre Effective",
+      "ansTitle": "Protocole ANS - Mise en Œuvre Effective",
       "smsTitle": "SMS CANSO SoE - Évaluation de Maturité",
       "overallEI": "Score EI Global",
       "overallMaturity": "Niveau de Maturité Global",
       "eiScore": "Score EI",
       "maturityScore": "Score de Maturité",
-      "byAuditArea": "Par Domaine d'Audit",
+      "byAuditArea": "Par Domaine d'Examen",
       "byComponent": "Par Composante SMS",
       "detailedBreakdown": "Répartition Détaillée",
       "componentBreakdown": "Répartition par Composante",
@@ -5978,11 +5978,11 @@
       "questions": "questions",
       "noANSAssessment": "Aucune donnée d'évaluation ANS disponible pour cette évaluation.",
       "noSMSAssessment": "Aucune donnée d'évaluation SMS disponible pour cette évaluation.",
-      "criticalElements": "Éléments Critiques (CE-1 à CE-8)",
+      "criticalElements": "Domaines d'Examen (ATS, FPD, AIS, MAP, CNS, MET, SAR)",
       "narrative": "Analyse",
       "eiTarget": "Objectif Abuja : 85% EI d'ici 2026",
       "deltaFromPrevious": "vs revue précédente",
-      "auditArea": "Domaine d'Audit",
+      "auditArea": "Domaine d'Examen",
       "code": "Code",
       "pqs": "PQs",
       "satisfactory": "Satisfaisant",
@@ -6021,8 +6021,8 @@
       "titleColumn": "Constat",
       "cap": "PAC",
       "required": "Requis",
-      "byAuditArea": "Par Domaine d'Audit",
-      "auditArea": "Domaine d'Audit",
+      "byAuditArea": "Par Domaine d'Examen",
+      "auditArea": "Domaine d'Examen",
       "allAuditAreas": "Tous les Domaines",
       "description": "Description",
       "evidence": "Preuves",
@@ -6110,14 +6110,14 @@
       "expertiseCoverage": "Matrice de Couverture des Compétences",
       "gapsDetected": "Lacunes Détectées",
       "areaCode": "Code",
-      "areaName": "Domaine d'Audit",
+      "areaName": "Domaine d'Examen",
       "coveredBy": "Couvert Par",
       "coverageStatus": "Statut",
       "noExpertAssigned": "Aucun expert assigné"
     },
     "cards": {
       "eiScore": "Score EI",
-      "eiScoreDescription": "Score de mise en œuvre effective basé sur l'évaluation ANS USOAP CMA",
+      "eiScoreDescription": "Score de mise en œuvre effective basé sur l'évaluation Protocole ANS",
       "smsMaturity": "Maturité SMS",
       "smsMaturityDescription": "Niveau de maturité du système de gestion de la sécurité basé sur l'évaluation CANSO SoE",
       "totalFindings": "Total des Constats",
@@ -6635,14 +6635,14 @@
     "subtitle": "Métriques et informations complètes pour la supervision du programme",
     "programmeIntelligence": {
       "title": "Intelligence Programme",
-      "subtitle": "Suivi des performances de sécurité, analyse comparative inter-ANSP et suivi de l'amélioration continue alignés avec l'OACI USOAP CMA et CANSO SoE.",
+      "subtitle": "Suivi des performances de sécurité, analyse comparative inter-ANSP et suivi de l'amélioration continue alignés avec les domaines d'examen AAPRP et CANSO SoE.",
       "tabs": {
         "overview": "Vue d'ensemble",
         "benchmarking": "Comparaison Inter-ANSP",
         "findingsTrends": "Tendances Constatations & PAC",
         "abujaTargets": "Objectif d'Abuja #15"
       },
-      "findingsTrendsPlaceholder": "L'analyse des tendances des constatations inter-revues, les constatations courantes par domaine d'audit, les taux de clôture des PAC et la distribution par gravité apparaîtront ici.",
+      "findingsTrendsPlaceholder": "L'analyse des tendances des constatations inter-revues, les constatations courantes par domaine d'examen, les taux de clôture des PAC et la distribution par gravité apparaîtront ici.",
       "abujaTargetsPlaceholder": "Le suivi des KPI de l'Objectif de Sécurité d'Abuja #15 — taux de participation des ANSP, progrès des jalons de maturité SMS et suivi de la conformité régionale apparaîtront ici."
     },
     "refresh": "Actualiser",
@@ -6686,7 +6686,7 @@
     "openFindingsLabel": "Constats Ouverts",
     "closedFindings": "Constats Fermés",
     "avgResolutionTime": "Temps de Résolution Moyen",
-    "findingsByArea": "Constats par Domaine d'Audit",
+    "findingsByArea": "Constats par Domaine d'Examen",
     "capsByStatus": "PAC par Statut",
     "totalCAPsCount": "Total : {count} PAC",
     "capMetrics": "Métriques des PAC",
@@ -6908,10 +6908,10 @@
     "title": "Auto-Évaluations",
     "description": "Gérer et suivre les auto-évaluations des organisations",
     "combinedTitle": "Questionnaires & Évaluations",
-    "combinedSubtitle": "Parcourez les cadres OACI USOAP CMA et CANSO SoE, gérez les auto-évaluations.",
+    "combinedSubtitle": "Parcourez les Questions de Protocole ANS AAPRP et les cadres CANSO SoE, gérez les auto-évaluations.",
     "tabs": {
       "myAssessments": "Mes Évaluations",
-      "usoap": "Questions USOAP CMA",
+      "usoap": "Questions Protocole ANS",
       "cansoSoe": "Cadre CANSO SoE"
     },
     "createAssessment": "Créer une Évaluation",
@@ -6926,7 +6926,7 @@
       "completed": "Terminé",
       "selectType": "Filtrer par type",
       "allTypes": "Tous les Types de Questionnaire",
-      "ansUsoap": "ANS (USOAP CMA)",
+      "ansUsoap": "ANS (Questions de Protocole)",
       "smsCanso": "SMS (CANSO SoE)",
       "clearFilters": "Effacer les Filtres"
     },
@@ -6968,7 +6968,7 @@
       "selectOrganization": "Organisation",
       "selectOrganizationPlaceholder": "Sélectionnez une organisation...",
       "organizationSelected": "L'évaluation sera créée pour {name}",
-      "questionnaireDescANS": "Basé sur les Questions de Protocole USOAP CMA 2024 de l'OACI pour les Services de Navigation Aérienne",
+      "questionnaireDescANS": "Basé sur les Questions de Protocole ANS AAPRP organisées par domaine d'examen",
       "questionnaireDescSMS": "Basé sur la Norme d'Excellence CANSO en Systèmes de Gestion de la Sécurité 2024",
       "assessmentTitle": "Titre de l'Évaluation",
       "titleHint": "Un titre descriptif aide à identifier cette évaluation ultérieurement",
@@ -7016,7 +7016,7 @@
     "filters": {
       "searchPlaceholder": "Rechercher des pratiques...",
       "allCategories": "Toutes les catégories",
-      "allAreas": "Tous les domaines",
+      "allAreas": "Tous les domaines d'examen",
       "sortNewest": "Plus récentes",
       "sortPopular": "Plus consultées",
       "sortMostAdopted": "Plus adoptées",
@@ -7219,8 +7219,8 @@
         "summaryFr": "Résumé (Français)",
         "summaryHelp": "Un bref aperçu qui apparaîtra dans les résultats de recherche (max 500 caractères)",
         "category": "Catégorie",
-        "auditArea": "Domaine d'audit (Facultatif)",
-        "noAuditArea": "Non spécifique à un domaine d'audit",
+        "auditArea": "Domaine d'examen (Facultatif)",
+        "noAuditArea": "Non spécifique à un domaine d'examen",
         "tags": "Étiquettes",
         "descriptionEn": "Description (Anglais)",
         "descriptionFr": "Description (Français)",
@@ -7236,7 +7236,7 @@
         "summaryEn": "Décrivez brièvement ce que cette pratique accomplit...",
         "summaryFr": "Décrivez brièvement ce que cette pratique accomplit...",
         "category": "Sélectionnez une catégorie",
-        "auditArea": "Sélectionnez un domaine d'audit",
+        "auditArea": "Sélectionnez un domaine d'examen",
         "tags": "Tapez une étiquette et appuyez sur Entrée",
         "descriptionEn": "Fournissez une description détaillée de la pratique...",
         "descriptionFr": "Fournissez une description détaillée de la pratique...",
@@ -7281,7 +7281,7 @@
     },
     "title": "Leçons Apprises",
     "description": "Base de connaissances consultable des leçons extraites des rétrospectives d'évaluations par les pairs. Apprenez de l'expérience des ANSP à travers l'Afrique.",
-    "searchPlaceholder": "Rechercher par mot-clé, sujet ou domaine d'audit...",
+    "searchPlaceholder": "Rechercher par mot-clé, sujet ou domaine d'examen...",
     "tabs": {
       "search": "Recherche",
       "knowledgeBase": "Base de Connaissances",
@@ -7364,7 +7364,7 @@
       "reviewContext": "Contexte de l'Évaluation",
       "reviewRef": "Issue de l'évaluation",
       "classification": "Classification",
-      "auditArea": "Domaine d'audit",
+      "auditArea": "Domaine d'examen",
       "soeArea": "Domaine d'étude SoE",
       "reviewPhase": "Phase d'évaluation",
       "hostRegion": "Région hôte",
@@ -7758,7 +7758,7 @@
     },
     "questionnairesAssessments": {
       "title": "Questionnaires & Évaluations",
-      "description": "Parcourez les Questions de Protocole OACI USOAP CMA et les cadres CANSO SoE, et gérez vos auto-évaluations."
+      "description": "Parcourez les Questions de Protocole ANS AAPRP et les cadres CANSO SoE, et gérez vos auto-évaluations."
     },
     "peerReviews": {
       "title": "Évaluations par les Pairs",
@@ -7778,7 +7778,7 @@
     },
     "assessments": {
       "title": "Auto-évaluations",
-      "description": "Créez et gérez les évaluations selon les cadres OACI USOAP et CANSO SoE pour votre organisation."
+      "description": "Créez et gérez les évaluations selon les cadres Protocole ANS AAPRP et CANSO SoE pour votre organisation."
     },
     "findings": {
       "title": "Constats",
@@ -7806,7 +7806,7 @@
     },
     "training": {
       "title": "Modules de Formation",
-      "description": "Accédez aux supports de formation couvrant la méthodologie OACI USOAP, CANSO SoE et les bonnes pratiques de revue."
+      "description": "Accédez aux supports de formation couvrant la méthodologie d'examen AAPRP, CANSO SoE et les bonnes pratiques de revue."
     },
     "shortcuts": {
       "title": "Raccourcis Clavier",
@@ -7857,7 +7857,7 @@
     },
     "questionnaires": {
       "title": "Questionnaires",
-      "description": "Accédez aux questionnaires OACI USOAP CMA et CANSO SoE utilisés pour les auto-évaluations et revues par les pairs."
+      "description": "Accédez aux questionnaires Protocole ANS AAPRP et CANSO SoE utilisés pour les auto-évaluations et revues par les pairs."
     },
     "settings": {
       "title": "Paramètres",
@@ -7978,7 +7978,7 @@
       "trendSubtitle": "Progression trimestrielle sur toutes les dimensions",
       "maturityDistTitle": "Distribution de la Maturité SMS",
       "maturityDistSubtitle": "Niveaux CANSO SoE par ANSP",
-      "radarTitle": "Comparaison Régionale EI par Domaine d'Audit",
+      "radarTitle": "Comparaison Régionale EI par Domaine d'Examen",
       "radarSubtitle": "Diagramme radar montrant forces et lacunes par région",
       "systemicTitle": "Problèmes Systémiques Principaux",
       "systemicSubtitle": "Tendances inter-ANSP identifiées par les examens par les pairs",
@@ -8001,7 +8001,7 @@
       "aboveAverage": "Au-dessus de la moyenne"
     },
     "findingsAnalysis": {
-      "byAreaTitle": "Constats par Domaine d'Audit et Sévérité",
+      "byAreaTitle": "Constats par Domaine d'Examen et Sévérité",
       "byAreaSubtitle": "Cliquez sur une barre pour un détail approfondi",
       "severityTitle": "Distribution de la Sévérité",
       "areaBreakdown": "Détail du Domaine {area}",
@@ -8029,7 +8029,7 @@
     "teams": {
       "ledBy": "Dirigé par {name}",
       "members": "{count} ANSP",
-      "eiByArea": "EI par Domaine d'Audit",
+      "eiByArea": "EI par Domaine d'Examen",
       "memberPerformance": "Performance des ANSP Membres",
       "programmeAvg": "Moy. Programme"
     },
@@ -8051,7 +8051,7 @@
     "footer": {
       "version": "Intelligence Sécurité AAPRP v1.0",
       "dataSource": "Données agrégées de {count} ANSP participants",
-      "frameworks": "OACI USOAP CMA 2024 & CANSO SoE 2024"
+      "frameworks": "Protocole ANS AAPRP 2024 & CANSO SoE 2024"
     }
   }
 }

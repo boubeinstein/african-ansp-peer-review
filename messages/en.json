@@ -2851,6 +2851,8 @@
       "expertiseHelp": {
         "ATS": "Air Traffic Services - Control tower, approach, and area control operations",
         "AIM_AIS": "Aeronautical Information Management - NOTAMs, charts, publications management",
+        "FPD": "Flight Procedures Design - Instrument approach and departure procedure design",
+        "MAP": "Aeronautical Charts - Production and maintenance of aeronautical charts",
         "MET": "Meteorology - Aviation weather services, forecasting, and briefing",
         "CNS": "Communications, Navigation, Surveillance - Technical systems and infrastructure",
         "SAR": "Search and Rescue - Emergency response coordination and procedures",

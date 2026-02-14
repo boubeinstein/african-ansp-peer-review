@@ -2851,6 +2851,8 @@
       "expertiseHelp": {
         "ATS": "Services de la circulation aérienne - Tour de contrôle, approche et contrôle régional",
         "AIM_AIS": "Gestion de l'information aéronautique - NOTAM, cartes, gestion des publications",
+        "FPD": "Conception des procédures de vol - Conception des procédures d'approche et de départ aux instruments",
+        "MAP": "Cartes aéronautiques - Production et maintenance des cartes aéronautiques",
         "MET": "Météorologie - Services météo aviation, prévisions et briefings",
         "CNS": "Communications, Navigation, Surveillance - Systèmes et infrastructures techniques",
         "SAR": "Recherche et Sauvetage - Coordination des interventions d'urgence",

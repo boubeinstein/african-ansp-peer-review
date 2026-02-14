@@ -158,21 +158,22 @@ src/components/features/{feature}/
 ### Dual Questionnaire System
 | Type | Framework | Structure |
 |------|-----------|-----------|
-| `ANS_USOAP_CMA` | ICAO 2024 USOAP CMA | 851 PQs, 9 audit areas, 8 Critical Elements |
+| `ANS_USOAP_CMA` | AFI ANSP Peer Review ANS Questionnaire | PQs across 7 review areas (ATS, FPD, AIS, MAP, MET, CNS, SAR) |
 | `SMS_CANSO_SOE` | CANSO SoE 2024 | 4 components, 13 study areas, 5 maturity levels (A-E) |
 
-### USOAP CMA 2024 Audit Areas
-| Code | Area | Focus |
-|------|------|-------|
-| LEG | Legislation | Primary aviation legislation |
-| ORG | Organization | Civil aviation organization |
-| PEL | Personnel | Licensing and training |
-| OPS | Operations | Aircraft operations |
-| AIR | Airworthiness | Aircraft airworthiness |
-| AIG | Investigation | Accident/incident investigation |
-| ANS | Air Navigation | Air navigation services |
-| AGA | Aerodromes | Aerodromes and ground aids |
-| SSP | Safety Programme | State Safety Programme (NEW in 2024) |
+### AAPRP Review Areas (Programme Manual Section 1.6)
+| Code | Review Area | Questionnaire Source |
+|------|-------------|---------------------|
+| ATS | Air Traffic Services | ANS (ATM PQs) |
+| FPD | Flight Procedures Design | ANS (PANS-OPS/IFPD PQs) |
+| AIS | Aeronautical Information Service | ANS (AIS PQs) |
+| MAP | Aeronautical Charts | ANS (Chart PQs) |
+| MET | Meteorological Service | ANS (MET PQs) |
+| CNS | Communications, Navigation, Surveillance | ANS (CNS PQs) |
+| SAR | Search and Rescue | ANS (SAR PQs) |
+| SMS | Safety Management System | CANSO SoE |
+
+> **Note**: The `USOAPAuditArea` enum (LEG, ORG, PEL, OPS, AIR, AIG, ANS, AGA, SSP) is retained as ICAO reference metadata. The primary classification for peer reviews uses `ANSReviewArea`.
 
 ### CANSO SoE SMS Components
 | Component | Study Areas |
@@ -372,6 +373,7 @@ git push origin feature/peer-review-module
 | ASECNA | Agency for Aerial Navigation Safety in Africa and Madagascar (18 member states) |
 | WACAF | Western and Central Africa |
 | ESAF | Eastern and Southern Africa |
+| ANSReviewArea | The 8 AAPRP review areas: ATS, FPD, AIS, MAP, MET, CNS, SAR, SMS |
 
 ---
 

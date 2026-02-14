@@ -2052,6 +2052,8 @@ enum COISeverity {
 enum ExpertiseArea {
   ATS
   AIM_AIS
+  FPD
+  MAP
   MET
   CNS
   PANS_OPS

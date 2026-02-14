@@ -30,6 +30,8 @@ export const reviewerTypeSchema = z.enum([
 export const expertiseAreaSchema = z.enum([
   "ATS",
   "AIM_AIS",
+  "FPD",
+  "MAP",
   "MET",
   "CNS",
   "PANS_OPS",

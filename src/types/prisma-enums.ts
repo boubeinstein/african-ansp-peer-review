@@ -275,6 +275,8 @@ export type COISeverity = (typeof COISeverity)[keyof typeof COISeverity];
 export const ExpertiseArea = {
   ATS: "ATS",
   AIM_AIS: "AIM_AIS",
+  FPD: "FPD",
+  MAP: "MAP",
   MET: "MET",
   CNS: "CNS",
   PANS_OPS: "PANS_OPS",

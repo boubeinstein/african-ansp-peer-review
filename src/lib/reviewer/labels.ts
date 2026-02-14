@@ -36,6 +36,14 @@ export const EXPERTISE_AREA_LABELS: Record<ExpertiseArea, BilingualLabel> = {
     en: "Aeronautical Information Management",
     fr: "Gestion de l'information aéronautique",
   },
+  FPD: {
+    en: "Flight Procedures Design",
+    fr: "Conception des procédures de vol",
+  },
+  MAP: {
+    en: "Aeronautical Charts",
+    fr: "Cartes aéronautiques",
+  },
   MET: {
     en: "Meteorology",
     fr: "Météorologie",
@@ -97,6 +105,8 @@ export const EXPERTISE_AREA_LABELS: Record<ExpertiseArea, BilingualLabel> = {
 export const EXPERTISE_AREA_ABBREV: Record<ExpertiseArea, string> = {
   ATS: "ATS",
   AIM_AIS: "AIM",
+  FPD: "FPD",
+  MAP: "MAP",
   MET: "MET",
   CNS: "CNS",
   SAR: "SAR",
@@ -376,7 +386,7 @@ export function getExpertiseAreasByCategory(locale: "en" | "fr" = "en"): {
   return [
     {
       category: locale === "en" ? "Air Navigation Services" : "Services de navigation aérienne",
-      areas: (["ATS", "AIM_AIS", "MET", "CNS", "SAR", "PANS_OPS"] as ExpertiseArea[]).map((area) => ({
+      areas: (["ATS", "AIM_AIS", "FPD", "MAP", "MET", "CNS", "SAR", "PANS_OPS"] as ExpertiseArea[]).map((area) => ({
         value: area,
         label: EXPERTISE_AREA_LABELS[area][locale],
         abbrev: EXPERTISE_AREA_ABBREV[area],
@@ -421,6 +431,8 @@ export function canConductReviewInLanguage(
 export const ANS_EXPERTISE_AREAS: ExpertiseArea[] = [
   "ATS",
   "AIM_AIS",
+  "FPD",
+  "MAP",
   "MET",
   "CNS",
   "SAR",

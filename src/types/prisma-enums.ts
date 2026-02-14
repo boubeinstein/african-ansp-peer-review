@@ -111,6 +111,18 @@ export const USOAPAuditArea = {
 } as const;
 export type USOAPAuditArea = (typeof USOAPAuditArea)[keyof typeof USOAPAuditArea];
 
+export const ANSReviewArea = {
+  ATS: "ATS",
+  FPD: "FPD",
+  AIS: "AIS",
+  MAP: "MAP",
+  MET: "MET",
+  CNS: "CNS",
+  SAR: "SAR",
+  SMS: "SMS",
+} as const;
+export type ANSReviewArea = (typeof ANSReviewArea)[keyof typeof ANSReviewArea];
+
 export const CriticalElement = {
   CE_1: "CE_1",
   CE_2: "CE_2",

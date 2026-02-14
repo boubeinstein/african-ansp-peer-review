@@ -99,7 +99,7 @@ export interface FindingInfo {
   title: string;
   severity: "CRITICAL" | "MAJOR" | "MINOR" | "OBSERVATION";
   type: "NON_CONFORMITY" | "CONCERN" | "OBSERVATION" | "GOOD_PRACTICE";
-  auditArea: string;
+  reviewArea: string;
   description: string;
   evidence: string;
   icaoReference?: string;
@@ -148,7 +148,7 @@ export interface BestPracticeInfo {
   id: string;
   reference: string;
   title: string;
-  auditArea: string;
+  reviewArea: string;
   description: string;
   benefit: string;
   applicability: string;

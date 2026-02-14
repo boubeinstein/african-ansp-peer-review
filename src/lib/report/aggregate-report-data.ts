@@ -148,7 +148,7 @@ export async function aggregateReportData(
             },
           },
           question: {
-            select: { auditArea: true },
+            select: { reviewArea: true },
           },
           bestPractice: true,
         },
@@ -176,7 +176,7 @@ export async function aggregateReportData(
         include: {
           question: {
             select: {
-              auditArea: true,
+              reviewArea: true,
               criticalElement: true,
               pqNumber: true,
             },
@@ -326,20 +326,20 @@ function buildANSAssessment(assessment: any, locale: "en" | "fr"): ANSAssessment
       overallEIScore: null,
       previousEIScore: null,
       eiDelta: null,
-      byAuditArea: [],
+      byReviewArea: [],
       byCriticalElement: [],
       narrativeEn: "",
       narrativeFr: "",
     };
   }
 
-  // Group responses by audit area
+  // Group responses by review area
   const byArea: Record<string, { satisfactory: number; notSatisfactory: number; notApplicable: number }> = {};
   // Group responses by critical element
   const byCE: Record<string, { satisfactory: number; notSatisfactory: number; notApplicable: number }> = {};
 
   for (const response of assessment.responses) {
-    const area = response.question?.auditArea || "UNKNOWN";
+    const area = response.question?.reviewArea || "UNKNOWN";
     const ce = response.question?.criticalElement;
 
     if (!byArea[area]) {
@@ -368,7 +368,7 @@ function buildANSAssessment(assessment: any, locale: "en" | "fr"): ANSAssessment
     }
   }
 
-  // Calculate EI per audit area: (satisfactory / applicable) * 100
+  // Calculate EI per review area: (satisfactory / applicable) * 100
   const areaResults = Object.entries(byArea)
     .filter(([code]) => code !== "UNKNOWN")
     .map(([code, counts]) => {
@@ -423,7 +423,7 @@ function buildANSAssessment(assessment: any, locale: "en" | "fr"): ANSAssessment
     overallEIScore: overallEI,
     previousEIScore: previousEI,
     eiDelta: previousEI != null ? Math.round((overallEI - previousEI) * 100) / 100 : null,
-    byAuditArea: areaResults,
+    byReviewArea: areaResults,
     byCriticalElement: ceResults,
     narrativeEn: generateANSNarrative(overallEI, areaResults, "en"),
     narrativeFr: generateANSNarrative(overallEI, areaResults, "fr"),
@@ -520,7 +520,7 @@ function buildSMSAssessment(assessment: any, locale: "en" | "fr"): SMSAssessment
 function buildFindingsSummary(findings: any[]): FindingsSummarySection {
   const byType: Record<string, number> = {};
   const bySeverity: Record<string, number> = {};
-  const byAuditArea: Record<string, number> = {};
+  const byReviewArea: Record<string, number> = {};
   const byStatus: Record<string, number> = {};
   let criticalAndMajorCount = 0;
   let capRequiredCount = 0;
@@ -530,8 +530,8 @@ function buildFindingsSummary(findings: any[]): FindingsSummarySection {
     bySeverity[f.severity] = (bySeverity[f.severity] || 0) + 1;
     byStatus[f.status] = (byStatus[f.status] || 0) + 1;
 
-    const area = f.question?.auditArea || "GENERAL";
-    byAuditArea[area] = (byAuditArea[area] || 0) + 1;
+    const area = f.reviewArea || "GENERAL";
+    byReviewArea[area] = (byReviewArea[area] || 0) + 1;
 
     if (f.severity === "CRITICAL" || f.severity === "MAJOR") {
       criticalAndMajorCount++;
@@ -545,7 +545,7 @@ function buildFindingsSummary(findings: any[]): FindingsSummarySection {
     totalFindings: findings.length,
     byType,
     bySeverity,
-    byAuditArea,
+    byReviewArea,
     byStatus,
     criticalAndMajorCount,
     capRequiredCount,
@@ -555,8 +555,8 @@ function buildFindingsSummary(findings: any[]): FindingsSummarySection {
 function buildFindingsDetail(findings: any[], locale: "en" | "fr"): FindingDetail[] {
   return findings.map((f: any) => {
     const cap = f.correctiveActionPlan;
-    const auditAreaCode = f.question?.auditArea || "";
-    const areaName = AUDIT_AREA_NAMES[auditAreaCode];
+    const reviewAreaCode = f.reviewArea || "";
+    const areaName = AUDIT_AREA_NAMES[reviewAreaCode];
     const ceName = f.criticalElement ? CRITICAL_ELEMENT_NAMES[f.criticalElement] : null;
 
     return {
@@ -565,7 +565,7 @@ function buildFindingsDetail(findings: any[], locale: "en" | "fr"): FindingDetai
       description: locale === "en" ? f.descriptionEn : f.descriptionFr,
       type: f.findingType,
       severity: f.severity,
-      auditArea: areaName ? (locale === "en" ? areaName.en : areaName.fr) : auditAreaCode,
+      reviewArea: areaName ? (locale === "en" ? areaName.en : areaName.fr) : reviewAreaCode,
       criticalElement: ceName
         ? (locale === "en" ? ceName.en : ceName.fr)
         : (f.criticalElement?.replace("_", "-") || ""),
@@ -632,8 +632,8 @@ function buildBestPractices(findings: any[], locale: "en" | "fr"): BestPractices
     .filter((f: any) => f.findingType === "GOOD_PRACTICE")
     .map((f: any) => {
       const bp = f.bestPractice;
-      const auditAreaCode = f.question?.auditArea || "";
-      const areaName = AUDIT_AREA_NAMES[auditAreaCode];
+      const reviewAreaCode = f.reviewArea || "";
+      const areaName = AUDIT_AREA_NAMES[reviewAreaCode];
 
       return {
         title: bp
@@ -642,7 +642,7 @@ function buildBestPractices(findings: any[], locale: "en" | "fr"): BestPractices
         description: bp
           ? (locale === "en" ? bp.descriptionEn : bp.descriptionFr)
           : (locale === "en" ? f.descriptionEn : f.descriptionFr),
-        auditArea: areaName ? (locale === "en" ? areaName.en : areaName.fr) : auditAreaCode,
+        reviewArea: areaName ? (locale === "en" ? areaName.en : areaName.fr) : reviewAreaCode,
         applicability: bp
           ? (locale === "en" ? bp.benefitsEn : bp.benefitsFr)
           : (locale === "en"
@@ -759,15 +759,15 @@ function buildMethodology(review: any, ansAssessment: any, locale: "en" | "fr"):
     });
   }
 
-  // Build audit area list with PQ counts
+  // Build review area list with PQ counts
   const allAreas = Object.keys(AUDIT_AREA_NAMES);
   const scopeAreas = review.areasInScope.length > 0 ? review.areasInScope : allAreas;
 
-  const auditAreas = allAreas.map((code: string) => {
+  const reviewAreas = allAreas.map((code: string) => {
     const name = AUDIT_AREA_NAMES[code];
     // Count PQs from assessment responses if available
     const pqCount = ansAssessment
-      ? ansAssessment.responses.filter((r: any) => r.question?.auditArea === code).length
+      ? ansAssessment.responses.filter((r: any) => r.question?.reviewArea === code).length
       : 0;
 
     return {
@@ -781,7 +781,7 @@ function buildMethodology(review: any, ansAssessment: any, locale: "en" | "fr"):
   return {
     approachDescription: { contentEn: descEn, contentFr: descFr },
     frameworksUsed,
-    auditAreas,
+    reviewAreas,
     evidenceTypes: [
       locale === "en" ? "Policies and procedures" : "Politiques et procédures",
       locale === "en" ? "Operational records" : "Registres opérationnels",

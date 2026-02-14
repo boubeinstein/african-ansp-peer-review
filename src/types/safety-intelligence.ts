@@ -10,7 +10,7 @@ export interface ProgrammeKPIs {
   totalReviews: number;
   activeReviews: number;
   completedReviews: number;
-  averageEIScore: number | null;       // USOAP CMA Effective Implementation %
+  averageEIScore: number | null;       // ANS Protocol Effective Implementation %
   averageSMSMaturity: number | null;   // CANSO SoE average (1-5 scale)
   totalFindings: number;
   openFindings: number;
@@ -34,9 +34,9 @@ export interface ANSPPerformanceRecord {
   teamId: string | null;
   teamNumber: number | null;
 
-  // USOAP CMA scores
+  // ANS Protocol scores
   latestEIScore: number | null;
-  eiScoreByArea: Record<string, number>;  // audit_area -> EI%
+  eiScoreByArea: Record<string, number>;  // review_area -> EI%
   eiTrend: number | null;                 // change from previous assessment
 
   // CANSO SoE scores
@@ -74,8 +74,8 @@ export interface RegionalTeamSummary {
   criticalFindings: number;
   averageCAPClosureRate: number | null;
 
-  // Per-audit-area averages
-  eiByAuditArea: Record<string, number>;
+  // Per-review-area averages
+  eiByReviewArea: Record<string, number>;
 
   // Per-SMS-component averages
   smsByComponent: Record<string, number>;
@@ -87,7 +87,7 @@ export interface RegionalTeamSummary {
 
 /** Finding pattern data for analysis */
 export interface FindingPatternData {
-  auditArea: string;
+  reviewArea: string;
   criticalCount: number;
   majorCount: number;
   minorCount: number;
@@ -98,8 +98,7 @@ export interface FindingPatternData {
 /** Systemic issue identified across multiple ANSPs */
 export interface SystemicIssue {
   id: string;
-  auditArea: string | null;
-  criticalElement: string | null;
+  reviewArea: string | null;
   titleEn: string;
   titleFr: string;
   severity: FindingSeverity;

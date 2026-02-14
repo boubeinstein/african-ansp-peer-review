@@ -5,7 +5,7 @@
  *
  * Professional findings display with:
  * - Summary cards (total, by type, by severity, CAP required)
- * - Findings by audit area breakdown
+ * - Findings by review area breakdown
  * - Sortable, filterable detail table with expandable rows
  * - CSV export
  *
@@ -72,7 +72,7 @@ const SEVERITY_ORDER: Record<string, number> = {
   OBSERVATION: 3,
 };
 
-type SortField = "reference" | "type" | "severity" | "auditArea" | "status";
+type SortField = "reference" | "type" | "severity" | "reviewArea" | "status";
 type SortDirection = "asc" | "desc";
 
 // =============================================================================
@@ -150,12 +150,12 @@ function SummaryCards({ content }: { content: ReportContent }) {
         </CardContent>
       </Card>
 
-      {/* By Audit Area */}
+      {/* By Review Area */}
       <Card>
         <CardContent className="pt-6">
-          <p className="text-xs text-muted-foreground mb-2">{t("byAuditArea")}</p>
+          <p className="text-xs text-muted-foreground mb-2">{t("byReviewArea")}</p>
           <div className="space-y-1">
-            {Object.entries(summary.byAuditArea)
+            {Object.entries(summary.byReviewArea)
               .sort(([, a], [, b]) => b - a)
               .map(([area, count]) => (
                 <div key={area} className="flex items-center justify-between text-sm">
@@ -180,14 +180,14 @@ interface Filters {
   type: string;
   severity: string;
   status: string;
-  auditArea: string;
+  reviewArea: string;
 }
 
 const EMPTY_FILTERS: Filters = {
   type: "ALL",
   severity: "ALL",
   status: "ALL",
-  auditArea: "ALL",
+  reviewArea: "ALL",
 };
 
 function FilterBar({
@@ -204,7 +204,7 @@ function FilterBar({
   const types = useMemo(() => [...new Set(findings.map((f) => f.type))].filter(Boolean).sort(), [findings]);
   const severities = useMemo(() => [...new Set(findings.map((f) => f.severity))].filter(Boolean).sort(), [findings]);
   const statuses = useMemo(() => [...new Set(findings.map((f) => f.status))].filter(Boolean).sort(), [findings]);
-  const auditAreas = useMemo(() => [...new Set(findings.map((f) => f.auditArea))].filter(Boolean).sort(), [findings]);
+  const reviewAreas = useMemo(() => [...new Set(findings.map((f) => f.reviewArea))].filter(Boolean).sort(), [findings]);
 
   const hasActiveFilters = Object.values(filters).some((v) => v !== "ALL");
 
@@ -254,13 +254,13 @@ function FilterBar({
         </SelectContent>
       </Select>
 
-      <Select value={filters.auditArea} onValueChange={(v) => onFiltersChange({ ...filters, auditArea: v })}>
+      <Select value={filters.reviewArea} onValueChange={(v) => onFiltersChange({ ...filters, reviewArea: v })}>
         <SelectTrigger className="w-[120px] h-8 text-xs">
-          <SelectValue placeholder={t("auditArea")} />
+          <SelectValue placeholder={t("reviewArea")} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="ALL">{t("allAuditAreas")}</SelectItem>
-          {auditAreas.map((area) => (
+          <SelectItem value="ALL">{t("allReviewAreas")}</SelectItem>
+          {reviewAreas.map((area) => (
             <SelectItem key={area} value={area}>
               {area}
             </SelectItem>
@@ -358,7 +358,7 @@ function FindingRow({ finding }: { finding: FindingDetail }) {
         </TableCell>
         <TableCell>
           <Badge variant="outline" className="font-mono text-xs">
-            {finding.auditArea}
+            {finding.reviewArea}
           </Badge>
         </TableCell>
         <TableCell>
@@ -446,7 +446,7 @@ function exportFindingsCSV(findings: FindingDetail[]) {
     "Title",
     "Type",
     "Severity",
-    "Audit Area",
+    "Review Area",
     "Critical Element",
     "ICAO Reference",
     "Status",
@@ -470,8 +470,8 @@ function exportFindingsCSV(findings: FindingDetail[]) {
       f.title,
       f.type,
       f.severity,
-      f.auditArea,
-      f.criticalElement,
+      f.reviewArea,
+      f.criticalElement || "",
       f.icaoReference,
       f.status,
       f.capRequired ? "Yes" : "No",
@@ -524,7 +524,7 @@ export function ReportFindingsTab({ content }: { content: ReportContent }) {
     if (filters.type !== "ALL") result = result.filter((f) => f.type === filters.type);
     if (filters.severity !== "ALL") result = result.filter((f) => f.severity === filters.severity);
     if (filters.status !== "ALL") result = result.filter((f) => f.status === filters.status);
-    if (filters.auditArea !== "ALL") result = result.filter((f) => f.auditArea === filters.auditArea);
+    if (filters.reviewArea !== "ALL") result = result.filter((f) => f.reviewArea === filters.reviewArea);
 
     // Sort
     result.sort((a, b) => {
@@ -539,8 +539,8 @@ export function ReportFindingsTab({ content }: { content: ReportContent }) {
         case "severity":
           cmp = (SEVERITY_ORDER[a.severity] ?? 99) - (SEVERITY_ORDER[b.severity] ?? 99);
           break;
-        case "auditArea":
-          cmp = a.auditArea.localeCompare(b.auditArea);
+        case "reviewArea":
+          cmp = a.reviewArea.localeCompare(b.reviewArea);
           break;
         case "status":
           cmp = a.status.localeCompare(b.status);
@@ -625,8 +625,8 @@ export function ReportFindingsTab({ content }: { content: ReportContent }) {
                       className="w-[100px]"
                     />
                     <SortableHeader
-                      field="auditArea"
-                      label={t("auditArea")}
+                      field="reviewArea"
+                      label={t("reviewArea")}
                       currentSort={sortField}
                       currentDirection={sortDir}
                       onSort={handleSort}

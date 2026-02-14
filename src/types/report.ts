@@ -1,6 +1,6 @@
 // ============================================================
 // AAPRP Peer Review Report — Structured Content Types
-// Aligned with ICAO USOAP CMA 2024 & CANSO SoE 2024
+// Aligned with AAPRP ANS Protocol & CANSO SoE 2024
 // ============================================================
 
 /** Top-level report content stored in ReviewReport.content */
@@ -97,8 +97,8 @@ export interface MethodologySection {
     version: string;
     description: string;
   }[];
-  auditAreas: {
-    code: string;                     // "ANS", "AGA", etc.
+  reviewAreas: {
+    code: string;                     // "ATS", "FPD", "AIS", etc.
     name: string;
     pqCount: number;                  // Number of Protocol Questions
     inScope: boolean;
@@ -121,14 +121,14 @@ export interface TeamMemberInfo {
   country: string;
 }
 
-/** Section 4: ANS Assessment (ICAO USOAP CMA) */
+/** Section 4: ANS Assessment (AAPRP ANS Protocol) */
 export interface ANSAssessmentSection {
   available: boolean;                 // Whether ANS data exists
   overallEIScore: number | null;      // 0-100 percentage
   previousEIScore: number | null;     // From prior review (if any)
   eiDelta: number | null;             // Change from previous
-  byAuditArea: {
-    code: string;                     // "LEG", "ORG", "PEL", etc.
+  byReviewArea: {
+    code: string;                     // "ATS", "FPD", "AIS", etc.
     name: string;
     eiScore: number;
     totalPQs: number;
@@ -172,7 +172,7 @@ export interface FindingsSummarySection {
   totalFindings: number;
   byType: Record<string, number>;     // NON_CONFORMITY: 2, OBSERVATION: 5, etc.
   bySeverity: Record<string, number>; // CRITICAL: 1, MAJOR: 3, etc.
-  byAuditArea: Record<string, number>;
+  byReviewArea: Record<string, number>;
   byStatus: Record<string, number>;
   criticalAndMajorCount: number;
   capRequiredCount: number;
@@ -189,8 +189,8 @@ export interface FindingDetail {
   description: string;
   type: string;                       // "NON_CONFORMITY", "OBSERVATION", etc.
   severity: string;                   // "CRITICAL", "MAJOR", "MINOR"
-  auditArea: string;
-  criticalElement: string;
+  reviewArea: string;
+  criticalElement?: string;
   icaoReference: string;              // ICAO Annex/Doc reference
   evidence: string;
   status: string;
@@ -224,7 +224,7 @@ export interface BestPracticesSection {
   practices: {
     title: string;
     description: string;
-    auditArea: string;
+    reviewArea: string;
     applicability: string;            // How other ANSPs could benefit
   }[];
 }

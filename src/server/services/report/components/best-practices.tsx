@@ -86,7 +86,7 @@ function BestPracticeCard({ practice, locale }: BestPracticeCardProps) {
         </View>
         <View style={bpStyles.areaBadge}>
           <Text style={{ fontSize: 8, color: colors.gray[600] }}>
-            {practice.auditArea}
+            {practice.reviewArea}
           </Text>
         </View>
       </View>

@@ -437,14 +437,14 @@ export async function getRegionalTeamSummaries(
       .map((m) => m.latestSMSMaturity)
       .filter((s): s is number => s !== null);
 
-    // Per-audit-area averages
-    const eiByAuditArea: Record<string, number[]> = {};
+    // Per-review-area averages
+    const eiByReviewArea: Record<string, number[]> = {};
     const smsByComponent: Record<string, number[]> = {};
 
     for (const member of members) {
       for (const [area, score] of Object.entries(member.eiScoreByArea)) {
-        if (!eiByAuditArea[area]) eiByAuditArea[area] = [];
-        eiByAuditArea[area].push(score);
+        if (!eiByReviewArea[area]) eiByReviewArea[area] = [];
+        eiByReviewArea[area].push(score);
       }
       for (const [comp, score] of Object.entries(member.smsScoreByComponent)) {
         if (!smsByComponent[comp]) smsByComponent[comp] = [];
@@ -453,7 +453,7 @@ export async function getRegionalTeamSummaries(
     }
 
     const eiByAreaAvg: Record<string, number> = {};
-    for (const [area, scores] of Object.entries(eiByAuditArea)) {
+    for (const [area, scores] of Object.entries(eiByReviewArea)) {
       const avg = average(scores);
       if (avg !== null) eiByAreaAvg[area] = Math.round(avg * 100) / 100;
     }
@@ -492,7 +492,7 @@ export async function getRegionalTeamSummaries(
         average(capRates) !== null
           ? Math.round(average(capRates)! * 100) / 100
           : null,
-      eiByAuditArea: eiByAreaAvg,
+      eiByReviewArea: eiByAreaAvg,
       smsByComponent: smsByCompAvg,
       eiRange:
         eiScores.length > 0
@@ -528,19 +528,18 @@ export async function getFindingPatterns(
     where: orgIds ? { organizationId: { in: orgIds } } : {},
     select: {
       severity: true,
-      question: { select: { auditArea: true } },
-      criticalElement: true,
+      reviewArea: true,
     },
   });
 
-  // Group by audit area
+  // Group by review area
   const byArea = new Map<
     string,
     { critical: number; major: number; minor: number; observation: number }
   >();
 
   for (const f of findings) {
-    const area = f.question?.auditArea ?? f.criticalElement ?? "UNKNOWN";
+    const area = f.reviewArea ?? "UNKNOWN";
     if (!byArea.has(area)) {
       byArea.set(area, { critical: 0, major: 0, minor: 0, observation: 0 });
     }
@@ -563,7 +562,7 @@ export async function getFindingPatterns(
 
   return [...byArea.entries()]
     .map(([area, counts]) => ({
-      auditArea: area,
+      reviewArea: area,
       criticalCount: counts.critical,
       majorCount: counts.major,
       minorCount: counts.minor,
@@ -592,20 +591,19 @@ export async function getSystemicIssues(
       severity: true,
       titleEn: true,
       titleFr: true,
-      criticalElement: true,
+      reviewArea: true,
       createdAt: true,
-      question: { select: { auditArea: true, id: true } },
+      question: { select: { reviewArea: true, id: true } },
     },
     orderBy: { createdAt: "asc" },
   });
 
-  // Group by question ID (or by audit area + criticalElement if no question)
+  // Group by question ID (or by review area if no question)
   const groups = new Map<
     string,
     {
       key: string;
-      auditArea: string | null;
-      criticalElement: string | null;
+      reviewArea: string | null;
       titleEn: string;
       titleFr: string;
       severity: (typeof findings)[number]["severity"];
@@ -615,13 +613,12 @@ export async function getSystemicIssues(
   >();
 
   for (const f of findings) {
-    const key = f.question?.id ?? `${f.question?.auditArea ?? "NONE"}_${f.criticalElement ?? "NONE"}`;
+    const key = f.question?.id ?? `${f.reviewArea ?? "NONE"}`;
 
     if (!groups.has(key)) {
       groups.set(key, {
         key,
-        auditArea: f.question?.auditArea ?? null,
-        criticalElement: f.criticalElement,
+        reviewArea: f.reviewArea ?? f.question?.reviewArea ?? null,
         titleEn: f.titleEn,
         titleFr: f.titleFr,
         severity: f.severity,
@@ -674,8 +671,7 @@ export async function getSystemicIssues(
 
     return {
       id: g.key,
-      auditArea: g.auditArea,
-      criticalElement: g.criticalElement,
+      reviewArea: g.reviewArea,
       titleEn: g.titleEn,
       titleFr: g.titleFr,
       severity: g.severity,

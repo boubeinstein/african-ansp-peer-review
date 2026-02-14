@@ -470,22 +470,22 @@ function MaturityDistribution({ teams }: MaturityDistributionProps) {
 // REGIONAL RADAR CHART
 // =============================================================================
 
-const AUDIT_AREAS = ["LEG", "ORG", "PEL", "OPS", "AIR", "AIG", "ANS", "AGA", "SSP"];
+const ANS_REVIEW_AREAS = ["ATS", "FPD", "AIS", "MAP", "MET", "CNS", "SAR"];
 
 interface RegionalRadarProps {
   teams: Array<{
     teamNumber: number;
     teamCode: string;
-    eiByAuditArea: Record<string, number>;
+    eiByReviewArea: Record<string, number>;
   }>;
 }
 
 function RegionalRadar({ teams }: RegionalRadarProps) {
-  // Build radar data: one row per audit area, one column per team
-  const radarData = AUDIT_AREAS.map((area) => {
+  // Build radar data: one row per review area, one column per team
+  const radarData = ANS_REVIEW_AREAS.map((area) => {
     const row: Record<string, string | number> = { area };
     for (const team of teams) {
-      row[`team${team.teamNumber}`] = team.eiByAuditArea[area] ?? 0;
+      row[`team${team.teamNumber}`] = team.eiByReviewArea[area] ?? 0;
     }
     return row;
   });
@@ -529,7 +529,7 @@ function RegionalRadar({ teams }: RegionalRadarProps) {
 interface SystemicIssuesListProps {
   issues: Array<{
     id: string;
-    auditArea: string | null;
+    reviewArea: string | null;
     titleEn: string;
     titleFr: string;
     severity: string;
@@ -587,9 +587,9 @@ function SystemicIssuesList({ issues }: SystemicIssuesListProps) {
         >
           <div className="space-y-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              {issue.auditArea && (
+              {issue.reviewArea && (
                 <Badge variant="outline" className="text-[10px] px-1.5 py-0">
-                  {issue.auditArea}
+                  {issue.reviewArea}
                 </Badge>
               )}
               <Badge

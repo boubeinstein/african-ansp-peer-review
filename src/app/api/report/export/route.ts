@@ -94,8 +94,8 @@ interface Labels {
   frameworksUsed: string;
   framework: string;
   version: string;
-  auditAreasInScope: string;
-  auditArea: string;
+  reviewAreasInScope: string;
+  reviewArea: string;
   code: string;
   pqs: string;
   inScope: string;
@@ -108,7 +108,7 @@ interface Labels {
   country: string;
   ansAssessment: string;
   overallEIScore: string;
-  eiByAuditArea: string;
+  eiByReviewArea: string;
   satisfactory: string;
   applicable: string;
   eiScore: string;
@@ -184,8 +184,8 @@ const LABELS_EN: Labels = {
   frameworksUsed: "Frameworks Used",
   framework: "Framework",
   version: "Version",
-  auditAreasInScope: "Audit Areas in Scope",
-  auditArea: "Audit Area",
+  reviewAreasInScope: "Review Areas in Scope",
+  reviewArea: "Review Area",
   code: "Code",
   pqs: "PQs",
   inScope: "In Scope",
@@ -198,7 +198,7 @@ const LABELS_EN: Labels = {
   country: "Country",
   ansAssessment: "ANS Assessment Results (ICAO USOAP CMA)",
   overallEIScore: "Overall Effective Implementation Score",
-  eiByAuditArea: "EI Score by Audit Area",
+  eiByReviewArea: "EI Score by Review Area",
   satisfactory: "Satisfactory",
   applicable: "Applicable",
   eiScore: "EI Score",
@@ -274,8 +274,8 @@ const LABELS_FR: Labels = {
   frameworksUsed: "Cadres Utilisés",
   framework: "Cadre",
   version: "Version",
-  auditAreasInScope: "Domaines d'Audit Couverts",
-  auditArea: "Domaine d'Audit",
+  reviewAreasInScope: "Domaines d'Examen Couverts",
+  reviewArea: "Domaine d'Examen",
   code: "Code",
   pqs: "PQs",
   inScope: "Inclus",
@@ -288,7 +288,7 @@ const LABELS_FR: Labels = {
   country: "Pays",
   ansAssessment: "Résultats de l'Évaluation ANS (OACI USOAP CMA)",
   overallEIScore: "Score Global de Mise en Œuvre Effective",
-  eiByAuditArea: "Score EI par Domaine d'Audit",
+  eiByReviewArea: "Score EI par Domaine d'Examen",
   satisfactory: "Satisfaisant",
   applicable: "Applicable",
   eiScore: "Score EI",
@@ -629,14 +629,14 @@ function buildDocx(report: ReportContent, locale: string): Document {
     );
   }
 
-  const inScopeAreas = meth.auditAreas.filter((a) => a.inScope);
+  const inScopeAreas = meth.reviewAreas.filter((a) => a.inScope);
   if (inScopeAreas.length > 0) {
     sec3.push(
-      heading2(L.auditAreasInScope, "3.3"),
+      heading2(L.reviewAreasInScope, "3.3"),
       new Table({
         rows: [
           new TableRow({
-            children: [headerCell(L.code, 1400), headerCell(L.auditArea), headerCell(L.pqs, 1400)],
+            children: [headerCell(L.code, 1400), headerCell(L.reviewArea), headerCell(L.pqs, 1400)],
             tableHeader: true,
           }),
           ...inScopeAreas.map(
@@ -712,15 +712,15 @@ function buildDocx(report: ReportContent, locale: string): Document {
       )
     );
 
-    if (ans.byAuditArea.length > 0) {
+    if (ans.byReviewArea.length > 0) {
       sec5.push(
-        heading2(L.eiByAuditArea, "5.2"),
+        heading2(L.eiByReviewArea, "5.2"),
         new Table({
           rows: [
             new TableRow({
               children: [
                 headerCell(L.code, 1200),
-                headerCell(L.auditArea),
+                headerCell(L.reviewArea),
                 headerCell(L.applicable, 1400),
                 headerCell(L.satisfactory, 1400),
                 headerCell(L.eiScore, 1400),
@@ -728,7 +728,7 @@ function buildDocx(report: ReportContent, locale: string): Document {
               ],
               tableHeader: true,
             }),
-            ...ans.byAuditArea.map((a) => {
+            ...ans.byReviewArea.map((a) => {
               const applicable = a.totalPQs - a.notApplicablePQs;
               const color = getEIColor(a.eiScore);
               const statusText = a.eiScore >= 80 ? "✓" : a.eiScore >= 60 ? "⚠" : "✗";
@@ -910,7 +910,7 @@ function buildDocx(report: ReportContent, locale: string): Document {
           rows: [
             new TableRow({ children: [headerCell(L.type), cell(f.type.replace(/_/g, " "))] }),
             new TableRow({ children: [headerCell(L.severity), cell(f.severity, { color: sevColor, bold: true })] }),
-            new TableRow({ children: [headerCell(L.auditArea), cell(f.auditArea)] }),
+            new TableRow({ children: [headerCell(L.reviewArea), cell(f.reviewArea)] }),
             new TableRow({ children: [headerCell(L.criticalElement), cell(f.criticalElement || "—")] }),
             new TableRow({ children: [headerCell(L.status), cell(f.status.replace(/_/g, " "))] }),
             new TableRow({ children: [headerCell(L.icaoRef), cell(f.icaoReference || "—")] }),
@@ -1013,13 +1013,13 @@ function buildDocx(report: ReportContent, locale: string): Document {
       new Table({
         rows: [
           new TableRow({
-            children: [headerCell(L.title), headerCell(L.auditArea, 1400), headerCell(L.description), headerCell(L.applicability)],
+            children: [headerCell(L.title), headerCell(L.reviewArea, 1400), headerCell(L.description), headerCell(L.applicability)],
             tableHeader: true,
           }),
           ...bp.practices.map(
             (p) =>
               new TableRow({
-                children: [cell(p.title, { bold: true }), cell(p.auditArea), cell(p.description), cell(p.applicability)],
+                children: [cell(p.title, { bold: true }), cell(p.reviewArea), cell(p.description), cell(p.applicability)],
               })
           ),
         ],

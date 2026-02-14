@@ -85,11 +85,11 @@ export function FindingsSummary({ review, locale }: ReportPageProps) {
   // Create a matrix of findings by area and severity
   const findingMatrix: Record<string, Record<string, number>> = {};
   findings.forEach((f) => {
-    if (!findingMatrix[f.auditArea]) {
-      findingMatrix[f.auditArea] = { CRITICAL: 0, MAJOR: 0, MINOR: 0, OBSERVATION: 0 };
+    if (!findingMatrix[f.reviewArea]) {
+      findingMatrix[f.reviewArea] = { CRITICAL: 0, MAJOR: 0, MINOR: 0, OBSERVATION: 0 };
     }
     if (f.type !== "GOOD_PRACTICE") {
-      findingMatrix[f.auditArea][f.severity]++;
+      findingMatrix[f.reviewArea][f.severity]++;
     }
   });
 
@@ -140,7 +140,7 @@ export function FindingsSummary({ review, locale }: ReportPageProps) {
       <View style={styles.table}>
         <View style={styles.tableHeader}>
           <Text style={{ ...styles.tableHeaderCell, flex: 3 }}>
-            {locale === "fr" ? "Domaine d'audit" : "Audit Area"}
+            {locale === "fr" ? "Domaine d'examen" : "Review Area"}
           </Text>
           {severityOrder.map((sev) => (
             <Text
@@ -307,13 +307,13 @@ function FindingCard({ finding, locale }: FindingCardProps) {
 
       {/* Body */}
       <View style={findingStyles.findingBody}>
-        {/* Audit Area and ICAO Reference */}
+        {/* Review Area and ICAO Reference */}
         <View style={{ flexDirection: "row", marginBottom: 10 }}>
           <View style={{ flex: 1 }}>
             <Text style={styles.label}>
-              {locale === "fr" ? "Domaine d'audit" : "Audit Area"}
+              {locale === "fr" ? "Domaine d'examen" : "Review Area"}
             </Text>
-            <Text style={styles.value}>{finding.auditArea}</Text>
+            <Text style={styles.value}>{finding.reviewArea}</Text>
           </View>
           {finding.icaoReference && (
             <View style={{ flex: 1 }}>

@@ -4,7 +4,7 @@
  * Report Scores Section Component
  *
  * Two-column layout displaying:
- * - Left: ANS USOAP CMA EI Scores by audit area
+ * - Left: ANS Protocol EI Scores by review area
  * - Right: SMS CANSO SoE Maturity by component
  */
 
@@ -49,7 +49,7 @@ interface ComponentScore {
 
 interface ANSScores {
   overallEI: number;
-  byAuditArea: Record<string, AuditAreaScore>;
+  byReviewArea: Record<string, AuditAreaScore>;
 }
 
 interface SMSScores {
@@ -68,15 +68,14 @@ interface ReportScoresSectionProps {
 // CONSTANTS
 // =============================================================================
 
-const AUDIT_AREA_LABELS: Record<string, { en: string; fr: string; abbrev: string }> = {
-  ANS: { en: "Air Navigation Services", fr: "Services de Navigation Aérienne", abbrev: "ANS" },
-  AGA: { en: "Aerodromes", fr: "Aérodromes", abbrev: "AGA" },
-  AIG: { en: "Aircraft Accident Investigation", fr: "Enquêtes sur les Accidents", abbrev: "AIG" },
-  AIR: { en: "Airworthiness", fr: "Navigabilité", abbrev: "AIR" },
-  OPS: { en: "Air Operations", fr: "Opérations Aériennes", abbrev: "OPS" },
-  PEL: { en: "Personnel Licensing", fr: "Licences du Personnel", abbrev: "PEL" },
-  LEG: { en: "Legislation", fr: "Législation", abbrev: "LEG" },
-  ORG: { en: "Organization", fr: "Organisation", abbrev: "ORG" },
+const REVIEW_AREA_LABELS: Record<string, { en: string; fr: string; abbrev: string }> = {
+  ATS: { en: "Air Traffic Services", fr: "Services de la Circulation Aérienne", abbrev: "ATS" },
+  FPD: { en: "Flight Procedures Design", fr: "Conception des Procédures de Vol", abbrev: "FPD" },
+  AIS: { en: "Aeronautical Information Service", fr: "Service d'Information Aéronautique", abbrev: "AIS" },
+  MAP: { en: "Aeronautical Charts", fr: "Cartes Aéronautiques", abbrev: "MAP" },
+  MET: { en: "Meteorological Service", fr: "Service Météorologique", abbrev: "MET" },
+  CNS: { en: "Communications, Navigation, Surveillance", fr: "Communications, Navigation et Surveillance", abbrev: "CNS" },
+  SAR: { en: "Search and Rescue", fr: "Recherche et Sauvetage", abbrev: "SAR" },
 };
 
 const SMS_COMPONENT_LABELS: Record<string, { en: string; fr: string; abbrev: string }> = {
@@ -145,10 +144,10 @@ function ANSScoresPanel({
   const t = useTranslations("report.scores");
 
   const chartData = useMemo(() => {
-    return Object.entries(scores.byAuditArea)
+    return Object.entries(scores.byReviewArea)
       .filter(([, data]) => data.total > 0)
       .map(([area, data]) => {
-        const label = AUDIT_AREA_LABELS[area];
+        const label = REVIEW_AREA_LABELS[area];
         return {
           area: label?.abbrev || area,
           name: locale === "fr" ? label?.fr : label?.en || area,
@@ -158,7 +157,7 @@ function ANSScoresPanel({
         };
       })
       .sort((a, b) => b.score - a.score);
-  }, [scores.byAuditArea, locale]);
+  }, [scores.byReviewArea, locale]);
 
   return (
     <Card>
@@ -425,7 +424,7 @@ export function ReportScoresSection({
 
   return (
     <div className={cn("grid grid-cols-1 lg:grid-cols-2 gap-6", className)}>
-      {/* ANS USOAP CMA Scores */}
+      {/* ANS Protocol Scores */}
       {ansScores ? (
         <ANSScoresPanel scores={ansScores} locale={locale} />
       ) : (

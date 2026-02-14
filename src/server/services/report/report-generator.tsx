@@ -217,6 +217,7 @@ async function getReviewWithAllDetails(reviewId: string): Promise<ReviewReportDa
     titleEn: string;
     severity: string;
     findingType: string;
+    reviewArea: string | null;
     descriptionEn: string;
     evidenceEn: string | null;
     icaoReference: string | null;
@@ -228,7 +229,7 @@ async function getReviewWithAllDetails(reviewId: string): Promise<ReviewReportDa
     title: f.titleEn,
     severity: f.severity as "CRITICAL" | "MAJOR" | "MINOR" | "OBSERVATION",
     type: f.findingType as "NON_CONFORMITY" | "CONCERN" | "OBSERVATION" | "GOOD_PRACTICE",
-    auditArea: "General", // Will need to determine from question or other source
+    reviewArea: f.reviewArea || "General",
     description: f.descriptionEn,
     evidence: f.evidenceEn || "",
     icaoReference: f.icaoReference || undefined,
@@ -249,8 +250,8 @@ async function getReviewWithAllDetails(reviewId: string): Promise<ReviewReportDa
     byArea: findings
       .filter((f: { type: string }) => f.type !== "GOOD_PRACTICE")
       .reduce(
-        (acc: Record<string, number>, f: { auditArea: string }) => {
-          acc[f.auditArea] = (acc[f.auditArea] || 0) + 1;
+        (acc: Record<string, number>, f: { reviewArea: string }) => {
+          acc[f.reviewArea] = (acc[f.reviewArea] || 0) + 1;
           return acc;
         },
         {} as Record<string, number>
@@ -296,11 +297,11 @@ async function getReviewWithAllDetails(reviewId: string): Promise<ReviewReportDa
   // Best practices
   const bestPractices = findings
     .filter((f: { type: string }) => f.type === "GOOD_PRACTICE")
-    .map((f: { id: string; reference: string; title: string; auditArea: string; description: string; evidence: string; recommendation?: string }) => ({
+    .map((f: { id: string; reference: string; title: string; reviewArea: string; description: string; evidence: string; recommendation?: string }) => ({
       id: f.id,
       reference: f.reference,
       title: f.title,
-      auditArea: f.auditArea,
+      reviewArea: f.reviewArea,
       description: f.description,
       benefit: f.evidence,
       applicability: f.recommendation || "Applicable to similar ANSP environments",

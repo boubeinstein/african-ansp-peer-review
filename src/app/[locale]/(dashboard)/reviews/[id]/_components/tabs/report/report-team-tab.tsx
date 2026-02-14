@@ -187,9 +187,9 @@ function ExpertiseCoverageMatrix({ content }: { content: ReportContent }) {
   const methodology = content.sections.methodology;
 
   // Get audit areas in scope
-  const auditAreas = useMemo(
-    () => methodology.auditAreas.filter((a) => a.inScope),
-    [methodology.auditAreas]
+  const reviewAreas = useMemo(
+    () => methodology.reviewAreas.filter((a: { inScope: boolean }) => a.inScope),
+    [methodology.reviewAreas]
   );
 
   // Collect all team members (lead + members)
@@ -203,7 +203,7 @@ function ExpertiseCoverageMatrix({ content }: { content: ReportContent }) {
   // Build coverage map: audit area code -> list of member names
   const coverageMap = useMemo(() => {
     const map = new Map<string, string[]>();
-    for (const area of auditAreas) {
+    for (const area of reviewAreas) {
       map.set(area.code, []);
     }
     for (const member of allMembers) {
@@ -215,9 +215,9 @@ function ExpertiseCoverageMatrix({ content }: { content: ReportContent }) {
       }
     }
     return map;
-  }, [auditAreas, allMembers]);
+  }, [reviewAreas, allMembers]);
 
-  if (auditAreas.length === 0) return null;
+  if (reviewAreas.length === 0) return null;
 
   const hasGaps = Array.from(coverageMap.values()).some(
     (members) => members.length === 0
@@ -250,7 +250,7 @@ function ExpertiseCoverageMatrix({ content }: { content: ReportContent }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {auditAreas.map((area) => {
+              {reviewAreas.map((area: { code: string; name: string; pqCount: number; inScope: boolean }) => {
                 const members = coverageMap.get(area.code) || [];
                 const isCovered = members.length > 0;
                 return (

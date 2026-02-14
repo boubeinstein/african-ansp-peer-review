@@ -4,7 +4,7 @@
  * Report Scores Tab
  *
  * Professional display of:
- * - ICAO USOAP CMA Effective Implementation (EI) scores by audit area & Critical Element
+ * - ANS Protocol Effective Implementation (EI) scores by review area
  * - CANSO SoE SMS Maturity levels by component with spider/radar chart
  *
  * Data sourced from ReportContent.sections.ansAssessment / smsAssessment.
@@ -132,7 +132,7 @@ function ANSAssessmentPanel({ ans, locale }: { ans: ANSAssessmentSection; locale
 
   // Prepare chart data sorted by score descending
   const chartData = useMemo(() => {
-    return [...ans.byAuditArea]
+    return [...ans.byReviewArea]
       .filter((area) => area.totalPQs > 0)
       .sort((a, b) => b.eiScore - a.eiScore)
       .map((area) => ({
@@ -145,7 +145,7 @@ function ANSAssessmentPanel({ ans, locale }: { ans: ANSAssessmentSection; locale
         notApplicable: area.notApplicablePQs,
         applicable: area.totalPQs - area.notApplicablePQs,
       }));
-  }, [ans.byAuditArea]);
+  }, [ans.byReviewArea]);
 
   // CE bar data
   const ceData = useMemo(() => {
@@ -212,11 +212,11 @@ function ANSAssessmentPanel({ ans, locale }: { ans: ANSAssessmentSection; locale
         </CardContent>
       </Card>
 
-      {/* EI by Audit Area — Horizontal Bar Chart */}
+      {/* EI by Review Area — Horizontal Bar Chart */}
       {chartData.length > 0 && (
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">{t("byAuditArea")}</CardTitle>
+            <CardTitle className="text-base">{t("byReviewArea")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="h-72">
@@ -622,7 +622,7 @@ export function ReportScoresTab({ content }: ReportScoresTabProps) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* ANS USOAP CMA — Left Column */}
+      {/* ANS Protocol — Left Column */}
       <div>
         {ans.available ? (
           <ANSAssessmentPanel ans={ans} locale={locale} />

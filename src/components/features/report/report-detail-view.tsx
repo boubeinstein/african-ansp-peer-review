@@ -125,7 +125,7 @@ interface ComponentScore {
 interface AssessmentScores {
   ans: {
     overallEI: number;
-    byAuditArea: Record<string, AuditAreaScore>;
+    byReviewArea: Record<string, AuditAreaScore>;
   } | null;
   sms: {
     overallMaturity: MaturityLevel | null;
@@ -698,7 +698,7 @@ export function ReportDetailView({
               page: t("print.page"),
               overallEI: t("scores.overallEI"),
               overallMaturity: t("scores.overallMaturity"),
-              auditArea: t("scores.byAuditArea"),
+              reviewArea: t("scores.byReviewArea"),
               score: t("scores.eiScore"),
               component: t("scores.byComponent"),
               maturityLevel: t("scores.maturityScore"),

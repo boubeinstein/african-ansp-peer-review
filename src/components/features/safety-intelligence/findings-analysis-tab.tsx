@@ -102,7 +102,7 @@ export function FindingsAnalysisTab({
   // Selected area detail
   const selectedAreaData = useMemo(() => {
     if (!selectedArea || !patterns) return null;
-    return patterns.find((p) => p.auditArea === selectedArea) ?? null;
+    return patterns.find((p) => p.reviewArea === selectedArea) ?? null;
   }, [selectedArea, patterns]);
 
   return (
@@ -138,7 +138,7 @@ export function FindingsAnalysisTab({
                 <CardTitle>
                   {selectedAreaData
                     ? t("findingsAnalysis.areaBreakdown", {
-                        area: selectedAreaData.auditArea,
+                        area: selectedAreaData.reviewArea,
                       })
                     : t("findingsAnalysis.severityTitle")}
                 </CardTitle>
@@ -194,12 +194,12 @@ export function FindingsAnalysisTab({
 }
 
 // =============================================================================
-// STACKED BAR CHART — Findings by Audit Area
+// STACKED BAR CHART — Findings by Review Area
 // =============================================================================
 
 interface StackedBarChartProps {
   data: Array<{
-    auditArea: string;
+    reviewArea: string;
     criticalCount: number;
     majorCount: number;
     minorCount: number;
@@ -215,12 +215,12 @@ function StackedBarChart({
   onSelectArea,
 }: StackedBarChartProps) {
   const chartData = data.map((d) => ({
-    area: d.auditArea,
+    area: d.reviewArea,
     Critical: d.criticalCount,
     Major: d.majorCount,
     Minor: d.minorCount,
     Observation: d.observationCount,
-    _selected: d.auditArea === selectedArea,
+    _selected: d.reviewArea === selectedArea,
   }));
 
   return (
@@ -343,7 +343,7 @@ function SeverityPieChart({ data, total: _total }: SeverityPieChartProps) {
 
 interface AreaBreakdownProps {
   data: {
-    auditArea: string;
+    reviewArea: string;
     criticalCount: number;
     majorCount: number;
     minorCount: number;

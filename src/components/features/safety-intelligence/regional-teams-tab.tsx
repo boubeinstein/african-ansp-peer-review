@@ -27,7 +27,7 @@ import {
 // CONSTANTS
 // =============================================================================
 
-const AUDIT_AREAS = ["LEG", "ORG", "PEL", "OPS", "AIR", "AIG", "ANS", "AGA", "SSP"];
+const ANS_REVIEW_AREAS = ["ATS", "FPD", "AIS", "MAP", "MET", "CNS", "SAR"];
 
 const TEAM_COLORS = [
   "#06b6d4",
@@ -137,7 +137,7 @@ interface TeamCardProps {
     totalFindings: number;
     criticalFindings: number;
     averageCAPClosureRate: number | null;
-    eiByAuditArea: Record<string, number>;
+    eiByReviewArea: Record<string, number>;
   };
   members: Array<{
     organizationId: string;
@@ -236,7 +236,7 @@ function TeamCard({ team, members, programmeAvgByArea, color }: TeamCardProps) {
                 {t("teams.eiByArea")}
               </p>
               <TeamVsProgrammeRadar
-                teamAreas={team.eiByAuditArea}
+                teamAreas={team.eiByReviewArea}
                 programmeAreas={programmeAvgByArea}
                 teamNumber={team.teamNumber}
                 color={color}
@@ -308,7 +308,7 @@ function TeamVsProgrammeRadar({
 }: TeamVsProgrammeRadarProps) {
   const t = useTranslations("safetyIntelligence");
 
-  const radarData = AUDIT_AREAS.map((area) => ({
+  const radarData = ANS_REVIEW_AREAS.map((area) => ({
     area,
     team: teamAreas[area] ?? 0,
     programme: programmeAreas[area] ?? 0,

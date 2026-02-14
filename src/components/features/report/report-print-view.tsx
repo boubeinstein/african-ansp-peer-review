@@ -84,7 +84,7 @@ interface ComponentScore {
 interface AssessmentScores {
   ans: {
     overallEI: number;
-    byAuditArea: Record<string, AuditAreaScore>;
+    byReviewArea: Record<string, AuditAreaScore>;
   } | null;
   sms: {
     overallMaturity: MaturityLevel | null;
@@ -152,7 +152,7 @@ interface ReportPrintViewProps {
     page: string;
     overallEI: string;
     overallMaturity: string;
-    auditArea: string;
+    reviewArea: string;
     score: string;
     component: string;
     maturityLevel: string;
@@ -175,15 +175,14 @@ interface ReportPrintViewProps {
 // CONSTANTS
 // =============================================================================
 
-const AUDIT_AREA_LABELS: Record<string, { en: string; fr: string }> = {
-  ANS: { en: "Air Navigation Services", fr: "Services de Navigation Aérienne" },
-  AGA: { en: "Aerodromes", fr: "Aérodromes" },
-  AIG: { en: "Aircraft Accident Investigation", fr: "Enquêtes sur les Accidents" },
-  AIR: { en: "Airworthiness", fr: "Navigabilité" },
-  OPS: { en: "Air Operations", fr: "Opérations Aériennes" },
-  PEL: { en: "Personnel Licensing", fr: "Licences du Personnel" },
-  LEG: { en: "Legislation", fr: "Législation" },
-  ORG: { en: "Organization", fr: "Organisation" },
+const REVIEW_AREA_LABELS: Record<string, { en: string; fr: string }> = {
+  ATS: { en: "Air Traffic Services", fr: "Services de la Circulation Aérienne" },
+  FPD: { en: "Flight Procedures Design", fr: "Conception des Procédures de Vol" },
+  AIS: { en: "Aeronautical Information Service", fr: "Service d'Information Aéronautique" },
+  MAP: { en: "Aeronautical Charts", fr: "Cartes Aéronautiques" },
+  MET: { en: "Meteorological Service", fr: "Service Météorologique" },
+  CNS: { en: "Communications, Navigation, Surveillance", fr: "Communications, Navigation et Surveillance" },
+  SAR: { en: "Search and Rescue", fr: "Recherche et Sauvetage" },
 };
 
 const SMS_COMPONENT_LABELS: Record<string, { en: string; fr: string }> = {
@@ -418,21 +417,21 @@ export const ReportPrintView = forwardRef<HTMLDivElement, ReportPrintViewProps>(
           <div className="two-column">
             {/* ANS Scores */}
             <div className="print-card">
-              <h3 style={{ marginBottom: "12pt" }}>ANS USOAP CMA - Effective Implementation</h3>
+              <h3 style={{ marginBottom: "12pt" }}>ANS Protocol - Effective Implementation</h3>
               {assessmentScores.ans ? (
                 <table>
                   <thead>
                     <tr>
-                      <th>{t.auditArea}</th>
+                      <th>{t.reviewArea}</th>
                       <th style={{ textAlign: "right" }}>{t.score}</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {Object.entries(assessmentScores.ans.byAuditArea)
+                    {Object.entries(assessmentScores.ans.byReviewArea)
                       .filter(([, data]) => data.total > 0)
                       .sort(([, a], [, b]) => b.score - a.score)
                       .map(([area, data]) => {
-                        const label = AUDIT_AREA_LABELS[area];
+                        const label = REVIEW_AREA_LABELS[area];
                         const areaName = locale === "fr" ? label?.fr : label?.en;
                         return (
                           <tr key={area}>

@@ -815,7 +815,8 @@
       "total": "Total des évaluations",
       "inProgress": "En cours",
       "completed": "Terminées",
-      "submitted": "Soumises"
+      "submitted": "Soumises",
+      "summary": "{total, plural, one {# évaluation} other {# évaluations}} au total · {inProgress} en cours · {completed} terminées"
     },
     "status": {
       "draft": "Brouillon",
@@ -1028,7 +1029,17 @@
       "effectiveDate": "En vigueur : 1er juillet 2025",
       "auditAreas": "Domaines d'Examen",
       "criticalElements": "Questions de Protocole",
-      "browse": "Parcourir les Questions"
+      "browse": "Parcourir les Questions",
+      "areaGrid": {
+        "title": "Domaines d'Examen ANS",
+        "subtitle": "Parcourir les questions de protocole par domaine d'examen",
+        "totalPQs": "{count} Questions de Protocole",
+        "priorityPQs": "{count} QP Prioritaires",
+        "browseArea": "Parcourir {area}",
+        "pqs": "{count, plural, one {# QP} other {# QP}}",
+        "viewAll": "Voir toutes les questions ANS",
+        "summary": "{total} QP dans {areas} domaines d'examen"
+      }
     },
     "sms": {
       "title": "Questionnaire SGS",
@@ -1045,9 +1056,10 @@
       "newIn2024": "Nouveau en 2024"
     },
     "info": {
-      "title": "À propos des Questionnaires",
-      "ansDescription": "Le questionnaire ANS est basé sur le Questionnaire de Protocole du Programme africain d'examen par les pairs des ANSP (AAPRP), adapté des normes USOAP CMA de l'OACI. Il évalue la conformité des ANSP à travers 7 domaines d'examen ANS : ATS, FPD, AIS, MAP, CNS, MET et SAR.",
-      "smsDescription": "Le questionnaire SGS suit le cadre de la Norme d'Excellence CANSO pour évaluer la maturité du Système de Gestion de la Sécurité. Les organisations sont notées du Niveau A (Informel) au Niveau E (Excellence)."
+      "title": "À propos des Questionnaires AAPRP",
+      "ansDescription": "Le questionnaire ANS est l'outil d'évaluation principal du Programme africain d'examen par les pairs des ANSP (AAPRP). Il contient {ansCount} Questions de Protocole organisées dans {areaCount} domaines d'examen — Services de la circulation aérienne (ATS), Conception des procédures de vol (FPD), Service d'information aéronautique (AIS), Cartes aéronautiques (MAP), Service météorologique (MET), Communications/Navigation/Surveillance (CNS), et Recherche et sauvetage (SAR) — dérivées des normes de l'OACI et adaptées pour l'examen par les pairs des fournisseurs de services de navigation aérienne.",
+      "smsDescription": "Le questionnaire SGS suit le cadre de la Norme d'Excellence (SoE) CANSO 2024 pour évaluer la maturité du Système de Gestion de la Sécurité à travers 4 composantes et 12 domaines d'étude. Les organisations sont notées du Niveau A (Initial/Ad hoc) au Niveau E (Optimisation/Leader).",
+      "together": "Ensemble, ces deux cadres fournissent une évaluation complète de la conformité technique ANS et de la maturité organisationnelle SGS."
     }
   },
   "auditAreas": {
@@ -1366,27 +1378,29 @@
   },
   "ansBrowser": {
     "title": "Questions de Protocole ANS",
-    "subtitle": "Protocole ANS AAPRP - 132 Questions de Protocole dans 7 Domaines d'Examen",
+    "subtitle": "Protocole ANS AAPRP - Questions de Protocole dans 7 Domaines d'Examen",
     "breadcrumb": {
       "questionnaires": "Questionnaires",
-      "ans": "Protocole ANS AAPRP"
+      "ans": "Questions de Protocole ANS"
     },
     "filters": {
       "title": "Filtres",
       "search": "Rechercher",
       "searchPlaceholder": "Rechercher par numéro QP ou texte...",
-      "auditArea": "Domaine d'Examen",
-      "criticalElement": "Élément Critique",
+      "reviewArea": "Domaine d'Examen",
       "additional": "Filtres Additionnels",
-      "priorityPQ": "QP Prioritaire",
-      "requiresOnSite": "Nécessite Sur Site",
+      "priorityPQ": "QP Prioritaires uniquement",
+      "newRevised": "Nouveau/Révisé en 2024",
       "selectAll": "Tout Sélectionner",
       "clear": "Effacer",
       "clearAll": "Effacer Tous les Filtres"
     },
     "results": {
-      "showing": "Affichage {from}-{to} sur {total} questions",
-      "page": "Page {current} sur {total}"
+      "total": "{count, plural, one {# question} other {# questions}} trouvée(s)",
+      "areas": "{count, plural, one {# domaine} other {# domaines}}"
+    },
+    "section": {
+      "pqs": "QP"
     },
     "pq": {
       "priority": "Prioritaire",
@@ -1394,7 +1408,15 @@
       "newIn2024": "Nouveau en 2024",
       "revisedIn2024": "Révisé en 2024",
       "guidance": "Orientations pour l'Évaluation des Preuves",
-      "icaoReferences": "Références OACI"
+      "icaoReferences": "Références OACI",
+      "noteToTeam": "Note à l'équipe d'examen",
+      "viewInAssessment": "Voir dans l'évaluation",
+      "responseStatus": {
+        "satisfactory": "Satisfaisant",
+        "notSatisfactory": "Non satisfaisant",
+        "notApplicable": "Non applicable",
+        "unanswered": "Sans réponse"
+      }
     },
     "empty": {
       "title": "Aucune question trouvée",
@@ -1428,6 +1450,17 @@
       "title": "Composantes SGS",
       "selected": "Composante Sélectionnée",
       "weight": "pondération"
+    },
+    "search": {
+      "label": "Recherche",
+      "placeholder": "Rechercher objectifs et descripteurs…",
+      "clear": "Effacer la recherche"
+    },
+    "results": {
+      "total": "{count, plural, one {# objectif} other {# objectifs}}",
+      "studyAreas": "{count, plural, one {# domaine d'étude} other {# domaines d'étude}}",
+      "noResults": "Aucun objectif ne correspond à votre recherche",
+      "noResultsDescription": "Essayez un terme de recherche différent ou effacez le filtre de recherche."
     },
     "studyArea": {
       "title": "Domaines d'Étude",
@@ -1957,6 +1990,7 @@
       "assessmentTitle": "Titre",
       "descriptionLabel": "Description",
       "auditAreas": "Domaines d'examen",
+      "reviewAreas": "Domaines d'examen",
       "smsComponents": "Composantes SMS",
       "estimatedQuestions": "Questions estimées",
       "estimatedTime": "Temps estimé",
@@ -6937,6 +6971,7 @@
     },
     "noAssessments": "Aucune évaluation trouvée",
     "noAssessmentsDescription": "Créez une nouvelle évaluation pour commencer",
+    "summary": "{total, plural, one {# évaluation} other {# évaluations}} au total · {inProgress} en cours · {completed} terminées",
     "create": {
       "pageTitle": "Créer une Auto-Évaluation",
       "pageDescription": "Démarrer une nouvelle auto-évaluation pour votre organisation",
@@ -6984,6 +7019,17 @@
       "organization": "Organisation",
       "questionnaire": "Questionnaire",
       "title": "Titre",
+      "scope": {
+        "title": "Sélectionner les Domaines d'Examen",
+        "description": "Choisissez les domaines d'examen ANS à inclure dans cette évaluation",
+        "selectAll": "Tout Sélectionner",
+        "deselectAll": "Tout Désélectionner",
+        "pqs": "{count, plural, one {# QP} other {# QP}}",
+        "selected": "Sélectionné : {areas, plural, one {# domaine} other {# domaines}} · {pqs} Questions de Protocole",
+        "noneSelected": "Aucun domaine sélectionné — sélectionnez au moins un domaine d'examen",
+        "allSelected": "Les {count} domaines d'examen sont sélectionnés",
+        "reviewAreas": "Domaines d'Examen"
+      },
       "confirmDialog": {
         "title": "Confirmer la Création de l'Évaluation",
         "description": "Vous êtes sur le point de créer une nouvelle évaluation pour {organization} utilisant le questionnaire {questionnaire}. Cette action ne peut pas être annulée.",

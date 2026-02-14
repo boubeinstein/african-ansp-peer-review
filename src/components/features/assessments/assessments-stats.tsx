@@ -39,51 +39,61 @@ export function AssessmentsStats({ organizationId }: AssessmentsStatsProps) {
   };
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <Card>
-        <CardHeader className="pb-2">
-          <CardDescription>{t("stats.total")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2">
-            <ClipboardList className="h-5 w-5 text-muted-foreground" />
-            <span className="text-2xl font-bold">{stats.total}</span>
-          </div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader className="pb-2">
-          <CardDescription>{t("stats.inProgress")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-blue-500" />
-            <span className="text-2xl font-bold">{stats.inProgress}</span>
-          </div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader className="pb-2">
-          <CardDescription>{t("stats.completed")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-5 w-5 text-green-500" />
-            <span className="text-2xl font-bold">{stats.completed}</span>
-          </div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader className="pb-2">
-          <CardDescription>{t("stats.submitted")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-purple-500" />
-            <span className="text-2xl font-bold">{stats.submitted}</span>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>{t("stats.total")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <ClipboardList className="h-5 w-5 text-muted-foreground" />
+              <span className="text-2xl font-bold">{stats.total}</span>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>{t("stats.inProgress")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-blue-500" />
+              <span className="text-2xl font-bold">{stats.inProgress}</span>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>{t("stats.completed")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5 text-green-500" />
+              <span className="text-2xl font-bold">{stats.completed}</span>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>{t("stats.submitted")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-purple-500" />
+              <span className="text-2xl font-bold">{stats.submitted}</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      {/* Summary row */}
+      <p className="text-sm text-muted-foreground px-1">
+        {t("stats.summary", {
+          total: stats.total,
+          inProgress: stats.inProgress,
+          completed: stats.completed,
+        })}
+      </p>
     </div>
   );
 }

@@ -72,6 +72,15 @@ const getStatsInputSchema = z.object({
   questionnaireId: z.string().cuid(),
 });
 
+const getANSQuestionsGroupedInputSchema = z.object({
+  reviewAreas: z
+    .array(z.enum(["ATS", "FPD", "AIS", "MAP", "MET", "CNS", "SAR"]))
+    .optional(),
+  isPriorityPQ: z.boolean().optional(),
+  isNewOrRevised: z.boolean().optional(),
+  search: z.string().max(200).optional(),
+});
+
 // =============================================================================
 // QUESTIONNAIRE ROUTER
 // =============================================================================
@@ -326,6 +335,166 @@ export const questionnaireRouter = router({
 
       return categories;
     }),
+
+  /**
+   * Get all ANS protocol questions grouped by review area.
+   * Returns all matching questions (no pagination — 132 PQs total).
+   */
+  getANSQuestionsGrouped: publicProcedure
+    .input(getANSQuestionsGroupedInputSchema)
+    .query(async ({ ctx, input }) => {
+      const { reviewAreas, isPriorityPQ, isNewOrRevised, search } = input;
+
+      // Find the ANS questionnaire
+      const ansQuestionnaire = await ctx.db.questionnaire.findFirst({
+        where: { type: "ANS_USOAP_CMA", isActive: true },
+        select: { id: true },
+      });
+
+      if (!ansQuestionnaire) {
+        return { groups: [], totalCount: 0 };
+      }
+
+      // Build where clause
+      const where: Prisma.QuestionWhereInput = {
+        questionnaireId: ansQuestionnaire.id,
+        isActive: true,
+        reviewArea: { not: null },
+      };
+
+      if (reviewAreas && reviewAreas.length > 0) {
+        where.reviewArea = { in: reviewAreas };
+      }
+
+      if (isPriorityPQ) {
+        where.isPriorityPQ = true;
+      }
+
+      if (isNewOrRevised) {
+        where.pqStatus = { in: ["NEW", "REVISED"] };
+      }
+
+      if (search) {
+        where.OR = [
+          { questionTextEn: { contains: search, mode: "insensitive" } },
+          { questionTextFr: { contains: search, mode: "insensitive" } },
+          { pqNumber: { contains: search, mode: "insensitive" } },
+        ];
+      }
+
+      // Fetch all matching questions
+      const questions = await ctx.db.question.findMany({
+        where,
+        orderBy: [{ sortOrder: "asc" }],
+        include: {
+          category: {
+            select: {
+              id: true,
+              code: true,
+              nameEn: true,
+              nameFr: true,
+              reviewArea: true,
+            },
+          },
+          icaoReferences: true,
+        },
+      });
+
+      // Get counts per review area (unfiltered by search/priority for sidebar)
+      const areaCounts = await ctx.db.question.groupBy({
+        by: ["reviewArea"],
+        where: {
+          questionnaireId: ansQuestionnaire.id,
+          isActive: true,
+          reviewArea: { not: null },
+        },
+        _count: { id: true },
+      });
+
+      const countsByArea: Record<string, number> = {};
+      for (const item of areaCounts) {
+        if (item.reviewArea) {
+          countsByArea[item.reviewArea] = item._count.id;
+        }
+      }
+
+      // Group questions by review area
+      const areaOrder = ["ATS", "FPD", "AIS", "MAP", "MET", "CNS", "SAR"];
+      const grouped: Record<string, typeof questions> = {};
+
+      for (const q of questions) {
+        const area = q.reviewArea as string;
+        if (!grouped[area]) {
+          grouped[area] = [];
+        }
+        grouped[area].push(q);
+      }
+
+      const groups = areaOrder
+        .filter((area) => grouped[area] && grouped[area].length > 0)
+        .map((area) => ({
+          reviewArea: area,
+          questions: grouped[area],
+          filteredCount: grouped[area].length,
+        }));
+
+      return {
+        groups,
+        totalCount: questions.length,
+        countsByArea,
+      };
+    }),
+
+  /**
+   * Get lightweight ANS review area stats (PQ counts per area).
+   * Used by the assessments page review area grid.
+   */
+  getANSStats: publicProcedure.query(async ({ ctx }) => {
+    const ansQuestionnaire = await ctx.db.questionnaire.findFirst({
+      where: { type: "ANS_USOAP_CMA", isActive: true },
+      select: { id: true },
+    });
+
+    if (!ansQuestionnaire) {
+      return { totalCount: 0, priorityCount: 0, countsByArea: {} as Record<string, number> };
+    }
+
+    const [totalCount, priorityCount, areaCounts] = await Promise.all([
+      ctx.db.question.count({
+        where: {
+          questionnaireId: ansQuestionnaire.id,
+          isActive: true,
+          reviewArea: { not: null },
+        },
+      }),
+      ctx.db.question.count({
+        where: {
+          questionnaireId: ansQuestionnaire.id,
+          isActive: true,
+          reviewArea: { not: null },
+          isPriorityPQ: true,
+        },
+      }),
+      ctx.db.question.groupBy({
+        by: ["reviewArea"],
+        where: {
+          questionnaireId: ansQuestionnaire.id,
+          isActive: true,
+          reviewArea: { not: null },
+        },
+        _count: { id: true },
+      }),
+    ]);
+
+    const countsByArea: Record<string, number> = {};
+    for (const item of areaCounts) {
+      if (item.reviewArea) {
+        countsByArea[item.reviewArea] = item._count.id;
+      }
+    }
+
+    return { totalCount, priorityCount, countsByArea };
+  }),
 
   /**
    * Get statistics for a questionnaire

@@ -1,7 +1,14 @@
 "use client";
 
+import React, { useState } from "react";
 import { useTranslations } from "next-intl";
+import { BookOpen, ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { maturityColors } from "./maturity-legend";
 import { getMaturityLevelsArray } from "@/lib/questionnaire/constants";
 import type { CANSOStudyArea, MaturityLevel } from "@/types/prisma-enums";
@@ -10,6 +17,7 @@ interface MaturityTableProps {
   studyArea: CANSOStudyArea;
   locale: string;
   componentNumber: number;
+  searchQuery?: string;
 }
 
 // Mock objectives data for each study area
@@ -179,6 +187,7 @@ function getObjectivesForStudyArea(studyArea: CANSOStudyArea): ObjectiveMaturity
 export function MaturityTable({
   studyArea,
   locale,
+  searchQuery,
 }: MaturityTableProps) {
   const t = useTranslations("smsBrowser");
   const lang = locale === "fr" ? "fr" : "en";
@@ -192,27 +201,102 @@ export function MaturityTable({
       </h4>
 
       {objectives.map((objective) => (
-        <div
+        <ObjectiveCard
           key={objective.id}
-          className="rounded-lg border bg-card overflow-hidden"
-        >
-          {/* Objective Header */}
-          <div className="p-3 bg-muted/30 border-b">
-            <div className="flex items-start gap-2">
+          objective={objective}
+          levels={levels}
+          lang={lang}
+          searchQuery={searchQuery}
+        />
+      ))}
+    </div>
+  );
+}
+
+// =============================================================================
+// OBJECTIVE CARD — Expandable card with collapsible maturity grid
+// =============================================================================
+
+interface ObjectiveCardProps {
+  objective: ObjectiveMaturity;
+  levels: ReturnType<typeof getMaturityLevelsArray>;
+  lang: "en" | "fr";
+  searchQuery?: string;
+}
+
+function ObjectiveCard({ objective, levels, lang, searchQuery }: ObjectiveCardProps) {
+  const t = useTranslations("smsBrowser");
+  const [isOpen, setIsOpen] = useState(false);
+
+  const titleText = lang === "fr" ? objective.titleFr : objective.titleEn;
+
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <div
+        className={cn(
+          "rounded-lg border bg-card overflow-hidden transition-all",
+          isOpen && "ring-2 ring-emerald-500/20"
+        )}
+      >
+        {/* Objective Header — clickable to expand */}
+        <CollapsibleTrigger asChild>
+          <div className="p-3 bg-muted/30 border-b cursor-pointer hover:bg-muted/50 transition-colors">
+            <div className="flex items-start gap-3">
               <span className="shrink-0 font-mono text-xs font-bold px-2 py-1 rounded bg-muted">
                 {objective.objectiveNumber}
               </span>
-              <p className="text-sm font-medium">
-                {lang === "fr" ? objective.titleFr : objective.titleEn}
+              <p className="text-sm font-medium flex-1">
+                {searchQuery
+                  ? highlightMatch(titleText, searchQuery)
+                  : titleText}
               </p>
+              <div className="shrink-0 flex items-center gap-2">
+                {/* Inline maturity level badges (collapsed preview) */}
+                {!isOpen && (
+                  <div className="hidden sm:flex gap-0.5">
+                    {levels.map((level) => {
+                      const colors = maturityColors[level.code];
+                      return (
+                        <div
+                          key={level.code}
+                          className={cn(
+                            "w-5 h-5 rounded flex items-center justify-center text-[10px] font-bold text-white",
+                            colors.fill
+                          )}
+                          title={level.name[lang]}
+                        >
+                          {level.level}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                {isOpen ? (
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                ) : (
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                )}
+              </div>
+            </div>
+          </div>
+        </CollapsibleTrigger>
+
+        {/* Expanded maturity descriptors */}
+        <CollapsibleContent>
+          {/* Guidance-style header */}
+          <div className="px-3 pt-3 pb-1">
+            <div className="flex items-center gap-2 text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+              <BookOpen className="h-4 w-4" />
+              {t("maturity.objectivesTitle")}
             </div>
           </div>
 
           {/* Maturity Levels Grid */}
-          <div className="grid grid-cols-5">
+          <div className="grid grid-cols-5 mx-3 mb-3 rounded-lg overflow-hidden border">
             {levels.map((level, index) => {
               const colors = maturityColors[level.code];
               const descriptor = objective.maturityDescriptors[level.code];
+              const descriptorText = lang === "fr" ? descriptor.fr : descriptor.en;
 
               return (
                 <div
@@ -240,14 +324,42 @@ export function MaturityTable({
 
                   {/* Descriptor */}
                   <p className="text-xs text-muted-foreground">
-                    {lang === "fr" ? descriptor.fr : descriptor.en}
+                    {searchQuery
+                      ? highlightMatch(descriptorText, searchQuery)
+                      : descriptorText}
                   </p>
                 </div>
               );
             })}
           </div>
-        </div>
-      ))}
-    </div>
+        </CollapsibleContent>
+      </div>
+    </Collapsible>
+  );
+}
+
+// =============================================================================
+// SEARCH HIGHLIGHT (same pattern as ANS browser pq-card.tsx)
+// =============================================================================
+
+function highlightMatch(text: string, query: string): React.ReactNode {
+  if (!query) return text;
+  const regex = new RegExp(
+    `(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
+    "gi"
+  );
+  const parts = text.split(regex);
+  if (parts.length === 1) return text;
+  return parts.map((part, i) =>
+    regex.test(part) ? (
+      <mark
+        key={i}
+        className="bg-yellow-200 dark:bg-yellow-800/50 rounded px-0.5"
+      >
+        {part}
+      </mark>
+    ) : (
+      part
+    )
   );
 }

@@ -8,6 +8,7 @@ interface PageProps {
   searchParams: Promise<{
     component?: string;
     studyArea?: string;
+    search?: string;
   }>;
 }
 
@@ -33,6 +34,7 @@ export default async function SMSQuestionnairePage({
         locale={locale}
         initialComponent={filters.component}
         initialStudyArea={filters.studyArea}
+        initialSearch={filters.search}
       />
     </Suspense>
   );

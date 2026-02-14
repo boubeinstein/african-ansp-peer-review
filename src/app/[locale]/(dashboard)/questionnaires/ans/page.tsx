@@ -6,12 +6,10 @@ import { ANSBrowserSkeleton } from "@/components/features/questionnaire/ans/ans-
 interface PageProps {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{
-    auditArea?: string;
-    criticalElement?: string;
-    isPriority?: string;
-    requiresOnSite?: string;
+    area?: string;
     search?: string;
-    page?: string;
+    priority?: string;
+    newRevised?: string;
   }>;
 }
 

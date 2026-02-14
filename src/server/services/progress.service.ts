@@ -11,7 +11,7 @@ import type {
   EventType,
   AssessmentStatus,
   AssessmentType,
-  USOAPAuditArea,
+  ANSReviewArea,
 } from "@prisma/client";
 import {
   isANSResponseAnswered,
@@ -106,10 +106,10 @@ export interface CreateEventInput {
 class ProgressService {
   /**
    * Calculate progress statistics for an assessment
-   * Respects selectedAuditAreas filter for accurate progress calculation
+   * Respects selectedReviewAreas filter for accurate progress calculation
    */
   async getAssessmentProgress(assessmentId: string): Promise<ProgressStats> {
-    // Get assessment with questionnaire categories and selectedAuditAreas
+    // Get assessment with questionnaire categories and selectedReviewAreas
     const assessment = await prisma.assessment.findUnique({
       where: { id: assessmentId },
       include: {
@@ -129,20 +129,20 @@ class ProgressService {
     }
 
     const questionnaireType = assessment.questionnaire.type;
-    const selectedAuditAreas = assessment.selectedAuditAreas as USOAPAuditArea[] | null;
+    const selectedReviewAreas = assessment.selectedReviewAreas as ANSReviewArea[] | null;
 
-    // Build question filter that respects selectedAuditAreas
+    // Build question filter that respects selectedReviewAreas (preferred)
     const questionsWhere: Prisma.QuestionWhereInput = {
       questionnaireId: assessment.questionnaireId,
       isActive: true,
     };
 
-    // Only filter by audit area if specific areas were selected
-    if (selectedAuditAreas && selectedAuditAreas.length > 0) {
-      questionsWhere.auditArea = { in: selectedAuditAreas };
+    // Filter by review area if specific areas were selected
+    if (selectedReviewAreas && selectedReviewAreas.length > 0) {
+      questionsWhere.reviewArea = { in: selectedReviewAreas };
     }
 
-    // Get questions filtered by selectedAuditAreas
+    // Get questions filtered by selectedReviewAreas
     const questions = await prisma.question.findMany({
       where: questionsWhere,
       select: { id: true, categoryId: true },
@@ -168,7 +168,7 @@ class ProgressService {
         ? Math.round((answeredQuestions / totalQuestions) * 100)
         : 0;
 
-    // Calculate by category - filtered by selectedAuditAreas
+    // Calculate by category - filtered by selectedReviewAreas
     const byCategory: CategoryProgressStats[] =
       assessment.questionnaire.categories.map((category) => {
         const categoryQuestions = questions.filter(

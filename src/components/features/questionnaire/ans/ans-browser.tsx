@@ -33,26 +33,23 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { AuditAreaFilter } from "./audit-area-filter";
-import { CriticalElementFilter } from "./critical-element-filter";
+import { ReviewAreaFilter } from "./review-area-filter";
 import { PQList } from "./pq-list";
-import { USOAP_AUDIT_AREAS } from "@/lib/questionnaire/constants";
-import type { USOAPAuditArea, CriticalElement } from "@/types/prisma-enums";
+import type { ANSReviewArea } from "@/types/prisma-enums";
 
 interface ANSBrowserProps {
   locale: string;
   initialFilters: {
-    auditArea?: string;
-    criticalElement?: string;
-    isPriority?: string;
-    requiresOnSite?: string;
+    area?: string;
     search?: string;
-    page?: string;
+    priority?: string;
+    newRevised?: string;
   };
 }
 
 export function ANSBrowser({ locale, initialFilters }: ANSBrowserProps) {
   const t = useTranslations("ansBrowser");
+  const tAreas = useTranslations("reviewAreas");
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -60,21 +57,18 @@ export function ANSBrowser({ locale, initialFilters }: ANSBrowserProps) {
   const [searchQuery, setSearchQuery] = useState(initialFilters.search || "");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
+  // PQ counts per area (updated from PQList via callback)
+  const [areaCounts, setAreaCounts] = useState<Record<string, number>>({});
+
   // Get current filter values from URL
-  const selectedAuditAreas = useMemo(() => {
-    const param = searchParams.get("auditArea");
-    return param ? param.split(",") as USOAPAuditArea[] : [];
+  const selectedAreas = useMemo(() => {
+    const param = searchParams.get("area");
+    return param ? (param.split(",") as ANSReviewArea[]) : [];
   }, [searchParams]);
 
-  const selectedCriticalElements = useMemo(() => {
-    const param = searchParams.get("criticalElement");
-    return param ? param.split(",") as CriticalElement[] : [];
-  }, [searchParams]);
-
-  const isPriority = searchParams.get("isPriority") === "true";
-  const requiresOnSite = searchParams.get("requiresOnSite") === "true";
+  const isPriority = searchParams.get("priority") === "true";
+  const isNewRevised = searchParams.get("newRevised") === "true";
   const currentSearch = searchParams.get("search") || "";
-  const currentPage = parseInt(searchParams.get("page") || "1", 10);
 
   // Update URL with new filters
   const updateFilters = useCallback(
@@ -89,43 +83,29 @@ export function ANSBrowser({ locale, initialFilters }: ANSBrowserProps) {
         }
       });
 
-      // Reset page when filters change (except when changing page itself)
-      if (!("page" in updates)) {
-        params.delete("page");
-      }
-
       router.push(`/${locale}/questionnaires/ans?${params.toString()}`);
     },
     [router, searchParams, locale]
   );
 
   // Filter handlers
-  const handleAuditAreaChange = useCallback(
-    (areas: USOAPAuditArea[]) => {
-      updateFilters({ auditArea: areas.length > 0 ? areas.join(",") : null });
-    },
-    [updateFilters]
-  );
-
-  const handleCriticalElementChange = useCallback(
-    (elements: CriticalElement[]) => {
-      updateFilters({
-        criticalElement: elements.length > 0 ? elements.join(",") : null,
-      });
+  const handleAreaChange = useCallback(
+    (areas: ANSReviewArea[]) => {
+      updateFilters({ area: areas.length > 0 ? areas.join(",") : null });
     },
     [updateFilters]
   );
 
   const handlePriorityToggle = useCallback(
     (checked: boolean) => {
-      updateFilters({ isPriority: checked ? "true" : null });
+      updateFilters({ priority: checked ? "true" : null });
     },
     [updateFilters]
   );
 
-  const handleOnSiteToggle = useCallback(
+  const handleNewRevisedToggle = useCallback(
     (checked: boolean) => {
-      updateFilters({ requiresOnSite: checked ? "true" : null });
+      updateFilters({ newRevised: checked ? "true" : null });
     },
     [updateFilters]
   );
@@ -143,13 +123,6 @@ export function ANSBrowser({ locale, initialFilters }: ANSBrowserProps) {
     [handleSearch]
   );
 
-  const handlePageChange = useCallback(
-    (page: number) => {
-      updateFilters({ page: page > 1 ? page.toString() : null });
-    },
-    [updateFilters]
-  );
-
   const clearAllFilters = useCallback(() => {
     setSearchQuery("");
     router.push(`/${locale}/questionnaires/ans`);
@@ -158,25 +131,17 @@ export function ANSBrowser({ locale, initialFilters }: ANSBrowserProps) {
   const removeFilter = useCallback(
     (type: string, value?: string) => {
       switch (type) {
-        case "auditArea":
+        case "area":
           if (value) {
-            const newAreas = selectedAuditAreas.filter((a) => a !== value);
-            handleAuditAreaChange(newAreas);
+            const newAreas = selectedAreas.filter((a) => a !== value);
+            handleAreaChange(newAreas);
           }
           break;
-        case "criticalElement":
-          if (value) {
-            const newElements = selectedCriticalElements.filter(
-              (e) => e !== value
-            );
-            handleCriticalElementChange(newElements);
-          }
-          break;
-        case "isPriority":
+        case "priority":
           handlePriorityToggle(false);
           break;
-        case "requiresOnSite":
-          handleOnSiteToggle(false);
+        case "newRevised":
+          handleNewRevisedToggle(false);
           break;
         case "search":
           setSearchQuery("");
@@ -185,22 +150,19 @@ export function ANSBrowser({ locale, initialFilters }: ANSBrowserProps) {
       }
     },
     [
-      selectedAuditAreas,
-      selectedCriticalElements,
-      handleAuditAreaChange,
-      handleCriticalElementChange,
+      selectedAreas,
+      handleAreaChange,
       handlePriorityToggle,
-      handleOnSiteToggle,
+      handleNewRevisedToggle,
       updateFilters,
     ]
   );
 
   // Count active filters
   const activeFilterCount =
-    selectedAuditAreas.length +
-    selectedCriticalElements.length +
+    selectedAreas.length +
     (isPriority ? 1 : 0) +
-    (requiresOnSite ? 1 : 0) +
+    (isNewRevised ? 1 : 0) +
     (currentSearch ? 1 : 0);
 
   // Filter sidebar content (shared between desktop and mobile)
@@ -229,42 +191,24 @@ export function ANSBrowser({ locale, initialFilters }: ANSBrowserProps) {
       {/* Filter Accordion */}
       <Accordion
         type="multiple"
-        defaultValue={["auditArea", "criticalElement"]}
+        defaultValue={["reviewArea", "additional"]}
         className="w-full"
       >
-        {/* Audit Area Filter */}
-        <AccordionItem value="auditArea">
+        {/* Review Area Filter */}
+        <AccordionItem value="reviewArea">
           <AccordionTrigger className="text-sm font-medium">
-            {t("filters.auditArea")}
-            {selectedAuditAreas.length > 0 && (
+            {t("filters.reviewArea")}
+            {selectedAreas.length > 0 && (
               <Badge variant="secondary" className="ml-2">
-                {selectedAuditAreas.length}
+                {selectedAreas.length}
               </Badge>
             )}
           </AccordionTrigger>
           <AccordionContent>
-            <AuditAreaFilter
-              selected={selectedAuditAreas}
-              onChange={handleAuditAreaChange}
-              locale={locale}
-            />
-          </AccordionContent>
-        </AccordionItem>
-
-        {/* Critical Element Filter */}
-        <AccordionItem value="criticalElement">
-          <AccordionTrigger className="text-sm font-medium">
-            {t("filters.criticalElement")}
-            {selectedCriticalElements.length > 0 && (
-              <Badge variant="secondary" className="ml-2">
-                {selectedCriticalElements.length}
-              </Badge>
-            )}
-          </AccordionTrigger>
-          <AccordionContent>
-            <CriticalElementFilter
-              selected={selectedCriticalElements}
-              onChange={handleCriticalElementChange}
+            <ReviewAreaFilter
+              selected={selectedAreas}
+              onChange={handleAreaChange}
+              counts={areaCounts}
               locale={locale}
             />
           </AccordionContent>
@@ -292,15 +236,15 @@ export function ANSBrowser({ locale, initialFilters }: ANSBrowserProps) {
               </div>
               <div className="flex items-center justify-between">
                 <Label
-                  htmlFor="onsite"
+                  htmlFor="newRevised"
                   className="text-sm cursor-pointer flex-1"
                 >
-                  {t("filters.requiresOnSite")}
+                  {t("filters.newRevised")}
                 </Label>
                 <Switch
-                  id="onsite"
-                  checked={requiresOnSite}
-                  onCheckedChange={handleOnSiteToggle}
+                  id="newRevised"
+                  checked={isNewRevised}
+                  onCheckedChange={handleNewRevisedToggle}
                 />
               </div>
             </div>
@@ -403,31 +347,16 @@ export function ANSBrowser({ locale, initialFilters }: ANSBrowserProps) {
           {/* Active Filters Display */}
           {activeFilterCount > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
-              {selectedAuditAreas.map((area) => (
+              {selectedAreas.map((area) => (
                 <Badge
                   key={area}
                   variant="secondary"
                   className="gap-1 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
                 >
-                  {USOAP_AUDIT_AREAS[area].name[locale === "fr" ? "fr" : "en"]}
+                  {area}: {tAreas(`${area}.name`)}
                   <button
-                    onClick={() => removeFilter("auditArea", area)}
+                    onClick={() => removeFilter("area", area)}
                     className="ml-1 hover:text-blue-900"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </Badge>
-              ))}
-              {selectedCriticalElements.map((element) => (
-                <Badge
-                  key={element}
-                  variant="secondary"
-                  className="gap-1 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
-                >
-                  {element.replace("_", "-")}
-                  <button
-                    onClick={() => removeFilter("criticalElement", element)}
-                    className="ml-1 hover:text-purple-900"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -440,22 +369,22 @@ export function ANSBrowser({ locale, initialFilters }: ANSBrowserProps) {
                 >
                   {t("filters.priorityPQ")}
                   <button
-                    onClick={() => removeFilter("isPriority")}
+                    onClick={() => removeFilter("priority")}
                     className="ml-1 hover:text-amber-900"
                   >
                     <X className="h-3 w-3" />
                   </button>
                 </Badge>
               )}
-              {requiresOnSite && (
+              {isNewRevised && (
                 <Badge
                   variant="secondary"
-                  className="gap-1 bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"
+                  className="gap-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                 >
-                  {t("filters.requiresOnSite")}
+                  {t("filters.newRevised")}
                   <button
-                    onClick={() => removeFilter("requiresOnSite")}
-                    className="ml-1 hover:text-orange-900"
+                    onClick={() => removeFilter("newRevised")}
+                    className="ml-1 hover:text-green-900"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -479,14 +408,12 @@ export function ANSBrowser({ locale, initialFilters }: ANSBrowserProps) {
           <PQList
             locale={locale}
             filters={{
-              auditAreas: selectedAuditAreas,
-              criticalElements: selectedCriticalElements,
+              reviewAreas: selectedAreas,
               isPriority,
-              requiresOnSite,
+              isNewRevised,
               search: currentSearch,
             }}
-            page={currentPage}
-            onPageChange={handlePageChange}
+            onCountsLoaded={setAreaCounts}
           />
         </div>
       </div>

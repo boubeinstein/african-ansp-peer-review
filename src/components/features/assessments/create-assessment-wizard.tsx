@@ -17,6 +17,8 @@ import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Card,
   CardContent,
@@ -54,8 +56,9 @@ import {
   ChevronLeft,
   AlertTriangle,
   Loader2,
+  Info,
 } from "lucide-react";
-import type { QuestionnaireType } from "@/types/prisma-enums";
+import type { QuestionnaireType, ANSReviewArea } from "@/types/prisma-enums";
 
 // =============================================================================
 // TYPES
@@ -64,6 +67,8 @@ import type { QuestionnaireType } from "@/types/prisma-enums";
 const STEPS = ["organization", "questionnaire", "details", "confirm"] as const;
 type Step = (typeof STEPS)[number];
 
+const ANS_AREAS: ANSReviewArea[] = ["ATS", "FPD", "AIS", "MAP", "MET", "CNS", "SAR"];
+
 interface AssessmentDraft {
   organizationId: string | null;
   organizationName: string | null;
@@ -71,6 +76,7 @@ interface AssessmentDraft {
   questionnaireName: string | null;
   title: string;
   description: string;
+  selectedReviewAreas: ANSReviewArea[];
 }
 
 interface CreationContext {
@@ -104,6 +110,7 @@ export function CreateAssessmentWizard() {
     questionnaireName: null,
     title: "",
     description: "",
+    selectedReviewAreas: [...ANS_AREAS],
   });
 
   // Fetch creation context
@@ -143,8 +150,12 @@ export function CreateAssessmentWizard() {
         return !!effectiveOrganizationId;
       case "questionnaire":
         return !!draft.questionnaireType;
-      case "details":
-        return draft.title.trim().length >= 3;
+      case "details": {
+        const titleOk = draft.title.trim().length >= 3;
+        const isANS = draft.questionnaireType === "ANS_USOAP_CMA";
+        const areasOk = !isANS || draft.selectedReviewAreas.length > 0;
+        return titleOk && areasOk;
+      }
       case "confirm":
         return true;
       default:
@@ -177,6 +188,10 @@ export function CreateAssessmentWizard() {
       questionnaireType: draft.questionnaireType,
       title: draft.title || undefined,
       description: draft.description || undefined,
+      selectedReviewAreas:
+        draft.questionnaireType === "ANS_USOAP_CMA"
+          ? draft.selectedReviewAreas
+          : [],
     });
     setShowConfirmDialog(false);
   };
@@ -548,6 +563,20 @@ function QuestionnaireStep({
 }
 
 // =============================================================================
+// AREA BADGE COLORS
+// =============================================================================
+
+const AREA_BADGE_BG: Record<string, string> = {
+  ATS: "bg-blue-600",
+  FPD: "bg-indigo-600",
+  AIS: "bg-teal-600",
+  MAP: "bg-emerald-600",
+  MET: "bg-sky-600",
+  CNS: "bg-violet-600",
+  SAR: "bg-orange-600",
+};
+
+// =============================================================================
 // DETAILS STEP
 // =============================================================================
 
@@ -562,13 +591,47 @@ function DetailsStep({
   t: (key: string, values?: Record<string, string | number>) => string;
   effectiveOrganizationName: string | null;
 }) {
+  const tAreas = useTranslations("reviewAreas");
   const defaultTitle = `${draft.questionnaireName ?? ""} - ${effectiveOrganizationName ?? ""} - ${new Date().toISOString().split("T")[0]}`;
-
-  // Compute effective title - use draft title or default
   const displayTitle = draft.title || defaultTitle;
+  const isANS = draft.questionnaireType === "ANS_USOAP_CMA";
+
+  // Fetch PQ counts per area for ANS assessments
+  const { data: ansStats } = trpc.questionnaire.getANSStats.useQuery(
+    undefined,
+    { enabled: isANS, staleTime: 5 * 60 * 1000 }
+  );
+  const countsByArea = ansStats?.countsByArea ?? {};
+
+  const handleAreaToggle = (area: ANSReviewArea) => {
+    setDraft((prev) => {
+      const current = prev.selectedReviewAreas;
+      const next = current.includes(area)
+        ? current.filter((a) => a !== area)
+        : [...current, area];
+      return { ...prev, selectedReviewAreas: next };
+    });
+  };
+
+  const handleSelectAll = () => {
+    setDraft((prev) => ({
+      ...prev,
+      selectedReviewAreas:
+        prev.selectedReviewAreas.length === ANS_AREAS.length
+          ? []
+          : [...ANS_AREAS],
+    }));
+  };
+
+  // Calculate total PQs for selected areas
+  const totalSelectedPQs = draft.selectedReviewAreas.reduce(
+    (sum, area) => sum + (countsByArea[area] ?? 0),
+    0
+  );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      {/* Title field */}
       <div className="space-y-2">
         <Label htmlFor="title">{t("assessmentTitle")}</Label>
         <Input
@@ -582,6 +645,7 @@ function DetailsStep({
         <p className="text-xs text-muted-foreground">{t("titleHint")}</p>
       </div>
 
+      {/* Description field */}
       <div className="space-y-2">
         <Label htmlFor="description">{t("description")}</Label>
         <Textarea
@@ -594,6 +658,87 @@ function DetailsStep({
           rows={3}
         />
       </div>
+
+      {/* Review Area Selection (ANS only) */}
+      {isANS && (
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-base">
+                  {t("scope.title")}
+                </CardTitle>
+                <CardDescription className="mt-1">
+                  {t("scope.description")}
+                </CardDescription>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleSelectAll}
+              >
+                {draft.selectedReviewAreas.length === ANS_AREAS.length
+                  ? t("scope.deselectAll")
+                  : t("scope.selectAll")}
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1">
+              {ANS_AREAS.map((area) => {
+                const isSelected = draft.selectedReviewAreas.includes(area);
+                const name = tAreas(`${area}.name`);
+                const count = countsByArea[area] ?? 0;
+                const badgeBg = AREA_BADGE_BG[area] ?? "bg-gray-600";
+
+                return (
+                  <label
+                    key={area}
+                    className={cn(
+                      "flex items-center gap-3 rounded-md p-2.5 cursor-pointer transition-colors",
+                      isSelected
+                        ? "bg-blue-50 dark:bg-blue-950/30"
+                        : "hover:bg-muted/50"
+                    )}
+                  >
+                    <Checkbox
+                      checked={isSelected}
+                      onCheckedChange={() => handleAreaToggle(area)}
+                      className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                    />
+                    <span
+                      className={cn(
+                        "font-mono text-xs font-bold px-1.5 py-0.5 rounded text-white shrink-0",
+                        badgeBg
+                      )}
+                    >
+                      {area}
+                    </span>
+                    <span className="text-sm flex-1 truncate">{name}</span>
+                    <span className="text-xs text-muted-foreground shrink-0">
+                      {t("scope.pqs", { count })}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+
+            {/* Selection summary */}
+            <div className="mt-4 flex items-center gap-2 text-sm border-t pt-3">
+              <Info className="h-4 w-4 text-muted-foreground shrink-0" />
+              <span className="text-muted-foreground">
+                {draft.selectedReviewAreas.length === 0
+                  ? t("scope.noneSelected")
+                  : t("scope.selected", {
+                      areas: draft.selectedReviewAreas.length,
+                      pqs: totalSelectedPQs,
+                    })}
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
@@ -611,6 +756,9 @@ function ConfirmStep({
   t: (key: string, values?: Record<string, string | number>) => string;
   effectiveOrganizationName: string | null;
 }) {
+  const tAreas = useTranslations("reviewAreas");
+  const isANS = draft.questionnaireType === "ANS_USOAP_CMA";
+
   // Compute effective title with default
   const defaultTitle = `${draft.questionnaireName ?? ""} - ${effectiveOrganizationName ?? ""} - ${new Date().toISOString().split("T")[0]}`;
   const displayTitle = draft.title || defaultTitle;
@@ -648,6 +796,20 @@ function ConfirmStep({
           <div className="py-3">
             <dt className="text-muted-foreground mb-1">{t("description")}</dt>
             <dd className="text-sm">{draft.description}</dd>
+          </div>
+        )}
+        {isANS && draft.selectedReviewAreas.length > 0 && (
+          <div className="py-3">
+            <dt className="text-muted-foreground mb-2">
+              {t("scope.reviewAreas")}
+            </dt>
+            <dd className="flex flex-wrap gap-1.5">
+              {draft.selectedReviewAreas.map((area) => (
+                <Badge key={area} variant="outline" className="text-xs">
+                  {area}: {tAreas(`${area}.name`)}
+                </Badge>
+              ))}
+            </dd>
           </div>
         )}
       </dl>

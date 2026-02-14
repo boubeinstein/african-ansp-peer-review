@@ -815,7 +815,8 @@
       "total": "Total Assessments",
       "inProgress": "In Progress",
       "completed": "Completed",
-      "submitted": "Submitted"
+      "submitted": "Submitted",
+      "summary": "{total, plural, one {# assessment} other {# assessments}} total · {inProgress} in progress · {completed} completed"
     },
     "status": {
       "draft": "Draft",
@@ -1028,7 +1029,17 @@
       "effectiveDate": "Effective: July 1, 2025",
       "auditAreas": "Review Areas",
       "criticalElements": "Protocol Questions",
-      "browse": "Browse Questions"
+      "browse": "Browse Questions",
+      "areaGrid": {
+        "title": "ANS Review Areas",
+        "subtitle": "Browse protocol questions by review area",
+        "totalPQs": "{count} Protocol Questions",
+        "priorityPQs": "{count} Priority PQs",
+        "browseArea": "Browse {area}",
+        "pqs": "{count, plural, one {# PQ} other {# PQs}}",
+        "viewAll": "View all ANS questions",
+        "summary": "{total} PQs across {areas} review areas"
+      }
     },
     "sms": {
       "title": "SMS Questionnaire",
@@ -1045,9 +1056,10 @@
       "newIn2024": "New in 2024"
     },
     "info": {
-      "title": "About the Questionnaires",
-      "ansDescription": "The ANS questionnaire is based on the African ANSP Peer Review Programme (AAPRP) Protocol Questionnaire, adapted from ICAO USOAP CMA standards. It evaluates ANSP compliance across 7 ANS review areas: Air Traffic Management, Flight Procedure Design, Aeronautical Information, Charts, Communications/Navigation/Surveillance, Meteorology, and Search & Rescue.",
-      "smsDescription": "The SMS questionnaire follows CANSO's Standard of Excellence framework to assess Safety Management System maturity. Organizations are rated from Level A (Informal) to Level E (Excellence)."
+      "title": "About the AAPRP Questionnaires",
+      "ansDescription": "The ANS questionnaire is the core assessment tool of the African ANSP Peer Review Programme (AAPRP). It contains {ansCount} Protocol Questions organized across {areaCount} review areas — Air Traffic Services (ATS), Flight Procedure Design (FPD), Aeronautical Information Service (AIS), Aeronautical Charts (MAP), Meteorological Service (MET), Communications/Navigation/Surveillance (CNS), and Search & Rescue (SAR) — derived from ICAO standards and adapted for peer review of Air Navigation Service Providers.",
+      "smsDescription": "The SMS questionnaire follows CANSO's Standard of Excellence (SoE) 2024 framework to assess Safety Management System maturity across 4 components and 12 study areas. Organizations are rated from Level A (Initial/Ad-hoc) to Level E (Optimizing/Leading).",
+      "together": "Together, these two frameworks provide a comprehensive assessment of both ANS technical compliance and SMS organizational maturity."
     }
   },
   "auditAreas": {
@@ -1375,18 +1387,20 @@
       "title": "Filters",
       "search": "Search",
       "searchPlaceholder": "Search by PQ number or text...",
-      "auditArea": "Review Area",
-      "criticalElement": "Critical Element",
+      "reviewArea": "Review Area",
       "additional": "Additional Filters",
-      "priorityPQ": "Priority PQ",
-      "requiresOnSite": "Requires On-Site",
+      "priorityPQ": "Priority PQ only",
+      "newRevised": "New/Revised in 2024",
       "selectAll": "Select All",
       "clear": "Clear",
       "clearAll": "Clear All Filters"
     },
     "results": {
-      "showing": "Showing {from}-{to} of {total} questions",
-      "page": "Page {current} of {total}"
+      "total": "{count, plural, one {# question} other {# questions}} found",
+      "areas": "{count, plural, one {# area} other {# areas}}"
+    },
+    "section": {
+      "pqs": "PQs"
     },
     "pq": {
       "priority": "Priority",
@@ -1394,7 +1408,15 @@
       "newIn2024": "New in 2024",
       "revisedIn2024": "Revised in 2024",
       "guidance": "Guidance for Review of Evidence",
-      "icaoReferences": "ICAO References"
+      "icaoReferences": "ICAO References",
+      "noteToTeam": "Note to the Review Team",
+      "viewInAssessment": "View in Assessment",
+      "responseStatus": {
+        "satisfactory": "Satisfactory",
+        "notSatisfactory": "Not Satisfactory",
+        "notApplicable": "Not Applicable",
+        "unanswered": "Unanswered"
+      }
     },
     "empty": {
       "title": "No questions found",
@@ -1428,6 +1450,17 @@
       "title": "SMS Components",
       "selected": "Selected Component",
       "weight": "weight"
+    },
+    "search": {
+      "label": "Search",
+      "placeholder": "Search objectives and descriptors…",
+      "clear": "Clear search"
+    },
+    "results": {
+      "total": "{count, plural, one {# objective} other {# objectives}}",
+      "studyAreas": "{count, plural, one {# study area} other {# study areas}}",
+      "noResults": "No objectives match your search",
+      "noResultsDescription": "Try a different search term or clear the search filter."
     },
     "studyArea": {
       "title": "Study Areas",
@@ -1957,6 +1990,7 @@
       "assessmentTitle": "Title",
       "descriptionLabel": "Description",
       "auditAreas": "Review Areas",
+      "reviewAreas": "Review Areas",
       "smsComponents": "SMS Components",
       "estimatedQuestions": "Est. Questions",
       "estimatedTime": "Est. Time",
@@ -6937,6 +6971,7 @@
     },
     "noAssessments": "No assessments found",
     "noAssessmentsDescription": "Create a new assessment to get started",
+    "summary": "{total, plural, one {# assessment} other {# assessments}} total · {inProgress} in progress · {completed} completed",
     "create": {
       "pageTitle": "Create Self-Assessment",
       "pageDescription": "Start a new self-assessment for your organization",
@@ -6984,6 +7019,17 @@
       "organization": "Organization",
       "questionnaire": "Questionnaire",
       "title": "Title",
+      "scope": {
+        "title": "Select Review Areas",
+        "description": "Choose which ANS review areas to include in this assessment",
+        "selectAll": "Select All",
+        "deselectAll": "Deselect All",
+        "pqs": "{count, plural, one {# PQ} other {# PQs}}",
+        "selected": "Selected: {areas, plural, one {# area} other {# areas}} · {pqs} Protocol Questions",
+        "noneSelected": "No areas selected — select at least one review area",
+        "allSelected": "All {count} review areas selected",
+        "reviewAreas": "Review Areas"
+      },
       "confirmDialog": {
         "title": "Confirm Assessment Creation",
         "description": "You are about to create a new assessment for {organization} using the {questionnaire} questionnaire. This action cannot be undone.",

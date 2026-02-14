@@ -4,7 +4,17 @@ import { useCallback, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { ChevronRight, Home, Shield } from "lucide-react";
+import {
+  ChevronRight,
+  Home,
+  Search,
+  Shield,
+  X,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { ComponentTabs } from "./component-tabs";
 import { StudyAreaAccordion } from "./study-area-accordion";
 import { MaturityLegend } from "./maturity-legend";
@@ -15,12 +25,14 @@ interface SMSBrowserProps {
   locale: string;
   initialComponent?: string;
   initialStudyArea?: string;
+  initialSearch?: string;
 }
 
 export function SMSBrowser({
   locale,
   initialComponent,
   initialStudyArea,
+  initialSearch,
 }: SMSBrowserProps) {
   const t = useTranslations("smsBrowser");
   const router = useRouter();
@@ -31,6 +43,16 @@ export function SMSBrowser({
   const [selectedComponent, setSelectedComponent] = useState<SMSComponent>(
     (initialComponent as SMSComponent) || "SAFETY_POLICY_OBJECTIVES"
   );
+  const [searchInput, setSearchInput] = useState(initialSearch || "");
+
+  // Get current search from URL
+  const currentSearch = searchParams.get("search") || "";
+
+  // Track result counts from children
+  const [resultCounts, setResultCounts] = useState<{
+    objectives: number;
+    studyAreas: number;
+  }>({ objectives: 0, studyAreas: 0 });
 
   // Update URL when component changes
   const handleComponentChange = useCallback(
@@ -57,6 +79,31 @@ export function SMSBrowser({
     },
     [router, searchParams, locale]
   );
+
+  // Search handlers
+  const handleSearch = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (searchInput) {
+      params.set("search", searchInput);
+    } else {
+      params.delete("search");
+    }
+    router.push(`/${locale}/questionnaires/sms?${params.toString()}`);
+  }, [router, searchParams, locale, searchInput]);
+
+  const handleSearchKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter") handleSearch();
+    },
+    [handleSearch]
+  );
+
+  const clearSearch = useCallback(() => {
+    setSearchInput("");
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("search");
+    router.push(`/${locale}/questionnaires/sms?${params.toString()}`);
+  }, [router, searchParams, locale]);
 
   const componentMeta = SMS_COMPONENTS[selectedComponent];
 
@@ -91,6 +138,40 @@ export function SMSBrowser({
         <p className="text-muted-foreground">{t("subtitle")}</p>
       </div>
 
+      {/* Search Bar */}
+      <div className="space-y-2">
+        <Label htmlFor="sms-search" className="text-sm font-medium">
+          {t("search.label")}
+        </Label>
+        <div className="flex gap-2">
+          <Input
+            id="sms-search"
+            placeholder={t("search.placeholder")}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={handleSearchKeyDown}
+            className="flex-1 max-w-md"
+          />
+          <Button size="icon" variant="secondary" onClick={handleSearch}>
+            <Search className="h-4 w-4" />
+          </Button>
+        </div>
+        {/* Active search badge */}
+        {currentSearch && (
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary" className="gap-1">
+              &quot;{currentSearch}&quot;
+              <button
+                onClick={clearSearch}
+                className="ml-1 hover:text-foreground"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          </div>
+        )}
+      </div>
+
       {/* Maturity Legend */}
       <MaturityLegend locale={locale} defaultOpen={false} />
 
@@ -120,6 +201,16 @@ export function SMSBrowser({
         </p>
       </div>
 
+      {/* Results Summary (shown when searching) */}
+      {currentSearch && (
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <span>{t("results.total", { count: resultCounts.objectives })}</span>
+          <span>
+            {t("results.studyAreas", { count: resultCounts.studyAreas })}
+          </span>
+        </div>
+      )}
+
       {/* Study Areas */}
       <div>
         <h2 className="text-lg font-semibold mb-3">
@@ -130,6 +221,8 @@ export function SMSBrowser({
           locale={locale}
           defaultOpen={initialStudyArea}
           onStudyAreaChange={handleStudyAreaChange}
+          searchQuery={currentSearch}
+          onResultCounts={setResultCounts}
         />
       </div>
     </div>

@@ -4,8 +4,8 @@
  * Assessments Combined Client — unified Questionnaires + Assessments hub
  *
  * Three tabs:
- *   1. My Assessments — self-assessment list, stats, filters
- *   2. USOAP CMA Questions — ANS questionnaire browser
+ *   1. My Assessments — self-assessment list, stats, filters, summary row
+ *   2. ANS Protocol Questions — review area navigation grid (7 areas)
  *   3. CANSO SoE Framework — SMS questionnaire browser
  */
 
@@ -17,22 +17,20 @@ import {
   FileText,
   Shield,
   Plus,
-  BookOpen,
   Layers,
   Target,
   Award,
-  BarChart3,
+  BookOpen,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { AssessmentsStats } from "@/components/features/assessments/assessments-stats";
 import { AssessmentsFilters } from "@/components/features/assessments/assessments-filters";
 import { AssessmentsList } from "@/components/features/assessments/assessments-list";
+import { ANSReviewAreaGrid } from "@/components/features/assessments/ans-review-area-grid";
 import { QuestionnaireTypeCard } from "@/components/features/questionnaire/questionnaire-type-card";
-import {
-  TOTAL_USOAP_PQ_COUNT,
-  QUESTIONNAIRE_METADATA,
-} from "@/lib/questionnaire/constants";
+import { QUESTIONNAIRE_METADATA } from "@/lib/questionnaire/constants";
+import { trpc } from "@/lib/trpc/client";
 
 // =============================================================================
 // TYPES
@@ -68,6 +66,14 @@ export function AssessmentsCombinedClient({
   const t = useTranslations("assessments");
   const tQ = useTranslations("questionnaire");
   const searchParams = useSearchParams();
+
+  // Fetch dynamic ANS stats for About section interpolation
+  const { data: ansStats } = trpc.questionnaire.getANSStats.useQuery(
+    undefined,
+    { staleTime: 5 * 60 * 1000 }
+  );
+  const ansCount = ansStats?.totalCount ?? 0;
+  const areaCount = Object.keys(ansStats?.countsByArea ?? {}).length || 7;
 
   // Support ?tab= deep linking (e.g. redirect from /questionnaires)
   const tabParam = searchParams.get("tab") as AssessmentsTab | null;
@@ -125,52 +131,18 @@ export function AssessmentsCombinedClient({
           />
         </TabsContent>
 
-        {/* Tab 2: USOAP CMA Questions */}
+        {/* Tab 2: ANS Protocol Questions — Review Area Grid */}
         <TabsContent value="usoap" className="space-y-6">
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold">{tQ("ans.title")}</h2>
-            <div className="max-w-xl">
-              <QuestionnaireTypeCard
-                type="ans"
-                title={tQ("ans.title")}
-                fullTitle={tQ("ans.fullTitle")}
-                description={tQ("ans.description")}
-                effectiveDate={tQ("ans.effectiveDate")}
-                browseLabel={tQ("ans.browse")}
-                href="/questionnaires/ans"
-                locale={locale}
-                isNew
-                stats={[
-                  {
-                    label: tQ("stats.totalQuestions"),
-                    value: TOTAL_USOAP_PQ_COUNT,
-                    icon: <BookOpen className="h-4 w-4" />,
-                  },
-                  {
-                    label: tQ("ans.auditAreas"),
-                    value: QUESTIONNAIRE_METADATA.ANS_USOAP_CMA.auditAreas,
-                    icon: <Layers className="h-4 w-4" />,
-                  },
-                  {
-                    label: tQ("ans.criticalElements"),
-                    value: QUESTIONNAIRE_METADATA.ANS_USOAP_CMA.criticalElements,
-                    icon: <Target className="h-4 w-4" />,
-                  },
-                  {
-                    label: tQ("stats.priorityQuestions"),
-                    value: "128",
-                    icon: <BarChart3 className="h-4 w-4" />,
-                  },
-                ]}
-              />
-            </div>
-          </div>
+          <ANSReviewAreaGrid locale={locale} />
 
-          {/* Quick Info */}
-          <div className="rounded-lg border bg-muted/30 p-6">
-            <h3 className="font-semibold mb-3">{tQ("info.title")}</h3>
+          {/* About section */}
+          <div className="rounded-lg border bg-muted/30 p-6 space-y-3">
+            <h3 className="font-semibold">{tQ("info.title")}</h3>
             <p className="text-sm text-muted-foreground">
-              {tQ("info.ansDescription")}
+              {tQ("info.ansDescription", { ansCount, areaCount })}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {tQ("info.together")}
             </p>
           </div>
         </TabsContent>
@@ -215,11 +187,14 @@ export function AssessmentsCombinedClient({
             </div>
           </div>
 
-          {/* Quick Info */}
-          <div className="rounded-lg border bg-muted/30 p-6">
-            <h3 className="font-semibold mb-3">{tQ("info.title")}</h3>
+          {/* About section */}
+          <div className="rounded-lg border bg-muted/30 p-6 space-y-3">
+            <h3 className="font-semibold">{tQ("info.title")}</h3>
             <p className="text-sm text-muted-foreground">
               {tQ("info.smsDescription")}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {tQ("info.together")}
             </p>
           </div>
         </TabsContent>

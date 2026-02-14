@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { trpc } from "@/lib/trpc/client";
 import type { QuestionnaireType, AssessmentType } from "@/types/prisma-enums";
 
 interface ReviewConfirmStepProps {
@@ -31,19 +32,6 @@ interface ReviewConfirmStepProps {
   onConfirmedChange: (confirmed: boolean) => void;
   isSubmitting?: boolean;
 }
-
-// Estimated questions per area
-const QUESTIONS_PER_ANS_AREA: Record<string, number> = {
-  LEG: 45,
-  ORG: 52,
-  PEL: 89,
-  OPS: 156,
-  AIR: 134,
-  AIG: 67,
-  ANS: 145,
-  AGA: 98,
-  SSP: 65,
-};
 
 const QUESTIONS_PER_SMS_COMPONENT: Record<string, number> = {
   SAFETY_POLICY_OBJECTIVES: 25,
@@ -64,19 +52,28 @@ export function ReviewConfirmStep({
   isSubmitting,
 }: ReviewConfirmStepProps) {
   const t = useTranslations("wizard");
-  const tAudit = useTranslations("auditAreas");
+  const tAreas = useTranslations("reviewAreas");
   const tSms = useTranslations("smsComponents");
 
   const isANS = questionnaireType === "ANS_USOAP_CMA";
 
-  // Calculate estimated questions
-  const questionsMap = isANS
-    ? QUESTIONS_PER_ANS_AREA
-    : QUESTIONS_PER_SMS_COMPONENT;
-  const estimatedQuestions = selectedAreas.reduce(
-    (total, area) => total + (questionsMap[area] || 0),
-    0
+  // Fetch real PQ counts for ANS assessments
+  const { data: ansStats } = trpc.questionnaire.getANSStats.useQuery(
+    undefined,
+    { enabled: isANS, staleTime: 5 * 60 * 1000 }
   );
+  const countsByArea = ansStats?.countsByArea ?? {};
+
+  // Calculate estimated questions
+  const estimatedQuestions = isANS
+    ? selectedAreas.reduce(
+        (total, area) => total + (countsByArea[area] ?? 0),
+        0
+      )
+    : selectedAreas.reduce(
+        (total, area) => total + (QUESTIONS_PER_SMS_COMPONENT[area] ?? 0),
+        0
+      );
 
   // Estimate time (5 minutes per question average)
   const estimatedMinutes = estimatedQuestions * 5;
@@ -158,14 +155,16 @@ export function ReviewConfirmStep({
 
             <Separator />
 
-            {/* Scope */}
+            {/* Scope — review areas for ANS, SMS components for SMS */}
             <div>
               <div className="text-sm text-muted-foreground mb-2">
-                {isANS ? t("review.auditAreas") : t("review.smsComponents")}
+                {isANS ? t("review.reviewAreas") : t("review.smsComponents")}
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {selectedAreas.map((area) => {
-                  const name = isANS ? tAudit(`${area}.name`) : tSms(`${area}.name`);
+                  const name = isANS
+                    ? tAreas(`${area}.name`)
+                    : tSms(`${area}.name`);
                   const code = isANS ? area : tSms(`${area}.code`);
                   return (
                     <Badge key={area} variant="outline" className="text-xs">

@@ -21,6 +21,7 @@ import { useTranslations } from "next-intl";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 import type { TeamRole, ExpertiseArea, Language } from "@/types/prisma-enums";
+import { expertiseToReviewArea } from "@/lib/review-areas";
 
 // UI Components
 import { Button } from "@/components/ui/button";
@@ -566,8 +567,29 @@ export function ReviewerSelector({
                               </div>
                             )}
 
+                            {/* Review Area Coverage */}
+                            {reviewer.expertiseAreas.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-1.5">
+                                {Array.from(
+                                  new Set(
+                                    reviewer.expertiseAreas
+                                      .map((e) => expertiseToReviewArea(e))
+                                      .filter(Boolean)
+                                  )
+                                ).map((area) => (
+                                  <Badge
+                                    key={area}
+                                    variant="outline"
+                                    className="text-xs font-mono"
+                                  >
+                                    {area}
+                                  </Badge>
+                                ))}
+                              </div>
+                            )}
+
                             {/* Match Reasons */}
-                            <div className="flex flex-wrap gap-1 mt-2">
+                            <div className="flex flex-wrap gap-1 mt-1.5">
                               {reviewer.matchReasons.slice(0, 3).map((reason, i) => (
                                 <Badge
                                   key={i}

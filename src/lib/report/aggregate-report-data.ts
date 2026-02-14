@@ -30,16 +30,14 @@ import type {
 // Constants & Mappings
 // ============================================================
 
-const AUDIT_AREA_NAMES: Record<string, { en: string; fr: string }> = {
-  LEG: { en: "Legislation", fr: "Législation" },
-  ORG: { en: "Organization", fr: "Organisation" },
-  PEL: { en: "Personnel Licensing", fr: "Licences du personnel" },
-  OPS: { en: "Operations", fr: "Opérations" },
-  AIR: { en: "Airworthiness", fr: "Navigabilité" },
-  AIG: { en: "Accident Investigation", fr: "Enquêtes sur les accidents" },
-  ANS: { en: "Air Navigation Services", fr: "Services de navigation aérienne" },
-  AGA: { en: "Aerodromes", fr: "Aérodromes" },
-  SSP: { en: "State Safety Programme", fr: "Programme de sécurité de l'État" },
+const REVIEW_AREA_NAMES: Record<string, { en: string; fr: string }> = {
+  ATS: { en: "Air Traffic Services", fr: "Services de la circulation aérienne" },
+  FPD: { en: "Flight Procedures Design", fr: "Conception des procédures de vol" },
+  AIS: { en: "Aeronautical Information Service", fr: "Service d'information aéronautique" },
+  MAP: { en: "Aeronautical Charts", fr: "Cartes aéronautiques" },
+  MET: { en: "Meteorological Service", fr: "Service météorologique" },
+  CNS: { en: "Communications, Navigation, Surveillance", fr: "Communications, Navigation, Surveillance" },
+  SAR: { en: "Search and Rescue", fr: "Recherche et sauvetage" },
 };
 
 const CRITICAL_ELEMENT_NAMES: Record<string, { en: string; fr: string }> = {
@@ -376,7 +374,7 @@ function buildANSAssessment(assessment: any, locale: "en" | "fr"): ANSAssessment
       const eiScore = applicable > 0
         ? Math.round((counts.satisfactory / applicable) * 10000) / 100
         : 0;
-      const areaName = AUDIT_AREA_NAMES[code];
+      const areaName = REVIEW_AREA_NAMES[code];
       return {
         code,
         name: areaName ? (locale === "en" ? areaName.en : areaName.fr) : code,
@@ -556,7 +554,7 @@ function buildFindingsDetail(findings: any[], locale: "en" | "fr"): FindingDetai
   return findings.map((f: any) => {
     const cap = f.correctiveActionPlan;
     const reviewAreaCode = f.reviewArea || "";
-    const areaName = AUDIT_AREA_NAMES[reviewAreaCode];
+    const areaName = REVIEW_AREA_NAMES[reviewAreaCode];
     const ceName = f.criticalElement ? CRITICAL_ELEMENT_NAMES[f.criticalElement] : null;
 
     return {
@@ -633,7 +631,7 @@ function buildBestPractices(findings: any[], locale: "en" | "fr"): BestPractices
     .map((f: any) => {
       const bp = f.bestPractice;
       const reviewAreaCode = f.reviewArea || "";
-      const areaName = AUDIT_AREA_NAMES[reviewAreaCode];
+      const areaName = REVIEW_AREA_NAMES[reviewAreaCode];
 
       return {
         title: bp
@@ -687,7 +685,7 @@ function buildIntroduction(review: any, locale: "en" | "fr"): IntroductionSectio
 
   const scope = review.areasInScope.length > 0
     ? review.areasInScope.map((code: string) => {
-        const name = AUDIT_AREA_NAMES[code];
+        const name = REVIEW_AREA_NAMES[code];
         return name ? `${code} - ${locale === "en" ? name.en : name.fr}` : code;
       })
     : [locale === "en" ? "Full scope review" : "Revue de portée complète"];
@@ -760,11 +758,11 @@ function buildMethodology(review: any, ansAssessment: any, locale: "en" | "fr"):
   }
 
   // Build review area list with PQ counts
-  const allAreas = Object.keys(AUDIT_AREA_NAMES);
+  const allAreas = Object.keys(REVIEW_AREA_NAMES);
   const scopeAreas = review.areasInScope.length > 0 ? review.areasInScope : allAreas;
 
   const reviewAreas = allAreas.map((code: string) => {
-    const name = AUDIT_AREA_NAMES[code];
+    const name = REVIEW_AREA_NAMES[code];
     // Count PQs from assessment responses if available
     const pqCount = ansAssessment
       ? ansAssessment.responses.filter((r: any) => r.question?.reviewArea === code).length

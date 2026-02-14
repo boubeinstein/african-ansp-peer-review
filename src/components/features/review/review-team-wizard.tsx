@@ -76,6 +76,7 @@ export function ReviewTeamWizard({
   canApproveCrossTeam = false,
 }: ReviewTeamWizardProps) {
   const t = useTranslations("review.teamWizardDialog");
+  const tAreas = useTranslations("reviewAreas");
   const locale = useLocale();
 
   const [step, setStep] = useState(1);
@@ -256,7 +257,7 @@ export function ReviewTeamWizard({
                             <div className="flex flex-wrap gap-1">
                               {review.areasInScope.map((area) => (
                                 <Badge key={area} variant="outline" className="text-xs">
-                                  {area}
+                                  {area} — {tAreas(`${area}.name`)}
                                 </Badge>
                               ))}
                             </div>

@@ -162,6 +162,7 @@ export function ReviewDetailView({
   userOrganizationId,
 }: ReviewDetailViewProps) {
   const t = useTranslations("review.detail");
+  const tAreas = useTranslations("reviewAreas");
   const utils = trpc.useUtils();
   const pusherState = usePusherConnectionState();
   const pusherConnected = pusherState === "connected";
@@ -494,7 +495,7 @@ export function ReviewDetailView({
               <div className="flex flex-wrap gap-1 mt-2">
                 {review.areasInScope.map((area) => (
                   <Badge key={area} variant="secondary" className="text-xs">
-                    {area}
+                    {area} — {tAreas(`${area}.name`)}
                   </Badge>
                 ))}
               </div>

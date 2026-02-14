@@ -251,7 +251,7 @@ function ANSAssessmentPanel({ ans, locale }: { ans: ANSAssessmentSection; locale
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{t("auditArea")}</TableHead>
+                    <TableHead>{t("reviewArea")}</TableHead>
                     <TableHead className="w-[60px] text-center">{t("code")}</TableHead>
                     <TableHead className="w-[60px] text-right">{t("pqs")}</TableHead>
                     <TableHead className="w-[80px] text-right">{t("satisfactory")}</TableHead>

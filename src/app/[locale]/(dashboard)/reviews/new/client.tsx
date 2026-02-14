@@ -114,8 +114,8 @@ const newReviewSchema = z.object({
 
 type NewReviewFormValues = z.infer<typeof newReviewSchema>;
 
-// Focus area constants
-const ANS_FOCUS_AREAS = ["ATS", "AIM", "MET", "CNS", "SAR"] as const;
+// Focus area constants — the 7 ANS review areas (excluding SMS which is separate)
+import { ANS_REVIEW_AREAS } from "@/lib/review-areas";
 
 // =============================================================================
 // COMPONENT
@@ -128,6 +128,7 @@ export function NewReviewClient({
 }: NewReviewClientProps) {
   const t = useTranslations("review.new");
   const tCommon = useTranslations("common");
+  const tAreas = useTranslations("reviewAreas");
   const router = useRouter();
 
   // Determine if user is oversight role or ANSP role
@@ -494,8 +495,8 @@ export function NewReviewClient({
                       <FormDescription>
                         {t("fields.focusAreasDesc")}
                       </FormDescription>
-                      <div className="grid grid-cols-5 gap-2 mt-2">
-                        {ANS_FOCUS_AREAS.map((area) => (
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2">
+                        {ANS_REVIEW_AREAS.map((area) => (
                           <FormField
                             key={area}
                             control={form.control}
@@ -503,7 +504,7 @@ export function NewReviewClient({
                             render={({ field }) => (
                               <FormItem
                                 key={area}
-                                className="flex flex-row items-center space-x-2 space-y-0"
+                                className="flex flex-row items-start space-x-2 space-y-0 rounded-md border p-3"
                               >
                                 <FormControl>
                                   <Checkbox
@@ -520,9 +521,14 @@ export function NewReviewClient({
                                     }}
                                   />
                                 </FormControl>
-                                <label className="text-sm font-medium">
-                                  {area}
-                                </label>
+                                <div className="leading-none">
+                                  <label className="text-sm font-medium">
+                                    {area}
+                                  </label>
+                                  <p className="text-xs text-muted-foreground mt-0.5">
+                                    {tAreas(`${area}.name`)}
+                                  </p>
+                                </div>
                               </FormItem>
                             )}
                           />

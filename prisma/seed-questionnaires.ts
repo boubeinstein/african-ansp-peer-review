@@ -143,6 +143,7 @@ async function seedCategories() {
         sortOrder: cat.sortOrder,
         nameEn: cat.nameEn,
         nameFr: cat.nameFr,
+        reviewArea: "SMS",
         smsComponent: cat.smsComponent,
       },
     });
@@ -223,6 +224,7 @@ async function seedSampleQuestions() {
           questionnaireId: smsQ.id,
           categoryId: category.id,
           pqNumber,
+          reviewArea: "SMS",
           smsComponent: category.smsComponent,
           questionTextEn: `Sample SMS assessment question ${i} for ${category.nameEn}. Is this element effectively implemented?`,
           questionTextFr: `Exemple de question d'évaluation SMS ${i} pour ${category.nameFr}. Cet élément est-il effectivement mis en œuvre?`,

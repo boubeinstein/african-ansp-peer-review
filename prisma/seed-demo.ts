@@ -38,6 +38,7 @@ import type {
   CAPStatus,
   CriticalElement,
   USOAPAuditArea,
+  ANSReviewArea,
 } from "@prisma/client";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -53,6 +54,23 @@ const DEMO_PREFIX = "DEMO-";
 // =============================================================================
 // HELPER FUNCTIONS
 // =============================================================================
+
+/**
+ * Derive areasInScope (ANSReviewArea[]) from questionnaire types.
+ * ANS reviews cover all 7 ANS review areas; SMS reviews cover SMS.
+ */
+function deriveAreasInScope(questionnaires: QuestionnaireType[]): string[] {
+  const areas = new Set<string>();
+  for (const q of questionnaires) {
+    if (q === "ANS_USOAP_CMA") {
+      ["ATS", "FPD", "AIS", "MAP", "MET", "CNS", "SAR"].forEach((a) => areas.add(a));
+    }
+    if (q === "SMS_CANSO_SOE") {
+      areas.add("SMS");
+    }
+  }
+  return Array.from(areas);
+}
 
 function addDays(date: Date, days: number): Date {
   const result = new Date(date);
@@ -185,6 +203,7 @@ interface FindingTemplate {
   severity: FindingSeverity;
   status: FindingStatus;
   criticalElement?: CriticalElement;
+  reviewArea?: ANSReviewArea;
   icaoReference?: string;
   capRequired: boolean;
   capStatus?: CAPStatus;
@@ -203,6 +222,7 @@ const COMPLETED_REVIEW_FINDINGS: FindingTemplate[] = [
     severity: "MAJOR" as FindingSeverity,
     status: "CLOSED" as FindingStatus,
     criticalElement: "CE_5" as CriticalElement,
+    reviewArea: "ATS" as ANSReviewArea,
     icaoReference: "Annex 11, Chapter 4",
     capRequired: true,
     capStatus: "CLOSED" as CAPStatus,
@@ -217,6 +237,7 @@ const COMPLETED_REVIEW_FINDINGS: FindingTemplate[] = [
     severity: "MAJOR" as FindingSeverity,
     status: "CLOSED" as FindingStatus,
     criticalElement: "CE_4" as CriticalElement,
+    reviewArea: "ATS" as ANSReviewArea,
     icaoReference: "Annex 1, Chapter 4",
     capRequired: true,
     capStatus: "VERIFIED" as CAPStatus,
@@ -230,6 +251,7 @@ const COMPLETED_REVIEW_FINDINGS: FindingTemplate[] = [
     findingType: "OBSERVATION" as FindingType,
     severity: "MINOR" as FindingSeverity,
     status: "CLOSED" as FindingStatus,
+    reviewArea: "SMS" as ANSReviewArea,
     capRequired: false,
   },
   {
@@ -240,6 +262,7 @@ const COMPLETED_REVIEW_FINDINGS: FindingTemplate[] = [
     findingType: "GOOD_PRACTICE" as FindingType,
     severity: "OBSERVATION" as FindingSeverity,
     status: "CLOSED" as FindingStatus,
+    reviewArea: "SMS" as ANSReviewArea,
     capRequired: false,
   },
   {
@@ -250,6 +273,7 @@ const COMPLETED_REVIEW_FINDINGS: FindingTemplate[] = [
     findingType: "CONCERN" as FindingType,
     severity: "MINOR" as FindingSeverity,
     status: "CLOSED" as FindingStatus,
+    reviewArea: "AIS" as ANSReviewArea,
     capRequired: true,
     capStatus: "CLOSED" as CAPStatus,
     capDaysOffset: -20,
@@ -262,6 +286,7 @@ const COMPLETED_REVIEW_FINDINGS: FindingTemplate[] = [
     findingType: "RECOMMENDATION" as FindingType,
     severity: "MINOR" as FindingSeverity,
     status: "CLOSED" as FindingStatus,
+    reviewArea: "SAR" as ANSReviewArea,
     capRequired: false,
   },
 ];
@@ -277,6 +302,7 @@ const IN_PROGRESS_REVIEW_FINDINGS: FindingTemplate[] = [
     severity: "CRITICAL" as FindingSeverity,
     status: "CAP_SUBMITTED" as FindingStatus,
     criticalElement: "CE_5" as CriticalElement,
+    reviewArea: "CNS" as ANSReviewArea,
     icaoReference: "Annex 10, Volume IV",
     capRequired: true,
     capStatus: "SUBMITTED" as CAPStatus,
@@ -291,6 +317,7 @@ const IN_PROGRESS_REVIEW_FINDINGS: FindingTemplate[] = [
     severity: "MAJOR" as FindingSeverity,
     status: "CAP_ACCEPTED" as FindingStatus,
     criticalElement: "CE_6" as CriticalElement,
+    reviewArea: "AIS" as ANSReviewArea,
     icaoReference: "Annex 15, Chapter 5",
     capRequired: true,
     capStatus: "ACCEPTED" as CAPStatus,
@@ -304,6 +331,7 @@ const IN_PROGRESS_REVIEW_FINDINGS: FindingTemplate[] = [
     findingType: "CONCERN" as FindingType,
     severity: "MINOR" as FindingSeverity,
     status: "IN_PROGRESS" as FindingStatus,
+    reviewArea: "SMS" as ANSReviewArea,
     capRequired: true,
     capStatus: "IN_PROGRESS" as CAPStatus,
     capDaysOffset: -5, // Overdue
@@ -322,6 +350,7 @@ const PLANNING_REVIEW_FINDINGS: FindingTemplate[] = [
     severity: "MAJOR" as FindingSeverity,
     status: "CAP_REQUIRED" as FindingStatus,
     criticalElement: "CE_3" as CriticalElement,
+    reviewArea: "ATS" as ANSReviewArea,
     capRequired: true,
     capStatus: "DRAFT" as CAPStatus,
     capDaysOffset: 60,
@@ -334,6 +363,7 @@ const PLANNING_REVIEW_FINDINGS: FindingTemplate[] = [
     findingType: "OBSERVATION" as FindingType,
     severity: "MINOR" as FindingSeverity,
     status: "OPEN" as FindingStatus,
+    reviewArea: "ATS" as ANSReviewArea,
     capRequired: false,
   },
 ];
@@ -348,6 +378,7 @@ const OTHER_REVIEW_FINDINGS: FindingTemplate[] = [
     findingType: "NON_CONFORMITY" as FindingType,
     severity: "MAJOR" as FindingSeverity,
     status: "CAP_REQUIRED" as FindingStatus,
+    reviewArea: "SMS" as ANSReviewArea,
     capRequired: true,
     capStatus: "DRAFT" as CAPStatus,
     capDaysOffset: 90,
@@ -360,6 +391,7 @@ const OTHER_REVIEW_FINDINGS: FindingTemplate[] = [
     findingType: "RECOMMENDATION" as FindingType,
     severity: "MINOR" as FindingSeverity,
     status: "OPEN" as FindingStatus,
+    reviewArea: "SMS" as ANSReviewArea,
     capRequired: false,
   },
 ];
@@ -384,6 +416,7 @@ function getFindingTemplatesForStatus(status: ReviewStatus): FindingTemplate[] {
 interface AssessmentConfig {
   questionnaireType: QuestionnaireType;
   selectedAuditAreas: USOAPAuditArea[];
+  selectedReviewAreas: ANSReviewArea[];
   status: AssessmentStatus;
   createAllResponses: boolean;
 }
@@ -395,12 +428,14 @@ function getAssessmentConfigsForStatus(reviewStatus: ReviewStatus): AssessmentCo
         {
           questionnaireType: "ANS_USOAP_CMA" as QuestionnaireType,
           selectedAuditAreas: ["AGA" as USOAPAuditArea],
+          selectedReviewAreas: ["ATS", "FPD", "AIS", "MAP", "MET", "CNS", "SAR"] as ANSReviewArea[],
           status: "COMPLETED" as AssessmentStatus,
           createAllResponses: true,
         },
         {
           questionnaireType: "SMS_CANSO_SOE" as QuestionnaireType,
           selectedAuditAreas: [],
+          selectedReviewAreas: ["SMS"] as ANSReviewArea[],
           status: "COMPLETED" as AssessmentStatus,
           createAllResponses: true,
         },
@@ -410,6 +445,7 @@ function getAssessmentConfigsForStatus(reviewStatus: ReviewStatus): AssessmentCo
         {
           questionnaireType: "ANS_USOAP_CMA" as QuestionnaireType,
           selectedAuditAreas: ["AGA" as USOAPAuditArea, "ANS" as USOAPAuditArea],
+          selectedReviewAreas: ["ATS", "FPD", "AIS", "MAP", "MET", "CNS", "SAR"] as ANSReviewArea[],
           status: "UNDER_REVIEW" as AssessmentStatus,
           createAllResponses: false,
         },
@@ -419,6 +455,7 @@ function getAssessmentConfigsForStatus(reviewStatus: ReviewStatus): AssessmentCo
         {
           questionnaireType: "ANS_USOAP_CMA" as QuestionnaireType,
           selectedAuditAreas: ["AGA" as USOAPAuditArea],
+          selectedReviewAreas: ["ATS", "AIS", "CNS"] as ANSReviewArea[],
           status: "DRAFT" as AssessmentStatus,
           createAllResponses: false,
         },
@@ -645,6 +682,7 @@ async function seedReviews(): Promise<Map<string, string>> {
         actualEndDate: actualEnd,
         requestedDate,
         questionnairesInScope: config.questionnaires,
+        areasInScope: deriveAreasInScope(config.questionnaires),
       },
     });
 
@@ -727,6 +765,7 @@ async function seedFindings(): Promise<{ findingMap: Map<string, string>; create
           severity: template.severity,
           status: template.status,
           criticalElement: template.criticalElement,
+          reviewArea: template.reviewArea,
           icaoReference: template.icaoReference,
           capRequired: template.capRequired,
           identifiedAt: subtractDays(new Date(), 30),
@@ -841,6 +880,7 @@ async function seedAssessments(): Promise<void> {
           type: "PEER_REVIEW" as AssessmentType,
           status: config.status,
           selectedAuditAreas: config.selectedAuditAreas,
+          selectedReviewAreas: config.selectedReviewAreas,
           startedAt: subtractDays(new Date(), 60),
           ...(config.status === "COMPLETED" && { completedAt: subtractDays(new Date(), 15) }),
         },

@@ -5,6 +5,7 @@ import { PrismaClient } from "@prisma/client";
 import type {
   QuestionnaireType,
   USOAPAuditArea,
+  ANSReviewArea,
   CriticalElement,
   SMSComponent,
   CANSOStudyArea,
@@ -74,6 +75,7 @@ interface CategoryData {
   descriptionEn?: string | null;
   descriptionFr?: string | null;
   auditArea?: USOAPAuditArea | null;
+  reviewArea?: ANSReviewArea | null;
   criticalElement?: CriticalElement | null;
   smsComponent?: SMSComponent | null;
   studyArea?: CANSOStudyArea | null;
@@ -154,6 +156,7 @@ async function seedANSQuestionnaire() {
         descriptionEn: categoryData.descriptionEn,
         descriptionFr: categoryData.descriptionFr,
         auditArea: categoryData.auditArea,
+        reviewArea: categoryData.reviewArea ?? null,
         criticalElement: categoryData.criticalElement,
       },
       create: {
@@ -165,6 +168,7 @@ async function seedANSQuestionnaire() {
         descriptionEn: categoryData.descriptionEn,
         descriptionFr: categoryData.descriptionFr,
         auditArea: categoryData.auditArea,
+        reviewArea: categoryData.reviewArea ?? null,
         criticalElement: categoryData.criticalElement,
       },
     });
@@ -310,6 +314,7 @@ async function seedSMSQuestionnaire() {
         nameFr: categoryData.nameFr,
         descriptionEn: categoryData.descriptionEn,
         descriptionFr: categoryData.descriptionFr,
+        reviewArea: "SMS",
         smsComponent: categoryData.smsComponent,
         studyArea: categoryData.studyArea,
         transversalArea: categoryData.transversalArea,
@@ -322,6 +327,7 @@ async function seedSMSQuestionnaire() {
         nameFr: categoryData.nameFr,
         descriptionEn: categoryData.descriptionEn,
         descriptionFr: categoryData.descriptionFr,
+        reviewArea: "SMS",
         smsComponent: categoryData.smsComponent,
         studyArea: categoryData.studyArea,
         transversalArea: categoryData.transversalArea,
@@ -372,6 +378,7 @@ async function seedSMSQuestionnaire() {
         categoryId,
         questionTextEn: questionData.questionTextEn,
         questionTextFr: questionData.questionTextFr,
+        reviewArea: "SMS",
         smsComponent: questionData.smsComponent,
         studyArea: questionData.studyArea,
         guidanceEn: questionData.guidanceEn,
@@ -388,6 +395,7 @@ async function seedSMSQuestionnaire() {
         pqNumber: smsQuestionId,
         questionTextEn: questionData.questionTextEn,
         questionTextFr: questionData.questionTextFr,
+        reviewArea: "SMS",
         smsComponent: questionData.smsComponent,
         studyArea: questionData.studyArea,
         guidanceEn: questionData.guidanceEn,

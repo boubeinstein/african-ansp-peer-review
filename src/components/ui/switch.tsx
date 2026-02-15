@@ -1,34 +1,67 @@
 "use client"
 
 import * as React from "react"
-import * as SwitchPrimitive from "@radix-ui/react-switch"
-
 import { cn } from "@/lib/utils"
 
 /**
- * Switch with enhanced focus states for WCAG 2.1 AA compliance
+ * Native Switch implementation (React 19 compatible)
+ * Replaces Radix UI Switch to avoid infinite loop with useComposedRefs
  */
 function Switch({
   className,
+  checked,
+  defaultChecked,
+  onCheckedChange,
+  disabled,
   ...props
-}: React.ComponentProps<typeof SwitchPrimitive.Root>) {
+}: {
+  className?: string
+  checked?: boolean
+  defaultChecked?: boolean
+  onCheckedChange?: (checked: boolean) => void
+  disabled?: boolean
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'checked' | 'defaultChecked' | 'type'>) {
+  const [internalChecked, setInternalChecked] = React.useState(defaultChecked ?? false)
+  const isChecked = checked !== undefined ? checked : internalChecked
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newChecked = e.target.checked
+    if (checked === undefined) {
+      setInternalChecked(newChecked)
+    }
+    onCheckedChange?.(newChecked)
+  }
+
   return (
-    <SwitchPrimitive.Root
+    <label
       data-slot="switch"
       className={cn(
-        "peer data-[state=checked]:bg-primary data-[state=unchecked]:bg-input dark:data-[state=unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50",
-        "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 focus-visible:ring-offset-background",
-        className
+        "peer inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none cursor-pointer",
+        "focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-1 focus-within:ring-offset-background",
+        isChecked
+          ? "bg-primary"
+          : "bg-input dark:bg-input/80",
+        disabled && "cursor-not-allowed opacity-50",
+        className,
       )}
-      {...props}
     >
-      <SwitchPrimitive.Thumb
+      <input
+        type="checkbox"
+        className="sr-only"
+        checked={isChecked}
+        onChange={handleChange}
+        disabled={disabled}
+        {...props}
+      />
+      <span
         data-slot="switch-thumb"
         className={cn(
-          "bg-background dark:data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block size-4 rounded-full ring-0 transition-transform data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0"
+          "pointer-events-none block size-4 rounded-full ring-0 transition-transform bg-background dark:data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-background shadow-sm",
+          isChecked ? "translate-x-[calc(100%-2px)]" : "translate-x-0",
         )}
+        data-state={isChecked ? "checked" : "unchecked"}
       />
-    </SwitchPrimitive.Root>
+    </label>
   )
 }
 

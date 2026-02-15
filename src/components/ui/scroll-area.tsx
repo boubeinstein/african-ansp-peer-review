@@ -1,58 +1,49 @@
 "use client"
 
 import * as React from "react"
-import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area"
-
 import { cn } from "@/lib/utils"
 
+/**
+ * Native CSS ScrollArea (React 19 compatible)
+ * Replaces Radix UI ScrollArea to avoid infinite loop with useComposedRefs
+ */
 function ScrollArea({
   className,
   children,
   ...props
-}: React.ComponentProps<typeof ScrollAreaPrimitive.Root>) {
+}: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <ScrollAreaPrimitive.Root
+    <div
       data-slot="scroll-area"
-      className={cn("relative", className)}
-      {...props}
-    >
-      <ScrollAreaPrimitive.Viewport
-        data-slot="scroll-area-viewport"
-        className="focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1"
-      >
-        {children}
-      </ScrollAreaPrimitive.Viewport>
-      <ScrollBar />
-      <ScrollAreaPrimitive.Corner />
-    </ScrollAreaPrimitive.Root>
-  )
-}
-
-function ScrollBar({
-  className,
-  orientation = "vertical",
-  ...props
-}: React.ComponentProps<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>) {
-  return (
-    <ScrollAreaPrimitive.ScrollAreaScrollbar
-      data-slot="scroll-area-scrollbar"
-      orientation={orientation}
       className={cn(
-        "flex touch-none p-px transition-colors select-none",
-        orientation === "vertical" &&
-          "h-full w-2.5 border-l border-l-transparent",
-        orientation === "horizontal" &&
-          "h-2.5 flex-col border-t border-t-transparent",
-        className
+        "relative overflow-auto",
+        "[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar]:h-2",
+        "[&::-webkit-scrollbar-track]:bg-transparent",
+        "[&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border/50",
+        "[&::-webkit-scrollbar-thumb:hover]:bg-border",
+        "scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border/50",
+        "focus-visible:ring-ring/50 rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1",
+        className,
       )}
       {...props}
     >
-      <ScrollAreaPrimitive.ScrollAreaThumb
-        data-slot="scroll-area-thumb"
-        className="bg-border relative flex-1 rounded-full"
-      />
-    </ScrollAreaPrimitive.ScrollAreaScrollbar>
+      {children}
+    </div>
   )
+}
+
+/**
+ * ScrollBar component for API compatibility
+ * Scrollbar styling is handled by CSS on the ScrollArea container
+ */
+function ScrollBar({
+  className: _className,
+  orientation: _orientation = "vertical",
+  ..._props
+}: React.HTMLAttributes<HTMLDivElement> & { orientation?: "vertical" | "horizontal" }) {
+  // No-op: scrollbar styling is handled by CSS on the ScrollArea container.
+  // This component exists only for API compatibility with existing code that renders <ScrollBar />.
+  return null
 }
 
 export { ScrollArea, ScrollBar }

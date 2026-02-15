@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
   AlertCircle,
@@ -281,9 +281,13 @@ export function PQList({
 
   const hasRealData = data && data.groups.length > 0;
   const totalCount = hasRealData ? data.totalCount : mockData.totalCount;
-  const countsByArea = hasRealData
-    ? (data.countsByArea as Record<string, number>)
-    : mockData.countsByArea;
+
+  // Stabilize countsByArea to prevent infinite loop
+  const countsByArea = useMemo(() => {
+    return hasRealData
+      ? (data.countsByArea as Record<string, number>)
+      : mockData.countsByArea;
+  }, [hasRealData, data?.countsByArea, mockData.countsByArea]);
 
   // Normalize groups into a common shape
   const groups: AreaGroup[] = useMemo(() => {
@@ -315,12 +319,16 @@ export function PQList({
     return mockData.groups;
   }, [hasRealData, data, mockData.groups]);
 
-  // Propagate counts to parent
+  // Propagate counts to parent (use ref to prevent infinite loop)
+  const prevCountsRef = useRef<string>("");
   useEffect(() => {
-    if (Object.keys(countsByArea).length > 0) {
+    const countsKey = JSON.stringify(countsByArea);
+    if (countsKey !== prevCountsRef.current && Object.keys(countsByArea).length > 0) {
+      prevCountsRef.current = countsKey;
       onCountsLoaded(countsByArea);
     }
-  }, [countsByArea, onCountsLoaded]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [countsByArea]);
 
   const toggleQuestion = (id: string) => {
     setExpandedQuestions((prev) => {

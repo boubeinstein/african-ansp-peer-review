@@ -60,6 +60,11 @@ export function ANSBrowser({ locale, initialFilters }: ANSBrowserProps) {
   // PQ counts per area (updated from PQList via callback)
   const [areaCounts, setAreaCounts] = useState<Record<string, number>>({});
 
+  // Stable callback to prevent infinite loop in PQList
+  const handleCountsLoaded = useCallback((counts: Record<string, number>) => {
+    setAreaCounts(counts);
+  }, []);
+
   // Get current filter values from URL
   const selectedAreas = useMemo(() => {
     const param = searchParams.get("area");
@@ -413,7 +418,7 @@ export function ANSBrowser({ locale, initialFilters }: ANSBrowserProps) {
               isNewRevised,
               search: currentSearch,
             }}
-            onCountsLoaded={setAreaCounts}
+            onCountsLoaded={handleCountsLoaded}
           />
         </div>
       </div>

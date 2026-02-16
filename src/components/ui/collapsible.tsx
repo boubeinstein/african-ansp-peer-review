@@ -67,11 +67,14 @@ function CollapsibleTrigger({
 
   if (asChild && React.isValidElement(children)) {
     return React.cloneElement(children, {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...({ 'data-state': open ? 'open' : 'closed' } as any),
       onClick: (e: React.MouseEvent) => {
         onOpenChange(!open)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ;(children as any).props?.onClick?.(e)
       },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)
   }
 

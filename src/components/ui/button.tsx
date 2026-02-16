@@ -1,12 +1,11 @@
 import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-
 import { cn } from "@/lib/utils"
 
 /**
- * Button variants with enhanced focus states
+ * Button variants with enhanced focus states (React 19 compatible)
  * Uses ring-2 ring-primary ring-offset-2 pattern for WCAG 2.1 AA compliance
+ * Replaces Radix Slot with native React.cloneElement for asChild
  */
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background aria-invalid:ring-destructive dark:aria-invalid:ring-destructive aria-invalid:border-destructive",
@@ -45,21 +44,36 @@ function Button({
   variant = "default",
   size = "default",
   asChild = false,
+  children,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
   }) {
-  const Comp = asChild ? Slot : "button"
+  const computedClassName = cn(buttonVariants({ variant, size, className }))
+
+  if (asChild && React.isValidElement(children)) {
+    return React.cloneElement(children, {
+      'data-slot': 'button',
+      'data-variant': variant,
+      'data-size': size,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      className: cn(computedClassName, (children.props as any).className),
+      ...props,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any)
+  }
 
   return (
-    <Comp
+    <button
       data-slot="button"
       data-variant={variant}
       data-size={size}
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={computedClassName}
       {...props}
-    />
+    >
+      {children}
+    </button>
   )
 }
 

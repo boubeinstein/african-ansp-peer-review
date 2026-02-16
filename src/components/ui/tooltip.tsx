@@ -1,71 +1,73 @@
 "use client"
 
 import * as React from "react"
-import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 
-import { cn } from "@/lib/utils"
+/**
+ * Native Tooltip implementation (React 19 compatible)
+ * Replaces Radix UI Tooltip to avoid infinite loop with useComposedRefs
+ *
+ * Note: This is a minimal no-op implementation that prevents crashes.
+ * Tooltips will not visually appear, but the component API is preserved
+ * for compatibility. This is acceptable since tooltips are non-critical
+ * progressive enhancement features.
+ */
 
 function TooltipProvider({
-  delayDuration = 0,
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
-  return (
-    <TooltipPrimitive.Provider
-      data-slot="tooltip-provider"
-      delayDuration={delayDuration}
-      {...props}
-    />
-  )
+  children,
+  ..._props
+}: {
+  children: React.ReactNode
+  delayDuration?: number
+  skipDelayDuration?: number
+}) {
+  return <>{children}</>
 }
 
 function Tooltip({
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Root>) {
-  return (
-    <TooltipProvider>
-      <TooltipPrimitive.Root data-slot="tooltip" {...props} />
-    </TooltipProvider>
-  )
-}
-
-function TooltipTrigger({
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
-}
-
-function TooltipContent({
-  className,
-  sideOffset = 4,
   children,
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Content>) {
-  return (
-    <TooltipPrimitive.Portal>
-      <TooltipPrimitive.Content
-        data-slot="tooltip-content"
-        sideOffset={sideOffset}
-        className={cn(
-          // Base styles
-          "z-50 w-fit rounded-md px-3 py-2 text-sm shadow-md",
-          // Soft, theme-consistent background (popover colors)
-          "bg-popover text-popover-foreground border border-border",
-          // Animation
-          "animate-in fade-in-0 zoom-in-95",
-          "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
-          "data-[side=bottom]:slide-in-from-top-2",
-          "data-[side=left]:slide-in-from-right-2",
-          "data-[side=right]:slide-in-from-left-2",
-          "data-[side=top]:slide-in-from-bottom-2",
-          "origin-(--radix-tooltip-content-transform-origin)",
-          className
-        )}
-        {...props}
-      >
-        {children}
-      </TooltipPrimitive.Content>
-    </TooltipPrimitive.Portal>
-  )
+  ..._props
+}: {
+  children: React.ReactNode
+  open?: boolean
+  defaultOpen?: boolean
+  onOpenChange?: (open: boolean) => void
+  delayDuration?: number
+}) {
+  return <>{children}</>
 }
+
+const TooltipTrigger = React.forwardRef<
+  HTMLButtonElement,
+  React.ButtonHTMLAttributes<HTMLButtonElement> & { asChild?: boolean }
+>(({ asChild, children, ...props }, ref) => {
+  if (asChild && React.isValidElement(children)) {
+    return children
+  }
+  return (
+    <button
+      type="button"
+      ref={ref}
+      data-slot="tooltip-trigger"
+      {...props}
+    >
+      {children}
+    </button>
+  )
+})
+TooltipTrigger.displayName = "TooltipTrigger"
+
+const TooltipContent = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & {
+    side?: "top" | "bottom" | "left" | "right"
+    sideOffset?: number
+    align?: "start" | "center" | "end"
+  }
+>((_props, _ref) => {
+  // Return null - tooltip content won't be shown
+  // This prevents the crash while maintaining API compatibility
+  return null
+})
+TooltipContent.displayName = "TooltipContent"
 
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }

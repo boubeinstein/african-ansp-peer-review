@@ -54,6 +54,11 @@ export function SMSBrowser({
     studyAreas: number;
   }>({ objectives: 0, studyAreas: 0 });
 
+  // Stable callback to prevent infinite loop in StudyAreaAccordion
+  const handleResultCounts = useCallback((counts: { objectives: number; studyAreas: number }) => {
+    setResultCounts(counts);
+  }, []);
+
   // Update URL when component changes
   const handleComponentChange = useCallback(
     (component: SMSComponent) => {
@@ -222,7 +227,7 @@ export function SMSBrowser({
           defaultOpen={initialStudyArea}
           onStudyAreaChange={handleStudyAreaChange}
           searchQuery={currentSearch}
-          onResultCounts={setResultCounts}
+          onResultCounts={handleResultCounts}
         />
       </div>
     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronDown, FileQuestion, Target } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -102,43 +102,56 @@ export function StudyAreaAccordion({
     }
   };
 
-  // Compute result counts when searching
+  // Compute result counts when searching (use ref to prevent infinite loop)
+  const prevResultRef = useRef<string>("");
+
   useEffect(() => {
     if (!onResultCounts) return;
 
+    let totalObjectives: number;
+    let totalAreas: number;
+
     if (!searchQuery) {
       // When not searching, sum all objective counts for this component
-      const totalObjectives = studyAreas.reduce(
+      totalObjectives = studyAreas.reduce(
         (sum, sa) => sum + (studyAreaObjectiveCounts[sa.code] || 0),
         0
       );
-      onResultCounts({ objectives: totalObjectives, studyAreas: studyAreas.length });
-      return;
-    }
+      totalAreas = studyAreas.length;
+    } else {
+      const s = searchQuery.toLowerCase();
+      let matchingObjectives = 0;
+      let matchingAreas = 0;
 
-    const s = searchQuery.toLowerCase();
-    let matchingObjectives = 0;
-    let matchingAreas = 0;
+      for (const sa of studyAreas) {
+        const nameMatch =
+          sa.name[lang].toLowerCase().includes(s) ||
+          sa.description[lang].toLowerCase().includes(s);
+        const objectiveCount = studyAreaObjectiveCounts[sa.code] || 0;
 
-    for (const sa of studyAreas) {
-      const nameMatch =
-        sa.name[lang].toLowerCase().includes(s) ||
-        sa.description[lang].toLowerCase().includes(s);
-      const objectiveCount = studyAreaObjectiveCounts[sa.code] || 0;
-
-      if (nameMatch) {
-        matchingObjectives += objectiveCount;
-        matchingAreas++;
-      } else {
-        // Check objective titles (approximate — count matching objectives)
-        // Since we use mock data fallback, approximate: count all if area name matches
-        matchingObjectives += objectiveCount;
-        matchingAreas++;
+        if (nameMatch) {
+          matchingObjectives += objectiveCount;
+          matchingAreas++;
+        } else {
+          // Check objective titles (approximate — count matching objectives)
+          // Since we use mock data fallback, approximate: count all if area name matches
+          matchingObjectives += objectiveCount;
+          matchingAreas++;
+        }
       }
+
+      totalObjectives = matchingObjectives;
+      totalAreas = matchingAreas;
     }
 
-    onResultCounts({ objectives: matchingObjectives, studyAreas: matchingAreas });
-  }, [searchQuery, studyAreas, lang, onResultCounts]);
+    // Only call onResultCounts if values changed
+    const resultKey = `${totalObjectives}-${totalAreas}`;
+    if (resultKey !== prevResultRef.current) {
+      prevResultRef.current = resultKey;
+      onResultCounts({ objectives: totalObjectives, studyAreas: totalAreas });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery, studyAreas, lang]);
 
   // When searching with no results for this component, show empty state
   if (searchQuery && studyAreas.length === 0) {

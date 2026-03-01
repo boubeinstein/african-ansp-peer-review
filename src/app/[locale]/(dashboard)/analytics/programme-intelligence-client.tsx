@@ -8,7 +8,7 @@
  *   1. Overview — KPIs, review/finding/CAP statistics, team metrics
  *   2. Cross-ANSP Benchmarking — EI benchmarking, SMS maturity, regional analysis
  *   3. Findings & CAP Trends — pattern analysis, CAP closure, severity
- *   4. Abuja Target #15 — AST #15 KPI tracking (placeholder)
+ *   4. Abuja Target #15 — AST #15 KPI tracking
  */
 
 import { useTranslations } from "next-intl";
@@ -18,14 +18,13 @@ import {
   GitCompareArrows,
   TrendingUp,
   Target,
-  Construction,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AnalyticsDashboard } from "./analytics-dashboard";
 import { SafetyIntelligenceClient } from "./safety-intelligence/safety-intelligence-client";
 import { FindingsCapTrendsTab } from "@/components/features/analytics/findings-cap-trends-tab";
+import { AbujaTarget15Tab } from "@/components/features/analytics/abuja-target15-tab";
 
 // =============================================================================
 // TYPES
@@ -119,46 +118,12 @@ export function ProgrammeIntelligenceClient({
           <FindingsCapTrendsTab locale={locale} />
         </TabsContent>
 
-        {/* Tab 4: Abuja Target #15 — placeholder */}
+        {/* Tab 4: Abuja Target #15 */}
         <TabsContent value="abujaTargets">
-          <ComingSoonPlaceholder
-            title={t("programmeIntelligence.tabs.abujaTargets")}
-            description={t("programmeIntelligence.abujaTargetsPlaceholder")}
-          />
+          <AbujaTarget15Tab locale={locale} />
         </TabsContent>
       </Tabs>
     </div>
-  );
-}
-
-// =============================================================================
-// PLACEHOLDER
-// =============================================================================
-
-function ComingSoonPlaceholder({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <Card className="border-dashed">
-      <CardHeader className="text-center pb-2">
-        <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-muted flex items-center justify-center">
-          <Construction className="h-6 w-6 text-muted-foreground" />
-        </div>
-        <CardTitle className="text-lg">{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="text-center">
-        <p className="text-sm text-muted-foreground max-w-md mx-auto">
-          {description}
-        </p>
-        <Badge variant="secondary" className="mt-4">
-          Coming Soon
-        </Badge>
-      </CardContent>
-    </Card>
   );
 }
 

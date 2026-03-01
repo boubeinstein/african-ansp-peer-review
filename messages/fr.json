@@ -6740,6 +6740,106 @@
           "severity": "Gravité",
           "allSeverities": "Toutes les Gravités"
         }
+      },
+      "abujaTarget15": {
+        "title": "Objectif de Sécurité d'Abuja #15",
+        "subtitle": "Participation des ANSP, jalons de maturité du SGS et suivi de l'état de préparation à la certification",
+        "description": "Tous les États veillent à ce que leurs ANSP obtiennent la certification par une participation effective au Programme de Revue par les Pairs des ANSP Africains",
+        "source": "Objectifs de Sécurité d'Abuja Révisés (Avril 2024)",
+        "overallProgress": "Progrès Global de l'AST #15",
+        "ast151": {
+          "title": "AST #15.1 — Participation au Programme",
+          "targetDate": "Objectif : 31 Décembre 2024",
+          "description": "Tous les ANSP doivent adhérer au Programme de Revue par les Pairs",
+          "kpi01": {
+            "title": "KPI 01 : ANSP dans le Programme",
+            "description": "Nombre d'ANSP participant au Programme de Revue par les Pairs"
+          },
+          "kpi02": {
+            "title": "KPI 02 : ANSP Évalués avec Succès",
+            "description": "Nombre d'ANSP ayant complété une revue par les pairs"
+          },
+          "enrollmentTrend": "Tendance d'Adhésion au Programme",
+          "cumulativeEnrollment": "Adhésion Cumulative"
+        },
+        "ast152": {
+          "title": "AST #15.2 — Maturité du SGS",
+          "milestone2025": {
+            "title": "Jalon 2025 : 50% de Maturité SGS",
+            "targetDate": "Objectif : 31 Décembre 2025",
+            "description": "Les ANSP participants doivent atteindre un niveau de maturité SGS d'au moins 50% (Niveau C)"
+          },
+          "milestone2028": {
+            "title": "Jalon 2028 : 100% de Maturité SGS",
+            "targetDate": "Objectif : 31 Décembre 2028",
+            "description": "Les ANSP participants doivent atteindre 100% de maturité SGS (Niveau E)"
+          },
+          "maturityDistribution": "Distribution des Niveaux de Maturité SGS",
+          "achieved": "Atteint",
+          "inProgress": "En Cours",
+          "notStarted": "Non Commencé",
+          "levels": {
+            "A": "Niveau A — Initial",
+            "B": "Niveau B — Défini",
+            "C": "Niveau C — Géré",
+            "D": "Niveau D — Assuré",
+            "E": "Niveau E — Amélioration Continue"
+          }
+        },
+        "ast153": {
+          "title": "AST #15.3 — Certification des ANSP",
+          "targetDate": "Objectif : 31 Décembre 2036",
+          "description": "Tous les ANSP doivent obtenir la certification",
+          "readiness": "État de Préparation à la Certification",
+          "readinessLevels": {
+            "high": "Préparation Élevée",
+            "highDescription": "Revue complétée + maturité SGS ≥ Niveau D",
+            "medium": "Préparation Moyenne",
+            "mediumDescription": "Revue en cours ou maturité SGS ≥ Niveau C",
+            "low": "Préparation Faible",
+            "lowDescription": "Enregistré mais aucune revue complétée",
+            "notStarted": "Non Commencé",
+            "notStartedDescription": "Pas encore enregistré dans le programme"
+          }
+        },
+        "regional": {
+          "title": "Répartition Régionale",
+          "region": "Région",
+          "total": "Total ANSP",
+          "joined": "Adhérés",
+          "reviewed": "Évalués",
+          "avgMaturity": "Maturité SGS Moyenne",
+          "regions": {
+            "WACAF": "Afrique de l'Ouest et du Centre (WACAF)",
+            "ESAF": "Afrique de l'Est et Australe (ESAF)",
+            "NORTHERN": "Afrique du Nord"
+          }
+        },
+        "organizationTable": {
+          "title": "Vue Détaillée des ANSP",
+          "description": "Progrès individuel des ANSP par rapport aux jalons de l'AST #15",
+          "search": "Rechercher des organisations...",
+          "organization": "Organisation",
+          "country": "Pays",
+          "status": "Statut",
+          "joined": "Adhésion au Programme",
+          "smsMaturity": "Maturité SGS",
+          "eiScore": "Score EI",
+          "reviews": "Revues",
+          "notJoined": "Non Adhéré",
+          "noAssessment": "Aucune Évaluation",
+          "viewDetails": "Voir les Détails"
+        },
+        "timeline": {
+          "title": "Chronologie de l'AST #15",
+          "past": "Échéance Passée",
+          "upcoming": "À Venir",
+          "future": "Futur"
+        },
+        "empty": {
+          "title": "Aucune Donnée Disponible",
+          "description": "Les données de suivi de l'Objectif de Sécurité d'Abuja #15 apparaîtront une fois que les organisations seront inscrites et les évaluations complétées."
+        }
       }
     },
     "refresh": "Actualiser",

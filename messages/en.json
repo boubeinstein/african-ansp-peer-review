@@ -6740,6 +6740,106 @@
           "severity": "Severity",
           "allSeverities": "All Severities"
         }
+      },
+      "abujaTarget15": {
+        "title": "Abuja Safety Target #15",
+        "subtitle": "ANSP participation, SMS maturity milestones, and certification readiness tracking",
+        "description": "All States ensure that their ANSPs attain certification by effective participation in the African ANSP Peer Review Programme",
+        "source": "Revised Abuja Safety Targets (April 2024)",
+        "overallProgress": "Overall AST #15 Progress",
+        "ast151": {
+          "title": "AST #15.1 — Programme Participation",
+          "targetDate": "Target: 31 December 2024",
+          "description": "All ANSPs to join the Peer Review Programme",
+          "kpi01": {
+            "title": "KPI 01: ANSPs in Programme",
+            "description": "Number of ANSPs party to the Peer Review Programme"
+          },
+          "kpi02": {
+            "title": "KPI 02: ANSPs Successfully Reviewed",
+            "description": "Number of ANSPs that have completed a peer review"
+          },
+          "enrollmentTrend": "Programme Enrollment Trend",
+          "cumulativeEnrollment": "Cumulative Enrollment"
+        },
+        "ast152": {
+          "title": "AST #15.2 — SMS Maturity",
+          "milestone2025": {
+            "title": "Milestone 2025: 50% SMS Maturity",
+            "targetDate": "Target: 31 December 2025",
+            "description": "Participating ANSPs to reach SMS maturity level of at least 50% (Level C)"
+          },
+          "milestone2028": {
+            "title": "Milestone 2028: 100% SMS Maturity",
+            "targetDate": "Target: 31 December 2028",
+            "description": "Participating ANSPs to reach 100% SMS maturity (Level E)"
+          },
+          "maturityDistribution": "SMS Maturity Level Distribution",
+          "achieved": "Achieved",
+          "inProgress": "In Progress",
+          "notStarted": "Not Started",
+          "levels": {
+            "A": "Level A — Initial",
+            "B": "Level B — Defined",
+            "C": "Level C — Managed",
+            "D": "Level D — Assured",
+            "E": "Level E — Continuous Improvement"
+          }
+        },
+        "ast153": {
+          "title": "AST #15.3 — ANSP Certification",
+          "targetDate": "Target: 31 December 2036",
+          "description": "All ANSPs to attain certification",
+          "readiness": "Certification Readiness",
+          "readinessLevels": {
+            "high": "High Readiness",
+            "highDescription": "Completed review + SMS maturity ≥ Level D",
+            "medium": "Medium Readiness",
+            "mediumDescription": "Review in progress or SMS maturity ≥ Level C",
+            "low": "Low Readiness",
+            "lowDescription": "Registered but no review completed yet",
+            "notStarted": "Not Started",
+            "notStartedDescription": "Not yet registered in programme"
+          }
+        },
+        "regional": {
+          "title": "Regional Breakdown",
+          "region": "Region",
+          "total": "Total ANSPs",
+          "joined": "Joined",
+          "reviewed": "Reviewed",
+          "avgMaturity": "Avg SMS Maturity",
+          "regions": {
+            "WACAF": "Western & Central Africa (WACAF)",
+            "ESAF": "Eastern & Southern Africa (ESAF)",
+            "NORTHERN": "Northern Africa"
+          }
+        },
+        "organizationTable": {
+          "title": "ANSP Detail View",
+          "description": "Individual ANSP progress against AST #15 milestones",
+          "search": "Search organizations...",
+          "organization": "Organization",
+          "country": "Country",
+          "status": "Status",
+          "joined": "Joined Programme",
+          "smsMaturity": "SMS Maturity",
+          "eiScore": "EI Score",
+          "reviews": "Reviews",
+          "notJoined": "Not Joined",
+          "noAssessment": "No Assessment",
+          "viewDetails": "View Details"
+        },
+        "timeline": {
+          "title": "AST #15 Timeline",
+          "past": "Past Deadline",
+          "upcoming": "Upcoming",
+          "future": "Future"
+        },
+        "empty": {
+          "title": "No Data Available",
+          "description": "Abuja Safety Target #15 tracking data will appear once organizations are enrolled and assessments are completed."
+        }
       }
     },
     "refresh": "Refresh",

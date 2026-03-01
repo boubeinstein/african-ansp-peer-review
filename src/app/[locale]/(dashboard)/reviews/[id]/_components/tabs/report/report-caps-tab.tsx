@@ -185,11 +185,12 @@ function StatusDistribution({ caps }: { caps: CAPSummary[] }) {
 
 export function ReportCAPsTab({ content }: { content: ReportContent }) {
   const t = useTranslations("report.caps");
-  const caps = content.sections.correctiveActions;
+  const caps = content?.sections?.correctiveActions;
+  const capItems = useMemo(() => caps?.caps || [], [caps]);
 
   // Enrich caps with days remaining
   const enrichedCaps = useMemo(() => {
-    return caps.caps.map((cap) => ({
+    return capItems.map((cap) => ({
       ...cap,
       daysRemaining: getDaysRemaining(cap.dueDate),
       isOverdue:
@@ -197,13 +198,15 @@ export function ReportCAPsTab({ content }: { content: ReportContent }) {
         getDaysRemaining(cap.dueDate) !== null &&
         (getDaysRemaining(cap.dueDate) ?? 0) < 0,
     }));
-  }, [caps.caps]);
+  }, [capItems]);
 
   // Count completed for stat card
   const completedCount = useMemo(
-    () => caps.caps.filter((c) => isTerminalStatus(c.status)).length,
-    [caps.caps]
+    () => capItems.filter((c) => isTerminalStatus(c.status)).length,
+    [capItems]
   );
+
+  if (!caps) return null;
 
   return (
     <div className="space-y-6">
@@ -253,7 +256,7 @@ export function ReportCAPsTab({ content }: { content: ReportContent }) {
       </Card>
 
       {/* Status Distribution */}
-      <StatusDistribution caps={caps.caps} />
+      <StatusDistribution caps={capItems} />
 
       {/* CAPs Detail Table */}
       <Card>

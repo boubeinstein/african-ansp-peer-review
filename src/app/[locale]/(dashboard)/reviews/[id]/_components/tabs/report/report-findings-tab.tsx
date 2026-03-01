@@ -81,7 +81,9 @@ type SortDirection = "asc" | "desc";
 
 function SummaryCards({ content }: { content: ReportContent }) {
   const t = useTranslations("report.findings");
-  const summary = content.sections.findingsSummary;
+  const summary = content?.sections?.findingsSummary;
+
+  if (!summary) return null;
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -102,7 +104,7 @@ function SummaryCards({ content }: { content: ReportContent }) {
           <p className="text-xs text-muted-foreground mb-2">{t("byType")}</p>
           {summary.totalFindings > 0 ? (
             <div className="space-y-1.5">
-              {Object.entries(summary.byType).map(([type, count]) => (
+              {Object.entries(summary.byType || {}).map(([type, count]) => (
                 <div key={type} className="flex items-center gap-2">
                   <Badge
                     variant="outline"
@@ -133,7 +135,7 @@ function SummaryCards({ content }: { content: ReportContent }) {
         <CardContent className="pt-6">
           <p className="text-xs text-muted-foreground mb-2">{t("bySeverity")}</p>
           <div className="flex flex-wrap gap-1.5">
-            {Object.entries(summary.bySeverity).map(([sev, count]) => (
+            {Object.entries(summary.bySeverity || {}).map(([sev, count]) => (
               <Badge
                 key={sev}
                 className={cn("text-xs", SEVERITY_STYLES[sev] || "")}
@@ -155,7 +157,7 @@ function SummaryCards({ content }: { content: ReportContent }) {
         <CardContent className="pt-6">
           <p className="text-xs text-muted-foreground mb-2">{t("byReviewArea")}</p>
           <div className="space-y-1">
-            {Object.entries(summary.byReviewArea)
+            {Object.entries(summary.byReviewArea || {})
               .sort(([, a], [, b]) => b - a)
               .map(([area, count]) => (
                 <div key={area} className="flex items-center justify-between text-sm">
@@ -498,7 +500,10 @@ function exportFindingsCSV(findings: FindingDetail[]) {
 
 export function ReportFindingsTab({ content }: { content: ReportContent }) {
   const t = useTranslations("report.findings");
-  const findings = content.sections.findingsDetail.findings;
+  const findings = useMemo(
+    () => content?.sections?.findingsDetail?.findings || [],
+    [content]
+  );
 
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
   const [sortField, setSortField] = useState<SortField>("reference");

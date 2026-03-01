@@ -156,10 +156,11 @@ export function ReportSummaryTab({
   const t = useTranslations("report");
   const tSummary = useTranslations("report.summary");
 
-  const ans = content.sections.ansAssessment;
-  const sms = content.sections.smsAssessment;
-  const findings = content.sections.findingsSummary;
-  const caps = content.sections.correctiveActions;
+  const sections = content?.sections;
+  const ans = sections?.ansAssessment;
+  const sms = sections?.smsAssessment;
+  const findings = sections?.findingsSummary;
+  const caps = sections?.correctiveActions;
 
   return (
     <div className="space-y-6">
@@ -169,66 +170,66 @@ export function ReportSummaryTab({
         <MetricCard
           title={tSummary("eiScore")}
           value={
-            ans.available && ans.overallEIScore !== null
+            ans?.available && ans.overallEIScore !== null
               ? `${ans.overallEIScore.toFixed(1)}%`
               : "—"
           }
           subtitle={
-            ans.available
+            ans?.available
               ? tSummary("effectiveImplementation")
               : tSummary("noAssessment")
           }
           icon={TrendingUp}
           iconColor={
-            ans.available && ans.overallEIScore !== null
+            ans?.available && ans.overallEIScore !== null
               ? getEIColor(ans.overallEIScore)
               : "text-gray-400"
           }
           bgColor={
-            ans.available && ans.overallEIScore !== null
+            ans?.available && ans.overallEIScore !== null
               ? getEIBgColor(ans.overallEIScore)
               : undefined
           }
           valueColor={
-            ans.available && ans.overallEIScore !== null
+            ans?.available && ans.overallEIScore !== null
               ? getEIColor(ans.overallEIScore)
               : "text-gray-400"
           }
-          delta={ans.eiDelta}
+          delta={ans?.eiDelta ?? null}
         />
 
         {/* SMS Maturity */}
         <MetricCard
           title={tSummary("smsMaturity")}
           value={
-            sms.available && sms.overallMaturityLevel
+            sms?.available && sms.overallMaturityLevel
               ? `Level ${sms.overallMaturityLevel}`
               : "—"
           }
           subtitle={
-            sms.available && sms.overallScore !== null
+            sms?.available && sms.overallScore !== null
               ? `${tSummary("score")}: ${sms.overallScore.toFixed(0)}%`
               : tSummary("noAssessment")
           }
           icon={Shield}
-          iconColor={getMaturityColor(sms.overallMaturityLevel)}
-          bgColor={getMaturityBgColor(sms.overallMaturityLevel)}
-          valueColor={getMaturityColor(sms.overallMaturityLevel)}
+          iconColor={getMaturityColor(sms?.overallMaturityLevel ?? null)}
+          bgColor={getMaturityBgColor(sms?.overallMaturityLevel ?? null)}
+          valueColor={getMaturityColor(sms?.overallMaturityLevel ?? null)}
         />
 
         {/* Total Findings */}
         <MetricCard
           title={tSummary("totalFindings")}
-          value={findings.totalFindings}
-          subtitle={`${findings.criticalAndMajorCount} ${tSummary("criticalMajor")}`}
+          value={findings?.totalFindings ?? 0}
+          subtitle={`${findings?.criticalAndMajorCount ?? 0} ${tSummary("criticalMajor")}`}
           icon={AlertTriangle}
           iconColor={
-            findings.criticalAndMajorCount > 0
+            (findings?.criticalAndMajorCount ?? 0) > 0
               ? "text-amber-600"
               : "text-green-600"
           }
           bgColor={
-            findings.criticalAndMajorCount > 0
+            (findings?.criticalAndMajorCount ?? 0) > 0
               ? "bg-amber-100 dark:bg-amber-900/30"
               : "bg-green-100 dark:bg-green-900/30"
           }
@@ -237,21 +238,21 @@ export function ReportSummaryTab({
         {/* CAP Completion */}
         <MetricCard
           title={tSummary("capCompletion")}
-          value={`${caps.completionRate}%`}
-          subtitle={`${caps.totalCAPs} ${tSummary("totalCAPs")}`}
+          value={`${caps?.completionRate ?? 0}%`}
+          subtitle={`${caps?.totalCAPs ?? 0} ${tSummary("totalCAPs")}`}
           icon={CheckCircle2}
           iconColor={
-            caps.completionRate >= 80 ? "text-green-600" : "text-blue-600"
+            (caps?.completionRate ?? 0) >= 80 ? "text-green-600" : "text-blue-600"
           }
           bgColor={
-            caps.completionRate >= 80
+            (caps?.completionRate ?? 0) >= 80
               ? "bg-green-100 dark:bg-green-900/30"
               : "bg-blue-100 dark:bg-blue-900/30"
           }
           valueColor={
-            caps.completionRate >= 80 ? "text-green-600" : "text-blue-600"
+            (caps?.completionRate ?? 0) >= 80 ? "text-green-600" : "text-blue-600"
           }
-          progress={caps.completionRate}
+          progress={caps?.completionRate ?? 0}
         />
       </div>
 
@@ -260,8 +261,8 @@ export function ReportSummaryTab({
         reviewId={reviewId}
         sectionKey="executiveSummary"
         title={t("executiveSummary")}
-        contentEn={content.sections.executiveSummary.contentEn}
-        contentFr={content.sections.executiveSummary.contentFr}
+        contentEn={sections?.executiveSummary?.contentEn ?? ""}
+        contentFr={sections?.executiveSummary?.contentFr ?? ""}
         readOnly={readOnly}
         onSaved={onSectionSaved}
       />
@@ -270,8 +271,8 @@ export function ReportSummaryTab({
         reviewId={reviewId}
         sectionKey="recommendations"
         title={t("recommendations")}
-        contentEn={content.sections.recommendations.contentEn}
-        contentFr={content.sections.recommendations.contentFr}
+        contentEn={sections?.recommendations?.contentEn ?? ""}
+        contentFr={sections?.recommendations?.contentFr ?? ""}
         readOnly={readOnly}
         onSaved={onSectionSaved}
       />
@@ -280,8 +281,8 @@ export function ReportSummaryTab({
         reviewId={reviewId}
         sectionKey="conclusion"
         title={t("conclusion")}
-        contentEn={content.sections.conclusion.contentEn}
-        contentFr={content.sections.conclusion.contentFr}
+        contentEn={sections?.conclusion?.contentEn ?? ""}
+        contentFr={sections?.conclusion?.contentFr ?? ""}
         readOnly={readOnly}
         onSaved={onSectionSaved}
       />

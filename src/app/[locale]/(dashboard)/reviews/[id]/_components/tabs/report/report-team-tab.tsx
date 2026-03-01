@@ -116,9 +116,9 @@ function TeamLeadCard({ lead }: { lead: TeamMemberInfo }) {
                 {lead.country}
               </Badge>
             </div>
-            {lead.expertise.length > 0 && (
+            {(lead.expertise?.length ?? 0) > 0 && (
               <div className="flex flex-wrap gap-1.5 mt-3">
-                {lead.expertise.map((exp) => (
+                {(lead.expertise || []).map((exp) => (
                   <Badge key={exp} variant="secondary" className="text-xs">
                     {exp}
                   </Badge>
@@ -157,9 +157,9 @@ function MemberCard({ member }: { member: TeamMemberInfo }) {
                 {member.country}
               </Badge>
             </div>
-            {member.expertise.length > 0 && (
+            {(member.expertise?.length ?? 0) > 0 && (
               <div className="flex flex-wrap gap-1 mt-2">
-                {member.expertise.map((exp) => (
+                {(member.expertise || []).map((exp) => (
                   <Badge
                     key={exp}
                     variant="secondary"
@@ -183,22 +183,22 @@ function MemberCard({ member }: { member: TeamMemberInfo }) {
 
 function ExpertiseCoverageMatrix({ content }: { content: ReportContent }) {
   const t = useTranslations("report.team");
-  const team = content.sections.teamComposition;
-  const methodology = content.sections.methodology;
+  const team = content?.sections?.teamComposition;
+  const methodology = content?.sections?.methodology;
 
   // Get audit areas in scope
   const reviewAreas = useMemo(
-    () => methodology.reviewAreas.filter((a: { inScope: boolean }) => a.inScope),
-    [methodology.reviewAreas]
+    () => (methodology?.reviewAreas || []).filter((a: { inScope: boolean }) => a.inScope),
+    [methodology]
   );
 
   // Collect all team members (lead + members)
   const allMembers = useMemo(() => {
-    const members: TeamMemberInfo[] = [];
-    if (team.teamLead) members.push(team.teamLead);
-    members.push(...team.members);
-    return members;
-  }, [team.teamLead, team.members]);
+    const result: TeamMemberInfo[] = [];
+    if (team?.teamLead) result.push(team.teamLead);
+    result.push(...(team?.members || []));
+    return result;
+  }, [team]);
 
   // Build coverage map: audit area code -> list of member names
   const coverageMap = useMemo(() => {
@@ -207,7 +207,7 @@ function ExpertiseCoverageMatrix({ content }: { content: ReportContent }) {
       map.set(area.code, []);
     }
     for (const member of allMembers) {
-      for (const exp of member.expertise) {
+      for (const exp of member.expertise || []) {
         const upper = exp.toUpperCase();
         if (map.has(upper)) {
           map.get(upper)!.push(member.name);
@@ -309,12 +309,13 @@ function ExpertiseCoverageMatrix({ content }: { content: ReportContent }) {
 
 export function ReportTeamTab({ content }: { content: ReportContent }) {
   const t = useTranslations("report.team");
-  const team = content.sections.teamComposition;
+  const team = content?.sections?.teamComposition;
+  const members = useMemo(() => team?.members || [], [team]);
 
-  const totalMembers = (team.teamLead ? 1 : 0) + team.members.length;
+  const totalMembers = (team?.teamLead ? 1 : 0) + members.length;
   const groupedMembers = useMemo(
-    () => groupMembersByRole(team.members),
-    [team.members]
+    () => groupMembersByRole(members),
+    [members]
   );
 
   return (
@@ -327,7 +328,7 @@ export function ReportTeamTab({ content }: { content: ReportContent }) {
       </div>
 
       {/* Team Lead */}
-      {team.teamLead && (
+      {team?.teamLead && (
         <div className="report-section">
           <TeamLeadCard lead={team.teamLead} />
         </div>
@@ -353,7 +354,7 @@ export function ReportTeamTab({ content }: { content: ReportContent }) {
       ))}
 
       {/* Observer Organizations */}
-      {team.observerOrganizations && team.observerOrganizations.length > 0 && (
+      {team?.observerOrganizations && team.observerOrganizations.length > 0 && (
         <Card className="report-section">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">

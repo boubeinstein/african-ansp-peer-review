@@ -220,7 +220,7 @@ function ANSAssessmentPanel({ ans, locale }: { ans: ANSAssessmentSection; locale
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="h-72">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
                 <BarChart data={chartData} layout="vertical" margin={{ left: 10, right: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" horizontal vertical={false} />
                   <XAxis type="number" domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
@@ -427,7 +427,7 @@ function SMSAssessmentPanel({ sms, locale }: { sms: SMSAssessmentSection; locale
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="h-72">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
                 <RadarChart data={radarData} margin={{ top: 20, right: 40, bottom: 20, left: 40 }}>
                   <PolarGrid />
                   <PolarAngleAxis

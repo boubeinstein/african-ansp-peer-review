@@ -144,7 +144,7 @@ function ANSScoresPanel({
   const t = useTranslations("report.scores");
 
   const chartData = useMemo(() => {
-    return Object.entries(scores.byReviewArea)
+    return Object.entries(scores.byReviewArea || {})
       .filter(([, data]) => data.total > 0)
       .map(([area, data]) => {
         const label = REVIEW_AREA_LABELS[area];
@@ -175,7 +175,7 @@ function ANSScoresPanel({
       <CardContent className="space-y-6">
         {/* Bar Chart */}
         <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
             <BarChart data={chartData} layout="vertical" margin={{ left: 0, right: 20 }}>
               <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
               <XAxis type="number" domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
@@ -254,7 +254,7 @@ function SMSScoresPanel({
   const t = useTranslations("report.scores");
 
   const chartData = useMemo(() => {
-    return Object.entries(scores.byComponent)
+    return Object.entries(scores.byComponent || {})
       .filter(([, data]) => data.count > 0)
       .map(([component, data]) => {
         const label = SMS_COMPONENT_LABELS[component];
@@ -297,7 +297,7 @@ function SMSScoresPanel({
       <CardContent className="space-y-6">
         {/* Radar Chart */}
         <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
             <RadarChart data={chartData} margin={{ top: 20, right: 30, bottom: 20, left: 30 }}>
               <PolarGrid />
               <PolarAngleAxis

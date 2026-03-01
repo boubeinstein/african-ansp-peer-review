@@ -174,9 +174,9 @@ export function ReportSummaryCards({
   const t = useTranslations("report.summary");
 
   const criticalMajorCount =
-    findings.bySeverity.CRITICAL + findings.bySeverity.MAJOR;
-  const hasCriticalFindings = findings.bySeverity.CRITICAL > 0;
-  const hasOverdueCAPs = caps.overdueCount > 0;
+    (findings.bySeverity?.CRITICAL ?? 0) + (findings.bySeverity?.MAJOR ?? 0);
+  const hasCriticalFindings = (findings.bySeverity?.CRITICAL ?? 0) > 0;
+  const hasOverdueCAPs = (caps?.overdueCount ?? 0) > 0;
 
   return (
     <div
@@ -229,7 +229,7 @@ export function ReportSummaryCards({
           <div className="space-y-3">
             <h4 className="font-medium text-sm">{t("findingsByType")}</h4>
             <div className="space-y-2">
-              {Object.entries(findings.byType).map(([type, count]) => (
+              {Object.entries(findings.byType || {}).map(([type, count]) => (
                 <div key={type} className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">{t(`findingType.${type}`)}</span>
                   <Badge variant="secondary">{count}</Badge>
@@ -239,7 +239,7 @@ export function ReportSummaryCards({
             <div className="border-t pt-3">
               <h4 className="font-medium text-sm mb-2">{t("findingsBySeverity")}</h4>
               <div className="space-y-2">
-                {Object.entries(findings.bySeverity).map(([severity, count]) => (
+                {Object.entries(findings.bySeverity || {}).map(([severity, count]) => (
                   <div key={severity} className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">{t(`severity.${severity}`)}</span>
                     <Badge
@@ -265,7 +265,7 @@ export function ReportSummaryCards({
       <SummaryCard
         title={t("criticalMajor")}
         value={criticalMajorCount}
-        subtitle={`${findings.bySeverity.CRITICAL} ${t("critical")}, ${findings.bySeverity.MAJOR} ${t("major")}`}
+        subtitle={`${findings.bySeverity?.CRITICAL ?? 0} ${t("critical")}, ${findings.bySeverity?.MAJOR ?? 0} ${t("major")}`}
         icon={AlertOctagon}
         iconColor={hasCriticalFindings ? "text-red-600" : "text-orange-600"}
         bgColor={

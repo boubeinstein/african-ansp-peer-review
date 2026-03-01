@@ -529,7 +529,7 @@ function SMSAssessmentPanel({ sms, locale }: { sms: SMSAssessmentSection; locale
                   {/* Study Areas */}
                   {(comp.studyAreas?.length ?? 0) > 0 && (
                     <div className="ml-4 border-l-2 border-muted pl-4 space-y-1.5">
-                      {comp.studyAreas.map((sa) => {
+                      {(comp.studyAreas || []).map((sa) => {
                         const saHex = MATURITY_HEX[sa.maturityLevel] || "#9ca3af";
                         return (
                           <div
@@ -617,14 +617,14 @@ function EmptyAssessmentPanel({ type }: { type: "ANS" | "SMS" }) {
 export function ReportScoresTab({ content }: ReportScoresTabProps) {
   const locale = useLocale();
 
-  const ans = content.sections.ansAssessment;
-  const sms = content.sections.smsAssessment;
+  const ans = content?.sections?.ansAssessment;
+  const sms = content?.sections?.smsAssessment;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* ANS Protocol — Left Column */}
       <div>
-        {ans.available ? (
+        {ans?.available ? (
           <ANSAssessmentPanel ans={ans} locale={locale} />
         ) : (
           <EmptyAssessmentPanel type="ANS" />
@@ -633,7 +633,7 @@ export function ReportScoresTab({ content }: ReportScoresTabProps) {
 
       {/* SMS CANSO SoE — Right Column */}
       <div>
-        {sms.available ? (
+        {sms?.available ? (
           <SMSAssessmentPanel sms={sms} locale={locale} />
         ) : (
           <EmptyAssessmentPanel type="SMS" />

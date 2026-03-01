@@ -70,14 +70,14 @@ export function ReportViewer({
             <AlertTriangle className="h-4 w-4" />
             {t("tabs.findings")}
             <Badge variant="secondary" className="ml-1">
-              {content.sections.findingsSummary.totalFindings}
+              {content.sections?.findingsSummary?.totalFindings ?? 0}
             </Badge>
           </TabsTrigger>
           <TabsTrigger value="caps" className="gap-2">
             <ClipboardList className="h-4 w-4" />
             {t("tabs.caps")}
             <Badge variant="secondary" className="ml-1">
-              {content.sections.correctiveActions.totalCAPs}
+              {content.sections?.correctiveActions?.totalCAPs ?? 0}
             </Badge>
           </TabsTrigger>
           <TabsTrigger value="team" className="gap-2">

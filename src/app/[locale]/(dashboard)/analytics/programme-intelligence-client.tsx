@@ -25,6 +25,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AnalyticsDashboard } from "./analytics-dashboard";
 import { SafetyIntelligenceClient } from "./safety-intelligence/safety-intelligence-client";
+import { FindingsCapTrendsTab } from "@/components/features/analytics/findings-cap-trends-tab";
 
 // =============================================================================
 // TYPES
@@ -113,12 +114,9 @@ export function ProgrammeIntelligenceClient({
           />
         </TabsContent>
 
-        {/* Tab 3: Findings & CAP Trends — placeholder */}
+        {/* Tab 3: Findings & CAP Trends */}
         <TabsContent value="findingsTrends">
-          <ComingSoonPlaceholder
-            title={t("programmeIntelligence.tabs.findingsTrends")}
-            description={t("programmeIntelligence.findingsTrendsPlaceholder")}
-          />
+          <FindingsCapTrendsTab locale={locale} />
         </TabsContent>
 
         {/* Tab 4: Abuja Target #15 — placeholder */}

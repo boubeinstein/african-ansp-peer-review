@@ -5,9 +5,20 @@
  * for the Programme Intelligence page "Findings & CAP Trends" tab.
  */
 
+import { z } from "zod";
 import { router, adminProcedure } from "../trpc";
-import { FindingSeverity, FindingType, FindingStatus, CAPStatus } from "@prisma/client";
+import { FindingSeverity, FindingType, FindingStatus, CAPStatus, AfricanRegion } from "@prisma/client";
 import { subMonths, startOfMonth, endOfMonth, differenceInDays, format } from "date-fns";
+
+// =============================================================================
+// INPUT SCHEMA
+// =============================================================================
+
+const filtersSchema = z.object({
+  region: z.nativeEnum(AfricanRegion).optional(),
+  teamNumber: z.number().min(1).max(5).optional(),
+  months: z.number().min(1).max(120).optional(), // undefined = all time
+}).optional();
 
 // =============================================================================
 // TYPES
@@ -89,12 +100,41 @@ export const intelligenceRouter = router({
   /**
    * Aggregated findings and CAP trend data for programme intelligence.
    */
-  getFindingsAndCAPTrends: adminProcedure.query(async ({ ctx }) => {
+  getFindingsAndCAPTrends: adminProcedure
+    .input(filtersSchema)
+    .query(async ({ ctx, input }) => {
     const { db } = ctx;
     const now = new Date();
 
+    // Build org filter from region/team
+    const orgWhere: Record<string, unknown> = {};
+    if (input?.region) orgWhere.region = input.region;
+    if (input?.teamNumber) orgWhere.peerReviewTeam = input.teamNumber;
+
+    const hasOrgFilter = Object.keys(orgWhere).length > 0;
+
+    // Pre-fetch org IDs matching filters (only when filtering)
+    let filteredOrgIds: string[] | undefined;
+    if (hasOrgFilter) {
+      const filteredOrgs = await db.organization.findMany({
+        where: orgWhere,
+        select: { id: true },
+      });
+      filteredOrgIds = filteredOrgs.map((o: { id: string }) => o.id);
+    }
+
+    // Base finding where clause
+    const findingWhere = filteredOrgIds
+      ? { organizationId: { in: filteredOrgIds } }
+      : {};
+
+    // Base CAP where clause (via finding → organization)
+    const capWhere = filteredOrgIds
+      ? { finding: { organizationId: { in: filteredOrgIds } } }
+      : {};
+
     // ------------------------------------------------------------------
-    // 1. SUMMARY KPIs (parallelised)
+    // 1. SUMMARY KPIs (parallelized)
     // ------------------------------------------------------------------
     const [
       totalFindings,
@@ -105,27 +145,28 @@ export const intelligenceRouter = router({
       capsOverdue,
       capsCompletedOrClosed,
     ] = await Promise.all([
-      db.finding.count(),
-      db.finding.count({ where: { status: { notIn: CLOSED_STATUSES } } }),
-      db.finding.count({ where: { status: "CLOSED" } }),
+      db.finding.count({ where: findingWhere }),
+      db.finding.count({ where: { ...findingWhere, status: { notIn: CLOSED_STATUSES } } }),
+      db.finding.count({ where: { ...findingWhere, status: "CLOSED" } }),
       db.finding.count({
-        where: { severity: "CRITICAL", status: { notIn: CLOSED_STATUSES } },
+        where: { ...findingWhere, severity: "CRITICAL", status: { notIn: CLOSED_STATUSES } },
       }),
-      db.correctiveActionPlan.count(),
+      db.correctiveActionPlan.count({ where: capWhere }),
       db.correctiveActionPlan.count({
         where: {
+          ...capWhere,
           status: { notIn: CAP_DONE_STATUSES },
           dueDate: { lt: now },
         },
       }),
       db.correctiveActionPlan.count({
-        where: { status: { in: CAP_DONE_STATUSES } },
+        where: { ...capWhere, status: { in: CAP_DONE_STATUSES } },
       }),
     ]);
 
     // Avg resolution days for closed findings
     const closedFindingDates = await db.finding.findMany({
-      where: { status: "CLOSED", closedAt: { not: null } },
+      where: { ...findingWhere, status: "CLOSED", closedAt: { not: null } },
       select: { identifiedAt: true, closedAt: true },
     });
 
@@ -139,7 +180,7 @@ export const intelligenceRouter = router({
 
     // CAPs closed on time: effective close date <= dueDate
     const allDoneCaps = await db.correctiveActionPlan.findMany({
-      where: { status: { in: CAP_DONE_STATUSES } },
+      where: { ...capWhere, status: { in: CAP_DONE_STATUSES } },
       select: { dueDate: true, closedAt: true, completedAt: true },
     });
     const capsOnTime = allDoneCaps.filter((c) => {
@@ -166,6 +207,7 @@ export const intelligenceRouter = router({
     // ------------------------------------------------------------------
     const severityGroups = await db.finding.groupBy({
       by: ["severity"],
+      where: findingWhere,
       _count: true,
     });
 
@@ -182,6 +224,7 @@ export const intelligenceRouter = router({
     // ------------------------------------------------------------------
     const typeGroups = await db.finding.groupBy({
       by: ["findingType"],
+      where: findingWhere,
       _count: true,
     });
 
@@ -197,6 +240,7 @@ export const intelligenceRouter = router({
     // 4. FINDINGS BY REVIEW AREA
     // ------------------------------------------------------------------
     const findingsWithArea = await db.finding.findMany({
+      where: findingWhere,
       select: {
         reviewArea: true,
         severity: true,
@@ -228,8 +272,9 @@ export const intelligenceRouter = router({
     // ------------------------------------------------------------------
     const monthlyTrend: MonthlyTrendItem[] = [];
     const monthBoundaries: { start: Date; end: Date; label: string }[] = [];
+    const trendMonths = input?.months ?? 12;
 
-    for (let i = 11; i >= 0; i--) {
+    for (let i = trendMonths - 1; i >= 0; i--) {
       const d = subMonths(now, i);
       const start = startOfMonth(d);
       const end = endOfMonth(d);
@@ -242,11 +287,11 @@ export const intelligenceRouter = router({
 
     const [openedInWindow, closedInWindow] = await Promise.all([
       db.finding.findMany({
-        where: { identifiedAt: { gte: windowStart, lte: windowEnd } },
+        where: { ...findingWhere, identifiedAt: { gte: windowStart, lte: windowEnd } },
         select: { identifiedAt: true },
       }),
       db.finding.findMany({
-        where: { closedAt: { gte: windowStart, lte: windowEnd } },
+        where: { ...findingWhere, closedAt: { gte: windowStart, lte: windowEnd } },
         select: { closedAt: true },
       }),
     ]);
@@ -271,6 +316,7 @@ export const intelligenceRouter = router({
     // ------------------------------------------------------------------
     const capStatusGroups = await db.correctiveActionPlan.groupBy({
       by: ["status"],
+      where: capWhere,
       _count: true,
     });
 
@@ -287,6 +333,7 @@ export const intelligenceRouter = router({
     // ------------------------------------------------------------------
     const closedCapsWithSeverity = await db.correctiveActionPlan.findMany({
       where: {
+        ...capWhere,
         status: { in: CAP_DONE_STATUSES },
         OR: [{ closedAt: { not: null } }, { completedAt: { not: null } }],
       },
@@ -323,6 +370,7 @@ export const intelligenceRouter = router({
     // ------------------------------------------------------------------
     const orgGroups = await db.finding.groupBy({
       by: ["organizationId"],
+      where: findingWhere,
       _count: true,
       orderBy: { _count: { organizationId: "desc" } },
       take: 10,
@@ -339,12 +387,12 @@ export const intelligenceRouter = router({
       }),
       db.finding.groupBy({
         by: ["organizationId"],
-        where: { organizationId: { in: orgIds }, severity: "CRITICAL" },
+        where: { ...findingWhere, organizationId: { in: orgIds }, severity: "CRITICAL" },
         _count: true,
       }),
       db.finding.groupBy({
         by: ["organizationId"],
-        where: { organizationId: { in: orgIds }, status: { notIn: CLOSED_STATUSES } },
+        where: { ...findingWhere, organizationId: { in: orgIds }, status: { notIn: CLOSED_STATUSES } },
         _count: true,
       }),
     ]);
@@ -389,7 +437,7 @@ export const intelligenceRouter = router({
     // 9. RECURRING PATTERNS (top ICAO references)
     // ------------------------------------------------------------------
     const findingsWithIcao = await db.finding.findMany({
-      where: { icaoReference: { not: null } },
+      where: { ...findingWhere, icaoReference: { not: null } },
       select: { icaoReference: true, organizationId: true },
     });
 

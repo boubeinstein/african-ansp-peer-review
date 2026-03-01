@@ -6682,7 +6682,65 @@
         "abujaTargets": "Abuja Target #15"
       },
       "findingsTrendsPlaceholder": "Cross-review findings pattern analysis, common findings by review area, CAP closure rates, and severity distribution will appear here.",
-      "abujaTargetsPlaceholder": "Abuja Safety Target #15 KPI tracker — ANSP participation rate, SMS maturity milestone progress, and regional compliance tracking will appear here."
+      "abujaTargetsPlaceholder": "Abuja Safety Target #15 KPI tracker — ANSP participation rate, SMS maturity milestone progress, and regional compliance tracking will appear here.",
+      "findingsAndCAP": {
+        "title": "Findings & CAP Trends",
+        "subtitle": "Cross-review findings pattern analysis, CAP closure performance, and severity distribution",
+        "summary": {
+          "totalFindings": "Total Findings",
+          "openFindings": "Open Findings",
+          "closedFindings": "Closed Findings",
+          "criticalOpen": "Critical Open",
+          "avgResolution": "Avg Resolution",
+          "days": "days",
+          "totalCAPs": "Total CAPs",
+          "onTime": "On Time",
+          "overdue": "Overdue",
+          "completionRate": "Completion Rate"
+        },
+        "charts": {
+          "severityDistribution": "Findings by Severity",
+          "typeDistribution": "Findings by Type",
+          "byReviewArea": "Findings by Review Area",
+          "monthlyTrend": "Monthly Findings Trend",
+          "monthlyTrendDescription": "Findings opened vs closed over last 12 months",
+          "opened": "Opened",
+          "closed": "Closed",
+          "netOpen": "Net Open",
+          "capStatus": "CAP Status Distribution",
+          "capClosurePerformance": "CAP Closure Performance",
+          "capClosureDescription": "Average days to close CAPs by finding severity",
+          "avgDays": "Avg Days",
+          "count": "Count"
+        },
+        "tables": {
+          "topOrganizations": "Top Organizations by Findings",
+          "topOrganizationsDescription": "Organizations with the most findings across all reviews",
+          "organization": "Organization",
+          "total": "Total",
+          "critical": "Critical",
+          "open": "Open",
+          "recurringPatterns": "Recurring Finding Patterns",
+          "recurringPatternsDescription": "Most frequently cited ICAO references across findings",
+          "icaoReference": "ICAO Reference",
+          "occurrences": "Occurrences",
+          "affectedOrgs": "Affected Organizations",
+          "noFindings": "No findings data available yet",
+          "noFindingsDescription": "Findings and CAP trend data will appear here once peer reviews with findings are completed."
+        },
+        "filters": {
+          "region": "Region",
+          "allRegions": "All Regions",
+          "team": "Team",
+          "allTeams": "All Teams",
+          "period": "Period",
+          "last6Months": "Last 6 Months",
+          "last12Months": "Last 12 Months",
+          "allTime": "All Time",
+          "severity": "Severity",
+          "allSeverities": "All Severities"
+        }
+      }
     },
     "refresh": "Refresh",
     "totalReviews": "Total Reviews",

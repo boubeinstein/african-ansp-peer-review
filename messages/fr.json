@@ -6682,7 +6682,65 @@
         "abujaTargets": "Objectif d'Abuja #15"
       },
       "findingsTrendsPlaceholder": "L'analyse des tendances des constatations inter-revues, les constatations courantes par domaine d'examen, les taux de clôture des PAC et la distribution par gravité apparaîtront ici.",
-      "abujaTargetsPlaceholder": "Le suivi des KPI de l'Objectif de Sécurité d'Abuja #15 — taux de participation des ANSP, progrès des jalons de maturité SMS et suivi de la conformité régionale apparaîtront ici."
+      "abujaTargetsPlaceholder": "Le suivi des KPI de l'Objectif de Sécurité d'Abuja #15 — taux de participation des ANSP, progrès des jalons de maturité SMS et suivi de la conformité régionale apparaîtront ici.",
+      "findingsAndCAP": {
+        "title": "Tendances Constatations & PAC",
+        "subtitle": "Analyse des tendances des constatations inter-revues, performance de clôture des PAC et distribution par gravité",
+        "summary": {
+          "totalFindings": "Total des Constatations",
+          "openFindings": "Constatations Ouvertes",
+          "closedFindings": "Constatations Clôturées",
+          "criticalOpen": "Critiques Ouvertes",
+          "avgResolution": "Résolution Moy.",
+          "days": "jours",
+          "totalCAPs": "Total des PAC",
+          "onTime": "Dans les Délais",
+          "overdue": "En Retard",
+          "completionRate": "Taux d'Achèvement"
+        },
+        "charts": {
+          "severityDistribution": "Constatations par Gravité",
+          "typeDistribution": "Constatations par Type",
+          "byReviewArea": "Constatations par Domaine d'Évaluation",
+          "monthlyTrend": "Tendance Mensuelle des Constatations",
+          "monthlyTrendDescription": "Constatations ouvertes vs clôturées sur les 12 derniers mois",
+          "opened": "Ouvertes",
+          "closed": "Clôturées",
+          "netOpen": "Solde Ouvert",
+          "capStatus": "Distribution des Statuts PAC",
+          "capClosurePerformance": "Performance de Clôture des PAC",
+          "capClosureDescription": "Nombre moyen de jours pour clôturer les PAC par gravité de constatation",
+          "avgDays": "Jours Moy.",
+          "count": "Nombre"
+        },
+        "tables": {
+          "topOrganizations": "Principales Organisations par Constatations",
+          "topOrganizationsDescription": "Organisations avec le plus de constatations sur l'ensemble des revues",
+          "organization": "Organisation",
+          "total": "Total",
+          "critical": "Critique",
+          "open": "Ouvert",
+          "recurringPatterns": "Tendances Récurrentes des Constatations",
+          "recurringPatternsDescription": "Références OACI les plus fréquemment citées dans les constatations",
+          "icaoReference": "Référence OACI",
+          "occurrences": "Occurrences",
+          "affectedOrgs": "Organisations Concernées",
+          "noFindings": "Aucune donnée de constatation disponible",
+          "noFindingsDescription": "Les données de tendance des constatations et des PAC apparaîtront ici une fois les revues par les pairs avec constatations terminées."
+        },
+        "filters": {
+          "region": "Région",
+          "allRegions": "Toutes les Régions",
+          "team": "Équipe",
+          "allTeams": "Toutes les Équipes",
+          "period": "Période",
+          "last6Months": "6 Derniers Mois",
+          "last12Months": "12 Derniers Mois",
+          "allTime": "Tout le Temps",
+          "severity": "Gravité",
+          "allSeverities": "Toutes les Gravités"
+        }
+      }
     },
     "refresh": "Actualiser",
     "totalReviews": "Total des Évaluations",

@@ -7,7 +7,7 @@
  * into a single tabbed interface with four sections:
  *   1. Overview — KPIs, review/finding/CAP statistics, team metrics
  *   2. Cross-ANSP Benchmarking — EI benchmarking, SMS maturity, regional analysis
- *   3. Findings & CAP Trends — pattern analysis (placeholder)
+ *   3. Findings & CAP Trends — pattern analysis, CAP closure, severity
  *   4. Abuja Target #15 — AST #15 KPI tracking (placeholder)
  */
 

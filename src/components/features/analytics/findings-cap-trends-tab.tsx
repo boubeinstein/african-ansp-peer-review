@@ -7,7 +7,7 @@
  * severity distribution, and recurring ICAO reference detection.
  */
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { AlertTriangle, FileSearch, Clock, CheckCircle2, XCircle } from "lucide-react";
 import {
@@ -64,26 +64,26 @@ type RegionFilter = "ALL" | "WACAF" | "ESAF" | "NORTHERN";
 type PeriodFilter = "6" | "12" | "all";
 
 // =============================================================================
-// COLORS
+// COLORS — consistent AAPRP palette
 // =============================================================================
 
 const SEVERITY_COLORS: Record<string, string> = {
-  CRITICAL: "#ef4444",
-  MAJOR: "#f97316",
-  MINOR: "#eab308",
-  OBSERVATION: "#3b82f6",
+  CRITICAL: "#ef4444", // red-500
+  MAJOR: "#f97316",    // orange-500
+  MINOR: "#eab308",    // yellow-500
+  OBSERVATION: "#3b82f6", // blue-500
 };
 
 const CAP_STATUS_COLORS: Record<string, string> = {
-  DRAFT: "#94a3b8",
-  SUBMITTED: "#3b82f6",
-  UNDER_REVIEW: "#8b5cf6",
-  ACCEPTED: "#06b6d4",
-  REJECTED: "#ef4444",
-  IN_PROGRESS: "#f59e0b",
-  COMPLETED: "#22c55e",
-  VERIFIED: "#10b981",
-  CLOSED: "#6b7280",
+  DRAFT: "#94a3b8",       // slate-400
+  SUBMITTED: "#3b82f6",   // blue-500
+  UNDER_REVIEW: "#8b5cf6", // violet-500
+  ACCEPTED: "#06b6d4",    // cyan-500
+  REJECTED: "#ef4444",    // red-500
+  IN_PROGRESS: "#f59e0b", // amber-500
+  COMPLETED: "#22c55e",   // green-500
+  VERIFIED: "#10b981",    // emerald-500
+  CLOSED: "#6b7280",      // gray-500
 };
 
 const TOOLTIP_STYLE = {
@@ -94,12 +94,28 @@ const TOOLTIP_STYLE = {
 };
 
 // =============================================================================
+// HELPERS
+// =============================================================================
+
+/** Locale-aware number formatter (memoised per locale). */
+function useNumberFormatter(locale: string) {
+  return useMemo(() => new Intl.NumberFormat(locale === "fr" ? "fr-FR" : "en-US"), [locale]);
+}
+
+// =============================================================================
 // MAIN COMPONENT
 // =============================================================================
 
 export function FindingsCapTrendsTab({ locale }: FindingsCapTrendsTabProps) {
   const t = useTranslations("analytics");
+  const tFinding = useTranslations("finding");
   const ft = (key: string) => t(`programmeIntelligence.findingsAndCAP.${key}`);
+  const nf = useNumberFormatter(locale);
+
+  /** Translate a severity enum to its localised label. */
+  const sevLabel = (sev: string) => {
+    try { return tFinding(`severity.${sev}`); } catch { return sev; }
+  };
 
   // Filter state
   const [region, setRegion] = useState<RegionFilter>("ALL");
@@ -124,8 +140,7 @@ export function FindingsCapTrendsTab({ locale }: FindingsCapTrendsTabProps) {
   const topOrgs = data?.topOrganizationsByFindings ?? [];
   const patterns = data?.recurringPatterns ?? [];
 
-  const isEmpty =
-    !isLoading && (!summary || summary.totalFindings === 0);
+  const isEmpty = !isLoading && (!summary || summary.totalFindings === 0);
 
   return (
     <div className="space-y-6">
@@ -133,7 +148,6 @@ export function FindingsCapTrendsTab({ locale }: FindingsCapTrendsTabProps) {
       <Card>
         <CardContent className="py-3 px-4">
           <div className="flex flex-wrap items-center gap-3">
-            {/* Region */}
             <Select value={region} onValueChange={(v) => setRegion(v as RegionFilter)}>
               <SelectTrigger size="sm" className="w-[160px]">
                 <SelectValue placeholder={ft("filters.region")} />
@@ -146,7 +160,6 @@ export function FindingsCapTrendsTab({ locale }: FindingsCapTrendsTabProps) {
               </SelectContent>
             </Select>
 
-            {/* Team */}
             <Select value={team} onValueChange={setTeam}>
               <SelectTrigger size="sm" className="w-[150px]">
                 <SelectValue placeholder={ft("filters.team")} />
@@ -161,7 +174,6 @@ export function FindingsCapTrendsTab({ locale }: FindingsCapTrendsTabProps) {
               </SelectContent>
             </Select>
 
-            {/* Period */}
             <Select value={period} onValueChange={(v) => setPeriod(v as PeriodFilter)}>
               <SelectTrigger size="sm" className="w-[170px]">
                 <SelectValue placeholder={ft("filters.period")} />
@@ -191,9 +203,9 @@ export function FindingsCapTrendsTab({ locale }: FindingsCapTrendsTabProps) {
         </Card>
       )}
 
-      {/* KPI Summary Cards */}
       {!isEmpty && (
         <>
+          {/* KPI Summary Cards */}
           {isLoading ? (
             <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
               {Array.from({ length: 8 }).map((_, i) => (
@@ -201,7 +213,7 @@ export function FindingsCapTrendsTab({ locale }: FindingsCapTrendsTabProps) {
               ))}
             </div>
           ) : (
-            summary && <KPISummary summary={summary} ft={ft} />
+            summary && <KPISummary summary={summary} ft={ft} nf={nf} />
           )}
 
           {/* Charts Row 1: Severity Donut + Monthly Trend */}
@@ -214,7 +226,11 @@ export function FindingsCapTrendsTab({ locale }: FindingsCapTrendsTabProps) {
                 {isLoading ? (
                   <Skeleton className="h-[300px] w-full" />
                 ) : (
-                  <SeverityDonut data={findingsBySeverity} />
+                  <SeverityDonut
+                    data={findingsBySeverity}
+                    sevLabel={sevLabel}
+                    emptyLabel={ft("tables.noFindings")}
+                  />
                 )}
               </CardContent>
             </Card>
@@ -222,15 +238,17 @@ export function FindingsCapTrendsTab({ locale }: FindingsCapTrendsTabProps) {
             <Card>
               <CardHeader>
                 <CardTitle>{ft("charts.monthlyTrend")}</CardTitle>
-                <CardDescription>
-                  {ft("charts.monthlyTrendDescription")}
-                </CardDescription>
+                <CardDescription>{ft("charts.monthlyTrendDescription")}</CardDescription>
               </CardHeader>
               <CardContent>
                 {isLoading ? (
                   <Skeleton className="h-[300px] w-full" />
                 ) : (
-                  <MonthlyTrendChart data={monthlyTrend} ft={ft} />
+                  <MonthlyTrendChart
+                    data={monthlyTrend}
+                    ft={ft}
+                    emptyLabel={ft("tables.noFindings")}
+                  />
                 )}
               </CardContent>
             </Card>
@@ -246,7 +264,11 @@ export function FindingsCapTrendsTab({ locale }: FindingsCapTrendsTabProps) {
                 {isLoading ? (
                   <Skeleton className="h-[300px] w-full" />
                 ) : (
-                  <ReviewAreaChart data={findingsByReviewArea} />
+                  <ReviewAreaChart
+                    data={findingsByReviewArea}
+                    sevLabel={sevLabel}
+                    emptyLabel={ft("tables.noFindings")}
+                  />
                 )}
               </CardContent>
             </Card>
@@ -259,7 +281,10 @@ export function FindingsCapTrendsTab({ locale }: FindingsCapTrendsTabProps) {
                 {isLoading ? (
                   <Skeleton className="h-[300px] w-full" />
                 ) : (
-                  <CAPStatusDonut data={capsByStatus} />
+                  <CAPStatusDonut
+                    data={capsByStatus}
+                    emptyLabel={ft("tables.noFindings")}
+                  />
                 )}
               </CardContent>
             </Card>
@@ -269,15 +294,18 @@ export function FindingsCapTrendsTab({ locale }: FindingsCapTrendsTabProps) {
           <Card>
             <CardHeader>
               <CardTitle>{ft("charts.capClosurePerformance")}</CardTitle>
-              <CardDescription>
-                {ft("charts.capClosureDescription")}
-              </CardDescription>
+              <CardDescription>{ft("charts.capClosureDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               {isLoading ? (
                 <Skeleton className="h-[300px] w-full" />
               ) : (
-                <CAPClosureChart data={capClosurePerformance} ft={ft} />
+                <CAPClosureChart
+                  data={capClosurePerformance}
+                  ft={ft}
+                  sevLabel={sevLabel}
+                  emptyLabel={ft("tables.noFindings")}
+                />
               )}
             </CardContent>
           </Card>
@@ -287,9 +315,7 @@ export function FindingsCapTrendsTab({ locale }: FindingsCapTrendsTabProps) {
             <Card>
               <CardHeader>
                 <CardTitle>{ft("tables.topOrganizations")}</CardTitle>
-                <CardDescription>
-                  {ft("tables.topOrganizationsDescription")}
-                </CardDescription>
+                <CardDescription>{ft("tables.topOrganizationsDescription")}</CardDescription>
               </CardHeader>
               <CardContent>
                 {isLoading ? (
@@ -299,7 +325,7 @@ export function FindingsCapTrendsTab({ locale }: FindingsCapTrendsTabProps) {
                     ))}
                   </div>
                 ) : (
-                  <TopOrganizationsTable data={topOrgs} locale={locale} ft={ft} />
+                  <TopOrganizationsTable data={topOrgs} locale={locale} nf={nf} ft={ft} />
                 )}
               </CardContent>
             </Card>
@@ -307,9 +333,7 @@ export function FindingsCapTrendsTab({ locale }: FindingsCapTrendsTabProps) {
             <Card>
               <CardHeader>
                 <CardTitle>{ft("tables.recurringPatterns")}</CardTitle>
-                <CardDescription>
-                  {ft("tables.recurringPatternsDescription")}
-                </CardDescription>
+                <CardDescription>{ft("tables.recurringPatternsDescription")}</CardDescription>
               </CardHeader>
               <CardContent>
                 {isLoading ? (
@@ -319,7 +343,7 @@ export function FindingsCapTrendsTab({ locale }: FindingsCapTrendsTabProps) {
                     ))}
                   </div>
                 ) : (
-                  <RecurringPatternsTable data={patterns} ft={ft} />
+                  <RecurringPatternsTable data={patterns} nf={nf} ft={ft} />
                 )}
               </CardContent>
             </Card>
@@ -347,68 +371,60 @@ interface KPISummaryProps {
     capCompletionRate: number;
   };
   ft: (key: string) => string;
+  nf: Intl.NumberFormat;
 }
 
-function KPISummary({ summary, ft }: KPISummaryProps) {
+function KPISummary({ summary, ft, nf }: KPISummaryProps) {
   return (
     <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
-      {/* Total Findings */}
       <KPICard
         label={ft("summary.totalFindings")}
-        value={summary.totalFindings}
-        subtitle={`${summary.openFindings} ${ft("summary.openFindings").toLowerCase()} / ${summary.closedFindings} ${ft("summary.closedFindings").toLowerCase()}`}
+        value={nf.format(summary.totalFindings)}
+        subtitle={`${nf.format(summary.openFindings)} ${ft("summary.openFindings").toLowerCase()} / ${nf.format(summary.closedFindings)} ${ft("summary.closedFindings").toLowerCase()}`}
         icon={<FileSearch className="h-4 w-4" />}
         color="#3b82f6"
       />
-      {/* Critical Open */}
       <KPICard
         label={ft("summary.criticalOpen")}
-        value={summary.criticalOpen}
+        value={nf.format(summary.criticalOpen)}
         icon={<AlertTriangle className="h-4 w-4" />}
         color="#ef4444"
         alert={summary.criticalOpen > 0}
       />
-      {/* Avg Resolution */}
       <KPICard
         label={ft("summary.avgResolution")}
-        value={summary.avgResolutionDays !== null ? `${summary.avgResolutionDays}` : "—"}
+        value={summary.avgResolutionDays !== null ? nf.format(summary.avgResolutionDays) : "—"}
         subtitle={summary.avgResolutionDays !== null ? ft("summary.days") : undefined}
         icon={<Clock className="h-4 w-4" />}
         color="#f59e0b"
       />
-      {/* CAP Completion Rate */}
       <KPICard
         label={ft("summary.completionRate")}
-        value={`${summary.capCompletionRate}%`}
+        value={`${nf.format(summary.capCompletionRate)}%`}
         icon={<CheckCircle2 className="h-4 w-4" />}
         color="#22c55e"
       />
-      {/* Total CAPs */}
       <KPICard
         label={ft("summary.totalCAPs")}
-        value={summary.totalCAPs}
+        value={nf.format(summary.totalCAPs)}
         color="#8b5cf6"
       />
-      {/* On Time */}
       <KPICard
         label={ft("summary.onTime")}
-        value={summary.capsOnTime}
+        value={nf.format(summary.capsOnTime)}
         color="#22c55e"
       />
-      {/* Overdue */}
       <KPICard
         label={ft("summary.overdue")}
-        value={summary.capsOverdue}
+        value={nf.format(summary.capsOverdue)}
         color="#ef4444"
         alert={summary.capsOverdue > 0}
         icon={<XCircle className="h-4 w-4" />}
       />
-      {/* Avg Resolution Days (from CAPs) */}
       <KPICard
-        label={ft("summary.avgResolution")}
-        value={summary.avgResolutionDays !== null ? `${summary.avgResolutionDays}` : "—"}
-        subtitle={summary.avgResolutionDays !== null ? ft("summary.days") : undefined}
-        color="#06b6d4"
+        label={ft("summary.openFindings")}
+        value={nf.format(summary.openFindings)}
+        color="#f59e0b"
       />
     </div>
   );
@@ -461,21 +477,23 @@ function KPICard({ label, value, subtitle, icon, color, alert }: KPICardProps) {
 
 interface SeverityDonutProps {
   data: Array<{ severity?: string; count: number; percentage: number }>;
+  sevLabel: (sev: string) => string;
+  emptyLabel: string;
 }
 
-function SeverityDonut({ data }: SeverityDonutProps) {
+function SeverityDonut({ data, sevLabel, emptyLabel }: SeverityDonutProps) {
   const chartData = data.map((d) => ({
-    name: d.severity ?? "Unknown",
+    name: sevLabel(d.severity ?? ""),
     value: d.count,
     fill: SEVERITY_COLORS[d.severity ?? ""] ?? "#94a3b8",
   }));
 
   if (chartData.length === 0) {
-    return <EmptyChartPlaceholder />;
+    return <EmptyChartPlaceholder label={emptyLabel} />;
   }
 
   return (
-    <div style={{ width: "100%", minHeight: 300 }}>
+    <div style={{ width: "100%", minHeight: 300 }} role="img" aria-label="Findings by severity distribution chart">
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
@@ -510,23 +528,24 @@ function SeverityDonut({ data }: SeverityDonutProps) {
 interface MonthlyTrendChartProps {
   data: Array<{ month: string; opened: number; closed: number; netOpen: number }>;
   ft: (key: string) => string;
+  emptyLabel: string;
 }
 
-function MonthlyTrendChart({ data, ft }: MonthlyTrendChartProps) {
+function MonthlyTrendChart({ data, ft, emptyLabel }: MonthlyTrendChartProps) {
   if (data.length === 0) {
-    return <EmptyChartPlaceholder />;
+    return <EmptyChartPlaceholder label={emptyLabel} />;
   }
 
   return (
-    <div style={{ width: "100%", minHeight: 300 }}>
+    <div style={{ width: "100%", minHeight: 300 }} role="img" aria-label="Monthly findings trend chart">
       <ResponsiveContainer width="100%" height={300}>
         <AreaChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
           <defs>
-            <linearGradient id="openedGrad" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="fctOpenedGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
               <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
             </linearGradient>
-            <linearGradient id="closedGrad" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="fctClosedGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
               <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
             </linearGradient>
@@ -542,7 +561,7 @@ function MonthlyTrendChart({ data, ft }: MonthlyTrendChartProps) {
             name={ft("charts.opened")}
             stroke="#3b82f6"
             strokeWidth={2}
-            fill="url(#openedGrad)"
+            fill="url(#fctOpenedGrad)"
           />
           <Area
             type="monotone"
@@ -550,7 +569,7 @@ function MonthlyTrendChart({ data, ft }: MonthlyTrendChartProps) {
             name={ft("charts.closed")}
             stroke="#22c55e"
             strokeWidth={2}
-            fill="url(#closedGrad)"
+            fill="url(#fctClosedGrad)"
           />
           <Area
             type="monotone"
@@ -580,31 +599,28 @@ interface ReviewAreaChartProps {
     minor: number;
     observation: number;
   }>;
+  sevLabel: (sev: string) => string;
+  emptyLabel: string;
 }
 
-function ReviewAreaChart({ data }: ReviewAreaChartProps) {
+function ReviewAreaChart({ data, sevLabel, emptyLabel }: ReviewAreaChartProps) {
   if (data.length === 0) {
-    return <EmptyChartPlaceholder />;
+    return <EmptyChartPlaceholder label={emptyLabel} />;
   }
 
   return (
-    <div style={{ width: "100%", minHeight: 300 }}>
+    <div style={{ width: "100%", minHeight: 300 }} role="img" aria-label="Findings by review area chart">
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} layout="vertical" margin={{ left: 10, right: 20 }}>
           <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
           <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11 }} />
-          <YAxis
-            type="category"
-            dataKey="area"
-            width={50}
-            tick={{ fontSize: 11 }}
-          />
+          <YAxis type="category" dataKey="area" width={50} tick={{ fontSize: 11 }} />
           <Tooltip contentStyle={TOOLTIP_STYLE} />
           <Legend />
-          <Bar dataKey="critical" name="Critical" stackId="a" fill={SEVERITY_COLORS.CRITICAL} />
-          <Bar dataKey="major" name="Major" stackId="a" fill={SEVERITY_COLORS.MAJOR} />
-          <Bar dataKey="minor" name="Minor" stackId="a" fill={SEVERITY_COLORS.MINOR} />
-          <Bar dataKey="observation" name="Observation" stackId="a" fill={SEVERITY_COLORS.OBSERVATION} radius={[0, 4, 4, 0]} />
+          <Bar dataKey="critical" name={sevLabel("CRITICAL")} stackId="a" fill={SEVERITY_COLORS.CRITICAL} />
+          <Bar dataKey="major" name={sevLabel("MAJOR")} stackId="a" fill={SEVERITY_COLORS.MAJOR} />
+          <Bar dataKey="minor" name={sevLabel("MINOR")} stackId="a" fill={SEVERITY_COLORS.MINOR} />
+          <Bar dataKey="observation" name={sevLabel("OBSERVATION")} stackId="a" fill={SEVERITY_COLORS.OBSERVATION} radius={[0, 4, 4, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
@@ -617,9 +633,10 @@ function ReviewAreaChart({ data }: ReviewAreaChartProps) {
 
 interface CAPStatusDonutProps {
   data: Array<{ status?: string; count: number; percentage: number }>;
+  emptyLabel: string;
 }
 
-function CAPStatusDonut({ data }: CAPStatusDonutProps) {
+function CAPStatusDonut({ data, emptyLabel }: CAPStatusDonutProps) {
   const chartData = data.map((d) => ({
     name: d.status ?? "Unknown",
     value: d.count,
@@ -627,11 +644,11 @@ function CAPStatusDonut({ data }: CAPStatusDonutProps) {
   }));
 
   if (chartData.length === 0) {
-    return <EmptyChartPlaceholder />;
+    return <EmptyChartPlaceholder label={emptyLabel} />;
   }
 
   return (
-    <div style={{ width: "100%", minHeight: 300 }}>
+    <div style={{ width: "100%", minHeight: 300 }} role="img" aria-label="CAP status distribution chart">
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
@@ -666,30 +683,33 @@ function CAPStatusDonut({ data }: CAPStatusDonutProps) {
 interface CAPClosureChartProps {
   data: Array<{ severity: string; avgDays: number; count: number }>;
   ft: (key: string) => string;
+  sevLabel: (sev: string) => string;
+  emptyLabel: string;
 }
 
-function CAPClosureChart({ data, ft }: CAPClosureChartProps) {
+function CAPClosureChart({ data, ft, sevLabel, emptyLabel }: CAPClosureChartProps) {
   if (data.length === 0) {
-    return <EmptyChartPlaceholder />;
+    return <EmptyChartPlaceholder label={emptyLabel} />;
   }
 
   const chartData = data.map((d) => ({
     ...d,
+    severityLabel: sevLabel(d.severity),
     fill: SEVERITY_COLORS[d.severity] ?? "#94a3b8",
   }));
 
   return (
-    <div style={{ width: "100%", minHeight: 300 }}>
+    <div style={{ width: "100%", minHeight: 300 }} role="img" aria-label="CAP closure performance by severity chart">
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={chartData} margin={{ top: 20, right: 20, bottom: 5, left: 0 }}>
           <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-          <XAxis dataKey="severity" tick={{ fontSize: 11 }} />
+          <XAxis dataKey="severityLabel" tick={{ fontSize: 11 }} />
           <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
           <Tooltip
             contentStyle={TOOLTIP_STYLE}
             formatter={(value: number | undefined, name?: string) => {
               const v = value ?? 0;
-              if (name === "avgDays") return [`${v} ${ft("summary.days")}`, ft("charts.avgDays")];
+              if (name === ft("charts.avgDays")) return [`${v} ${ft("summary.days")}`, ft("charts.avgDays")];
               return [v, ft("charts.count")];
             }}
           />
@@ -724,10 +744,11 @@ interface TopOrganizationsTableProps {
     open: number;
   }>;
   locale: string;
+  nf: Intl.NumberFormat;
   ft: (key: string) => string;
 }
 
-function TopOrganizationsTable({ data, locale, ft }: TopOrganizationsTableProps) {
+function TopOrganizationsTable({ data, locale, nf, ft }: TopOrganizationsTableProps) {
   if (data.length === 0) {
     return (
       <p className="text-sm text-muted-foreground py-8 text-center">
@@ -753,14 +774,14 @@ function TopOrganizationsTable({ data, locale, ft }: TopOrganizationsTableProps)
               <TableCell className="font-medium">
                 {locale === "fr" ? org.nameFr : org.nameEn}
               </TableCell>
-              <TableCell className="text-right">{org.total}</TableCell>
+              <TableCell className="text-right">{nf.format(org.total)}</TableCell>
               <TableCell className="text-right">
                 {org.critical > 0 ? (
                   <Badge
                     variant="outline"
                     className="bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800"
                   >
-                    {org.critical}
+                    {nf.format(org.critical)}
                   </Badge>
                 ) : (
                   <span className="text-muted-foreground">0</span>
@@ -769,7 +790,7 @@ function TopOrganizationsTable({ data, locale, ft }: TopOrganizationsTableProps)
               <TableCell className="text-right">
                 {org.open > 0 ? (
                   <span className="font-medium text-amber-600 dark:text-amber-400">
-                    {org.open}
+                    {nf.format(org.open)}
                   </span>
                 ) : (
                   <span className="text-muted-foreground">0</span>
@@ -793,10 +814,11 @@ interface RecurringPatternsTableProps {
     count: number;
     organizations: number;
   }>;
+  nf: Intl.NumberFormat;
   ft: (key: string) => string;
 }
 
-function RecurringPatternsTable({ data, ft }: RecurringPatternsTableProps) {
+function RecurringPatternsTable({ data, nf, ft }: RecurringPatternsTableProps) {
   if (data.length === 0) {
     return (
       <p className="text-sm text-muted-foreground py-8 text-center">
@@ -822,10 +844,10 @@ function RecurringPatternsTable({ data, ft }: RecurringPatternsTableProps) {
                 {pattern.icaoReference}
               </TableCell>
               <TableCell className="text-right">
-                <Badge variant="secondary">{pattern.count}</Badge>
+                <Badge variant="secondary">{nf.format(pattern.count)}</Badge>
               </TableCell>
               <TableCell className="text-right">
-                {pattern.organizations}
+                {nf.format(pattern.organizations)}
               </TableCell>
             </TableRow>
           ))}
@@ -839,11 +861,11 @@ function RecurringPatternsTable({ data, ft }: RecurringPatternsTableProps) {
 // EMPTY CHART PLACEHOLDER
 // =============================================================================
 
-function EmptyChartPlaceholder() {
+function EmptyChartPlaceholder({ label }: { label: string }) {
   return (
     <div className="flex items-center justify-center h-[300px] text-sm text-muted-foreground">
       <FileSearch className="h-5 w-5 mr-2" />
-      No data available
+      {label}
     </div>
   );
 }

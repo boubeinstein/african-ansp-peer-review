@@ -146,6 +146,7 @@ function RadialProgress({
   color = "#22C55E",
   label,
   sublabel,
+  ariaLabel,
 }: {
   value: number;
   size?: number;
@@ -153,6 +154,7 @@ function RadialProgress({
   color?: string;
   label: string;
   sublabel?: string;
+  ariaLabel?: string;
 }) {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -160,8 +162,15 @@ function RadialProgress({
   const offset = circumference - (clamped / 100) * circumference;
 
   return (
-    <div className="flex flex-col items-center gap-1">
-      <svg width={size} height={size} className="-rotate-90">
+    <div
+      className="relative flex flex-col items-center gap-1"
+      role="progressbar"
+      aria-valuenow={Math.round(clamped)}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label={ariaLabel || `${label} progress`}
+    >
+      <svg width={size} height={size} className="-rotate-90" aria-hidden="true">
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -184,10 +193,12 @@ function RadialProgress({
           className="transition-all duration-700"
         />
       </svg>
-      <div className="absolute flex flex-col items-center justify-center" style={{ width: size, height: size }}>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-2xl font-bold">{label}</span>
         {sublabel && (
-          <span className="text-xs text-muted-foreground">{sublabel}</span>
+          <span className="text-xs text-muted-foreground text-center leading-tight max-w-[80%]">
+            {sublabel}
+          </span>
         )}
       </div>
     </div>
@@ -243,7 +254,7 @@ function HeaderBanner({
           </div>
 
           {/* Overall progress ring */}
-          <div className="relative flex-shrink-0">
+          <div className="flex-shrink-0">
             <RadialProgress
               value={overallProgress}
               size={130}
@@ -251,6 +262,7 @@ function HeaderBanner({
               color={progressColor}
               label={`${Math.round(overallProgress)}%`}
               sublabel={t("overallProgress")}
+              ariaLabel={`${t("overallProgress")}: ${Math.round(overallProgress)}%`}
             />
           </div>
         </div>
@@ -268,6 +280,16 @@ interface MilestoneData {
   label: string;
   date: string;
   status: "past" | "current" | "future";
+  /** Achievement percentage for past milestones (0-100), used for red/amber/green coloring */
+  achievement?: number;
+}
+
+/** Color a past milestone dot based on achievement percentage */
+function pastDotClasses(achievement: number | undefined): string {
+  const pct = achievement ?? 0;
+  if (pct >= 80) return "bg-green-500 border-green-600 text-white";
+  if (pct >= 50) return "bg-amber-500 border-amber-600 text-white";
+  return "bg-red-500 border-red-600 text-white";
 }
 
 function TimelineSection({
@@ -286,81 +308,90 @@ function TimelineSection({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="relative">
-          {/* Track line */}
-          <div className="absolute top-4 left-0 right-0 h-1 bg-muted rounded-full" />
+        <nav aria-label={t("timeline.title")}>
+          <div className="relative">
+            {/* Track line */}
+            <div className="absolute top-4 left-0 right-0 h-1 bg-muted rounded-full" aria-hidden="true" />
 
-          {/* Milestones */}
-          <div className="relative flex justify-between">
-            {milestones.map((m) => {
-              const days = daysUntil(m.date);
-              const isPast = m.status === "past";
-              const isCurrent = m.status === "current";
+            {/* Milestones */}
+            <div className="relative flex justify-between">
+              {milestones.map((m) => {
+                const days = daysUntil(m.date);
+                const isPast = m.status === "past";
+                const isCurrent = m.status === "current";
 
-              return (
-                <div
-                  key={m.id}
-                  className="flex flex-col items-center gap-1.5 w-1/4"
-                >
-                  {/* Dot */}
+                return (
                   <div
-                    className={cn(
-                      "relative z-10 h-8 w-8 rounded-full border-2 flex items-center justify-center transition-all",
-                      isPast
-                        ? days < 0 && m.id === "ast151"
-                          ? "bg-amber-500 border-amber-600 text-white"
-                          : "bg-green-500 border-green-600 text-white"
-                        : isCurrent
-                          ? "bg-blue-500 border-blue-600 text-white ring-4 ring-blue-200 dark:ring-blue-900"
-                          : "bg-muted border-muted-foreground/30 text-muted-foreground"
-                    )}
+                    key={m.id}
+                    className="flex flex-col items-center gap-1.5 w-1/4"
+                    aria-label={`${m.label}: ${m.date}, ${isPast ? t("timeline.past") : isCurrent ? t("timeline.upcoming") : t("timeline.future")}`}
                   >
-                    {isPast ? (
-                      <CheckCircle2 className="h-4 w-4" />
-                    ) : isCurrent ? (
-                      <Clock className="h-4 w-4" />
-                    ) : (
-                      <span className="h-2 w-2 rounded-full bg-current" />
+                    {/* Dot */}
+                    <div
+                      className={cn(
+                        "relative z-10 h-8 w-8 rounded-full border-2 flex items-center justify-center transition-all",
+                        isPast
+                          ? pastDotClasses(m.achievement)
+                          : isCurrent
+                            ? "bg-blue-500 border-blue-600 text-white ring-4 ring-blue-200 dark:ring-blue-900"
+                            : "bg-muted border-muted-foreground/30 text-muted-foreground"
+                      )}
+                      aria-hidden="true"
+                    >
+                      {isPast ? (
+                        <CheckCircle2 className="h-4 w-4" />
+                      ) : isCurrent ? (
+                        <Clock className="h-4 w-4" />
+                      ) : (
+                        <span className="h-2 w-2 rounded-full bg-current" />
+                      )}
+                    </div>
+
+                    {/* Label */}
+                    <p className="text-xs font-semibold text-center leading-tight">
+                      {m.label}
+                    </p>
+
+                    {/* Date */}
+                    <p className="text-[10px] text-muted-foreground text-center">
+                      {m.date}
+                    </p>
+
+                    {/* Status badge */}
+                    {isPast && (
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          "text-[10px] px-1.5 py-0",
+                          (m.achievement ?? 0) >= 80
+                            ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800"
+                            : (m.achievement ?? 0) >= 50
+                              ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800"
+                              : "bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800"
+                        )}
+                      >
+                        {t("timeline.past")} — {(m.achievement ?? 0).toFixed(0)}%
+                      </Badge>
+                    )}
+                    {isCurrent && (
+                      <Badge className="text-[10px] px-1.5 py-0 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                        {Math.abs(days)}d — {t("timeline.upcoming")}
+                      </Badge>
+                    )}
+                    {!isPast && !isCurrent && (
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] px-1.5 py-0"
+                      >
+                        {t("timeline.future")}
+                      </Badge>
                     )}
                   </div>
-
-                  {/* Label */}
-                  <p className="text-xs font-semibold text-center leading-tight">
-                    {m.label}
-                  </p>
-
-                  {/* Date */}
-                  <p className="text-[10px] text-muted-foreground text-center">
-                    {m.date}
-                  </p>
-
-                  {/* Status badge */}
-                  {isPast && (
-                    <Badge
-                      variant="outline"
-                      className="text-[10px] px-1.5 py-0 bg-muted"
-                    >
-                      {t("timeline.past")}
-                    </Badge>
-                  )}
-                  {isCurrent && (
-                    <Badge className="text-[10px] px-1.5 py-0 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                      {Math.abs(days)}d — {t("timeline.upcoming")}
-                    </Badge>
-                  )}
-                  {!isPast && !isCurrent && (
-                    <Badge
-                      variant="outline"
-                      className="text-[10px] px-1.5 py-0"
-                    >
-                      {t("timeline.future")}
-                    </Badge>
-                  )}
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
+        </nav>
       </CardContent>
     </Card>
   );
@@ -389,7 +420,7 @@ function KPICard({
     <Card>
       <CardContent className="pt-6">
         <div className="flex items-start gap-4">
-          <div className="relative flex-shrink-0">
+          <div className="flex-shrink-0">
             <RadialProgress
               value={percentage}
               size={100}
@@ -397,6 +428,7 @@ function KPICard({
               color={color}
               label={`${current}`}
               sublabel={`/ ${target}`}
+              ariaLabel={`${title}: ${current} / ${target}`}
             />
           </div>
           <div className="flex-1 min-w-0 pt-2">
@@ -408,7 +440,11 @@ function KPICard({
                   {percentage.toFixed(1)}%
                 </span>
               </div>
-              <Progress value={percentage} className="h-1.5" />
+              <Progress
+                value={percentage}
+                className="h-1.5"
+                aria-label={`${title}: ${percentage.toFixed(1)}%`}
+              />
             </div>
           </div>
         </div>
@@ -492,14 +528,14 @@ function AST151Section({
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{t("regional.region")}</TableHead>
-                    <TableHead className="text-center">
+                    <TableHead scope="col">{t("regional.region")}</TableHead>
+                    <TableHead scope="col" className="text-center">
                       {t("regional.total")}
                     </TableHead>
-                    <TableHead className="text-center">
+                    <TableHead scope="col" className="text-center">
                       {t("regional.joined")}
                     </TableHead>
-                    <TableHead className="text-center">
+                    <TableHead scope="col" className="text-center">
                       {t("regional.reviewed")}
                     </TableHead>
                   </TableRow>
@@ -548,7 +584,7 @@ function AST151Section({
             <CardDescription>{t("ast151.cumulativeEnrollment")}</CardDescription>
           </CardHeader>
           <CardContent>
-            <div style={{ minHeight: 250 }}>
+            <div style={{ minHeight: 250 }} role="img" aria-label={t("ast151.enrollmentTrend")}>
               <ResponsiveContainer width="100%" height={250} minWidth={1} minHeight={1}>
                 <AreaChart
                   data={trendData}
@@ -566,8 +602,8 @@ function AST151Section({
                   />
                   <YAxis tick={{ fontSize: 11 }} />
                   <Tooltip
-                    formatter={(value: number) => [
-                      nf.format(value),
+                    formatter={(value: number | undefined) => [
+                      nf.format(value ?? 0),
                       t("ast151.cumulativeEnrollment"),
                     ]}
                   />
@@ -627,7 +663,7 @@ function MilestoneCard({
           <span className="font-semibold text-lg">{achieved}</span>
           <span className="text-muted-foreground">/ {total}</span>
         </div>
-        <Progress value={pct} className="h-2.5" />
+        <Progress value={pct} className="h-2.5" aria-label={`${title}: ${achieved} / ${total}`} />
 
         {/* Stacked breakdown */}
         {(inProgress !== undefined || notStarted !== undefined) && (
@@ -744,7 +780,7 @@ function AST152Section({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div style={{ minHeight: 220 }}>
+            <div style={{ minHeight: 220 }} role="img" aria-label={t("ast152.maturityDistribution")}>
               <ResponsiveContainer width="100%" height={220} minWidth={1} minHeight={1}>
                 <BarChart
                   data={distData}
@@ -760,7 +796,7 @@ function AST152Section({
                     tick={{ fontSize: 11 }}
                   />
                   <Tooltip
-                    formatter={(value: number) => [nf.format(value), "ANSPs"]}
+                    formatter={(value: number | undefined) => [nf.format(value ?? 0), "ANSPs"]}
                   />
                   <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={24}>
                     {distData.map((entry) => (
@@ -785,14 +821,14 @@ function AST152Section({
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{t("regional.region")}</TableHead>
-                    <TableHead className="text-center">
+                    <TableHead scope="col">{t("regional.region")}</TableHead>
+                    <TableHead scope="col" className="text-center">
                       {t("regional.total")}
                     </TableHead>
-                    <TableHead className="text-center">
+                    <TableHead scope="col" className="text-center">
                       {t("regional.avgMaturity")}
                     </TableHead>
-                    <TableHead className="text-center">
+                    <TableHead scope="col" className="text-center">
                       ≥ Level C
                     </TableHead>
                   </TableRow>
@@ -917,7 +953,11 @@ function AST153Section({
           <CardTitle className="text-sm">{t("ast153.readiness")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="flex h-4 rounded-full overflow-hidden">
+          <div
+            className="flex h-4 rounded-full overflow-hidden"
+            role="img"
+            aria-label={`${t("ast153.readiness")}: ${segments.map((s) => `${t(`ast153.readinessLevels.${s.key}`)} ${s.count}`).join(", ")}`}
+          >
             {segments.map((seg) => {
               const pct = total > 0 ? (seg.count / total) * 100 : 0;
               if (pct === 0) return null;
@@ -926,7 +966,7 @@ function AST153Section({
                   key={seg.key}
                   className={cn("h-full transition-all", seg.color)}
                   style={{ width: `${pct}%` }}
-                  title={`${seg.key}: ${seg.count}`}
+                  title={`${t(`ast153.readinessLevels.${seg.key}`)}: ${seg.count}`}
                 />
               );
             })}
@@ -1002,27 +1042,34 @@ interface OrgRow {
 function SortableHeader({
   field,
   activeField,
+  sortDirection,
   onSort,
   children,
 }: {
   field: SortField;
   activeField: SortField;
+  sortDirection: SortDir;
   onSort: (field: SortField) => void;
   children: React.ReactNode;
 }) {
+  const isActive = activeField === field;
+  const dirLabel = isActive
+    ? sortDirection === "asc"
+      ? "sorted ascending"
+      : "sorted descending"
+    : "sortable";
   return (
     <button
       type="button"
       className="flex items-center gap-1 hover:text-foreground transition-colors"
       onClick={() => onSort(field)}
+      aria-label={`${typeof children === "string" ? children : field}, ${dirLabel}`}
     >
       {children}
       <ArrowUpDown
         className={cn(
           "h-3 w-3",
-          activeField === field
-            ? "text-foreground"
-            : "text-muted-foreground/50"
+          isActive ? "text-foreground" : "text-muted-foreground/50"
         )}
       />
     </button>
@@ -1121,6 +1168,8 @@ function OrganizationDetailTable({
             type="button"
             onClick={() => setExpanded((v) => !v)}
             className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            aria-expanded={expanded}
+            aria-label={expanded ? "Collapse table" : "Expand table"}
           >
             {expanded ? (
               <ChevronUp className="h-4 w-4" />
@@ -1144,6 +1193,7 @@ function OrganizationDetailTable({
                 setPage(0);
               }}
               className="pl-9"
+              aria-label={t("organizationTable.search")}
             />
           </div>
 
@@ -1152,38 +1202,38 @@ function OrganizationDetailTable({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>
-                    <SortableHeader activeField={sortField} onSort={toggleSort} field="name">
+                  <TableHead scope="col">
+                    <SortableHeader activeField={sortField} sortDirection={sortDir} onSort={toggleSort} field="name">
                       {t("organizationTable.organization")}
                     </SortableHeader>
                   </TableHead>
-                  <TableHead>
-                    <SortableHeader activeField={sortField} onSort={toggleSort} field="country">
+                  <TableHead scope="col">
+                    <SortableHeader activeField={sortField} sortDirection={sortDir} onSort={toggleSort} field="country">
                       {t("organizationTable.country")}
                     </SortableHeader>
                   </TableHead>
-                  <TableHead>
-                    <SortableHeader activeField={sortField} onSort={toggleSort} field="region">
+                  <TableHead scope="col">
+                    <SortableHeader activeField={sortField} sortDirection={sortDir} onSort={toggleSort} field="region">
                       {t("regional.region")}
                     </SortableHeader>
                   </TableHead>
-                  <TableHead>
-                    <SortableHeader activeField={sortField} onSort={toggleSort} field="status">
+                  <TableHead scope="col">
+                    <SortableHeader activeField={sortField} sortDirection={sortDir} onSort={toggleSort} field="status">
                       {t("organizationTable.status")}
                     </SortableHeader>
                   </TableHead>
-                  <TableHead>
-                    <SortableHeader activeField={sortField} onSort={toggleSort} field="smsMaturity">
+                  <TableHead scope="col">
+                    <SortableHeader activeField={sortField} sortDirection={sortDir} onSort={toggleSort} field="smsMaturity">
                       {t("organizationTable.smsMaturity")}
                     </SortableHeader>
                   </TableHead>
-                  <TableHead className="text-right">
-                    <SortableHeader activeField={sortField} onSort={toggleSort} field="eiScore">
+                  <TableHead scope="col" className="text-right">
+                    <SortableHeader activeField={sortField} sortDirection={sortDir} onSort={toggleSort} field="eiScore">
                       {t("organizationTable.eiScore")}
                     </SortableHeader>
                   </TableHead>
-                  <TableHead className="text-center">
-                    <SortableHeader activeField={sortField} onSort={toggleSort} field="reviewCount">
+                  <TableHead scope="col" className="text-center">
+                    <SortableHeader activeField={sortField} sortDirection={sortDir} onSort={toggleSort} field="reviewCount">
                       {t("organizationTable.reviews")}
                     </SortableHeader>
                   </TableHead>
@@ -1285,12 +1335,13 @@ function OrganizationDetailTable({
                 {Math.min((page + 1) * ROWS_PER_PAGE, sorted.length)}{" "}
                 / {sorted.length}
               </span>
-              <div className="flex gap-2">
+              <div className="flex gap-2" role="navigation" aria-label="Pagination">
                 <button
                   type="button"
                   disabled={page === 0}
                   onClick={() => setPage((p) => p - 1)}
                   className="px-3 py-1 text-xs rounded-md border hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed"
+                  aria-label="Previous page"
                 >
                   ←
                 </button>
@@ -1299,6 +1350,7 @@ function OrganizationDetailTable({
                   disabled={page >= totalPages - 1}
                   onClick={() => setPage((p) => p + 1)}
                   className="px-3 py-1 text-xs rounded-md border hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed"
+                  aria-label="Next page"
                 >
                   →
                 </button>
@@ -1392,24 +1444,28 @@ export function AbujaTarget15Tab({ locale }: AbujaTarget15TabProps) {
         label: "AST 15.1",
         date: data.ast151?.targetDate || "2024-12-31",
         status: toStatus(data.ast151?.targetDate || "2024-12-31"),
+        achievement: data.ast151?.kpi01?.percentage ?? 0,
       },
       {
         id: "ast152a",
         label: "AST 15.2 (50%)",
         date: data.ast152?.milestone2025?.targetDate || "2025-12-31",
         status: toStatus(data.ast152?.milestone2025?.targetDate || "2025-12-31"),
+        achievement: data.ast152?.milestone2025?.percentage ?? 0,
       },
       {
         id: "ast152b",
         label: "AST 15.2 (100%)",
         date: data.ast152?.milestone2028?.targetDate || "2028-12-31",
         status: toStatus(data.ast152?.milestone2028?.targetDate || "2028-12-31"),
+        achievement: data.ast152?.milestone2028?.percentage ?? 0,
       },
       {
         id: "ast153",
         label: "AST 15.3",
         date: data.ast153?.targetDate || "2036-12-31",
         status: toStatus(data.ast153?.targetDate || "2036-12-31"),
+        achievement: 0,
       },
     ];
 

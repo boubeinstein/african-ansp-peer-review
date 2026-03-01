@@ -1,13 +1,13 @@
 /**
- * Intelligence Router - Programme-Level Findings & CAP Trends
+ * Intelligence Router - Programme-Level Analytics
  *
- * Aggregates findings and corrective action plan data across all reviews
- * for the Programme Intelligence page "Findings & CAP Trends" tab.
+ * Aggregates findings, CAP, and Abuja Safety Target data across all reviews
+ * for the Programme Intelligence page tabs.
  */
 
 import { z } from "zod";
-import { router, adminProcedure } from "../trpc";
-import { FindingSeverity, FindingType, FindingStatus, CAPStatus, AfricanRegion } from "@prisma/client";
+import { router, adminProcedure, protectedProcedure } from "../trpc";
+import { FindingSeverity, FindingType, FindingStatus, CAPStatus, AfricanRegion, MaturityLevel, ReviewStatus, ParticipationStatus } from "@prisma/client";
 import { subMonths, startOfMonth, endOfMonth, differenceInDays, format } from "date-fns";
 
 // =============================================================================
@@ -81,12 +81,94 @@ interface RecurringPattern {
   organizations: number;
 }
 
+// -- Abuja Target #15 types --
+
+interface AST151KPI {
+  label: string;
+  target: number;
+  current: number;
+  percentage: number;
+  trend?: { month: string; count: number }[];
+}
+
+interface AST151 {
+  targetDate: string;
+  kpi01: AST151KPI;
+  kpi02: AST151KPI;
+  byRegion: { region: string; total: number; joined: number; reviewed: number }[];
+}
+
+interface AST152Milestone {
+  targetDate: string;
+  target: number;
+  label: string;
+  achieved: number;
+  percentage: number;
+  inProgress?: number;
+  notStarted?: number;
+}
+
+interface AST152 {
+  milestone2025: AST152Milestone;
+  milestone2028: AST152Milestone;
+  maturityDistribution: { level: string; count: number; percentage: number }[];
+  byRegion: { region: string; avgMaturity: string; achieved50: number; total: number }[];
+}
+
+interface AST153 {
+  targetDate: string;
+  label: string;
+  readinessLevels: {
+    high: number;
+    medium: number;
+    low: number;
+    notStarted: number;
+  };
+}
+
+interface OrgDetail {
+  id: string;
+  nameEn: string;
+  nameFr: string;
+  country: string;
+  region: string;
+  participationStatus: string;
+  joinedAt: string | null;
+  hasCompletedReview: boolean;
+  latestSMSMaturity: string | null;
+  latestEIScore: number | null;
+  reviewCount: number;
+}
+
 // =============================================================================
 // HELPERS
 // =============================================================================
 
 const CLOSED_STATUSES: FindingStatus[] = ["CLOSED", "DEFERRED"];
 const CAP_DONE_STATUSES: CAPStatus[] = ["COMPLETED", "VERIFIED", "CLOSED"];
+
+// Abuja Target constants
+const TOTAL_AFRICAN_ANSPS = 54;
+const ACTIVE_PARTICIPATION: ParticipationStatus[] = ["ACTIVE", "APPROVED"];
+const COMPLETED_REVIEW: ReviewStatus = "COMPLETED";
+
+// Maturity ordering: A(20%) < B(40%) < C(60%) < D(80%) < E(100%)
+const MATURITY_ORDER: Record<MaturityLevel, number> = {
+  LEVEL_A: 1,
+  LEVEL_B: 2,
+  LEVEL_C: 3,
+  LEVEL_D: 4,
+  LEVEL_E: 5,
+};
+
+// Display label for maturity levels (strip LEVEL_ prefix)
+function maturityLabel(level: MaturityLevel): string {
+  return level.replace("LEVEL_", "");
+}
+
+function maturityAtLeast(level: MaturityLevel, threshold: MaturityLevel): boolean {
+  return MATURITY_ORDER[level] >= MATURITY_ORDER[threshold];
+}
 
 function pct(count: number, total: number): number {
   return total > 0 ? Math.round((count / total) * 1000) / 10 : 0;
@@ -475,6 +557,338 @@ export const intelligenceRouter = router({
       capClosurePerformance,
       topOrganizationsByFindings,
       recurringPatterns,
+    };
+  }),
+
+  /**
+   * Abuja Safety Target #15 — ANSP certification via peer review programme.
+   *
+   * Returns KPIs for 3 sub-targets:
+   *   AST 15.1 — Programme participation
+   *   AST 15.2 — SMS maturity milestones (50% by 2025, 100% by 2028)
+   *   AST 15.3 — Certification readiness (by 2036)
+   */
+  getAbujaTarget15: protectedProcedure.query(async ({ ctx }) => {
+    const { db } = ctx;
+
+    // ------------------------------------------------------------------
+    // Fetch all organizations with their reviews & latest SMS assessment
+    // ------------------------------------------------------------------
+    const allOrgs = await db.organization.findMany({
+      select: {
+        id: true,
+        nameEn: true,
+        nameFr: true,
+        country: true,
+        region: true,
+        participationStatus: true,
+        joinedProgrammeAt: true,
+        reviewsAsHost: {
+          select: { id: true, status: true },
+        },
+        assessments: {
+          where: {
+            status: "COMPLETED",
+            questionnaire: { type: "SMS_CANSO_SOE" },
+          },
+          orderBy: { completedAt: "desc" },
+          take: 1,
+          select: {
+            maturityLevel: true,
+            eiScore: true,
+            completedAt: true,
+          },
+        },
+      },
+    });
+
+    const registeredANSPs = allOrgs.length;
+
+    // ------------------------------------------------------------------
+    // AST 15.1 — Programme Participation
+    // ------------------------------------------------------------------
+    const joinedOrgs = allOrgs.filter((o) =>
+      ACTIVE_PARTICIPATION.includes(o.participationStatus)
+    );
+
+    const reviewedOrgs = allOrgs.filter((o) =>
+      o.reviewsAsHost.some((r) => r.status === COMPLETED_REVIEW)
+    );
+
+    // Monthly cumulative enrollment trend (based on joinedProgrammeAt)
+    const orgsWithJoinDate = allOrgs
+      .filter((o) => o.joinedProgrammeAt !== null)
+      .sort(
+        (a, b) =>
+          a.joinedProgrammeAt!.getTime() - b.joinedProgrammeAt!.getTime()
+      );
+
+    const enrollmentTrend: { month: string; count: number }[] = [];
+    if (orgsWithJoinDate.length > 0) {
+      const earliest = orgsWithJoinDate[0].joinedProgrammeAt!;
+      const now = new Date();
+      let cursor = startOfMonth(earliest);
+      const end = endOfMonth(now);
+
+      while (cursor <= end) {
+        const monthEnd = endOfMonth(cursor);
+        const cumulative = orgsWithJoinDate.filter(
+          (o) => o.joinedProgrammeAt! <= monthEnd
+        ).length;
+        enrollmentTrend.push({
+          month: format(cursor, "MMM yyyy"),
+          count: cumulative,
+        });
+        cursor = startOfMonth(subMonths(cursor, -1));
+      }
+    }
+
+    // By region for AST 15.1
+    const regionMap151 = new Map<
+      string,
+      { total: number; joined: number; reviewed: number }
+    >();
+    for (const o of allOrgs) {
+      const entry = regionMap151.get(o.region) ?? {
+        total: 0,
+        joined: 0,
+        reviewed: 0,
+      };
+      entry.total++;
+      if (ACTIVE_PARTICIPATION.includes(o.participationStatus)) {
+        entry.joined++;
+      }
+      if (o.reviewsAsHost.some((r) => r.status === COMPLETED_REVIEW)) {
+        entry.reviewed++;
+      }
+      regionMap151.set(o.region, entry);
+    }
+
+    const ast151: AST151 = {
+      targetDate: "2024-12-31",
+      kpi01: {
+        label: "ANSPs in Programme",
+        target: TOTAL_AFRICAN_ANSPS,
+        current: joinedOrgs.length,
+        percentage: pct(joinedOrgs.length, TOTAL_AFRICAN_ANSPS),
+        trend: enrollmentTrend,
+      },
+      kpi02: {
+        label: "ANSPs Reviewed",
+        target: TOTAL_AFRICAN_ANSPS,
+        current: reviewedOrgs.length,
+        percentage: pct(reviewedOrgs.length, TOTAL_AFRICAN_ANSPS),
+      },
+      byRegion: Array.from(regionMap151.entries()).map(
+        ([region, { total, joined, reviewed }]) => ({
+          region,
+          total,
+          joined,
+          reviewed,
+        })
+      ),
+    };
+
+    // ------------------------------------------------------------------
+    // AST 15.2 — SMS Maturity
+    // ------------------------------------------------------------------
+    // Categorize orgs by latest SMS maturity
+    type OrgWithMaturity = {
+      orgId: string;
+      maturityLevel: MaturityLevel | null;
+      region: string;
+    };
+
+    const orgMaturityData: OrgWithMaturity[] = allOrgs.map((o) => ({
+      orgId: o.id,
+      maturityLevel: o.assessments[0]?.maturityLevel ?? null,
+      region: o.region,
+    }));
+
+    // 50% maturity = Level C or above
+    const achieved50 = orgMaturityData.filter(
+      (o) => o.maturityLevel && maturityAtLeast(o.maturityLevel, "LEVEL_C")
+    ).length;
+    const inProgress50 = orgMaturityData.filter(
+      (o) =>
+        o.maturityLevel &&
+        !maturityAtLeast(o.maturityLevel, "LEVEL_C")
+    ).length;
+    const notStartedSMS = orgMaturityData.filter(
+      (o) => o.maturityLevel === null
+    ).length;
+
+    // 100% maturity = Level E
+    const achievedE = orgMaturityData.filter(
+      (o) => o.maturityLevel === "LEVEL_E"
+    ).length;
+
+    // Maturity distribution (A through E)
+    const maturityCounts = new Map<string, number>();
+    for (const level of ["LEVEL_A", "LEVEL_B", "LEVEL_C", "LEVEL_D", "LEVEL_E"] as MaturityLevel[]) {
+      maturityCounts.set(level, 0);
+    }
+    for (const o of orgMaturityData) {
+      if (o.maturityLevel) {
+        maturityCounts.set(
+          o.maturityLevel,
+          (maturityCounts.get(o.maturityLevel) ?? 0) + 1
+        );
+      }
+    }
+    const orgsWithMaturity = orgMaturityData.filter(
+      (o) => o.maturityLevel !== null
+    ).length;
+
+    const maturityDistribution = Array.from(maturityCounts.entries()).map(
+      ([level, count]) => ({
+        level: maturityLabel(level as MaturityLevel),
+        count,
+        percentage: pct(count, orgsWithMaturity || 1),
+      })
+    );
+
+    // By region for AST 15.2
+    const regionMap152 = new Map<
+      string,
+      { levels: number[]; achieved50: number; total: number }
+    >();
+    for (const o of orgMaturityData) {
+      const entry = regionMap152.get(o.region) ?? {
+        levels: [],
+        achieved50: 0,
+        total: 0,
+      };
+      entry.total++;
+      if (o.maturityLevel) {
+        entry.levels.push(MATURITY_ORDER[o.maturityLevel]);
+        if (maturityAtLeast(o.maturityLevel, "LEVEL_C")) {
+          entry.achieved50++;
+        }
+      }
+      regionMap152.set(o.region, entry);
+    }
+
+    const ast152: AST152 = {
+      milestone2025: {
+        targetDate: "2025-12-31",
+        target: 50,
+        label: "50% SMS Maturity by Dec 2025",
+        achieved: achieved50,
+        inProgress: inProgress50,
+        notStarted: notStartedSMS,
+        percentage: pct(achieved50, registeredANSPs),
+      },
+      milestone2028: {
+        targetDate: "2028-12-31",
+        target: 100,
+        label: "100% SMS Maturity by Dec 2028",
+        achieved: achievedE,
+        percentage: pct(achievedE, registeredANSPs),
+      },
+      maturityDistribution,
+      byRegion: Array.from(regionMap152.entries()).map(
+        ([region, { levels, achieved50: a50, total }]) => {
+          // Average maturity: compute mean of ordinal values and map back
+          const avgOrd =
+            levels.length > 0
+              ? Math.round(
+                  levels.reduce((s, v) => s + v, 0) / levels.length
+                )
+              : 0;
+          const ordToLabel: Record<number, string> = {
+            0: "-",
+            1: "A",
+            2: "B",
+            3: "C",
+            4: "D",
+            5: "E",
+          };
+          return {
+            region,
+            avgMaturity: ordToLabel[avgOrd] ?? "-",
+            achieved50: a50,
+            total,
+          };
+        }
+      ),
+    };
+
+    // ------------------------------------------------------------------
+    // AST 15.3 — Certification Readiness
+    // ------------------------------------------------------------------
+    let high = 0;
+    let medium = 0;
+    let low = 0;
+    let notStarted = 0;
+
+    for (const o of allOrgs) {
+      const hasCompletedReview = o.reviewsAsHost.some(
+        (r) => r.status === COMPLETED_REVIEW
+      );
+      const latestMaturity = o.assessments[0]?.maturityLevel ?? null;
+      const isActive = ACTIVE_PARTICIPATION.includes(o.participationStatus);
+
+      if (
+        hasCompletedReview &&
+        latestMaturity &&
+        maturityAtLeast(latestMaturity, "LEVEL_D")
+      ) {
+        high++;
+      } else if (
+        o.reviewsAsHost.some(
+          (r) =>
+            r.status === "IN_PROGRESS" ||
+            r.status === "REPORT_DRAFTING" ||
+            r.status === "REPORT_REVIEW"
+        ) ||
+        (latestMaturity && maturityAtLeast(latestMaturity, "LEVEL_C"))
+      ) {
+        medium++;
+      } else if (isActive) {
+        low++;
+      } else {
+        notStarted++;
+      }
+    }
+
+    const ast153: AST153 = {
+      targetDate: "2036-12-31",
+      label: "ANSP Certification by Dec 2036",
+      readinessLevels: { high, medium, low, notStarted },
+    };
+
+    // ------------------------------------------------------------------
+    // Organization-level drill-down details
+    // ------------------------------------------------------------------
+    const organizationDetails: OrgDetail[] = allOrgs.map((o) => ({
+      id: o.id,
+      nameEn: o.nameEn,
+      nameFr: o.nameFr,
+      country: o.country,
+      region: o.region,
+      participationStatus: o.participationStatus,
+      joinedAt: o.joinedProgrammeAt?.toISOString() ?? null,
+      hasCompletedReview: o.reviewsAsHost.some(
+        (r) => r.status === COMPLETED_REVIEW
+      ),
+      latestSMSMaturity: o.assessments[0]?.maturityLevel
+        ? maturityLabel(o.assessments[0].maturityLevel)
+        : null,
+      latestEIScore: o.assessments[0]?.eiScore ?? null,
+      reviewCount: o.reviewsAsHost.length,
+    }));
+
+    // ------------------------------------------------------------------
+    // RESPONSE
+    // ------------------------------------------------------------------
+    return {
+      totalANSPs: TOTAL_AFRICAN_ANSPS,
+      registeredANSPs,
+      ast151,
+      ast152,
+      ast153,
+      organizationDetails,
     };
   }),
 });

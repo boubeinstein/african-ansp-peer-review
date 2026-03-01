@@ -6,8 +6,9 @@
  */
 
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import { router, adminProcedure, protectedProcedure } from "../trpc";
-import { FindingSeverity, FindingType, FindingStatus, CAPStatus, AfricanRegion, MaturityLevel, ReviewStatus, ParticipationStatus } from "@prisma/client";
+import { FindingStatus, CAPStatus, AfricanRegion, MaturityLevel, ReviewStatus, ParticipationStatus } from "@prisma/client";
 import { subMonths, startOfMonth, endOfMonth, differenceInDays, format } from "date-fns";
 
 // =============================================================================
@@ -185,6 +186,7 @@ export const intelligenceRouter = router({
   getFindingsAndCAPTrends: adminProcedure
     .input(filtersSchema)
     .query(async ({ ctx, input }) => {
+    try {
     const { db } = ctx;
     const now = new Date();
 
@@ -255,7 +257,8 @@ export const intelligenceRouter = router({
     let avgResolutionDays: number | null = null;
     if (closedFindingDates.length > 0) {
       const totalDays = closedFindingDates.reduce((sum, f) => {
-        return sum + differenceInDays(f.closedAt!, f.identifiedAt);
+        if (!f.closedAt) return sum;
+        return sum + differenceInDays(f.closedAt, f.identifiedAt);
       }, 0);
       avgResolutionDays = Math.round(totalDays / closedFindingDates.length);
     }
@@ -290,14 +293,14 @@ export const intelligenceRouter = router({
     const severityGroups = await db.finding.groupBy({
       by: ["severity"],
       where: findingWhere,
-      _count: true,
+      _count: { _all: true },
     });
 
     const findingsBySeverity: DistributionItem[] = severityGroups.map(
-      (g: { severity: FindingSeverity; _count: number }) => ({
+      (g) => ({
         severity: g.severity,
-        count: g._count,
-        percentage: pct(g._count, totalFindings),
+        count: g._count._all,
+        percentage: pct(g._count._all, totalFindings),
       })
     );
 
@@ -307,14 +310,14 @@ export const intelligenceRouter = router({
     const typeGroups = await db.finding.groupBy({
       by: ["findingType"],
       where: findingWhere,
-      _count: true,
+      _count: { _all: true },
     });
 
     const findingsByType: DistributionItem[] = typeGroups.map(
-      (g: { findingType: FindingType; _count: number }) => ({
+      (g) => ({
         type: g.findingType,
-        count: g._count,
-        percentage: pct(g._count, totalFindings),
+        count: g._count._all,
+        percentage: pct(g._count._all, totalFindings),
       })
     );
 
@@ -332,7 +335,7 @@ export const intelligenceRouter = router({
 
     const areaMap = new Map<string, FindingsByReviewArea>();
     for (const f of findingsWithArea) {
-      const area = f.reviewArea ?? f.review.areasInScope[0] ?? "GENERAL";
+      const area = f.reviewArea ?? f.review?.areasInScope?.[0] ?? "GENERAL";
       let entry = areaMap.get(area);
       if (!entry) {
         entry = { area, total: 0, critical: 0, major: 0, minor: 0, observation: 0 };
@@ -363,34 +366,36 @@ export const intelligenceRouter = router({
       monthBoundaries.push({ start, end, label: format(d, "MMM yyyy") });
     }
 
-    // Fetch all opened/closed dates in the 12-month window for efficiency
-    const windowStart = monthBoundaries[0].start;
-    const windowEnd = monthBoundaries[monthBoundaries.length - 1].end;
+    if (monthBoundaries.length > 0) {
+      // Fetch all opened/closed dates in the window for efficiency
+      const windowStart = monthBoundaries[0].start;
+      const windowEnd = monthBoundaries[monthBoundaries.length - 1].end;
 
-    const [openedInWindow, closedInWindow] = await Promise.all([
-      db.finding.findMany({
-        where: { ...findingWhere, identifiedAt: { gte: windowStart, lte: windowEnd } },
-        select: { identifiedAt: true },
-      }),
-      db.finding.findMany({
-        where: { ...findingWhere, closedAt: { gte: windowStart, lte: windowEnd } },
-        select: { closedAt: true },
-      }),
-    ]);
+      const [openedInWindow, closedInWindow] = await Promise.all([
+        db.finding.findMany({
+          where: { ...findingWhere, identifiedAt: { gte: windowStart, lte: windowEnd } },
+          select: { identifiedAt: true },
+        }),
+        db.finding.findMany({
+          where: { ...findingWhere, closedAt: { gte: windowStart, lte: windowEnd } },
+          select: { closedAt: true },
+        }),
+      ]);
 
-    for (const mb of monthBoundaries) {
-      const opened = openedInWindow.filter(
-        (f) => f.identifiedAt >= mb.start && f.identifiedAt <= mb.end
-      ).length;
-      const closed = closedInWindow.filter(
-        (f) => f.closedAt && f.closedAt >= mb.start && f.closedAt <= mb.end
-      ).length;
-      monthlyTrend.push({
-        month: mb.label,
-        opened,
-        closed,
-        netOpen: opened - closed,
-      });
+      for (const mb of monthBoundaries) {
+        const opened = openedInWindow.filter(
+          (f) => f.identifiedAt >= mb.start && f.identifiedAt <= mb.end
+        ).length;
+        const closed = closedInWindow.filter(
+          (f) => f.closedAt && f.closedAt >= mb.start && f.closedAt <= mb.end
+        ).length;
+        monthlyTrend.push({
+          month: mb.label,
+          opened,
+          closed,
+          netOpen: opened - closed,
+        });
+      }
     }
 
     // ------------------------------------------------------------------
@@ -399,14 +404,14 @@ export const intelligenceRouter = router({
     const capStatusGroups = await db.correctiveActionPlan.groupBy({
       by: ["status"],
       where: capWhere,
-      _count: true,
+      _count: { _all: true },
     });
 
     const capsByStatus: DistributionItem[] = capStatusGroups.map(
-      (g: { status: CAPStatus; _count: number }) => ({
+      (g) => ({
         status: g.status,
-        count: g._count,
-        percentage: pct(g._count, totalCAPs),
+        count: g._count._all,
+        percentage: pct(g._count._all, totalCAPs),
       })
     );
 
@@ -443,7 +448,7 @@ export const intelligenceRouter = router({
       severityBuckets.entries()
     ).map(([severity, { totalDays, count }]) => ({
       severity,
-      avgDays: Math.round(totalDays / count),
+      avgDays: count > 0 ? Math.round(totalDays / count) : 0,
       count,
     }));
 
@@ -453,53 +458,46 @@ export const intelligenceRouter = router({
     const orgGroups = await db.finding.groupBy({
       by: ["organizationId"],
       where: findingWhere,
-      _count: true,
+      _count: { _all: true },
       orderBy: { _count: { organizationId: "desc" } },
       take: 10,
     });
 
-    const orgIds = orgGroups.map(
-      (g: { organizationId: string }) => g.organizationId
-    );
+    const orgIds = orgGroups.map((g) => g.organizationId);
 
-    const [orgs, criticalByOrg, openByOrg] = await Promise.all([
-      db.organization.findMany({
-        where: { id: { in: orgIds } },
-        select: { id: true, nameEn: true, nameFr: true },
-      }),
-      db.finding.groupBy({
-        by: ["organizationId"],
-        where: { ...findingWhere, organizationId: { in: orgIds }, severity: "CRITICAL" },
-        _count: true,
-      }),
-      db.finding.groupBy({
-        by: ["organizationId"],
-        where: { ...findingWhere, organizationId: { in: orgIds }, status: { notIn: CLOSED_STATUSES } },
-        _count: true,
-      }),
-    ]);
+    let topOrganizationsByFindings: OrgFindingSummary[] = [];
+    if (orgIds.length > 0) {
+      const [orgs, criticalByOrg, openByOrg] = await Promise.all([
+        db.organization.findMany({
+          where: { id: { in: orgIds } },
+          select: { id: true, nameEn: true, nameFr: true },
+        }),
+        db.finding.groupBy({
+          by: ["organizationId"],
+          where: { organizationId: { in: orgIds }, severity: "CRITICAL" },
+          _count: { _all: true },
+        }),
+        db.finding.groupBy({
+          by: ["organizationId"],
+          where: { organizationId: { in: orgIds }, status: { notIn: CLOSED_STATUSES } },
+          _count: { _all: true },
+        }),
+      ]);
 
-    const orgNameMap = new Map(
-      orgs.map((o: { id: string; nameEn: string; nameFr: string }) => [
-        o.id,
-        { nameEn: o.nameEn, nameFr: o.nameFr },
-      ])
-    );
-    const criticalMap = new Map(
-      criticalByOrg.map((g: { organizationId: string; _count: number }) => [
-        g.organizationId,
-        g._count,
-      ])
-    );
-    const openMap = new Map(
-      openByOrg.map((g: { organizationId: string; _count: number }) => [
-        g.organizationId,
-        g._count,
-      ])
-    );
+      const orgNameMap = new Map(
+        orgs.map((o: { id: string; nameEn: string; nameFr: string }) => [
+          o.id,
+          { nameEn: o.nameEn, nameFr: o.nameFr },
+        ])
+      );
+      const criticalMap = new Map(
+        criticalByOrg.map((g) => [g.organizationId, g._count._all])
+      );
+      const openMap = new Map(
+        openByOrg.map((g) => [g.organizationId, g._count._all])
+      );
 
-    const topOrganizationsByFindings: OrgFindingSummary[] = orgGroups.map(
-      (g: { organizationId: string; _count: number }) => {
+      topOrganizationsByFindings = orgGroups.map((g) => {
         const names = orgNameMap.get(g.organizationId) ?? {
           nameEn: "Unknown",
           nameFr: "Inconnu",
@@ -508,12 +506,12 @@ export const intelligenceRouter = router({
           organizationId: g.organizationId,
           nameEn: names.nameEn,
           nameFr: names.nameFr,
-          total: g._count,
+          total: g._count._all,
           critical: criticalMap.get(g.organizationId) ?? 0,
           open: openMap.get(g.organizationId) ?? 0,
         };
-      }
-    );
+      });
+    }
 
     // ------------------------------------------------------------------
     // 9. RECURRING PATTERNS (top ICAO references)
@@ -558,6 +556,13 @@ export const intelligenceRouter = router({
       topOrganizationsByFindings,
       recurringPatterns,
     };
+    } catch (error) {
+      console.error("[getFindingsAndCAPTrends] FATAL:", error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to aggregate findings data",
+      });
+    }
   }),
 
   /**

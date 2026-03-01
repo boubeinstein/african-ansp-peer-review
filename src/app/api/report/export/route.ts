@@ -475,8 +475,9 @@ function splitText(text: string): Paragraph[] {
   return text.split("\n").filter((l) => l.trim()).map((line) => bodyText(line));
 }
 
-function localeText(section: { contentEn: string; contentFr: string }, locale: string): string {
-  return locale === "fr" ? section.contentFr || section.contentEn : section.contentEn || section.contentFr;
+function localeText(section: { contentEn: string; contentFr: string } | undefined | null, locale: string): string {
+  if (!section) return "—";
+  return locale === "fr" ? section.contentFr || section.contentEn || "—" : section.contentEn || section.contentFr || "—";
 }
 
 // =============================================================================
@@ -486,13 +487,15 @@ function localeText(section: { contentEn: string; contentFr: string }, locale: s
 function buildDocx(report: ReportContent, locale: string): Document {
   const L = locale === "fr" ? LABELS_FR : LABELS_EN;
   const glossary = locale === "fr" ? GLOSSARY_FR : GLOSSARY_EN;
-  const meta = report.metadata;
-  const orgName = locale === "fr" ? meta.hostOrganization.nameFr : meta.hostOrganization.nameEn;
-  const sections = report.sections;
+  const meta = report.metadata ?? {} as ReportContent["metadata"];
+  const hostOrg = meta.hostOrganization ?? { nameEn: "Organization", nameFr: "Organisation", code: "", country: "", city: "", region: "", regionalTeam: "" };
+  const orgName = locale === "fr" ? hostOrg.nameFr || hostOrg.nameEn : hostOrg.nameEn || hostOrg.nameFr;
+  const sections = report.sections ?? {} as ReportContent["sections"];
 
   // ───────────────────────────────────────────────────────────────────
   // COVER PAGE
   // ───────────────────────────────────────────────────────────────────
+  const cp = report.coverPage ?? { title: "", subtitle: "", reportNumber: "", classification: "CONFIDENTIAL" as const, date: "" };
   const coverPage: DocChild[] = [
     emptyLine(),
     emptyLine(),
@@ -520,15 +523,15 @@ function buildDocx(report: ReportContent, locale: string): Document {
     emptyLine(),
     emptyLine(),
     new Paragraph({
-      children: [new TextRun({ text: `${L.reportReference}: ${report.coverPage.reportNumber}`, size: 22, color: GREY, font: "Calibri" })],
+      children: [new TextRun({ text: `${L.reportReference}: ${cp.reportNumber || "—"}`, size: 22, color: GREY, font: "Calibri" })],
       alignment: AlignmentType.CENTER,
     }),
     new Paragraph({
-      children: [new TextRun({ text: `${L.date}: ${report.coverPage.date}`, size: 22, color: GREY, font: "Calibri" })],
+      children: [new TextRun({ text: `${L.date}: ${cp.date || "—"}`, size: 22, color: GREY, font: "Calibri" })],
       alignment: AlignmentType.CENTER,
     }),
     new Paragraph({
-      children: [new TextRun({ text: `${L.classification}: ${report.coverPage.classification}`, size: 22, color: RED, bold: true, font: "Calibri" })],
+      children: [new TextRun({ text: `${L.classification}: ${cp.classification || "CONFIDENTIAL"}`, size: 22, color: RED, bold: true, font: "Calibri" })],
       alignment: AlignmentType.CENTER,
     }),
     emptyLine(),
@@ -563,20 +566,20 @@ function buildDocx(report: ReportContent, locale: string): Document {
   // ───────────────────────────────────────────────────────────────────
   // SECTION 2: INTRODUCTION
   // ───────────────────────────────────────────────────────────────────
-  const intro = sections.introduction;
+  const intro = sections.introduction ?? { background: { contentEn: "", contentFr: "" }, objectives: [], scope: [], basisDocuments: [], activitySchedule: [] };
   const sec2: DocChild[] = [
     heading1(L.introduction, "2."),
     heading2(L.background, "2.1"),
     ...splitText(localeText(intro.background, locale)),
     heading2(L.objectives, "2.2"),
-    ...intro.objectives.map((o) => bulletPoint(o)),
+    ...(intro.objectives || []).map((o) => bulletPoint(o)),
     heading2(L.scope, "2.3"),
-    ...intro.scope.map((s) => bulletPoint(s)),
+    ...(intro.scope || []).map((s) => bulletPoint(s)),
     heading2(L.basisDocuments, "2.4"),
-    ...intro.basisDocuments.map((d) => bulletPoint(d)),
+    ...(intro.basisDocuments || []).map((d) => bulletPoint(d)),
   ];
 
-  if (intro.activitySchedule.length > 0) {
+  if ((intro.activitySchedule || []).length > 0) {
     sec2.push(
       heading2(L.activitySchedule, "2.5"),
       new Table({
@@ -601,7 +604,7 @@ function buildDocx(report: ReportContent, locale: string): Document {
   // ───────────────────────────────────────────────────────────────────
   // SECTION 3: METHODOLOGY
   // ───────────────────────────────────────────────────────────────────
-  const meth = sections.methodology;
+  const meth = sections.methodology ?? { approachDescription: { contentEn: "", contentFr: "" }, frameworksUsed: [], reviewAreas: [], evidenceTypes: [] };
   const sec3: DocChild[] = [
     heading1(L.methodology, "3."),
     heading2(L.reviewApproach, "3.1"),
@@ -609,7 +612,7 @@ function buildDocx(report: ReportContent, locale: string): Document {
     heading2(L.frameworksUsed, "3.2"),
   ];
 
-  if (meth.frameworksUsed.length > 0) {
+  if ((meth.frameworksUsed || []).length > 0) {
     sec3.push(
       new Table({
         rows: [
@@ -629,7 +632,7 @@ function buildDocx(report: ReportContent, locale: string): Document {
     );
   }
 
-  const inScopeAreas = meth.reviewAreas.filter((a) => a.inScope);
+  const inScopeAreas = (meth.reviewAreas || []).filter((a) => a.inScope);
   if (inScopeAreas.length > 0) {
     sec3.push(
       heading2(L.reviewAreasInScope, "3.3"),
@@ -655,10 +658,10 @@ function buildDocx(report: ReportContent, locale: string): Document {
   // ───────────────────────────────────────────────────────────────────
   // SECTION 4: REVIEW TEAM
   // ───────────────────────────────────────────────────────────────────
-  const team = sections.teamComposition;
+  const team = sections.teamComposition ?? { teamLead: null, members: [] };
   const allMembers = [
     ...(team.teamLead ? [team.teamLead] : []),
-    ...team.members,
+    ...(team.members || []),
   ];
   const sec4: DocChild[] = [
     heading1(L.reviewTeam, "4."),
@@ -683,11 +686,11 @@ function buildDocx(report: ReportContent, locale: string): Document {
             (m) =>
               new TableRow({
                 children: [
-                  cell(m.name, { bold: true }),
-                  cell(m.role.replace(/_/g, " ")),
-                  cell(m.organization),
-                  cell(m.expertise.join(", ")),
-                  cell(m.country),
+                  cell(m.name || "—", { bold: true }),
+                  cell((m.role || "").replace(/_/g, " ")),
+                  cell(m.organization || "—"),
+                  cell((m.expertise || []).join(", ") || "—"),
+                  cell(m.country || "—"),
                 ],
               })
           ),
@@ -701,7 +704,7 @@ function buildDocx(report: ReportContent, locale: string): Document {
   // ───────────────────────────────────────────────────────────────────
   // SECTION 5: ANS ASSESSMENT
   // ───────────────────────────────────────────────────────────────────
-  const ans = sections.ansAssessment;
+  const ans = sections.ansAssessment ?? { available: false, overallEIScore: null, previousEIScore: null, eiDelta: null, byReviewArea: [], byCriticalElement: [], narrativeEn: "", narrativeFr: "" };
   const sec5: DocChild[] = [heading1(L.ansAssessment, "5.")];
 
   if (ans.available) {
@@ -712,7 +715,7 @@ function buildDocx(report: ReportContent, locale: string): Document {
       )
     );
 
-    if (ans.byReviewArea.length > 0) {
+    if ((ans.byReviewArea || []).length > 0) {
       sec5.push(
         heading2(L.eiByReviewArea, "5.2"),
         new Table({
@@ -749,7 +752,7 @@ function buildDocx(report: ReportContent, locale: string): Document {
       );
     }
 
-    if (ans.byCriticalElement.length > 0) {
+    if ((ans.byCriticalElement || []).length > 0) {
       sec5.push(
         heading2(L.eiByCriticalElement, "5.3"),
         new Table({
@@ -786,7 +789,7 @@ function buildDocx(report: ReportContent, locale: string): Document {
   // ───────────────────────────────────────────────────────────────────
   // SECTION 6: SMS ASSESSMENT
   // ───────────────────────────────────────────────────────────────────
-  const sms = sections.smsAssessment;
+  const sms = sections.smsAssessment ?? { available: false, overallMaturityLevel: null, overallScore: null, previousScore: null, byComponent: [], narrativeEn: "", narrativeFr: "" };
   const sec6: DocChild[] = [heading1(L.smsAssessment, "6.")];
 
   if (sms.available) {
@@ -799,7 +802,7 @@ function buildDocx(report: ReportContent, locale: string): Document {
       )
     );
 
-    if (sms.byComponent.length > 0) {
+    if ((sms.byComponent || []).length > 0) {
       sec6.push(
         heading2(L.maturityByComponent, "6.2"),
         new Table({
@@ -842,15 +845,15 @@ function buildDocx(report: ReportContent, locale: string): Document {
   // ───────────────────────────────────────────────────────────────────
   // SECTION 7: FINDINGS
   // ───────────────────────────────────────────────────────────────────
-  const fSum = sections.findingsSummary;
-  const fDet = sections.findingsDetail;
+  const fSum = sections.findingsSummary ?? { totalFindings: 0, byType: {}, bySeverity: {}, byReviewArea: {}, byStatus: {}, criticalAndMajorCount: 0, capRequiredCount: 0 };
+  const fDet = sections.findingsDetail ?? { findings: [] };
   const sec7: DocChild[] = [
     heading1(L.findings, "7."),
     heading2(L.findingsSummary, "7.1"),
   ];
 
   // By Type summary
-  const typeEntries = Object.entries(fSum.byType);
+  const typeEntries = Object.entries(fSum.byType || {});
   if (typeEntries.length > 0) {
     sec7.push(
       bodyText(`${L.type}:`),
@@ -869,7 +872,7 @@ function buildDocx(report: ReportContent, locale: string): Document {
   }
 
   // By Severity summary
-  const sevEntries = Object.entries(fSum.bySeverity);
+  const sevEntries = Object.entries(fSum.bySeverity || {});
   if (sevEntries.length > 0) {
     sec7.push(
       bodyText(`${L.severity}:`),
@@ -888,7 +891,7 @@ function buildDocx(report: ReportContent, locale: string): Document {
   }
 
   // Detailed findings
-  if (fDet.findings.length > 0) {
+  if ((fDet.findings || []).length > 0) {
     sec7.push(heading2(L.detailedFindings, "7.2"));
     fDet.findings.forEach((f: FindingDetail, idx: number) => {
       const sevColor = f.severity === "CRITICAL" ? RED : f.severity === "MAJOR" ? ORANGE : GREY;
@@ -896,7 +899,7 @@ function buildDocx(report: ReportContent, locale: string): Document {
         new Paragraph({
           children: [
             new TextRun({
-              text: `${f.reference}  —  ${f.title}`,
+              text: `${f.reference || "—"}  —  ${f.title || "—"}`,
               bold: true,
               size: 22,
               color: "1F2937",
@@ -908,11 +911,11 @@ function buildDocx(report: ReportContent, locale: string): Document {
         }),
         new Table({
           rows: [
-            new TableRow({ children: [headerCell(L.type), cell(f.type.replace(/_/g, " "))] }),
-            new TableRow({ children: [headerCell(L.severity), cell(f.severity, { color: sevColor, bold: true })] }),
-            new TableRow({ children: [headerCell(L.reviewArea), cell(f.reviewArea)] }),
+            new TableRow({ children: [headerCell(L.type), cell((f.type || "").replace(/_/g, " "))] }),
+            new TableRow({ children: [headerCell(L.severity), cell(f.severity || "—", { color: sevColor, bold: true })] }),
+            new TableRow({ children: [headerCell(L.reviewArea), cell(f.reviewArea || "—")] }),
             new TableRow({ children: [headerCell(L.criticalElement), cell(f.criticalElement || "—")] }),
-            new TableRow({ children: [headerCell(L.status), cell(f.status.replace(/_/g, " "))] }),
+            new TableRow({ children: [headerCell(L.status), cell((f.status || "").replace(/_/g, " "))] }),
             new TableRow({ children: [headerCell(L.icaoRef), cell(f.icaoReference || "—")] }),
             new TableRow({ children: [headerCell(L.capRequired), cell(f.capRequired ? L.yes : L.no)] }),
             ...(f.capReference
@@ -941,23 +944,23 @@ function buildDocx(report: ReportContent, locale: string): Document {
   // ───────────────────────────────────────────────────────────────────
   // SECTION 8: CORRECTIVE ACTION PLANS
   // ───────────────────────────────────────────────────────────────────
-  const caps = sections.correctiveActions;
+  const caps = sections.correctiveActions ?? { totalCAPs: 0, submitted: 0, accepted: 0, overdue: 0, completionRate: 0, caps: [] };
   const sec8: DocChild[] = [
     heading1(L.correctiveActionPlans, "8."),
     heading2(L.capSummary, "8.1"),
     new Table({
       rows: [
-        new TableRow({ children: [headerCell(L.totalCAPs), cell(String(caps.totalCAPs))] }),
-        new TableRow({ children: [headerCell(L.submitted), cell(String(caps.submitted))] }),
-        new TableRow({ children: [headerCell(L.accepted), cell(String(caps.accepted))] }),
-        new TableRow({ children: [headerCell(L.overdue), cell(String(caps.overdue), { color: caps.overdue > 0 ? RED : GREY })] }),
-        new TableRow({ children: [headerCell(L.completionRate), cell(`${caps.completionRate}%`)] }),
+        new TableRow({ children: [headerCell(L.totalCAPs), cell(String(caps.totalCAPs ?? 0))] }),
+        new TableRow({ children: [headerCell(L.submitted), cell(String(caps.submitted ?? 0))] }),
+        new TableRow({ children: [headerCell(L.accepted), cell(String(caps.accepted ?? 0))] }),
+        new TableRow({ children: [headerCell(L.overdue), cell(String(caps.overdue ?? 0), { color: (caps.overdue ?? 0) > 0 ? RED : GREY })] }),
+        new TableRow({ children: [headerCell(L.completionRate), cell(`${caps.completionRate ?? 0}%`)] }),
       ],
       width: { size: 60, type: WidthType.PERCENTAGE },
     }),
   ];
 
-  if (caps.caps.length > 0) {
+  if ((caps.caps || []).length > 0) {
     sec8.push(
       heading2(L.capDetail, "8.2"),
       new Table({
@@ -977,12 +980,12 @@ function buildDocx(report: ReportContent, locale: string): Document {
             (c: CAPSummary) =>
               new TableRow({
                 children: [
-                  cell(c.reference, { mono: true }),
-                  cell(c.findingReference, { mono: true }),
+                  cell(c.reference || "—", { mono: true }),
+                  cell(c.findingReference || "—", { mono: true }),
                   cell(c.rootCause || "—"),
-                  cell(c.correctiveAction),
+                  cell(c.correctiveAction || "—"),
                   cell(c.dueDate || "—"),
-                  cell(c.status.replace(/_/g, " ")),
+                  cell((c.status || "").replace(/_/g, " ")),
                 ],
               })
           ),
@@ -1005,10 +1008,10 @@ function buildDocx(report: ReportContent, locale: string): Document {
   // ───────────────────────────────────────────────────────────────────
   // SECTION 10: BEST PRACTICES
   // ───────────────────────────────────────────────────────────────────
-  const bp = sections.bestPractices;
+  const bp = sections.bestPractices ?? { practices: [] };
   const sec10: DocChild[] = [heading1(L.bestPractices, "10.")];
 
-  if (bp.practices.length > 0) {
+  if ((bp.practices || []).length > 0) {
     sec10.push(
       new Table({
         rows: [
@@ -1016,10 +1019,10 @@ function buildDocx(report: ReportContent, locale: string): Document {
             children: [headerCell(L.title), headerCell(L.reviewArea, 1400), headerCell(L.description), headerCell(L.applicability)],
             tableHeader: true,
           }),
-          ...bp.practices.map(
+          ...(bp.practices || []).map(
             (p) =>
               new TableRow({
-                children: [cell(p.title, { bold: true }), cell(p.reviewArea), cell(p.description), cell(p.applicability)],
+                children: [cell(p.title || "—", { bold: true }), cell(p.reviewArea || "—"), cell(p.description || "—"), cell(p.applicability || "—")],
               })
           ),
         ],
@@ -1043,11 +1046,11 @@ function buildDocx(report: ReportContent, locale: string): Document {
   // ───────────────────────────────────────────────────────────────────
   // ANNEXES
   // ───────────────────────────────────────────────────────────────────
-  const annex = sections.annexes;
+  const annex = sections.annexes ?? { documentList: [], teamCVs: false, glossary: true, pqMatrix: false };
   const secAnnex: DocChild[] = [heading1(L.annexes, "")];
 
   // A. Document List
-  if (annex.documentList.length > 0) {
+  if ((annex.documentList || []).length > 0) {
     secAnnex.push(
       heading2(`A. ${L.documentList}`),
       new Table({
@@ -1093,7 +1096,7 @@ function buildDocx(report: ReportContent, locale: string): Document {
   // ───────────────────────────────────────────────────────────────────
   // ASSEMBLE DOCUMENT
   // ───────────────────────────────────────────────────────────────────
-  const footerRef = report.coverPage.reportNumber || meta.reportReference;
+  const footerRef = cp.reportNumber || meta.reportReference || "AAPRP";
 
   return new Document({
     features: { updateFields: true },
@@ -1192,6 +1195,13 @@ function buildDocx(report: ReportContent, locale: string): Document {
 // =============================================================================
 
 export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const reviewId = searchParams.get("reviewId");
+  const format = searchParams.get("format") || "docx";
+  const locale = searchParams.get("locale") === "fr" ? "fr" : "en";
+
+  console.log("[report/export] Starting export:", { reviewId, format, locale });
+
   try {
     // 1. Auth check
     const session = await auth();
@@ -1199,16 +1209,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // 2. Parse query params
-    const { searchParams } = new URL(request.url);
-    const reviewId = searchParams.get("reviewId");
-    const locale = searchParams.get("locale") === "fr" ? "fr" : "en";
-
     if (!reviewId) {
       return NextResponse.json({ error: "Missing reviewId parameter" }, { status: 400 });
     }
 
-    // 3. Authorization — user must be team member or oversight role
+    // 2. Authorization — user must be team member or oversight role
     const userId = session.user.id;
     const userRole = session.user.role;
 
@@ -1233,34 +1238,58 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 4. Fetch report
+    // 3. Fetch report
     const report = await prisma.reviewReport.findUnique({
       where: { reviewId },
     });
 
-    if (!report || !report.content) {
-      return NextResponse.json({ error: "Report not found or has no content" }, { status: 404 });
+    if (!report) {
+      console.error("[report/export] No ReviewReport record for reviewId:", reviewId);
+      return NextResponse.json({ error: "Report not found. Generate the report first from the Report tab." }, { status: 404 });
+    }
+
+    if (!report.content) {
+      console.error("[report/export] Report exists but content is null, id:", report.id);
+      return NextResponse.json({ error: "Report has no content. Regenerate the report from the Report tab." }, { status: 404 });
     }
 
     const content = report.content as unknown as ReportContent;
+
+    // Validate minimum required structure
+    if (!content.sections) {
+      console.error("[report/export] Report content missing 'sections' key, id:", report.id);
+      return NextResponse.json({ error: "Report content is incomplete. Regenerate the report." }, { status: 422 });
+    }
+
     const reportRef = content.coverPage?.reportNumber || content.metadata?.reportReference || "AAPRP-Report";
 
-    // 5. Generate DOCX
+    console.log("[report/export] Building DOCX for:", reportRef);
+
+    // 4. Generate DOCX
     const doc = buildDocx(content, locale);
     const buffer = await Packer.toBuffer(doc);
 
-    // 6. Return as download
+    console.log("[report/export] DOCX generated:", buffer.byteLength, "bytes");
+
+    // 5. Return as download
+    const mimeType = format === "pdf"
+      ? "application/pdf"
+      : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    const extension = format === "pdf" ? "pdf" : "docx";
+
     return new Response(new Uint8Array(buffer), {
       headers: {
-        "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "Content-Disposition": `attachment; filename="${reportRef}-${locale}.docx"`,
+        "Content-Type": mimeType,
+        "Content-Disposition": `attachment; filename="${reportRef}-${locale}.${extension}"`,
         "Content-Length": String(buffer.byteLength),
       },
     });
   } catch (error) {
-    console.error("[Report Export] Error:", error);
+    const message = error instanceof Error ? error.message : String(error);
+    const stack = error instanceof Error ? error.stack : undefined;
+    console.error("[report/export] FATAL ERROR:", { reviewId, format, locale, message, stack });
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Internal server error", details: message },
       { status: 500 }
     );
   }

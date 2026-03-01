@@ -132,7 +132,7 @@ function ANSAssessmentPanel({ ans, locale }: { ans: ANSAssessmentSection; locale
 
   // Prepare chart data sorted by score descending
   const chartData = useMemo(() => {
-    return [...ans.byReviewArea]
+    return [...(ans.byReviewArea || [])]
       .filter((area) => area.totalPQs > 0)
       .sort((a, b) => b.eiScore - a.eiScore)
       .map((area) => ({
@@ -149,7 +149,7 @@ function ANSAssessmentPanel({ ans, locale }: { ans: ANSAssessmentSection; locale
 
   // CE bar data
   const ceData = useMemo(() => {
-    return ans.byCriticalElement.map((ce) => ({
+    return (ans.byCriticalElement || []).map((ce) => ({
       code: ce.code,
       name: ce.name,
       score: ce.eiScore,
@@ -363,7 +363,7 @@ function SMSAssessmentPanel({ sms, locale }: { sms: SMSAssessmentSection; locale
 
   // Radar chart data
   const radarData = useMemo(() => {
-    return sms.byComponent.map((comp) => ({
+    return (sms.byComponent || []).map((comp) => ({
       component: comp.code,
       name: comp.name,
       // Convert percentage (0-100) to 0-5 scale for radar
@@ -483,13 +483,13 @@ function SMSAssessmentPanel({ sms, locale }: { sms: SMSAssessmentSection; locale
       )}
 
       {/* Component Breakdown with Study Areas */}
-      {sms.byComponent.length > 0 && (
+      {(sms.byComponent?.length ?? 0) > 0 && (
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-base">{t("componentBreakdown")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-5">
-            {sms.byComponent.map((comp) => {
+            {(sms.byComponent || []).map((comp) => {
               const levelHex = MATURITY_HEX[comp.maturityLevel] || "#9ca3af";
 
               return (
@@ -527,7 +527,7 @@ function SMSAssessmentPanel({ sms, locale }: { sms: SMSAssessmentSection; locale
                   </div>
 
                   {/* Study Areas */}
-                  {comp.studyAreas.length > 0 && (
+                  {(comp.studyAreas?.length ?? 0) > 0 && (
                     <div className="ml-4 border-l-2 border-muted pl-4 space-y-1.5">
                       {comp.studyAreas.map((sa) => {
                         const saHex = MATURITY_HEX[sa.maturityLevel] || "#9ca3af";
@@ -557,7 +557,7 @@ function SMSAssessmentPanel({ sms, locale }: { sms: SMSAssessmentSection; locale
                     </div>
                   )}
 
-                  {comp !== sms.byComponent[sms.byComponent.length - 1] && (
+                  {comp !== (sms.byComponent || [])[(sms.byComponent || []).length - 1] && (
                     <Separator className="mt-3" />
                   )}
                 </div>

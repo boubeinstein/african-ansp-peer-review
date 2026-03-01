@@ -5621,11 +5621,25 @@
           "ATS": "Air Traffic Services",
           "FPD": "Flight Procedures Design",
           "AIS": "Aeronautical Information Service",
+          "AIM": "Aeronautical Information Management",
           "MAP": "Aeronautical Charts",
           "MET": "Meteorological Service",
           "CNS": "Communications, Navigation, Surveillance",
           "SAR": "Search and Rescue",
-          "SMS": "Safety Management System"
+          "SMS": "Safety Management System",
+          "AGA": "Aerodromes & Ground Aids",
+          "LEG": "Legislation",
+          "ORG": "Organization",
+          "PEL": "Personnel Licensing",
+          "OPS": "Operations",
+          "AIR": "Airworthiness",
+          "AIG": "Accident Investigation",
+          "ANS": "Air Navigation Services",
+          "SSP": "State Safety Programme",
+          "SMS_POLICY": "Safety Policy & Objectives",
+          "SMS_RISK": "Safety Risk Management",
+          "SMS_ASSURANCE": "Safety Assurance",
+          "SMS_PROMOTION": "Safety Promotion"
         }
       },
       "schedule": {

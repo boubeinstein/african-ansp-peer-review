@@ -507,229 +507,245 @@ export const assessmentRouter = router({
   create: protectedProcedure
     .input(CreateAssessmentInput)
     .mutation(async ({ ctx, input }) => {
-      const user = ctx.user;
+      console.log("[assessment.create] input:", JSON.stringify(input, null, 2));
 
-      // Validate permission to create assessments
-      const globalRoles: UserRole[] = [
-        "SUPER_ADMIN",
-        "SYSTEM_ADMIN",
-        "PROGRAMME_COORDINATOR",
-        "STEERING_COMMITTEE",
-      ];
-      const orgRoles: UserRole[] = [
-        "ANSP_ADMIN",
-        "SAFETY_MANAGER",
-        "QUALITY_MANAGER",
-      ];
+      try {
+        const user = ctx.user;
 
-      const canCreateForAnyOrg = globalRoles.includes(user.role);
-      const canCreateForOwnOrg = orgRoles.includes(user.role);
+        // Validate permission to create assessments
+        const globalRoles: UserRole[] = [
+          "SUPER_ADMIN",
+          "SYSTEM_ADMIN",
+          "PROGRAMME_COORDINATOR",
+          "STEERING_COMMITTEE",
+        ];
+        const orgRoles: UserRole[] = [
+          "ANSP_ADMIN",
+          "SAFETY_MANAGER",
+          "QUALITY_MANAGER",
+        ];
 
-      if (!canCreateForAnyOrg && !canCreateForOwnOrg) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "You do not have permission to create assessments",
-        });
-      }
+        const canCreateForAnyOrg = globalRoles.includes(user.role);
+        const canCreateForOwnOrg = orgRoles.includes(user.role);
 
-      // Org-level users can only create for their own organization
-      if (!canCreateForAnyOrg && user.organizationId !== input.organizationId) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "You can only create assessments for your own organization",
-        });
-      }
-
-      // Verify the organization exists and is active
-      const targetOrg = await prisma.organization.findUnique({
-        where: { id: input.organizationId },
-        select: { id: true, nameEn: true, nameFr: true, organizationCode: true, membershipStatus: true },
-      });
-
-      if (!targetOrg) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Organization not found",
-        });
-      }
-
-      if (targetOrg.membershipStatus !== "ACTIVE") {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Cannot create assessment for inactive organization",
-        });
-      }
-
-      const targetOrganizationId = input.organizationId;
-
-      // Resolve questionnaire - either by ID or by type
-      let questionnaire;
-      if (input.questionnaireId) {
-        questionnaire = await prisma.questionnaire.findUnique({
-          where: { id: input.questionnaireId },
-          include: {
-            _count: { select: { questions: true } },
-          },
-        });
-      } else if (input.questionnaireType) {
-        // Find the active questionnaire of this type
-        questionnaire = await prisma.questionnaire.findFirst({
-          where: {
-            type: input.questionnaireType,
-            isActive: true,
-          },
-          orderBy: { version: "desc" },
-          include: {
-            _count: { select: { questions: true } },
-          },
-        });
-      }
-
-      if (!questionnaire) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: input.questionnaireType
-            ? `No active questionnaire found for type ${input.questionnaireType}`
-            : "Questionnaire not found",
-        });
-      }
-
-      if (!questionnaire.isActive) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Cannot create assessment for inactive questionnaire",
-        });
-      }
-
-      // Check for existing active assessment of same type
-      const existingAssessment = await prisma.assessment.findFirst({
-        where: {
-          organizationId: targetOrganizationId,
-          questionnaireId: questionnaire.id,
-          type: input.assessmentType,
-          status: { notIn: ["COMPLETED", "ARCHIVED"] },
-        },
-      });
-
-      if (existingAssessment) {
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: `An active ${input.assessmentType.toLowerCase().replace("_", " ")} already exists for this questionnaire. Please complete or archive it before creating a new one.`,
-        });
-      }
-
-      // Build question filter based on selectedReviewAreas (preferred) or selectedAuditAreas
-      const questionFilter: Prisma.QuestionWhereInput = {
-        questionnaireId: questionnaire.id,
-      };
-      if (questionnaire.type === "ANS_USOAP_CMA") {
-        if (input.selectedReviewAreas && input.selectedReviewAreas.length > 0) {
-          questionFilter.reviewArea = { in: input.selectedReviewAreas };
-        } else if (input.selectedAuditAreas && input.selectedAuditAreas.length > 0) {
-          questionFilter.auditArea = { in: input.selectedAuditAreas };
+        if (!canCreateForAnyOrg && !canCreateForOwnOrg) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You do not have permission to create assessments",
+          });
         }
-      }
 
-      // Determine assessment type code
-      const assessmentTypeCode = getAssessmentTypeCode(questionnaire.type);
+        // Org-level users can only create for their own organization
+        if (!canCreateForAnyOrg && user.organizationId !== input.organizationId) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You can only create assessments for your own organization",
+          });
+        }
 
-      // Generate unique reference number
-      const orgCode = targetOrg.organizationCode || targetOrg.nameEn.substring(0, 6);
-      const referenceNumber = await generateAssessmentReferenceNumber({
-        organizationCode: orgCode,
-        assessmentType: assessmentTypeCode,
-      });
+        // Verify the organization exists and is active
+        const targetOrg = await prisma.organization.findUnique({
+          where: { id: input.organizationId },
+          select: { id: true, nameEn: true, nameFr: true, organizationCode: true, membershipStatus: true },
+        });
 
-      // Generate title (use user-provided title or generate one)
-      const title = input.title || generateAssessmentTitle(assessmentTypeCode, referenceNumber);
+        if (!targetOrg) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Organization not found",
+          });
+        }
 
-      // Create assessment with empty responses for all questions
-      // Use extended timeout for bulk response creation (150+ responses possible)
-      const assessment = await prisma.$transaction(
-        async (tx) => {
-          // Store selected areas from input (only applicable for ANS assessments)
-          const selectedAuditAreas =
-            questionnaire.type === "ANS_USOAP_CMA"
-              ? input.selectedAuditAreas
-              : [];
-          const selectedReviewAreas =
-            questionnaire.type === "ANS_USOAP_CMA"
-              ? input.selectedReviewAreas
-              : [];
+        if (targetOrg.membershipStatus !== "ACTIVE") {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Cannot create assessment for inactive organization",
+          });
+        }
 
-          const newAssessment = await tx.assessment.create({
-            data: {
-              referenceNumber,
-              type: input.assessmentType,
-              title,
-              description: input.description,
-              dueDate: input.dueDate,
-              questionnaireId: questionnaire.id,
-              organizationId: targetOrganizationId,
-              status: "DRAFT",
-              progress: 0,
-              selectedAuditAreas,
-              selectedReviewAreas,
-            },
+        const targetOrganizationId = input.organizationId;
+
+        // Resolve questionnaire - either by ID or by type
+        let questionnaire;
+        if (input.questionnaireId) {
+          questionnaire = await prisma.questionnaire.findUnique({
+            where: { id: input.questionnaireId },
             include: {
-              questionnaire: true,
-              organization: true,
+              _count: { select: { questions: true } },
             },
           });
-
-          console.log("[Assessment Create]", {
-            id: newAssessment.id,
-            title: newAssessment.title,
-            selectedAuditAreas: newAssessment.selectedAuditAreas,
-            selectedReviewAreas: newAssessment.selectedReviewAreas,
+        } else if (input.questionnaireType) {
+          // Find the active questionnaire of this type
+          questionnaire = await prisma.questionnaire.findFirst({
+            where: {
+              type: input.questionnaireType,
+              isActive: true,
+            },
+            orderBy: { version: "desc" },
+            include: {
+              _count: { select: { questions: true } },
+            },
           });
+        }
 
-          // Get questions for this questionnaire (filtered by scope if provided)
-          const questions = await tx.question.findMany({
-            where: questionFilter,
-            select: { id: true },
+        if (!questionnaire) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: input.questionnaireType
+              ? `No active questionnaire found for type ${input.questionnaireType}`
+              : "Questionnaire not found",
           });
+        }
 
-          // Bulk create empty responses using createMany (fast!)
-          if (questions.length > 0) {
-            await tx.assessmentResponse.createMany({
-              data: questions.map((q) => ({
-                assessmentId: newAssessment.id,
-                questionId: q.id,
-              })),
-              skipDuplicates: true,
+        if (!questionnaire.isActive) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Cannot create assessment for inactive questionnaire",
+          });
+        }
+
+        // Check for existing active assessment of same type
+        const existingAssessment = await prisma.assessment.findFirst({
+          where: {
+            organizationId: targetOrganizationId,
+            questionnaireId: questionnaire.id,
+            type: input.assessmentType,
+            status: { notIn: ["COMPLETED", "ARCHIVED"] },
+          },
+        });
+
+        if (existingAssessment) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: `An active ${input.assessmentType.toLowerCase().replace("_", " ")} already exists for this questionnaire. Please complete or archive it before creating a new one.`,
+          });
+        }
+
+        // Build question filter based on selectedReviewAreas (preferred) or selectedAuditAreas
+        const questionFilter: Prisma.QuestionWhereInput = {
+          questionnaireId: questionnaire.id,
+          isActive: true,
+        };
+        if (questionnaire.type === "ANS_USOAP_CMA") {
+          if (input.selectedReviewAreas && input.selectedReviewAreas.length > 0) {
+            questionFilter.reviewArea = { in: input.selectedReviewAreas };
+          } else if (input.selectedAuditAreas && input.selectedAuditAreas.length > 0) {
+            questionFilter.auditArea = { in: input.selectedAuditAreas };
+          }
+        }
+
+        // Determine assessment type code
+        const assessmentTypeCode = getAssessmentTypeCode(questionnaire.type);
+
+        // Generate unique reference number
+        const orgCode = targetOrg.organizationCode || targetOrg.nameEn.substring(0, 6);
+        const referenceNumber = await generateAssessmentReferenceNumber({
+          organizationCode: orgCode,
+          assessmentType: assessmentTypeCode,
+        });
+
+        // Generate title (use user-provided title or generate one)
+        const title = input.title || generateAssessmentTitle(assessmentTypeCode, referenceNumber);
+
+        // Create assessment with empty responses for all questions
+        // Use extended timeout for bulk response creation (150+ responses possible)
+        const assessment = await prisma.$transaction(
+          async (tx) => {
+            // Store selected areas from input (only applicable for ANS assessments)
+            const selectedAuditAreas =
+              questionnaire.type === "ANS_USOAP_CMA"
+                ? input.selectedAuditAreas
+                : [];
+            const selectedReviewAreas =
+              questionnaire.type === "ANS_USOAP_CMA"
+                ? input.selectedReviewAreas
+                : [];
+
+            const newAssessment = await tx.assessment.create({
+              data: {
+                referenceNumber,
+                type: input.assessmentType,
+                title,
+                description: input.description,
+                dueDate: input.dueDate,
+                questionnaireId: questionnaire.id,
+                organizationId: targetOrganizationId,
+                status: "DRAFT",
+                progress: 0,
+                selectedAuditAreas,
+                selectedReviewAreas,
+              },
+              include: {
+                questionnaire: true,
+                organization: true,
+              },
             });
 
-            console.log(
-              `[Assessment Create] Created ${questions.length} response records`
-            );
+            console.log("[assessment.create] created:", {
+              id: newAssessment.id,
+              ref: newAssessment.referenceNumber,
+              title: newAssessment.title,
+            });
+
+            // Get questions for this questionnaire (filtered by scope if provided)
+            const questions = await tx.question.findMany({
+              where: questionFilter,
+              select: { id: true },
+            });
+
+            // Bulk create empty responses using createMany (fast!)
+            if (questions.length > 0) {
+              await tx.assessmentResponse.createMany({
+                data: questions.map((q) => ({
+                  assessmentId: newAssessment.id,
+                  questionId: q.id,
+                })),
+                skipDuplicates: true,
+              });
+
+              console.log(
+                `[assessment.create] Created ${questions.length} response records`
+              );
+            } else {
+              console.warn(
+                `[assessment.create] No questions found for questionnaire ${questionnaire.id} with filter:`,
+                JSON.stringify(questionFilter)
+              );
+            }
+
+            return newAssessment;
+          },
+          {
+            timeout: 30000, // 30 seconds for bulk operations
+            maxWait: 10000, // Max 10s wait to acquire connection
           }
+        );
 
-          return newAssessment;
-        },
-        {
-          timeout: 30000, // 30 seconds for bulk operations
-          maxWait: 10000, // Max 10s wait to acquire connection
-        }
-      );
+        // Log audit entry
+        await logAuditEntry(user.id, AuditAction.CREATE, "Assessment", assessment.id, {
+          referenceNumber,
+          type: input.assessmentType,
+          title,
+          questionnaireId: questionnaire.id,
+          questionnaireType: questionnaire.type,
+          organizationId: user.organizationId,
+          selectedAuditAreas: input.selectedAuditAreas,
+          selectedReviewAreas: input.selectedReviewAreas,
+        });
 
-      // Log audit entry
-      await logAuditEntry(user.id, AuditAction.CREATE, "Assessment", assessment.id, {
-        referenceNumber,
-        type: input.assessmentType,
-        title,
-        questionnaireId: questionnaire.id,
-        questionnaireType: questionnaire.type,
-        organizationId: user.organizationId,
-        selectedAuditAreas: input.selectedAuditAreas,
-        selectedReviewAreas: input.selectedReviewAreas,
-      });
+        console.log(
+          `[assessment.create] User ${user.id} created assessment ${assessment.id} for org ${user.organizationId}`
+        );
 
-      console.log(
-        `[Assessment] User ${user.id} created assessment ${assessment.id} for org ${user.organizationId}`
-      );
-
-      return assessment;
+        return assessment;
+      } catch (error) {
+        console.error("[assessment.create] ERROR:", error);
+        if (error instanceof TRPCError) throw error;
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: error instanceof Error ? error.message : "Failed to create assessment",
+        });
+      }
     }),
 
   /**

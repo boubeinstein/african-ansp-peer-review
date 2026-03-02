@@ -431,8 +431,7 @@ export function RetrospectiveForm({
     const existing = taggedMap.get(findingId);
     if (!existing || !existingData?.id) return;
 
-    // Untag and re-tag with new type
-    untagFindingMutation.mutate({ id: existing.tagId });
+    // Server uses upsert, so we can just re-tag directly (no need to untag first)
     tagFindingMutation.mutate(
       {
         retrospectiveId: existingData.id,

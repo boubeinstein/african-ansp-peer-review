@@ -422,14 +422,33 @@ export const retrospectiveRouter = router({
         });
       }
 
-      return ctx.db.retrospectiveFinding.create({
-        data: {
-          retrospectiveId: input.retrospectiveId,
-          findingId: input.findingId,
-          lessonType: input.lessonType,
-          notableReason: input.notableReason,
-        },
-      });
+      try {
+        // Use upsert to handle duplicate tagging gracefully (unique constraint on [retrospectiveId, findingId])
+        return await ctx.db.retrospectiveFinding.upsert({
+          where: {
+            retrospectiveId_findingId: {
+              retrospectiveId: input.retrospectiveId,
+              findingId: input.findingId,
+            },
+          },
+          update: {
+            lessonType: input.lessonType,
+            notableReason: input.notableReason,
+          },
+          create: {
+            retrospectiveId: input.retrospectiveId,
+            findingId: input.findingId,
+            lessonType: input.lessonType,
+            notableReason: input.notableReason,
+          },
+        });
+      } catch (error) {
+        console.error("Failed to tag finding:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to tag finding. Please try again.",
+        });
+      }
     }),
 
   /**
@@ -468,9 +487,17 @@ export const retrospectiveRouter = router({
         });
       }
 
-      return ctx.db.retrospectiveFinding.delete({
-        where: { id: input.id },
-      });
+      try {
+        return await ctx.db.retrospectiveFinding.delete({
+          where: { id: input.id },
+        });
+      } catch (error) {
+        console.error("Failed to untag finding:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to remove tagged finding. Please try again.",
+        });
+      }
     }),
 
   /**

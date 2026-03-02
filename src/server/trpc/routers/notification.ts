@@ -40,49 +40,66 @@ export const notificationRouter = router({
       const { user } = ctx.session;
       const { page, pageSize, unreadOnly, type, priority } = input;
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const where: any = {
-        userId: user.id,
-      };
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const where: any = {
+          userId: user.id,
+        };
 
-      if (unreadOnly) {
-        where.readAt = null;
+        if (unreadOnly) {
+          where.readAt = null;
+        }
+
+        if (type) {
+          where.type = type;
+        }
+
+        if (priority) {
+          where.priority = priority;
+        }
+
+        const [notifications, total] = await Promise.all([
+          ctx.db.notification.findMany({
+            where,
+            orderBy: { createdAt: "desc" },
+            take: pageSize,
+            skip: (page - 1) * pageSize,
+          }),
+          ctx.db.notification.count({ where }),
+        ]);
+
+        return {
+          notifications,
+          pagination: {
+            page,
+            pageSize,
+            total,
+            totalPages: Math.ceil(total / pageSize),
+            hasMore: page * pageSize < total,
+          },
+        };
+      } catch (error) {
+        console.warn(
+          "[notification.list] Returning empty fallback:",
+          error instanceof Error ? error.message : error
+        );
+        return {
+          notifications: [],
+          pagination: {
+            page,
+            pageSize,
+            total: 0,
+            totalPages: 0,
+            hasMore: false,
+          },
+        };
       }
-
-      if (type) {
-        where.type = type;
-      }
-
-      if (priority) {
-        where.priority = priority;
-      }
-
-      const [notifications, total] = await Promise.all([
-        ctx.db.notification.findMany({
-          where,
-          orderBy: { createdAt: "desc" },
-          take: pageSize,
-          skip: (page - 1) * pageSize,
-        }),
-        ctx.db.notification.count({ where }),
-      ]);
-
-      return {
-        notifications,
-        pagination: {
-          page,
-          pageSize,
-          total,
-          totalPages: Math.ceil(total / pageSize),
-          hasMore: page * pageSize < total,
-        },
-      };
     }),
 
   /**
    * Get recent notifications (for dropdown)
    * Optimized: parallel queries, selected fields only
-   * Handles network errors gracefully
+   * Must never throw — returns safe fallback on any error
    */
   getRecent: protectedProcedure
     .input(
@@ -92,12 +109,6 @@ export const notificationRouter = router({
     )
     .query(async ({ ctx, input }) => {
       const { user } = ctx.session;
-
-      console.log("[Notification.getRecent] Fetching for user:", {
-        userId: user.id,
-        email: user.email,
-        role: user.role,
-      });
 
       try {
         // Run both queries in parallel for better performance
@@ -127,43 +138,43 @@ export const notificationRouter = router({
           }),
         ]);
 
-        console.log("[Notification.getRecent] Found:", {
-          total: notifications.length,
-          unread: unreadCount,
-          types: notifications.map((n) => n.type),
-        });
-
         return {
           notifications,
           unreadCount,
         };
       } catch (error) {
-        // Handle network/DNS errors gracefully
-        if (error instanceof Error &&
-            (error.message.includes('EAI_AGAIN') ||
-             error.message.includes('ECONNREFUSED') ||
-             error.message.includes('ETIMEDOUT'))) {
-          console.warn('[Notification] Database connection failed:', error.message);
-          return { notifications: [], unreadCount: 0 };
-        }
-        throw error;
+        // This query runs on every page load — must never crash
+        console.warn(
+          "[notification.getRecent] Returning empty fallback:",
+          error instanceof Error ? error.message : error
+        );
+        return { notifications: [], unreadCount: 0 };
       }
     }),
 
   /**
    * Get unread notification count
+   * Must never throw — returns 0 on any error
    */
   getUnreadCount: protectedProcedure.query(async ({ ctx }) => {
     const { user } = ctx.session;
 
-    const count = await ctx.db.notification.count({
-      where: {
-        userId: user.id,
-        readAt: null,
-      },
-    });
+    try {
+      const count = await ctx.db.notification.count({
+        where: {
+          userId: user.id,
+          readAt: null,
+        },
+      });
 
-    return { count };
+      return { count };
+    } catch (error) {
+      console.warn(
+        "[notification.getUnreadCount] Returning 0 fallback:",
+        error instanceof Error ? error.message : error
+      );
+      return { count: 0 };
+    }
   }),
 
   /**
@@ -334,38 +345,52 @@ export const notificationRouter = router({
   getStats: protectedProcedure.query(async ({ ctx }) => {
     const { user } = ctx.session;
 
-    const [total, unread, byType, byPriority] = await Promise.all([
-      ctx.db.notification.count({
-        where: { userId: user.id },
-      }),
-      ctx.db.notification.count({
-        where: { userId: user.id, readAt: null },
-      }),
-      ctx.db.notification.groupBy({
-        by: ["type"],
-        where: { userId: user.id, readAt: null },
-        _count: true,
-      }),
-      ctx.db.notification.groupBy({
-        by: ["priority"],
-        where: { userId: user.id, readAt: null },
-        _count: true,
-      }),
-    ]);
+    try {
+      const [total, unread, byType, byPriority] = await Promise.all([
+        ctx.db.notification.count({
+          where: { userId: user.id },
+        }),
+        ctx.db.notification.count({
+          where: { userId: user.id, readAt: null },
+        }),
+        ctx.db.notification.groupBy({
+          by: ["type"],
+          where: { userId: user.id, readAt: null },
+          _count: { _all: true },
+        }),
+        ctx.db.notification.groupBy({
+          by: ["priority"],
+          where: { userId: user.id, readAt: null },
+          _count: { _all: true },
+        }),
+      ]);
 
-    return {
-      total,
-      unread,
-      read: total - unread,
-      byType: byType.reduce(
-        (acc, item) => ({ ...acc, [item.type]: item._count }),
-        {} as Record<NotificationType, number>
-      ),
-      byPriority: byPriority.reduce(
-        (acc, item) => ({ ...acc, [item.priority]: item._count }),
-        {} as Record<NotificationPriority, number>
-      ),
-    };
+      return {
+        total,
+        unread,
+        read: total - unread,
+        byType: byType.reduce(
+          (acc, item) => ({ ...acc, [item.type]: item._count._all }),
+          {} as Record<NotificationType, number>
+        ),
+        byPriority: byPriority.reduce(
+          (acc, item) => ({ ...acc, [item.priority]: item._count._all }),
+          {} as Record<NotificationPriority, number>
+        ),
+      };
+    } catch (error) {
+      console.warn(
+        "[notification.getStats] Returning empty fallback:",
+        error instanceof Error ? error.message : error
+      );
+      return {
+        total: 0,
+        unread: 0,
+        read: 0,
+        byType: {} as Record<NotificationType, number>,
+        byPriority: {} as Record<NotificationPriority, number>,
+      };
+    }
   }),
 
   // ===========================================================================
